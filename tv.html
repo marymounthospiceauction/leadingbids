@@ -53,33 +53,37 @@
       100% { transform: translate3d(-60px,120px,0); }
     }
 
-    /* TOP HEADER IMAGE WITH INTEGRATED TITLE */
-    .header-image {
-      position: relative;
+    /* HEADER IMAGE BAR */
+    .header-wrapper {
       width: 100%;
       max-width: 1900px;
-      margin: 0 auto 6px auto;
+      margin: 0 auto 4px auto;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 4px 10px rgba(0,0,0,0.4);
       background: #f6e7c1;
     }
 
-    .header-image img {
+    .header-image {
       width: 100%;
       height: auto;
       display: block;
     }
 
-    .header-title {
-      position: absolute;
-      bottom: 12%;               /* vertically inside the banner */
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
+    /* TITLE + LAST UPDATE ROW */
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.6vh;
+      padding: 0 0.5vw;
+    }
+
+    .title {
+      flex: 1;
       text-align: center;
       font-family: "Great Vibes", cursive;
-      font-size: 3vw;
+      font-size: 2.2vw;               /* smaller for visibility */
       color: #ffe8a3;
       text-shadow:
         -3px -3px 5px rgba(0,0,0,0.9),
@@ -87,16 +91,6 @@
         -3px  3px 5px rgba(0,0,0,0.9),
          3px  3px 5px rgba(0,0,0,0.9);
       letter-spacing: 0.06em;
-    }
-
-    /* ROW WITH LAST UPDATE ONLY (TITLE IS IN HEADER) */
-    .header-bar {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      margin-top: 0.2vh;
-      margin-bottom: 0.6vh;
-      padding: 0 0.5vw;
     }
 
     .last-update {
@@ -113,7 +107,7 @@
       display: flex;
       justify-content: center;
       align-items: stretch;
-      padding: 0.6vh 1.5vw 0.8vh 1.5vw;
+      padding: 0.4vh 1.5vw 0.8vh 1.5vw;
     }
 
     .board-inner {
@@ -160,7 +154,7 @@
       color: #ff2a2a;
       font-weight: bold;
       white-space: nowrap;
-      font-size: 0.9vw;
+      font-size: 0.9vw;  /* smaller */
     }
 
     .bid-amount {
@@ -230,7 +224,7 @@
     @media (max-width: 1200px) {
       .bid-row { font-size: 1.4vw; }
       .footer-qr-label { font-size: 1.1vw; }
-      .header-title { font-size: 3.4vw; }
+      .title { font-size: 2.5vw; }
     }
   </style>
 </head>
@@ -239,14 +233,15 @@
   <div class="snow"></div>
 
   <div class="screen">
-    <!-- LIVE HEADER IMAGE + INTEGRATED TITLE -->
-    <div class="header-image">
-      <img src="LiveHeader.png" alt="Live Auction Header">
-      <div class="header-title">Current Leading Bids</div>
+    <!-- HEADER IMAGE -->
+    <div class="header-wrapper">
+      <img src="LiveHeader.png" class="header-image" alt="Live Header">
     </div>
 
-    <!-- LAST UPDATE ROW (NO SEPARATE TITLE HERE) -->
-    <div class="header-bar">
+    <!-- TITLE + LAST UPDATE -->
+    <div class="title-row">
+      <div style="width:10vw;"></div>
+      <div class="title">Current Leading Bids</div>
       <div class="last-update" id="lastUpdate">Last update: --:--:--</div>
     </div>
 
@@ -353,7 +348,7 @@
     }
 
     loadBids();
-    setInterval(loadBids, 30000);
+    setInterval(loadBids, 5000);  // refresh every 5 seconds
   </script>
 </body>
 </html>
