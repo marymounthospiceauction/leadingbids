@@ -53,7 +53,7 @@
       100% { transform: translate3d(-60px,120px,0); }
     }
 
-    /* HEADER IMAGE – FORCE REAL HEIGHT SO IT'S VISIBLE */
+    /* HEADER IMAGE – FORCE REAL HEIGHT & PREVENT SHRINKING */
     .header-wrapper {
       width: 100%;
       max-width: 1900px;
@@ -62,23 +62,25 @@
       overflow: hidden;
       box-shadow: 0 4px 10px rgba(0,0,0,0.4);
       background: #f6e7c1;
-      height: 160px;               /* <<< guarantees visible strip */
+      height: 160px;               /* visible strip */
+      flex-shrink: 0;              /* DO NOT shrink header */
     }
 
     .header-image {
       width: 100%;
-      height: 100%;                 /* fill the 160px strip */
-      object-fit: cover;            /* crop evenly, no collapse */
+      height: 100%;
+      object-fit: cover;
       display: block;
     }
 
-    /* TITLE + LAST UPDATE */
+    /* TITLE + LAST UPDATE – ALSO NO SHRINK */
     .title-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 0.6vh;
       padding: 0 0.5vw;
+      flex-shrink: 0;              /* keep title row size */
     }
 
     .title {
@@ -103,9 +105,10 @@
       text-shadow: 0 2px 4px rgba(0,0,0,0.7);
     }
 
-    /* MAIN BOARD */
+    /* MAIN BOARD – THIS IS ALLOWED TO SHRINK IF NEEDED */
     .board {
-      flex: 1;
+      flex: 1 1 auto;              /* grow & shrink as needed */
+      min-height: 0;               /* allow flexbox to reduce it */
       display: flex;
       justify-content: center;
       align-items: stretch;
@@ -128,6 +131,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.45vh;
+      min-height: 0;
     }
 
     .bid-row {
@@ -168,7 +172,7 @@
       white-space: nowrap;
     }
 
-    /* FOOTER WITH QR LEFT/RIGHT + SPONSORS CENTRE */
+    /* FOOTER WITH QR LEFT/RIGHT + SPONSORS CENTRE – NO SHRINK */
     .footer {
       display: flex;
       align-items: center;
@@ -176,6 +180,7 @@
       padding: 0.2vh 0 0 0;
       font-size: 1.1vw;
       color: #ffe599;
+      flex-shrink: 0;              /* keep footer size */
     }
 
     .footer-side {
