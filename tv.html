@@ -23,12 +23,27 @@
       width: 96vw;
       margin: 8px auto 4px auto;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: space-between;
+      gap: 1vw;
+    }
+
+    .header-logo {
+      height: 60px;
+      width: auto;
+      display: block;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
+    }
+
+    .title-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1vw;
     }
 
     .title-text {
-      flex: 1;
       text-align: center;
       font-family: 'Alisha', cursive;
       font-size: 3vw;
@@ -39,14 +54,16 @@
         -2px  2px 4px rgba(0,0,0,0.9),
          2px  2px 4px rgba(0,0,0,0.9);
       letter-spacing: 0.06em;
+      white-space: nowrap;
     }
 
     .last-update {
-      min-width: 190px;
+      min-width: 170px;
       text-align: right;
-      font-size: 1.1vw;
+      font-size: 1vw;
       color: #ffe599;
       text-shadow: 0 0 4px rgba(0,0,0,0.9);
+      white-space: nowrap;
     }
 
     /* BOARD WITH TWO COLUMNS */
@@ -158,10 +175,16 @@
 </head>
 <body>
 
-  <!-- TITLE + LAST UPDATE -->
+  <!-- TITLE + LOGOS + LAST UPDATE -->
   <div class="title-bar">
-    <div style="width:190px;"></div>
-    <div class="title-text">The Starry Night Ball</div>
+    <img src="Marymount Logo.png" alt="Marymount Logo" class="header-logo">
+
+    <div class="title-center">
+      <div class="title-text">The Starry Night Ball</div>
+    </div>
+
+    <img src="Marymount Logo.png" alt="Marymount Logo" class="header-logo">
+
     <div class="last-update" id="lastUpdate">Last update: --:--:--</div>
   </div>
 
@@ -198,7 +221,7 @@
   <script>
     const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
-    const range     = 'U4:W39';   // updated range (includes header row)
+    const range     = 'U4:W39';   // includes header row in sheet
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq` +
