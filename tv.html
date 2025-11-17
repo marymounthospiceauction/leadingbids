@@ -15,10 +15,10 @@
       padding: 0;
       height: 100%;
       font-family: Calibri, Arial, sans-serif;
-      /* Christmasy red + gold background */
-      background:
-        radial-gradient(circle at top, #fdf6d7 0, #f3d992 30%, #b87e1b 55%, #5a0010 100%);
-      overflow: hidden; /* no scrolling – fits TV */
+
+      /* 🔥 USE TV BACKGROUND IMAGE FROM REPO */
+      background: url("tvbackground.png") center center/cover no-repeat fixed;
+      overflow: hidden;
     }
 
     .screen {
@@ -30,16 +30,17 @@
       box-shadow: 0 0 40px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
+      background: rgba(0,0,0,0.35); /* Transparent overlay for readability */
     }
 
     /* TITLE */
     .title {
       text-align: center;
-      font-family: "Great Vibes", "Brush Script MT", cursive;
+      font-family: "Great Vibes", cursive;
       font-size: 4vw;
-      color: #1b1204;
+      color: #fff;
       margin-bottom: 1vh;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.25);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
     }
 
     /* MAIN BOARD */
@@ -54,11 +55,11 @@
     .board-inner {
       width: 100%;
       max-width: 1900px;
-      background: rgba(0,0,0,0.9);
+      background: rgba(0,0,0,0.85);
       padding: 1.2vh 1vw;
       display: flex;
       gap: 1vw;
-      box-shadow: 0 0 18px rgba(0,0,0,0.7);
+      box-shadow: 0 0 18px rgba(255,255,255,0.15);
       border: 3px solid #f5dd9a;
     }
 
@@ -75,7 +76,7 @@
       background: #111;
       border: 1px solid #555;
       padding: 0.18vh 0.7vw;
-      color: #fdf4dc; /* warm cream text */
+      color: #fdf4dc; /* warm cream */
       font-size: 1.1vw;
       letter-spacing: 0.04em;
     }
@@ -88,11 +89,12 @@
       text-overflow: ellipsis;
     }
 
+    /* 🔥 NEW BID COLUMN IN RED */
     .bid-new {
       flex: 0.5;
       text-align: right;
       padding: 0 0.4vw;
-      color: #ffdf80; /* gold-ish for new bid */
+      color: #ff2a2a;   /* bright red */
       font-weight: bold;
     }
 
@@ -101,12 +103,7 @@
       text-align: right;
       padding-left: 0.4vw;
       font-weight: bold;
-    }
-
-    /* Optional thin separators between numeric columns */
-    .bid-row::before {
-      content: "";
-      position: absolute;
+      color: #ffd;
     }
 
     /* FOOTER */
@@ -116,7 +113,8 @@
       justify-content: space-between;
       padding: 0.6vh 1.8vw 0;
       font-size: 1.1vw;
-      color: #1b1204;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
     }
 
     .footer-left,
@@ -134,7 +132,7 @@
     }
 
     .footer-center a {
-      color: #1b1204;
+      color: #fff;
       text-decoration: none;
     }
 
@@ -143,20 +141,21 @@
     }
 
     .footer-logo {
-      height: 5vh;
+      height: 6vh;
       object-fit: contain;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
     }
 
     .footer-qr-wrap {
       display: flex;
       align-items: center;
       gap: 0.8vw;
-      background: rgba(0,0,0,0.65);
+      background: rgba(0,0,0,0.6);
       padding: 0.5vh 1vw;
-      border-radius: 10px;
+      border-radius: 12px;
       border: 2px solid #f5dd9a;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      color: #fdf4dc;
+      box-shadow: 0 0 8px rgba(0,0,0,0.4);
+      color: #fff;
     }
 
     .footer-qr-text {
@@ -168,23 +167,17 @@
     }
 
     .footer-qr {
-      height: 7vh;
-      object-fit: contain;
+      height: 8vh;
       background: #fff;
-      padding: 0.3vh;
+      padding: 0.4vh;
       border-radius: 6px;
+      object-fit: contain;
     }
 
     @media (max-width: 1200px) {
-      .bid-row {
-        font-size: 1.4vw;
-      }
-      .title {
-        font-size: 5vw;
-      }
-      .footer-qr-text {
-        font-size: 1vw;
-      }
+      .bid-row { font-size: 1.4vw; }
+      .title { font-size: 5vw; }
+      .footer-qr-text { font-size: 1vw; }
     }
   </style>
 </head>
@@ -195,27 +188,21 @@
 
     <div class="board">
       <div class="board-inner">
-        <div class="column" id="leftColumn">
-          <!-- left column rows injected here -->
-        </div>
-        <div class="column" id="rightColumn">
-          <!-- right column rows injected here -->
-        </div>
+        <div class="column" id="leftColumn"></div>
+        <div class="column" id="rightColumn"></div>
       </div>
     </div>
 
     <!-- FOOTER -->
     <div class="footer">
       <div class="footer-left">
-        <img src="Marymount Logo.png" alt="Marymount" class="footer-logo">
+        <img src="Marymount Logo.png" class="footer-logo">
       </div>
 
       <div class="footer-center">
         <div class="footer-qr-wrap">
-          <div class="footer-qr-text">
-            SCAN<br>QR CODE TO BID
-          </div>
-          <img src="2025 Marymount QR Code.jpeg" alt="QR code to bid" class="footer-qr">
+          <div class="footer-qr-text">SCAN<br>QR CODE TO BID</div>
+          <img src="2025 Marymount QR Code.jpeg" class="footer-qr">
         </div>
       </div>
 
@@ -226,18 +213,17 @@
   </div>
 
   <script>
-    // ==== GOOGLE SHEET CONFIG ====
     const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
-    const range     = 'Q5:S42'; // Q: Item, R: New Bid, S: Leading Bid
+    const range     = 'Q5:S42';
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq` +
       `?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
     function formatEuro(value) {
-      if (value === '' || value == null || isNaN(value)) return '€0';
-      return '€' + Number(value).toLocaleString('en-IE');
+      if (!value || isNaN(value)) return "€0";
+      return "€" + Number(value).toLocaleString("en-IE");
     }
 
     async function loadBids() {
@@ -245,9 +231,7 @@
         const res  = await fetch(url);
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = json.table.rows
-          .map(r => r.c.map(c => c?.v || ''))
-          .filter(r => r[0]); // only rows with item text
+        const rows = json.table.rows.map(r => r.c.map(c => c?.v || '')).filter(r => r[0]);
 
         const leftCol  = document.getElementById('leftColumn');
         const rightCol = document.getElementById('rightColumn');
@@ -258,42 +242,22 @@
         const mid = Math.ceil(rows.length / 2);
 
         rows.forEach((r, index) => {
-          const itemText  = r[0]; // ITEM ## - description
-          const newBidVal = r[1]; // New Bid
-          const leadVal   = r[2]; // Leading Bid
+          const row = document.createElement('div');
+          row.className = 'bid-row';
 
-          const rowEl = document.createElement('div');
-          rowEl.className = 'bid-row';
+          row.innerHTML = `
+            <div class="bid-item">${r[0]}</div>
+            <div class="bid-new">${r[1] ? formatEuro(r[1]) : ""}</div>
+            <div class="bid-amount">${formatEuro(r[2])}</div>
+          `;
 
-          const itemEl = document.createElement('div');
-          itemEl.className = 'bid-item';
-          itemEl.textContent = itemText;
-
-          const newEl = document.createElement('div');
-          newEl.className = 'bid-new';
-          newEl.textContent = newBidVal ? formatEuro(newBidVal) : '';
-
-          const leadEl = document.createElement('div');
-          leadEl.className = 'bid-amount';
-          leadEl.textContent = formatEuro(leadVal);
-
-          rowEl.appendChild(itemEl);
-          rowEl.appendChild(newEl);
-          rowEl.appendChild(leadEl);
-
-          if (index < mid) {
-            leftCol.appendChild(rowEl);
-          } else {
-            rightCol.appendChild(rowEl);
-          }
+          if (index < mid) leftCol.appendChild(row);
+          else rightCol.appendChild(row);
         });
 
-      } catch (err) {
-        console.error('Failed to load sheet', err);
-      }
+      } catch (err) { console.error(err); }
     }
 
-    // Initial load and refresh every 30 seconds
     loadBids();
     setInterval(loadBids, 30000);
   </script>
