@@ -1,361 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Current Leading Bids – TV Display</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Current Leading Bids – Marymount Auction</title>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet"/>
-
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: Calibri, Arial, sans-serif;
-      background: url("tvbackground.png") center center/cover no-repeat fixed;
-      overflow: hidden;
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: url("tvbackground.png") center/cover no-repeat fixed;
+        font-family: Arial, sans-serif;
+        color: #ffe599;
+        overflow: hidden;
     }
 
-    .screen {
-      box-sizing: border-box;
-      width: 100vw;
-      height: 100vh;
-      padding: 8px 18px 18px 18px;
-      border: 14px solid #f6e7c1;
-      box-shadow: 0 0 40px rgba(0,0,0,0.5);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      z-index: 1;
-      background: transparent;
-    }
-
-    /* ✨ STAR OVERLAY (front layer) */
-    .snow {
-      pointer-events: none;
-      position: fixed;
-      inset: 0;
-      z-index: 999;
-      background-image:
-        radial-gradient(1.5px 1.5px at 20px 20px, rgba(255,255,255,0.95) 60%, transparent 61%),
-        radial-gradient(2px 2px at 100px 150px, rgba(255,255,200,0.8) 60%, transparent 61%),
-        radial-gradient(1.8px 1.8px at 200px 50px, rgba(255,255,255,0.9) 60%, transparent 61%),
-        radial-gradient(2.5px 2.5px at 320px 120px, rgba(255,255,210,0.95) 60%, transparent 61%);
-      background-size: 260px 260px, 340px 340px, 420px 420px, 500px 500px;
-      animation: stars-drift 30s linear infinite;
-      opacity: 0.7;
-    }
-
-    @keyframes stars-drift {
-      0%   { transform: translate3d(0,-120px,0); }
-      100% { transform: translate3d(-60px,120px,0); }
-    }
-
-    /* HEADER IMAGE – FORCE REAL HEIGHT & PREVENT SHRINKING */
+    /* HEADER IMAGE */
     .header-wrapper {
-      width: 100%;
-      max-width: 1900px;
-      margin: 0 auto 4px auto;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-      background: #f6e7c1;
-      height: 160px;               /* visible strip */
-      flex-shrink: 0;              /* DO NOT shrink header */
+        width: 100%;
+        text-align: center;
+        padding-top: 10px;
     }
 
     .header-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+        width: 90%;
+        max-width: 1600px;
+        height: auto;
+        display: block;
+        margin: 0 auto 10px auto;
     }
 
-    /* TITLE + LAST UPDATE – ALSO NO SHRINK */
-    .title-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.6vh;
-      padding: 0 0.5vw;
-      flex-shrink: 0;              /* keep title row size */
+    /* TABLE STYLES */
+    .table-container {
+        width: 95%;
+        margin: 0 auto;
+        margin-top: 5px;
+        border: 2px solid #ffe599;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.8);
     }
 
-    .title {
-      flex: 1;
-      text-align: center;
-      font-family: "Great Vibes", cursive;
-      font-size: 2.2vw;
-      color: #ffe8a3;
-      text-shadow:
-        -3px -3px 5px rgba(0,0,0,0.9),
-         3px -3px 5px rgba(0,0,0,0.9),
-        -3px  3px 5px rgba(0,0,0,0.9),
-         3px  3px 5px rgba(0,0,0,0.9);
-      letter-spacing: 0.06em;
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 22px;
+    }
+
+    td {
+        border: 1px solid #ffe599;
+        padding: 6px 10px;
+        white-space: nowrap;
+    }
+
+    .newbid {
+        color: red;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
     }
 
     .last-update {
-      font-size: 1vw;
-      color: #ffe599;
-      white-space: nowrap;
-      padding-right: 0.5vw;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: #ffe599;
+        font-size: 20px;
+        font-weight: bold;
+        text-shadow: 0 0 5px black;
     }
 
-    /* MAIN BOARD – THIS IS ALLOWED TO SHRINK IF NEEDED */
-    .board {
-      flex: 1 1 auto;              /* grow & shrink as needed */
-      min-height: 0;               /* allow flexbox to reduce it */
-      display: flex;
-      justify-content: center;
-      align-items: stretch;
-      padding: 0.4vh 1.5vw 0.8vh 1.5vw;
+    /* FOOTER */
+    .footer-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 95%;
+        margin: 15px auto 5px auto;
     }
 
-    .board-inner {
-      width: 100%;
-      max-width: 1900px;
-      background: rgba(0,0,0,0.9);
-      padding: 1.2vh 1vw;
-      display: flex;
-      gap: 1vw;
-      box-shadow: 0 0 18px rgba(0,0,0,0.7);
-      border: 3px solid #ffe599;
+    .footer-box {
+        text-align: center;
+        color: black;
+        font-weight: bold;
+        background: #ffe599;
+        padding: 6px 10px;
+        border-radius: 6px;
+        margin-bottom: 5px;
     }
 
-    .column {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.45vh;
-      min-height: 0;
+    .qr {
+        width: 140px;
+        height: auto;
     }
 
-    .bid-row {
-      display: flex;
-      align-items: center;
-      background: #111;
-      border: 1px solid #ffe599;
-      padding: 0.25vh 0.7vw;
-      color: #ffe599;
-      font-size: 1.15vw;
-      letter-spacing: 0.03em;
+    .footer-sponsors {
+        width: 45%;
+        max-width: 900px;
+        display: block;
+        margin: 0 20px;
     }
 
-    .bid-item {
-      flex: 1.4;
-      text-transform: uppercase;
-      white-space: normal;
-      word-wrap: break-word;
-      overflow: visible;
-    }
-
-    .bid-new {
-      flex: 0.5;
-      text-align: center;
-      padding: 0 0.4vw;
-      color: #ff2a2a;
-      font-weight: bold;
-      white-space: nowrap;
-      font-size: 0.9vw;
-    }
-
-    .bid-amount {
-      flex: 0.5;
-      text-align: right;
-      padding-left: 0.4vw;
-      font-weight: bold;
-      color: #ffe599;
-      white-space: nowrap;
-    }
-
-    /* FOOTER WITH QR LEFT/RIGHT + SPONSORS CENTRE – NO SHRINK */
-    .footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.2vh 0 0 0;
-      font-size: 1.1vw;
-      color: #ffe599;
-      flex-shrink: 0;              /* keep footer size */
-    }
-
-    .footer-side {
-      width: 15vw;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 0.4vh;
-    }
-
-    .footer-qr-label {
-      text-transform: uppercase;
-      font-weight: bold;
-      letter-spacing: 0.12em;
-      font-size: 0.9vw;
-      text-align: center;
-      color: #000; /* black for visibility */
-      text-shadow: 0 0 4px rgba(255,255,255,0.9);
-      background: rgba(255,255,255,0.7);
-      padding: 0.15vh 0.5vw;
-      border-radius: 4px;
-    }
-
-    .footer-qr {
-      height: 8vh;
-      background: #fff;
-      padding: 0.4vh;
-      border-radius: 6px;
-      object-fit: contain;
-      box-shadow: 0 0 6px rgba(0,0,0,0.7);
-    }
-
-    .footer-center {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .footer-center img {
-      max-height: 11vh;
-      width: auto;
-      display: block;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
-    }
-
-    @media (max-width: 1200px) {
-      .bid-row { font-size: 1.4vw; }
-      .footer-qr-label { font-size: 1.1vw; }
-      .title { font-size: 2.5vw; }
-    }
-  </style>
+</style>
 </head>
 
 <body>
-  <div class="snow"></div>
 
-  <div class="screen">
-    <!-- HEADER IMAGE -->
-    <div class="header-wrapper">
-      <img src="LiveHeader.png" class="header-image" alt="Live Header">
+<div class="last-update" id="lastUpdate">Loading...</div>
+
+<!-- HEADER IMAGE -->
+<div class="header-wrapper">
+    <img src="LiveHeader_transparent.png" class="header-image" alt="Starry Night Header">
+</div>
+
+<!-- TABLE -->
+<div class="table-container">
+    <table id="bidsTable"></table>
+</div>
+
+<!-- FOOTER -->
+<div class="footer-row">
+
+    <!-- LEFT QR CODE -->
+    <div>
+        <div class="footer-box">SCAN QR CODE TO BID</div>
+        <img src="2025 Marymount QR Code.jpeg" class="qr">
     </div>
 
-    <!-- TITLE + LAST UPDATE -->
-    <div class="title-row">
-      <div style="width:10vw;"></div>
-      <div class="title">Current Leading Bids</div>
-      <div class="last-update" id="lastUpdate">Last update: --:--:--</div>
+    <!-- SPONSORS -->
+    <img src="Marymount Footer Sponsors.png" class="footer-sponsors">
+
+    <!-- RIGHT QR CODE -->
+    <div>
+        <div class="footer-box">SCAN QR CODE TO BID</div>
+        <img src="2025 Marymount QR Code.jpeg" class="qr">
     </div>
 
-    <!-- MAIN BOARD -->
-    <div class="board">
-      <div class="board-inner">
-        <div class="column" id="leftColumn"></div>
-        <div class="column" id="rightColumn"></div>
-      </div>
-    </div>
+</div>
 
-    <!-- FOOTER: QR LEFT & RIGHT, SPONSORS CENTER -->
-    <div class="footer">
-      <div class="footer-side">
-        <div class="footer-qr-label">SCAN QR CODE<br>TO BID</div>
-        <img src="2025 Marymount QR Code.jpeg" alt="QR to bid" class="footer-qr">
-      </div>
+<script>
+const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
+const sheetName = 'LEADING BIDS';
+const range = 'Q5:S42';
+const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}&range=${range}`;
 
-      <div class="footer-center">
-        <img src="Marymount Footer Sponsors.png" alt="Marymount Sponsors">
-      </div>
+function formatEuro(v) {
+    if (!v || isNaN(v)) return '€0';
+    return '€' + Number(v).toLocaleString('en-IE');
+}
 
-      <div class="footer-side">
-        <div class="footer-qr-label">SCAN QR CODE<br>TO BID</div>
-        <img src="2025 Marymount QR Code.jpeg" alt="QR to bid" class="footer-qr">
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
-    const sheetName = 'LEADING BIDS';
-    const range     = 'Q5:S42';
-
-    const url =
-      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq` +
-      `?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
-
-    function formatEuro(value) {
-      if (!value || isNaN(value)) return "€0";
-      return "€" + Number(value).toLocaleString("en-IE");
-    }
-
-    function updateLastUpdated() {
-      const el = document.getElementById('lastUpdate');
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('en-IE', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      });
-      el.textContent = `Last update: ${timeStr}`;
-    }
-
-    async function loadBids() {
-      try {
-        const res  = await fetch(url);
+async function loadData() {
+    try {
+        const res = await fetch(url);
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = json.table.rows
-          .map(r => r.c.map(c => c?.v || ''))
-          .filter(r => r[0]);
 
-        const leftCol  = document.getElementById('leftColumn');
-        const rightCol = document.getElementById('rightColumn');
+        const rows = json.table.rows.map(r => r.c.map(c => c?.v || ''));
 
-        leftCol.innerHTML = '';
-        rightCol.innerHTML = '';
-
-        const mid = Math.ceil(rows.length / 2);
-
-        rows.forEach((r, index) => {
-          const itemText  = r[0];
-          const newBidTxt = r[1];
-          const leadVal   = r[2];
-
-          const row = document.createElement('div');
-          row.className = 'bid-row';
-
-          const itemEl = document.createElement('div');
-          itemEl.className = 'bid-item';
-          itemEl.textContent = itemText;
-
-          const newEl = document.createElement('div');
-          newEl.className = 'bid-new';
-          newEl.textContent = newBidTxt ? String(newBidTxt) : "";
-
-          const leadEl = document.createElement('div');
-          leadEl.className = 'bid-amount';
-          leadEl.textContent = formatEuro(leadVal);
-
-          row.appendChild(itemEl);
-          row.appendChild(newEl);
-          row.appendChild(leadEl);
-
-          if (index < mid) leftCol.appendChild(row);
-          else rightCol.appendChild(row);
+        let html = '';
+        rows.forEach(r => {
+            html += `
+                <tr>
+                    <td>${r[0]}</td>
+                    <td class="newbid">${r[1] ? "NEW BID!" : ""}</td>
+                    <td>${formatEuro(r[2])}</td>
+                </tr>
+            `;
         });
 
-        updateLastUpdated();
-      } catch (err) {
-        console.error(err);
-      }
-    }
+        document.getElementById("bidsTable").innerHTML = html;
 
-    loadBids();
-    setInterval(loadBids, 5000);  // refresh every 5 seconds
-  </script>
+        // Update timestamp
+        document.getElementById("lastUpdate").innerText =
+            "Last update: " + new Date().toLocaleTimeString('en-IE', { hour12: false });
+
+    } catch (e) {
+        console.error("Error loading data", e);
+    }
+}
+
+loadData();
+setInterval(loadData, 5000); // 5-second refresh
+</script>
+
 </body>
 </html>
