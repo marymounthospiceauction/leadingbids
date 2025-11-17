@@ -15,7 +15,8 @@
       padding: 0;
       height: 100%;
       font-family: Calibri, Arial, sans-serif;
-      background-color: #f6e7c6;   /* warm cream background */
+      /* TV background image */
+      background: url("tvbackground.png") center center/cover no-repeat fixed;
       overflow: hidden;
     }
 
@@ -30,7 +31,7 @@
       flex-direction: column;
       position: relative;
       z-index: 1;
-      background-color: transparent;  /* no dark overlay */
+      background: transparent; /* no grey overlay */
     }
 
     /* SNOWFALL OVERLAY */
@@ -56,7 +57,7 @@
       100% { transform: translateY(200px); }
     }
 
-    /* HEADER IMAGE WITH BALL NAME + SPONSORS */
+    /* TOP HEADER IMAGE (LIVE HEADER) */
     .header-image {
       width: 100%;
       max-width: 1900px;
@@ -72,7 +73,7 @@
       display: block;
     }
 
-    /* TITLE + LAST UPDATE BELOW HEADER */
+    /* TITLE + LAST UPDATE */
     .header-bar {
       display: flex;
       align-items: center;
@@ -86,15 +87,16 @@
       text-align: center;
       font-family: "Great Vibes", cursive;
       font-size: 3vw;
-      color: #1b1204;
-      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+      color: #ffe599;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.7);
     }
 
     .last-update {
       font-size: 1vw;
-      color: #4a3516;
+      color: #ffe599;
       white-space: nowrap;
       padding-right: 0.5vw;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.7);
     }
 
     /* MAIN BOARD */
@@ -109,12 +111,12 @@
     .board-inner {
       width: 100%;
       max-width: 1900px;
-      background: rgba(0,0,0,0.88);
+      background: rgba(0,0,0,0.9);
       padding: 1.2vh 1vw;
       display: flex;
       gap: 1vw;
-      box-shadow: 0 0 18px rgba(0,0,0,0.5);
-      border: 3px solid #f5dd9a;
+      box-shadow: 0 0 18px rgba(0,0,0,0.7);
+      border: 3px solid #ffe599; /* border in same gold */
     }
 
     .column {
@@ -128,9 +130,9 @@
       display: flex;
       align-items: center;
       background: #111;
-      border: 1px solid #555;
+      border: 1px solid #ffe599; /* lines in same gold */
       padding: 0.25vh 0.7vw;
-      color: #fdf4dc;
+      color: #ffe599;           /* main table text colour */
       font-size: 1.15vw;
       letter-spacing: 0.03em;
     }
@@ -144,14 +146,15 @@
       overflow: visible;
     }
 
-    /* NEW BID – TEXT FROM SHEET, RED */
+    /* NEW BID – SMALLER RED TEXT (SHEET TEXT, e.g. "NEW BID") */
     .bid-new {
       flex: 0.5;
       text-align: center;
       padding: 0 0.4vw;
-      color: #ff2a2a;       /* bright red */
+      color: #ff2a2a;
       font-weight: bold;
       white-space: nowrap;
+      font-size: 0.9vw;   /* smaller than main row text */
     }
 
     /* LEADING BID AMOUNT */
@@ -160,49 +163,36 @@
       text-align: right;
       padding-left: 0.4vw;
       font-weight: bold;
-      color: #ffd;
+      color: #ffe599;
       white-space: nowrap;
     }
 
-    /* FOOTER WITH TWO QRs */
+    /* FOOTER WITH QR LEFT/RIGHT + SPONSORS IMAGE CENTER */
     .footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.4vh 1.8vw 0 1.8vw;
+      padding: 0.4vh 0 0 0;
       font-size: 1.1vw;
-      color: #4a3516;
+      color: #ffe599;
     }
 
-    .footer-left,
-    .footer-right {
+    .footer-side {
+      width: 15vw;
       display: flex;
       align-items: center;
-      gap: 1vw;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0.6vh;
     }
 
-    .footer-logo {
-      height: 6vh;
-      object-fit: contain;
-    }
-
-    .footer-center {
-      flex: 1;
-      text-align: center;
-    }
-
-    .footer-qr-text {
+    .footer-qr-label {
       text-transform: uppercase;
       font-weight: bold;
-      letter-spacing: 0.15em;
-      font-size: 1vw;
-      margin-bottom: 0.5vh;
-    }
-
-    .footer-qr-row {
-      display: flex;
-      justify-content: center;
-      gap: 2vw;
+      letter-spacing: 0.12em;
+      font-size: 0.9vw;
+      text-align: center;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.7);
     }
 
     .footer-qr {
@@ -211,32 +201,42 @@
       padding: 0.4vh;
       border-radius: 6px;
       object-fit: contain;
-      box-shadow: 0 0 6px rgba(0,0,0,0.3);
+      box-shadow: 0 0 6px rgba(0,0,0,0.7);
     }
 
-    .footer-right span {
-      font-weight: bold;
+    .footer-center {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .footer-center img {
+      max-height: 9vh;
+      width: auto;
+      display: block;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
     }
 
     @media (max-width: 1200px) {
       .bid-row { font-size: 1.4vw; }
       .title { font-size: 4vw; }
-      .footer-qr-text { font-size: 1.2vw; }
+      .footer-qr-label { font-size: 1.1vw; }
     }
   </style>
 </head>
 
 <body>
-  <!-- Snow layer -->
+  <!-- Snowfall overlay -->
   <div class="snow"></div>
 
   <div class="screen">
-    <!-- HEADER IMAGE WITH BALL NAME + SPONSORS -->
+    <!-- LIVE HEADER IMAGE AT TOP -->
     <div class="header-image">
-      <img src="Marymount Header.png" alt="The Starry Night Ball">
+      <img src="LiveHeader.png" alt="Live Auction Header">
     </div>
 
-    <!-- TITLE + LAST UPDATE -->
+    <!-- TITLE + LAST UPDATE UNDER HEADER -->
     <div class="header-bar">
       <div style="width:10vw;"></div><!-- spacer -->
       <div class="title">Current Leading Bids</div>
@@ -251,22 +251,20 @@
       </div>
     </div>
 
-    <!-- FOOTER WITH TWO QR CODES -->
+    <!-- FOOTER: QR LEFT & RIGHT, SPONSORS CENTER -->
     <div class="footer">
-      <div class="footer-left">
-        <img src="Marymount Logo.png" alt="Marymount" class="footer-logo">
+      <div class="footer-side">
+        <div class="footer-qr-label">SCAN QR CODE<br>TO BID</div>
+        <img src="2025 Marymount QR Code.jpeg" alt="QR to bid" class="footer-qr">
       </div>
 
       <div class="footer-center">
-        <div class="footer-qr-text">SCAN QR CODES TO BID</div>
-        <div class="footer-qr-row">
-          <img src="2025 Marymount QR Code.jpeg" alt="QR to bid" class="footer-qr">
-          <img src="2025 Marymount QR Code.jpeg" alt="QR to bid" class="footer-qr">
-        </div>
+        <img src="Marymount Footer Sponsors.png" alt="Marymount Sponsors">
       </div>
 
-      <div class="footer-right">
-        <span>www.marymountauction2025.ie</span>
+      <div class="footer-side">
+        <div class="footer-qr-label">SCAN QR CODE<br>TO BID</div>
+        <img src="2025 Marymount QR Code.jpeg" alt="QR to bid" class="footer-qr">
       </div>
     </div>
   </div>
@@ -314,8 +312,8 @@
         const mid = Math.ceil(rows.length / 2);
 
         rows.forEach((r, index) => {
-          const itemText  = r[0]; // ITEM description (incl. item number)
-          const newBidTxt = r[1]; // text like "NEW BID" or blank
+          const itemText  = r[0]; // item + description
+          const newBidTxt = r[1]; // text like "NEW BID"
           const leadVal   = r[2]; // numeric leading bid
 
           const row = document.createElement('div');
