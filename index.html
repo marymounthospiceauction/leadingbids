@@ -6,6 +6,7 @@
   <title>Marymount Auction & Leading Bids</title>
 
   <style>
+    /* BASIC PAGE SETUP */
     html, body {
       margin: 0;
       padding: 0;
@@ -27,6 +28,7 @@
       padding: 20px 0;
       width: 100%;
     }
+
     .button-container {
       display: flex;
       flex-direction: column;
@@ -35,6 +37,7 @@
       max-width: 360px;
       align-items: center;
     }
+
     .custom-button {
       display: flex;
       align-items: center;
@@ -52,8 +55,26 @@
       transition: background-color 0.3s ease;
       white-space: nowrap;
     }
-    .custom-button:hover { background-color: #a87d3a; }
-    .custom-button .emoji { margin-right: 8px; font-size: 1.2em; }
+
+    .custom-button:hover {
+      background-color: #a87d3a;
+    }
+
+    .custom-button .emoji {
+      margin-right: 8px;
+      font-size: 1.2em;
+    }
+
+    @media (max-width: 480px) {
+      .custom-button {
+        max-width: 90%;
+        font-size: 16px;
+        padding: 12px;
+      }
+      .button-container {
+        max-width: 90%;
+      }
+    }
 
     /* TABLE SECTION */
     .table-section {
@@ -63,6 +84,7 @@
       padding: 20px;
       width: 100%;
     }
+
     .table-heading {
       font-size: 1.5em;
       font-weight: bold;
@@ -86,7 +108,7 @@
       table-layout: fixed;
     }
 
-    /* Smaller headers */
+    /* --- HEADER CELLS (ALL UNIFORM) --- */
     thead th {
       background-color: #000;
       color: #bc8b41;
@@ -95,9 +117,12 @@
       text-align: center;
       border: 1px solid #ccc;
       padding: 0.25em 0.2em;
-      font-size: 0.6rem;
+      font-size: 0.58rem;   /* uniform small size */
+      line-height: 1.1;
+      white-space: normal;  /* allow wrapping so height is equal */
     }
 
+    /* --- TABLE BODY CELLS --- */
     tbody td {
       border: 1px solid #ccc;
       vertical-align: middle;
@@ -107,37 +132,39 @@
       white-space: nowrap;
     }
 
-    /* COLUMN WIDTHS */
-    /* Item description – wider */
+    /* ---- COLUMN WIDTHS & BEHAVIOR ---- */
+
+    /* Item Description — WIDER */
     tbody td:nth-child(1),
     thead th:nth-child(1) {
       width: 75%;
+      white-space: normal;        /* allow wrapping for long items */
+      word-wrap: break-word;
+      text-align: left;
     }
 
-    /* New Bid – narrower + wrapping + smaller text */
+    /* New Bid — SMALLER, WRAPS, SMALL TEXT */
     tbody td:nth-child(2),
     thead th:nth-child(2) {
-      width: 50px;
-      max-width: 50px;
+      width: 45px;
+      max-width: 45px;
       text-align: center;
-      font-size: 0.7rem;
-      white-space: normal; /* allow wrapping */
-      word-break: break-word;
+      font-size: 0.65rem;         /* small but readable */
+      white-space: normal;        /* allow wrapping */
+      word-wrap: break-word;
     }
 
+    /* Leading Bid */
     tbody td:nth-child(3),
     thead th:nth-child(3) {
       width: 20%;
       text-align: center;
     }
 
+    /* Red text for New Bid values */
     .new-bid {
       color: red;
-    }
-
-    @media (max-width: 480px) {
-      .custom-button { max-width: 90%; font-size: 16px; }
-      .button-container { max-width: 90%; }
+      font-weight: bold;
     }
   </style>
 </head>
@@ -147,13 +174,19 @@
   <!-- BUTTON SECTION -->
   <div class="button-section">
     <div class="button-container">
-      <a href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform" class="custom-button" target="_blank">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
+         class="custom-button"
+         target="_blank">
         <span class="emoji">📝</span> Place an Auction Bid
       </a>
-      <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing" class="custom-button" target="_blank">
+      <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing"
+         class="custom-button"
+         target="_blank">
         <span class="emoji">📜</span> View Auction Listings
       </a>
-      <a href="https://www.idonate.ie/donate/fundraiser/MarymountBall2025" class="custom-button" target="_blank">
+      <a href="https://www.idonate.ie/donate/fundraiser/MarymountBall2025"
+         class="custom-button"
+         target="_blank">
         <span class="emoji">❤️</span> Donate Now
       </a>
     </div>
@@ -224,7 +257,9 @@
       }
     }
 
+    // Initial load
     loadData();
+    // Refresh every 30 seconds
     setInterval(loadData, 30000);
   </script>
 
