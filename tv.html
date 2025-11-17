@@ -53,7 +53,7 @@
       100% { transform: translate3d(-60px,120px,0); }
     }
 
-    /* HEADER IMAGE BAR */
+    /* HEADER IMAGE – FORCE REAL HEIGHT SO IT'S VISIBLE */
     .header-wrapper {
       width: 100%;
       max-width: 1900px;
@@ -62,15 +62,17 @@
       overflow: hidden;
       box-shadow: 0 4px 10px rgba(0,0,0,0.4);
       background: #f6e7c1;
+      height: 160px;               /* <<< guarantees visible strip */
     }
 
     .header-image {
       width: 100%;
-      height: auto;
+      height: 100%;                 /* fill the 160px strip */
+      object-fit: cover;            /* crop evenly, no collapse */
       display: block;
     }
 
-    /* TITLE + LAST UPDATE ROW */
+    /* TITLE + LAST UPDATE */
     .title-row {
       display: flex;
       align-items: center;
@@ -83,7 +85,7 @@
       flex: 1;
       text-align: center;
       font-family: "Great Vibes", cursive;
-      font-size: 2.2vw;               /* smaller for visibility */
+      font-size: 2.2vw;
       color: #ffe8a3;
       text-shadow:
         -3px -3px 5px rgba(0,0,0,0.9),
@@ -154,7 +156,7 @@
       color: #ff2a2a;
       font-weight: bold;
       white-space: nowrap;
-      font-size: 0.9vw;  /* smaller */
+      font-size: 0.9vw;
     }
 
     .bid-amount {
@@ -215,7 +217,7 @@
     }
 
     .footer-center img {
-      max-height: 11vh;   /* bigger logos */
+      max-height: 11vh;
       width: auto;
       display: block;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
