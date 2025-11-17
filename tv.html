@@ -20,7 +20,7 @@
 
     /* TOP TITLE BAR */
     .title-bar {
-      width: 95vw;
+      width: 96vw;
       margin: 8px auto 4px auto;
       display: flex;
       align-items: flex-end;
@@ -49,30 +49,39 @@
       text-shadow: 0 0 4px rgba(0,0,0,0.9);
     }
 
-    /* TABLE AREA */
-    .table-container {
-      width: 95vw;
+    /* BOARD WITH TWO COLUMNS */
+    .board {
+      width: 96vw;
       margin: 2px auto 4px auto;
       border: 2px solid #ffe599;
       padding: 6px;
       background: rgba(0,0,0,0.85);
       box-sizing: border-box;
-
-      /* Keep everything on one screen */
-      height: 70vh;
+      height: 70vh;                  /* space reserved for rows */
       display: flex;
       align-items: stretch;
+      justify-content: center;
+    }
+
+    .board-inner {
+      width: 100%;
+      display: flex;
+      gap: 1vw;
+    }
+
+    .column {
+      flex: 1;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 18px;        /* slightly smaller to fit all rows */
+      font-size: 1.0vw;              /* small enough for many rows */
     }
 
     td {
       border: 1px solid #ffe599;
-      padding: 4px 8px;
+      padding: 0.2vh 0.5vw;
       white-space: nowrap;
     }
 
@@ -93,13 +102,13 @@
 
     .newbid {
       color: red;
-      font-size: 16px;        /* smaller than main text */
+      font-size: 0.9vw;
       font-weight: bold;
     }
 
     /* FOOTER – QR + SPONSORS */
     .footer-row {
-      width: 95vw;
+      width: 96vw;
       margin: 4px auto 6px auto;
       display: flex;
       align-items: center;
@@ -144,14 +153,20 @@
     <div class="last-update" id="lastUpdate">Last update: --:--:--</div>
   </div>
 
-  <!-- TABLE -->
-  <div class="table-container">
-    <table id="bidsTable"></table>
+  <!-- TWO-COLUMN BOARD -->
+  <div class="board">
+    <div class="board-inner">
+      <div class="column">
+        <table id="leftTable"></table>
+      </div>
+      <div class="column">
+        <table id="rightTable"></table>
+      </div>
+    </div>
   </div>
 
   <!-- FOOTER -->
   <div class="footer-row">
-
     <!-- LEFT QR -->
     <div>
       <div class="footer-box">SCAN QR CODE&nbsp;&nbsp;TO BID</div>
@@ -166,13 +181,12 @@
       <div class="footer-box">SCAN QR CODE&nbsp;&nbsp;TO BID</div>
       <img src="2025 Marymount QR Code.jpeg" class="qr" alt="QR to bid">
     </div>
-
   </div>
 
   <script>
     const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
-    const range     = 'U5:W39';   // <<< updated range
+    const range     = 'U5:W39';   // updated range
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq` +
@@ -189,24 +203,32 @@
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
 
-        const rows = json.table.rows.map(r => r.c.map(c => c?.v || ''));
+        const rows = json.table.rows
+          .map(r => r.c.map(c => c?.v || ''))
+          .filter(r => r[0]);   // only rows with an item description
 
-        let html = '';
-        rows.forEach(r => {
-          const item  = r[0];
-          const flag  = r[1];   // any non-empty value means “NEW BID”
-          const lead  = r[2];
+        const mid = Math.ceil(rows.length / 2);
+        const leftRows  = rows.slice(0, mid);
+        const rightRows = rows.slice(mid);
 
-          html += `
-            <tr>
-              <td>${item}</td>
-              <td class="newbid">${flag ? 'NEW BID!' : ''}</td>
-              <td>${formatEuro(lead)}</td>
-            </tr>
-          `;
-        });
+        function makeTableHTML(rowArray) {
+          return rowArray.map(r => {
+            const item = r[0];
+            const flag = r[1];   // any non-empty => NEW BID
+            const lead = r[2];
 
-        document.getElementById('bidsTable').innerHTML = html;
+            return `
+              <tr>
+                <td>${item}</td>
+                <td class="newbid">${flag ? 'NEW BID!' : ''}</td>
+                <td>${formatEuro(lead)}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+
+        document.getElementById('leftTable').innerHTML  = makeTableHTML(leftRows);
+        document.getElementById('rightTable').innerHTML = makeTableHTML(rightRows);
 
         // update timestamp
         const now = new Date();
