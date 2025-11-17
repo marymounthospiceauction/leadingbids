@@ -22,7 +22,7 @@
       box-sizing: border-box;
       width: 100vw;
       height: 100vh;
-      padding: 10px 20px 20px 20px;
+      padding: 8px 18px 18px 18px;
       border: 14px solid #f6e7c1;
       box-shadow: 0 0 40px rgba(0,0,0,0.5);
       display: flex;
@@ -32,35 +32,36 @@
       background: transparent;
     }
 
-    /* ❄ STRONGER, FRONT-LAYER SNOWFALL ❄ */
+    /* ✨ STAR OVERLAY (instead of snow) – FRONT LAYER */
     .snow {
       pointer-events: none;
       position: fixed;
       inset: 0;
-      z-index: 999;  /* above everything, but non-clickable */
+      z-index: 999;
       background-image:
-        radial-gradient(2px 2px at 20px 20px, rgba(255,255,255,0.9) 60%, transparent 61%),
-        radial-gradient(3px 3px at 100px 150px, rgba(255,255,255,0.7) 60%, transparent 61%),
-        radial-gradient(2px 2px at 200px 50px, rgba(255,255,255,0.8) 60%, transparent 61%),
-        radial-gradient(4px 4px at 300px 120px, rgba(255,255,255,0.9) 60%, transparent 61%);
-      background-size: 250px 250px, 320px 320px, 380px 380px, 450px 450px;
-      animation: snow-fall 18s linear infinite;
-      opacity: 0.8;
+        radial-gradient(1.5px 1.5px at 20px 20px, rgba(255,255,255,0.95) 60%, transparent 61%),
+        radial-gradient(2px 2px at 100px 150px, rgba(255,255,200,0.8) 60%, transparent 61%),
+        radial-gradient(1.8px 1.8px at 200px 50px, rgba(255,255,255,0.9) 60%, transparent 61%),
+        radial-gradient(2.5px 2.5px at 320px 120px, rgba(255,255,210,0.95) 60%, transparent 61%);
+      background-size: 260px 260px, 340px 340px, 420px 420px, 500px 500px;
+      animation: stars-drift 30s linear infinite;
+      opacity: 0.7;
     }
 
-    @keyframes snow-fall {
-      0%   { transform: translate3d(0,-150px,0); }
-      100% { transform: translate3d(-80px,150px,0); }
+    @keyframes stars-drift {
+      0%   { transform: translate3d(0,-120px,0); }
+      100% { transform: translate3d(-60px,120px,0); }
     }
 
     /* TOP HEADER IMAGE (LIVE HEADER) */
     .header-image {
       width: 100%;
       max-width: 1900px;
-      margin: 0 auto 8px auto;
+      margin: 0 auto 6px auto;
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      background: #f6e7c1;
     }
 
     .header-image img {
@@ -74,7 +75,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.8vh;
+      margin-bottom: 0.6vh;
       padding: 0 0.5vw;
     }
 
@@ -101,7 +102,7 @@
       display: flex;
       justify-content: center;
       align-items: stretch;
-      padding: 0.8vh 1.5vw 1vh 1.5vw;
+      padding: 0.6vh 1.5vw 0.8vh 1.5vw;
     }
 
     .board-inner {
@@ -148,7 +149,7 @@
       color: #ff2a2a;
       font-weight: bold;
       white-space: nowrap;
-      font-size: 0.9vw;
+      font-size: 0.9vw; /* smaller than main text */
     }
 
     .bid-amount {
@@ -160,12 +161,12 @@
       white-space: nowrap;
     }
 
-    /* FOOTER WITH QR LEFT/RIGHT + SPONSORS CENTER */
+    /* FOOTER WITH QR LEFT/RIGHT + SPONSORS CENTRE */
     .footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.4vh 0 0 0;
+      padding: 0.2vh 0 0 0;
       font-size: 1.1vw;
       color: #ffe599;
     }
@@ -176,7 +177,7 @@
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      gap: 0.6vh;
+      gap: 0.4vh;
     }
 
     .footer-qr-label {
@@ -185,7 +186,11 @@
       letter-spacing: 0.12em;
       font-size: 0.9vw;
       text-align: center;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+      color: #000; /* black for better visibility */
+      text-shadow: 0 0 4px rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.7);
+      padding: 0.15vh 0.5vw;
+      border-radius: 4px;
     }
 
     .footer-qr {
@@ -205,7 +210,7 @@
     }
 
     .footer-center img {
-      max-height: 9vh;
+      max-height: 11vh;   /* made taller so logos appear bigger */
       width: auto;
       display: block;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
