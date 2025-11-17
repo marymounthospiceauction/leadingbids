@@ -5,182 +5,123 @@
   <title>The Starry Night Ball – Leading Bids</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Alisha font for header -->
+  <!-- FONT -->
   <link href="https://fonts.googleapis.com/css2?family=Alisha&display=swap" rel="stylesheet">
 
   <style>
     body {
-      margin: 0;
-      padding: 0;
+      margin:0; padding:0;
       background: url("tvbackground.png") center/cover no-repeat fixed;
       font-family: Arial, sans-serif;
-      color: #ffe599;
-      overflow: hidden;
+      color:#ffe599;
+      overflow:hidden;
     }
 
-    /* TOP HEADER SECTION */
-    .title-bar {
-      width: 96vw;
-      margin: 10px auto 5px auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.8vw;
+    /* HEADER BAR */
+    .title-bar{
+      width:96vw; margin:10px auto 5px auto;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .header-logo{
+      height:60px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.7));
+    }
+    .title-text{
+      flex:1; text-align:center;
+      font-family:'Alisha', cursive;
+      font-size:3vw; color:#ffe8a3;
+      text-shadow:0 0 6px rgba(0,0,0,0.9);
+      letter-spacing:0.05em;
+      white-space:nowrap;
+    }
+    .last-update{
+      min-width:160px; text-align:right;
+      font-size:1vw; text-shadow:0 0 4px rgba(0,0,0,0.8);
     }
 
-    .header-logo {
-      height: 60px;
-      width: auto;
-      display: block;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
+    /* BOARD WRAPPER */
+    .board{
+      width:96vw; margin:5px auto;
+      height:70vh;
+      background:rgba(0,0,0,0.85);
+      border:2px solid #ffe599;
+      padding:10px;
+      display:flex; box-sizing:border-box;
+    }
+    .board-inner{ width:100%; display:flex; gap:1vw; }
+
+    /* TABLE BASE */
+    table{ width:100%; border-collapse:collapse; }
+    th,td{
+      border:1px solid #ffe599;
+      white-space:nowrap;
+      padding:0.35vh 0.5vw;
     }
 
-    .title-text {
-      flex: 1;
-      text-align: center;
-      font-family: 'Alisha', cursive;
-      font-size: 3vw;
-      color: #ffe8a3;
-      text-shadow:
-          -2px -2px 4px rgba(0,0,0,0.8),
-           2px -2px 4px rgba(0,0,0,0.8),
-          -2px  2px 4px rgba(0,0,0,0.8),
-           2px  2px 4px rgba(0,0,0,0.8);
-      letter-spacing: 0.05em;
-      white-space: nowrap;
+    /* REMOVE INTERNAL COLUMN BORDERS */
+    td:nth-child(1), th:nth-child(1) { border-right:none; }
+    td:nth-child(2), th:nth-child(2) { border-left:none; border-right:none; }
+    td:nth-child(3), th:nth-child(3) { border-left:none; }
+
+    /* HEADER STYLE */
+    th{
+      background:rgba(255,229,153,0.25); /* Slight gold tint */
+      font-size:0.75vw;                  /* Smaller headers */
+      text-transform:uppercase;
+      color:#ffe8a3;
+      text-shadow:0 0 3px rgba(0,0,0,0.8);
     }
 
-    .last-update {
-      min-width: 170px;
-      text-align: right;
-      font-size: 1vw;
-      color: #ffe599;
-      text-shadow: 0 0 4px rgba(0,0,0,0.9);
-      white-space: nowrap;
+    /* COLUMN WIDTHS */
+    td:nth-child(1), th:nth-child(1){
+      width:70%;
+      font-size:1.35vw;        /* larger item text */
+    }
+    td:nth-child(2), th:nth-child(2){
+      width:8%; text-align:center;
+      font-size:0.95vw;
+    }
+    td:nth-child(3), th:nth-child(3){
+      width:22%; text-align:right;
+      font-size:1.35vw;        /* SAME AS ITEM DESCRIPTION */
+      font-weight:bold;
     }
 
-    /* MAIN BOARD */
-    .board {
-      width: 96vw;
-      margin: 5px auto 0 auto;
-      border: 2px solid #ffe599;
-      padding: 10px 10px;
-      background: rgba(0,0,0,0.85);
-      box-sizing: border-box;
-      height: 70vh;
-      display: flex;
+    .newbid{
+      color:red; font-size:0.85vw; font-weight:bold;
     }
 
-    .board-inner {
-      width: 100%;
-      display: flex;
-      gap: 1vw;
+    /* FOOTER */
+    .footer-row{
+      width:96vw; margin:4px auto 5px auto;
+      display:flex; justify-content:space-between; align-items:center;
     }
-
-    .column {
-      flex: 1;
+    .footer-box{
+      background:#ffe599; color:#000; font-weight:bold;
+      padding:4px 12px; border-radius:6px;
+      font-size:0.9vw; letter-spacing:0.08em;
     }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 1vw;
+    .qr{
+      width:110px; margin-top:6px;
+      background:#fff; padding:5px; border-radius:4px;
     }
-
-    th, td {
-      border: 1px solid #ffe599;   /* internal borders back on */
-      padding: 0.3vh 0.5vw;
-      white-space: nowrap;
-    }
-
-    th {
-      color: #ffe599;
-      font-size: 1.05vw;
-      text-align: left;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-
-    /* Column sizing */
-    td:nth-child(1), th:nth-child(1) {
-      width: 72%;
-      font-size: 1.25vw;           /* bigger item text */
-    }
-
-    td:nth-child(2), th:nth-child(2) {
-      width: 8%;
-      text-align: center;
-      border-right-color: transparent;  /* remove line between NEW BID & Leading Bid */
-    }
-
-    td:nth-child(3), th:nth-child(3) {
-      width: 20%;
-      text-align: right;
-      font-size: 1.0vw;
-    }
-
-    .newbid {
-      color: red;
-      font-size: 0.9vw;
-      font-weight: bold;
-    }
-
-    /* FOOTER SECTION */
-    .footer-row {
-      width: 96vw;
-      margin: 4px auto 6px auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .footer-qr-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .footer-box {
-      text-align: center;
-      color: #000;
-      font-weight: bold;
-      background: #ffe599;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.9vw;
-      letter-spacing: 0.1em;
-    }
-
-    .qr {
-      width: 110px;
-      margin-top: 5px;
-      background: #fff;
-      padding: 5px;
-      border-radius: 5px;
-    }
-
-    /* Make sponsors image as big as possible */
-    .footer-sponsors {
-      max-height: 14vh;      /* grow to fill vertical space */
-      width: auto;           /* keep aspect ratio */
-      display: block;
+    .footer-sponsors{
+      max-height:14vh;
+      width:auto; display:block;
     }
   </style>
 </head>
+
 <body>
 
   <!-- HEADER -->
   <div class="title-bar">
-    <img src="Marymount Logo.png" class="header-logo" alt="Left Logo">
-
+    <img src="Marymount Logo.png" class="header-logo">
     <div class="title-text">The Starry Night Ball</div>
-
-    <img src="Marymount Logo.png" class="header-logo" alt="Right Logo">
-
+    <img src="Marymount Logo.png" class="header-logo">
     <div class="last-update" id="lastUpdate">Last update: --:--:--</div>
   </div>
 
-  <!-- MAIN TABLE BOARD -->
+  <!-- MAIN TABLE -->
   <div class="board">
     <div class="board-inner">
 
@@ -218,20 +159,21 @@
   <!-- FOOTER -->
   <div class="footer-row">
 
-    <div class="footer-qr-wrap">
+    <div style="text-align:center">
       <div class="footer-box">SCAN QR CODE TO BID</div>
-      <img src="2025 Marymount QR Code.jpeg" class="qr" alt="QR code">
+      <img src="2025 Marymount QR Code.jpeg" class="qr">
     </div>
 
-    <img src="Marymount Footer Sponsors.png" class="footer-sponsors" alt="Sponsors">
+    <img src="Marymount Footer Sponsors.png" class="footer-sponsors">
 
-    <div class="footer-qr-wrap">
+    <div style="text-align:center">
       <div class="footer-box">SCAN QR CODE TO BID</div>
-      <img src="2025 Marymount QR Code.jpeg" class="qr" alt="QR code">
+      <img src="2025 Marymount QR Code.jpeg" class="qr">
     </div>
 
   </div>
 
+  <!-- DATA SCRIPT -->
   <script>
     const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
@@ -241,46 +183,41 @@
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
       `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
-    function formatEuro(v) {
-      if (!v || isNaN(v)) return '€0';
+    function formatEuro(v){
+      if(!v || isNaN(v)) return '€0';
       return '€' + Number(v).toLocaleString('en-IE');
     }
 
-    async function loadData() {
-      try {
+    async function loadData(){
+      try{
         const res  = await fetch(url);
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
 
         const allRows = json.table.rows.map(r => r.c.map(c => c?.v || ''));
-
-        // Skip header row in sheet (U4:W4)
         const rows = allRows.slice(1).filter(r => r[0]);
 
-        const mid = Math.ceil(rows.length / 2);
-        const leftRows  = rows.slice(0, mid);
-        const rightRows = rows.slice(mid);
+        const mid = Math.ceil(rows.length/2);
+        const left  = rows.slice(0, mid);
+        const right = rows.slice(mid);
 
-        function makeRows(arr) {
-          return arr.map(r => `
+        function build(list){
+          return list.map(r => `
             <tr>
               <td>${r[0]}</td>
               <td class="newbid">${r[1] ? 'NEW BID!' : ''}</td>
               <td>${formatEuro(r[2])}</td>
-            </tr>
-          `).join('');
+            </tr>`).join('');
         }
 
-        document.getElementById('leftBody').innerHTML  = makeRows(leftRows);
-        document.getElementById('rightBody').innerHTML = makeRows(rightRows);
+        leftBody.innerHTML  = build(left);
+        rightBody.innerHTML = build(right);
 
         const now = new Date();
-        document.getElementById('lastUpdate').textContent =
-          'Last update: ' + now.toLocaleTimeString('en-IE', { hour12: false });
-
-      } catch (e) {
-        console.error('Error loading data', e);
+        lastUpdate.textContent =
+          "Last update: " + now.toLocaleTimeString("en-IE",{hour12:false});
       }
+      catch(e){ console.error(e); }
     }
 
     loadData();
