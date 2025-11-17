@@ -21,6 +21,15 @@
 
     * { box-sizing: border-box; }
 
+    /* HEADER IMAGE */
+    .header-image img {
+      width: 100%;
+      max-width: 600px;     /* clean & centred */
+      display: block;
+      margin: 10px auto 20px auto;
+      border-radius: 6px;
+    }
+
     /* BUTTON SECTION */
     .button-section {
       display: flex;
@@ -108,7 +117,7 @@
       table-layout: fixed;
     }
 
-    /* --- HEADER CELLS (ALL UNIFORM) --- */
+    /* HEADER CELLS */
     thead th {
       background-color: #000;
       color: #bc8b41;
@@ -117,12 +126,12 @@
       text-align: center;
       border: 1px solid #ccc;
       padding: 0.25em 0.2em;
-      font-size: 0.58rem;   /* uniform small size */
+      font-size: 0.58rem;
       line-height: 1.1;
-      white-space: normal;  /* allow wrapping so height is equal */
+      white-space: normal;
     }
 
-    /* --- TABLE BODY CELLS --- */
+    /* TABLE BODY CELLS */
     tbody td {
       border: 1px solid #ccc;
       vertical-align: middle;
@@ -132,25 +141,23 @@
       white-space: nowrap;
     }
 
-    /* ---- COLUMN WIDTHS & BEHAVIOR ---- */
-
-    /* Item Description — WIDER */
+    /* Item Description — wider */
     tbody td:nth-child(1),
     thead th:nth-child(1) {
       width: 75%;
-      white-space: normal;        /* allow wrapping for long items */
+      white-space: normal;
       word-wrap: break-word;
       text-align: left;
     }
 
-    /* New Bid — SMALLER, WRAPS, SMALL TEXT */
+    /* New Bid — smaller, wraps */
     tbody td:nth-child(2),
     thead th:nth-child(2) {
       width: 45px;
       max-width: 45px;
       text-align: center;
-      font-size: 0.65rem;         /* small but readable */
-      white-space: normal;        /* allow wrapping */
+      font-size: 0.65rem;
+      white-space: normal;
       word-wrap: break-word;
     }
 
@@ -161,7 +168,7 @@
       text-align: center;
     }
 
-    /* Red text for New Bid values */
+    /* Red text for new bids */
     .new-bid {
       color: red;
       font-weight: bold;
@@ -171,30 +178,38 @@
 
 <body>
 
+  <!-- HEADER IMAGE -->
+  <div class="header-image">
+    <img src="starry-night-banner-1000w.jpg"
+         alt="The Starry Night Ball in aid of Marymount University Hospital and Hospice">
+  </div>
+
   <!-- BUTTON SECTION -->
   <div class="button-section">
     <div class="button-container">
+
       <a href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
-         class="custom-button"
-         target="_blank">
+         class="custom-button" target="_blank">
         <span class="emoji">📝</span> Place an Auction Bid
       </a>
+
       <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing"
-         class="custom-button"
-         target="_blank">
+         class="custom-button" target="_blank">
         <span class="emoji">📜</span> View Auction Listings
       </a>
+
       <a href="https://www.idonate.ie/donate/fundraiser/MarymountBall2025"
-         class="custom-button"
-         target="_blank">
+         class="custom-button" target="_blank">
         <span class="emoji">❤️</span> Donate Now
       </a>
+
     </div>
   </div>
 
   <!-- TABLE SECTION -->
   <div class="table-section">
     <div class="table-heading">LEADING BIDS</div>
+
     <div class="table-container">
       <table id="bidsTable">
         <thead>
@@ -204,9 +219,7 @@
             <th>Leading Bid</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- Rows will be injected here -->
-        </tbody>
+        <tbody></tbody>
       </table>
     </div>
   </div>
@@ -224,7 +237,7 @@
 
     function boldFirstSeven(text) {
       if (!text) return '';
-      return '<strong>' + text.substring(0,7) + '</strong>' + text.substring(7);
+      return '<strong>' + text.substring(0, 7) + '</strong>' + text.substring(7);
     }
 
     async function loadData() {
@@ -247,19 +260,17 @@
               <td>${item}</td>
               <td class="new-bid">${newBid}</td>
               <td>${leadingBid}</td>
-            </tr>
-          `;
+            </tr>`;
         });
 
         tbody.innerHTML = html;
+
       } catch (err) {
         console.error('Failed to load sheet', err);
       }
     }
 
-    // Initial load
     loadData();
-    // Refresh every 30 seconds
     setInterval(loadData, 30000);
   </script>
 
