@@ -1,264 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>Marymount Auction & Leading Bids</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Marymount Auction & Leading Bids</title>
 
-<!-- jQuery & DataTables -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+  <style>
+    /* ---- GLOBAL (single scroll layer, iOS-friendly) ---- */
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Calibri, Arial, sans-serif;
+      background-color: #e6d4ad;
+      height: 100%;
+      overflow-x: hidden;
+    }
 
-<style>
-  /* ---- GLOBAL (single scroll layer, iOS-friendly) ---- */
-  html, body {
-    margin: 0;
-    padding: 0;
-    font-family: Calibri, Arial, sans-serif;
-    background-color: #e6d4ad;
-    height: 100%;
-    overflow-x: hidden;
-  }
+    body {
+      overflow-y: auto;                 /* body is the only scroll container */
+      -webkit-overflow-scrolling: touch;/* momentum scroll on iOS */
+      touch-action: pan-y;
+    }
 
-  body {
-    overflow-y: auto;                 /* body is the only scroll container */
-    -webkit-overflow-scrolling: touch;/* momentum scroll on iOS */
-    touch-action: pan-y;
-  }
+    * { box-sizing: border-box; }
 
-  * { box-sizing: border-box; }
+    /* BUTTON SECTION */
+    .button-section {
+      display: flex;
+      justify-content: center;
+      padding: 20px 0;
+      width: 100%;
+    }
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      max-width: 360px;
+      align-items: center;
+    }
+    .custom-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 10px 16px;
+      font-size: 17px;
+      font-weight: bold;
+      color: #000;
+      background-color: #bc8b41;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
+    }
+    .custom-button:hover { background-color: #a87d3a; }
+    .custom-button .emoji { margin-right: 8px; font-size: 1.2em; }
 
-  /* BUTTON SECTION */
-  .button-section {
-    display: flex;
-    justify-content: center;
-    padding: 20px 0;
-    width: 100%;
-  }
-  .button-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-    max-width: 360px;
-    align-items: center;
-  }
-  .custom-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 10px 16px;
-    font-size: 17px;
-    font-weight: bold;
-    color: #000;
-    background-color: #bc8b41;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    transition: background-color 0.3s ease;
-    white-space: nowrap;
-  }
-  .custom-button:hover { background-color: #a87d3a; }
-  .custom-button .emoji { margin-right: 8px; font-size: 1.2em; }
+    /* TABLE SECTION */
+    .table-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      width: 100%;
+    }
+    .table-heading {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 10px;
+      text-align: center;
+    }
 
-  /* TABLE SECTION */
-  .table-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    width: 100%;
-  }
-  .table-heading {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #000;
-    margin-bottom: 10px;
-    text-align: center;
-  }
+    .table-container {
+      width: 98vw;
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
 
-  /* No internal scroll here – let the body scroll */
-  .table-container {
-    width: 98vw;
-    background: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: clamp(0.6rem, 1.6vw, 0.9rem);
+      table-layout: fixed;
+    }
 
-  table.dataTable {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    font-size: clamp(0.6rem, 1.6vw, 0.9rem);
-    table-layout: fixed;
-  }
+    thead th {
+      background-color: #000;
+      color: #bc8b41;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-align: center;
+      border: 1px solid #ccc;
+      padding: 0.3em 0.2em;
+      font-size: 0.75rem;
+    }
 
-  table.dataTable thead th {
-    background-color: #000;
-    color: #bc8b41;
-    font-weight: 700;
-    text-transform: uppercase;
-    text-align: center;
-    border: 1px solid #ccc;
-    padding: 0.3em 0.2em;
-    font-size: 0.75rem;
+    tbody td {
+      border: 1px solid #ccc;
+      vertical-align: middle;
+      padding: 0.3em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
-    /* IMPORTANT: no sticky header – static only */
-    position: static;
-    top: auto;
-  }
+    /* COLUMN WIDTHS */
+    tbody td:nth-child(1),
+    thead th:nth-child(1) {
+      width: 70%;
+    }
 
-  table.dataTable td {
-    border: 1px solid #ccc;
-    vertical-align: middle;
-    padding: 0.3em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+    tbody td:nth-child(2),
+    thead th:nth-child(2) {
+      width: 70px;
+      max-width: 70px;
+      text-align: center;
+    }
 
-  /* COLUMN WIDTHS */
-  table.dataTable td:nth-child(1),
-  table.dataTable th:nth-child(1) {
-    width: 70%;
-    white-space: nowrap;
-  }
+    tbody td:nth-child(3),
+    thead th:nth-child(3) {
+      width: 20%;
+      text-align: center;
+    }
 
-  table.dataTable td:nth-child(2),
-  table.dataTable th:nth-child(2) {
-    width: 70px;
-    max-width: 70px;
-    text-align: center;
-    white-space: nowrap;
-  }
+    .new-bid {
+      color: red;
+    }
 
-  table.dataTable td:nth-child(3),
-  table.dataTable th:nth-child(3) {
-    width: 20%;
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  @media (max-width: 480px) {
-    .custom-button { max-width: 90%; font-size: 16px; }
-    .button-container { max-width: 90%; }
-  }
-</style>
+    @media (max-width: 480px) {
+      .custom-button { max-width: 90%; font-size: 16px; }
+      .button-container { max-width: 90%; }
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- BUTTON SECTION -->
-<div class="button-section">
-  <div class="button-container">
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform" class="custom-button" target="_blank">
-      <span class="emoji">📝</span> Place an Auction Bid
-    </a>
-    <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing" class="custom-button" target="_blank">
-      <span class="emoji">📜</span> View Auction Listings
-    </a>
-    <a href="https://www.idonate.ie/donate/fundraiser/MarymountBall2025" class="custom-button" target="_blank">
-      <span class="emoji">❤️</span> Donate Now
-    </a>
+  <!-- BUTTON SECTION -->
+  <div class="button-section">
+    <div class="button-container">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform" class="custom-button" target="_blank">
+        <span class="emoji">📝</span> Place an Auction Bid
+      </a>
+      <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing" class="custom-button" target="_blank">
+        <span class="emoji">📜</span> View Auction Listings
+      </a>
+      <a href="https://www.idonate.ie/donate/fundraiser/MarymountBall2025" class="custom-button" target="_blank">
+        <span class="emoji">❤️</span> Donate Now
+      </a>
+    </div>
   </div>
-</div>
 
-<!-- TABLE SECTION -->
-<div class="table-section">
-  <div class="table-heading">LEADING BIDS</div>
-  <div class="table-container">
-    <table id="bidsTable" class="display"></table>
+  <!-- TABLE SECTION -->
+  <div class="table-section">
+    <div class="table-heading">LEADING BIDS</div>
+    <div class="table-container">
+      <table id="bidsTable">
+        <thead>
+          <tr>
+            <th>Item Description</th>
+            <th>New Bid</th>
+            <th>Leading Bid</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be injected here -->
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
 
-<script>
-  const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
-  const sheetName = 'LEADING BIDS';
-  const range = 'P5:R42';
-  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
+  <script>
+    const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
+    const sheetName = 'LEADING BIDS';
+    const range = 'P5:R42';
+    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
-  function formatEuro(value) {
-    if (!value || isNaN(value)) return '€0';
-    return '€' + Number(value).toLocaleString('en-IE');
-  }
-
-  function boldFirstSeven(text) {
-    if (!text) return '';
-    return `<strong>${text.substring(0,7)}</strong>${text.substring(7)}`;
-  }
-
-  let table;
-  let isScrolling = false;
-  let scrollTimeout;
-
-  // Track when user is actively scrolling (to avoid redraws mid-swipe)
-  window.addEventListener('scroll', () => {
-    isScrolling = true;
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => { isScrolling = false; }, 200);
-  }, { passive: true });
-
-  async function loadData(force = false) {
-    try {
-      if (!force && isScrolling) {
-        // Skip this refresh if user is currently scrolling
-        return;
-      }
-
-      const res = await fetch(url);
-      const text = await res.text();
-      const json = JSON.parse(text.substr(47).slice(0, -2));
-      const rows = json.table.rows.map(r => r.c.map(c => c?.v || ''));
-
-      const formatted = rows.map(r => [
-        boldFirstSeven(r[0]),
-        r[1],
-        formatEuro(r[2])
-      ]);
-
-      // Preserve scroll position while updating the table
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-
-      if (table) {
-        table.clear();
-        table.rows.add(formatted).draw(false); // draw(false) keeps paging/position
-      } else {
-        table = $('#bidsTable').DataTable({
-          data: formatted,
-          columns: [
-            { title: 'Item Description' },
-            { title: 'New Bid' },
-            { title: 'Leading Bid' }
-          ],
-          paging: false,
-          searching: false,
-          info: false,
-          ordering: false,
-          responsive: false,
-          scrollY: false,
-          scrollCollapse: false,
-          autoWidth: false,
-          createdRow: function(row, data) {
-            $('td:eq(0)', row).html(data[0]);
-            $('td:eq(1)', row).css('color', 'red');
-          }
-        });
-      }
-
-      // Restore scroll position (important for iOS)
-      window.scrollTo(0, scrollTop);
-
-    } catch (err) {
-      console.error('Failed to load sheet', err);
+    function formatEuro(value) {
+      if (!value || isNaN(value)) return '€0';
+      return '€' + Number(value).toLocaleString('en-IE');
     }
-  }
 
-  // Initial load
-  loadData(true);
-  // Periodic refresh (every 30s)
-  setInterval(() => loadData(false), 30000);
-</script>
+    function boldFirstSeven(text) {
+      if (!text) return '';
+      return '<strong>' + text.substring(0,7) + '</strong>' + text.substring(7);
+    }
+
+    let isScrolling = false;
+    let scrollTimeout;
+
+    // Track when user is scrolling so we don't redraw in the middle of it
+    window.addEventListener('scroll', () => {
+      isScrolling = true;
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => { isScrolling = false; }, 200);
+    }, { passive: true });
+
+    async function loadData(force = false) {
+      try {
+        if (!force && isScrolling) {
+          // Skip this refresh if user is currently scrolling
+          return;
+        }
+
+        const res = await fetch(url);
+        const text = await res.text();
+        const json = JSON.parse(text.substr(47).slice(0, -2));
+        const rows = json.table.rows.map(r => r.c.map(c => c?.v || ''));
+
+        const tbody = document.querySelector('#bidsTable tbody');
+
+        // Preserve scroll position while updating
+        const scrollTop =
+          window.pageYOffset ||
+          document.documentElement.scrollTop ||
+          document.body.scrollTop ||
+          0;
+
+        let html = '';
+        rows.forEach(r => {
+          const item = boldFirstSeven(r[0]);
+          const newBid = r[1] || '';
+          const leadingBid = formatEuro(r[2]);
+
+          html += `
+            <tr>
+              <td>${item}</td>
+              <td class="new-bid">${newBid}</td>
+              <td>${leadingBid}</td>
+            </tr>
+          `;
+        });
+
+        tbody.innerHTML = html;
+
+        // Restore scroll position (important for iOS)
+        window.scrollTo(0, scrollTop);
+
+      } catch (err) {
+        console.error('Failed to load sheet', err);
+      }
+    }
+
+    // Initial load
+    loadData(true);
+    // Refresh every 30 seconds
+    setInterval(() => loadData(false), 30000);
+  </script>
 
 </body>
 </html>
