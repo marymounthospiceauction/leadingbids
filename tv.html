@@ -15,7 +15,7 @@
       padding: 0;
       height: 100%;
       font-family: Calibri, Arial, sans-serif;
-      background: url("tvbackground.png") center center/cover no-repeat fixed;
+      background-color: #f6e7c6;   /* warm cream background */
       overflow: hidden;
     }
 
@@ -23,14 +23,14 @@
       box-sizing: border-box;
       width: 100vw;
       height: 100vh;
-      padding: 20px;
+      padding: 10px 20px 20px 20px;
       border: 14px solid #f6e7c1;
       box-shadow: 0 0 40px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
-      background: rgba(0,0,0,0.35); /* overlay for readability */
       position: relative;
       z-index: 1;
+      background-color: transparent;  /* no dark overlay */
     }
 
     /* SNOWFALL OVERLAY */
@@ -46,41 +46,53 @@
         radial-gradient(2px 2px at 20px 20px, rgba(255,255,255,0.9) 50%, transparent 51%),
         radial-gradient(3px 3px at 60px 80px, rgba(255,255,255,0.6) 50%, transparent 51%),
         radial-gradient(2px 2px at 120px 40px, rgba(255,255,255,0.8) 50%, transparent 51%);
-      background-size: 200px 200px;
-      animation: snow-fall 25s linear infinite;
-      opacity: 0.6;
+      background-size: 220px 220px;
+      animation: snow-fall 30s linear infinite;
+      opacity: 0.4;
     }
 
     @keyframes snow-fall {
-      0% {
-        transform: translateY(-50px);
-      }
-      100% {
-        transform: translateY(200px);
-      }
+      0%   { transform: translateY(-60px); }
+      100% { transform: translateY(200px); }
     }
 
-    /* TITLE + LAST UPDATE */
+    /* HEADER IMAGE WITH BALL NAME + SPONSORS */
+    .header-image {
+      width: 100%;
+      max-width: 1900px;
+      margin: 0 auto 8px auto;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+    }
+
+    .header-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* TITLE + LAST UPDATE BELOW HEADER */
     .header-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1vh;
+      margin-bottom: 0.8vh;
+      padding: 0 0.5vw;
     }
 
     .title {
       flex: 1;
       text-align: center;
       font-family: "Great Vibes", cursive;
-      font-size: 4vw;
-      color: #fff;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+      font-size: 3vw;
+      color: #1b1204;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
     }
 
     .last-update {
       font-size: 1vw;
-      color: #fdf4dc;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+      color: #4a3516;
       white-space: nowrap;
       padding-right: 0.5vw;
     }
@@ -91,17 +103,17 @@
       display: flex;
       justify-content: center;
       align-items: stretch;
-      padding: 1vh 1.5vw;
+      padding: 0.8vh 1.5vw 1vh 1.5vw;
     }
 
     .board-inner {
       width: 100%;
       max-width: 1900px;
-      background: rgba(0,0,0,0.85);
+      background: rgba(0,0,0,0.88);
       padding: 1.2vh 1vw;
       display: flex;
       gap: 1vw;
-      box-shadow: 0 0 18px rgba(255,255,255,0.15);
+      box-shadow: 0 0 18px rgba(0,0,0,0.5);
       border: 3px solid #f5dd9a;
     }
 
@@ -123,21 +135,21 @@
       letter-spacing: 0.03em;
     }
 
-    /* ITEM DESCRIPTION – ALWAYS VISIBLE (WRAPS IF NEEDED) */
+    /* ITEM DESCRIPTION – ALWAYS FULLY VISIBLE (WRAPS) */
     .bid-item {
       flex: 1.4;
       text-transform: uppercase;
-      white-space: normal;      /* allow wrapping */
+      white-space: normal;
       word-wrap: break-word;
-      overflow: visible;        /* no clipping */
+      overflow: visible;
     }
 
-    /* NEW BID COLUMN – RED TEXT, SHEET TEXT (e.g. "NEW BID") */
+    /* NEW BID – TEXT FROM SHEET, RED */
     .bid-new {
       flex: 0.5;
       text-align: center;
       padding: 0 0.4vw;
-      color: #ff2a2a;           /* bright red */
+      color: #ff2a2a;       /* bright red */
       font-weight: bold;
       white-space: nowrap;
     }
@@ -152,15 +164,14 @@
       white-space: nowrap;
     }
 
-    /* FOOTER */
+    /* FOOTER WITH TWO QRs */
     .footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.6vh 1.8vw 0;
+      padding: 0.4vh 1.8vw 0 1.8vw;
       font-size: 1.1vw;
-      color: #fff;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+      color: #4a3516;
     }
 
     .footer-left,
@@ -173,7 +184,6 @@
     .footer-logo {
       height: 6vh;
       object-fit: contain;
-      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
     }
 
     .footer-center {
@@ -201,7 +211,7 @@
       padding: 0.4vh;
       border-radius: 6px;
       object-fit: contain;
-      box-shadow: 0 0 6px rgba(0,0,0,0.5);
+      box-shadow: 0 0 6px rgba(0,0,0,0.3);
     }
 
     .footer-right span {
@@ -210,23 +220,30 @@
 
     @media (max-width: 1200px) {
       .bid-row { font-size: 1.4vw; }
-      .title { font-size: 5vw; }
+      .title { font-size: 4vw; }
       .footer-qr-text { font-size: 1.2vw; }
     }
   </style>
 </head>
 
 <body>
-  <!-- Snow layer underneath everything -->
+  <!-- Snow layer -->
   <div class="snow"></div>
 
   <div class="screen">
+    <!-- HEADER IMAGE WITH BALL NAME + SPONSORS -->
+    <div class="header-image">
+      <img src="Marymount Header.png" alt="The Starry Night Ball">
+    </div>
+
+    <!-- TITLE + LAST UPDATE -->
     <div class="header-bar">
-      <div style="width:10vw;"></div> <!-- spacer to balance flex -->
+      <div style="width:10vw;"></div><!-- spacer -->
       <div class="title">Current Leading Bids</div>
       <div class="last-update" id="lastUpdate">Last update: --:--:--</div>
     </div>
 
+    <!-- MAIN BOARD -->
     <div class="board">
       <div class="board-inner">
         <div class="column" id="leftColumn"></div>
@@ -234,7 +251,7 @@
       </div>
     </div>
 
-    <!-- FOOTER WITH TWO QRS -->
+    <!-- FOOTER WITH TWO QR CODES -->
     <div class="footer">
       <div class="footer-left">
         <img src="Marymount Logo.png" alt="Marymount" class="footer-logo">
@@ -298,7 +315,7 @@
 
         rows.forEach((r, index) => {
           const itemText  = r[0]; // ITEM description (incl. item number)
-          const newBidTxt = r[1]; // text like "NEW BID" or empty
+          const newBidTxt = r[1]; // text like "NEW BID" or blank
           const leadVal   = r[2]; // numeric leading bid
 
           const row = document.createElement('div');
@@ -335,4 +352,3 @@
   </script>
 </body>
 </html>
-
