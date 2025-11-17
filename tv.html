@@ -32,7 +32,7 @@
       background: transparent;
     }
 
-    /* ✨ STAR OVERLAY (instead of snow) – FRONT LAYER */
+    /* ✨ STAR OVERLAY (front layer) */
     .snow {
       pointer-events: none;
       position: fixed;
@@ -53,8 +53,9 @@
       100% { transform: translate3d(-60px,120px,0); }
     }
 
-    /* TOP HEADER IMAGE (LIVE HEADER) */
+    /* TOP HEADER IMAGE WITH INTEGRATED TITLE */
     .header-image {
+      position: relative;
       width: 100%;
       max-width: 1900px;
       margin: 0 auto 6px auto;
@@ -70,22 +71,32 @@
       display: block;
     }
 
-    /* TITLE + LAST UPDATE */
-    .header-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.6vh;
-      padding: 0 0.5vw;
-    }
-
-    .title {
-      flex: 1;
+    .header-title {
+      position: absolute;
+      bottom: 12%;               /* vertically inside the banner */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
       text-align: center;
       font-family: "Great Vibes", cursive;
       font-size: 3vw;
-      color: #ffe599;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+      color: #ffe8a3;
+      text-shadow:
+        -3px -3px 5px rgba(0,0,0,0.9),
+         3px -3px 5px rgba(0,0,0,0.9),
+        -3px  3px 5px rgba(0,0,0,0.9),
+         3px  3px 5px rgba(0,0,0,0.9);
+      letter-spacing: 0.06em;
+    }
+
+    /* ROW WITH LAST UPDATE ONLY (TITLE IS IN HEADER) */
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 0.2vh;
+      margin-bottom: 0.6vh;
+      padding: 0 0.5vw;
     }
 
     .last-update {
@@ -149,7 +160,7 @@
       color: #ff2a2a;
       font-weight: bold;
       white-space: nowrap;
-      font-size: 0.9vw; /* smaller than main text */
+      font-size: 0.9vw;
     }
 
     .bid-amount {
@@ -186,7 +197,7 @@
       letter-spacing: 0.12em;
       font-size: 0.9vw;
       text-align: center;
-      color: #000; /* black for better visibility */
+      color: #000; /* black for visibility */
       text-shadow: 0 0 4px rgba(255,255,255,0.9);
       background: rgba(255,255,255,0.7);
       padding: 0.15vh 0.5vw;
@@ -210,7 +221,7 @@
     }
 
     .footer-center img {
-      max-height: 11vh;   /* made taller so logos appear bigger */
+      max-height: 11vh;   /* bigger logos */
       width: auto;
       display: block;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
@@ -218,8 +229,8 @@
 
     @media (max-width: 1200px) {
       .bid-row { font-size: 1.4vw; }
-      .title { font-size: 4vw; }
       .footer-qr-label { font-size: 1.1vw; }
+      .header-title { font-size: 3.4vw; }
     }
   </style>
 </head>
@@ -228,15 +239,14 @@
   <div class="snow"></div>
 
   <div class="screen">
-    <!-- LIVE HEADER IMAGE AT TOP -->
+    <!-- LIVE HEADER IMAGE + INTEGRATED TITLE -->
     <div class="header-image">
       <img src="LiveHeader.png" alt="Live Auction Header">
+      <div class="header-title">Current Leading Bids</div>
     </div>
 
-    <!-- TITLE + LAST UPDATE UNDER HEADER -->
+    <!-- LAST UPDATE ROW (NO SEPARATE TITLE HERE) -->
     <div class="header-bar">
-      <div style="width:10vw;"></div>
-      <div class="title">Current Leading Bids</div>
       <div class="last-update" id="lastUpdate">Last update: --:--:--</div>
     </div>
 
