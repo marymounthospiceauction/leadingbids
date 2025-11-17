@@ -15,8 +15,6 @@
       padding: 0;
       height: 100%;
       font-family: Calibri, Arial, sans-serif;
-
-      /* 🔥 USE TV BACKGROUND IMAGE FROM REPO */
       background: url("tvbackground.png") center center/cover no-repeat fixed;
       overflow: hidden;
     }
@@ -30,17 +28,61 @@
       box-shadow: 0 0 40px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
-      background: rgba(0,0,0,0.35); /* Transparent overlay for readability */
+      background: rgba(0,0,0,0.35); /* overlay for readability */
+      position: relative;
+      z-index: 1;
     }
 
-    /* TITLE */
+    /* SNOWFALL OVERLAY */
+    .snow {
+      pointer-events: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      background-image:
+        radial-gradient(2px 2px at 20px 20px, rgba(255,255,255,0.9) 50%, transparent 51%),
+        radial-gradient(3px 3px at 60px 80px, rgba(255,255,255,0.6) 50%, transparent 51%),
+        radial-gradient(2px 2px at 120px 40px, rgba(255,255,255,0.8) 50%, transparent 51%);
+      background-size: 200px 200px;
+      animation: snow-fall 25s linear infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes snow-fall {
+      0% {
+        transform: translateY(-50px);
+      }
+      100% {
+        transform: translateY(200px);
+      }
+    }
+
+    /* TITLE + LAST UPDATE */
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1vh;
+    }
+
     .title {
+      flex: 1;
       text-align: center;
       font-family: "Great Vibes", cursive;
       font-size: 4vw;
       color: #fff;
-      margin-bottom: 1vh;
       text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    }
+
+    .last-update {
+      font-size: 1vw;
+      color: #fdf4dc;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+      white-space: nowrap;
+      padding-right: 0.5vw;
     }
 
     /* MAIN BOARD */
@@ -75,35 +117,39 @@
       align-items: center;
       background: #111;
       border: 1px solid #555;
-      padding: 0.18vh 0.7vw;
-      color: #fdf4dc; /* warm cream */
-      font-size: 1.1vw;
-      letter-spacing: 0.04em;
+      padding: 0.25vh 0.7vw;
+      color: #fdf4dc;
+      font-size: 1.15vw;
+      letter-spacing: 0.03em;
     }
 
+    /* ITEM DESCRIPTION – ALWAYS VISIBLE (WRAPS IF NEEDED) */
     .bid-item {
-      flex: 1.1;
+      flex: 1.4;
       text-transform: uppercase;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;      /* allow wrapping */
+      word-wrap: break-word;
+      overflow: visible;        /* no clipping */
     }
 
-    /* 🔥 NEW BID COLUMN IN RED */
+    /* NEW BID COLUMN – RED TEXT, SHEET TEXT (e.g. "NEW BID") */
     .bid-new {
       flex: 0.5;
-      text-align: right;
+      text-align: center;
       padding: 0 0.4vw;
-      color: #ff2a2a;   /* bright red */
+      color: #ff2a2a;           /* bright red */
       font-weight: bold;
+      white-space: nowrap;
     }
 
+    /* LEADING BID AMOUNT */
     .bid-amount {
-      flex: 0.6;
+      flex: 0.5;
       text-align: right;
       padding-left: 0.4vw;
       font-weight: bold;
       color: #ffd;
+      white-space: nowrap;
     }
 
     /* FOOTER */
@@ -124,46 +170,29 @@
       gap: 1vw;
     }
 
-    .footer-center {
-      text-align: center;
-      flex: 1;
-      font-size: 1.25vw;
-      font-weight: bold;
-    }
-
-    .footer-center a {
-      color: #fff;
-      text-decoration: none;
-    }
-
-    .footer-center a:hover {
-      text-decoration: underline;
-    }
-
     .footer-logo {
       height: 6vh;
       object-fit: contain;
       filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
     }
 
-    .footer-qr-wrap {
-      display: flex;
-      align-items: center;
-      gap: 0.8vw;
-      background: rgba(0,0,0,0.6);
-      padding: 0.5vh 1vw;
-      border-radius: 12px;
-      border: 2px solid #f5dd9a;
-      box-shadow: 0 0 8px rgba(0,0,0,0.4);
-      color: #fff;
+    .footer-center {
+      flex: 1;
+      text-align: center;
     }
 
     .footer-qr-text {
       text-transform: uppercase;
       font-weight: bold;
-      letter-spacing: 0.12em;
-      font-size: 0.85vw;
-      text-align: center;
+      letter-spacing: 0.15em;
+      font-size: 1vw;
+      margin-bottom: 0.5vh;
+    }
+
+    .footer-qr-row {
+      display: flex;
+      justify-content: center;
+      gap: 2vw;
     }
 
     .footer-qr {
@@ -172,19 +201,31 @@
       padding: 0.4vh;
       border-radius: 6px;
       object-fit: contain;
+      box-shadow: 0 0 6px rgba(0,0,0,0.5);
+    }
+
+    .footer-right span {
+      font-weight: bold;
     }
 
     @media (max-width: 1200px) {
       .bid-row { font-size: 1.4vw; }
       .title { font-size: 5vw; }
-      .footer-qr-text { font-size: 1vw; }
+      .footer-qr-text { font-size: 1.2vw; }
     }
   </style>
 </head>
 
 <body>
+  <!-- Snow layer underneath everything -->
+  <div class="snow"></div>
+
   <div class="screen">
-    <div class="title">Current Leading Bids</div>
+    <div class="header-bar">
+      <div style="width:10vw;"></div> <!-- spacer to balance flex -->
+      <div class="title">Current Leading Bids</div>
+      <div class="last-update" id="lastUpdate">Last update: --:--:--</div>
+    </div>
 
     <div class="board">
       <div class="board-inner">
@@ -193,16 +234,17 @@
       </div>
     </div>
 
-    <!-- FOOTER -->
+    <!-- FOOTER WITH TWO QRS -->
     <div class="footer">
       <div class="footer-left">
-        <img src="Marymount Logo.png" class="footer-logo">
+        <img src="Marymount Logo.png" alt="Marymount" class="footer-logo">
       </div>
 
       <div class="footer-center">
-        <div class="footer-qr-wrap">
-          <div class="footer-qr-text">SCAN<br>QR CODE TO BID</div>
-          <img src="2025 Marymount QR Code.jpeg" class="footer-qr">
+        <div class="footer-qr-text">SCAN QR CODES TO BID</div>
+        <div class="footer-qr-row">
+          <img src="2025 Marymount QR Code.jpeg" alt="QR to bid" class="footer-qr">
+          <img src="2025 Marymount QR Code.jpeg" alt="QR to bid" class="footer-qr">
         </div>
       </div>
 
@@ -226,12 +268,25 @@
       return "€" + Number(value).toLocaleString("en-IE");
     }
 
+    function updateLastUpdated() {
+      const el = document.getElementById('lastUpdate');
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-IE', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      el.textContent = `Last update: ${timeStr}`;
+    }
+
     async function loadBids() {
       try {
         const res  = await fetch(url);
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = json.table.rows.map(r => r.c.map(c => c?.v || '')).filter(r => r[0]);
+        const rows = json.table.rows
+          .map(r => r.c.map(c => c?.v || ''))
+          .filter(r => r[0]);
 
         const leftCol  = document.getElementById('leftColumn');
         const rightCol = document.getElementById('rightColumn');
@@ -242,20 +297,37 @@
         const mid = Math.ceil(rows.length / 2);
 
         rows.forEach((r, index) => {
+          const itemText  = r[0]; // ITEM description (incl. item number)
+          const newBidTxt = r[1]; // text like "NEW BID" or empty
+          const leadVal   = r[2]; // numeric leading bid
+
           const row = document.createElement('div');
           row.className = 'bid-row';
 
-          row.innerHTML = `
-            <div class="bid-item">${r[0]}</div>
-            <div class="bid-new">${r[1] ? formatEuro(r[1]) : ""}</div>
-            <div class="bid-amount">${formatEuro(r[2])}</div>
-          `;
+          const itemEl = document.createElement('div');
+          itemEl.className = 'bid-item';
+          itemEl.textContent = itemText;
+
+          const newEl = document.createElement('div');
+          newEl.className = 'bid-new';
+          newEl.textContent = newBidTxt ? String(newBidTxt) : "";
+
+          const leadEl = document.createElement('div');
+          leadEl.className = 'bid-amount';
+          leadEl.textContent = formatEuro(leadVal);
+
+          row.appendChild(itemEl);
+          row.appendChild(newEl);
+          row.appendChild(leadEl);
 
           if (index < mid) leftCol.appendChild(row);
           else rightCol.appendChild(row);
         });
 
-      } catch (err) { console.error(err); }
+        updateLastUpdated();
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     loadBids();
