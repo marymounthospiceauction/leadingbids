@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Marymount Auction & Leading Bids</title>
+
+  <!-- VIEWPORT — ZOOM ENABLED -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
+
+  <title>Marymount Auction Leading Bids</title>
 
   <style>
     /* BASIC PAGE SETUP */
@@ -24,7 +27,7 @@
     /* HEADER IMAGE */
     .header-image img {
       width: 100%;
-      max-width: 600px;     /* clean & centred */
+      max-width: 600px;
       display: block;
       margin: 10px auto 20px auto;
       border-radius: 6px;
@@ -156,7 +159,7 @@
       width: 45px;
       max-width: 45px;
       text-align: center;
-      font-size: 0.65rem;
+      font-size: 0.3rem;
       white-space: normal;
       word-wrap: break-word;
     }
@@ -168,7 +171,6 @@
       text-align: center;
     }
 
-    /* Red text for new bids */
     .new-bid {
       color: red;
       font-weight: bold;
@@ -180,7 +182,7 @@
 
   <!-- HEADER IMAGE -->
   <div class="header-image">
-    <img src="starry-night-banner-1000w.jpg"
+    <img src="Marymount Header.png"
          alt="The Starry Night Ball in aid of Marymount University Hospital and Hospice">
   </div>
 
@@ -228,7 +230,10 @@
     const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
     const range = 'Q5:S42';
-    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
+
+    const url =
+      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
+      `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
     function formatEuro(value) {
       if (!value || isNaN(value)) return '€0';
@@ -271,7 +276,7 @@
     }
 
     loadData();
-    setInterval(loadData, 30000);
+    setInterval(loadData, 5000);
   </script>
 
 </body>
