@@ -4,10 +4,9 @@
   <meta charset="UTF-8" />
   <title>Current Leading Bids – TV Display</title>
 
-  <!-- For TVs / big screens this is fine -->
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Fancy script font for heading (optional) -->
+  <!-- Script font similar to main branding -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet"/>
 
   <style>
@@ -16,20 +15,19 @@
       padding: 0;
       height: 100%;
       font-family: Calibri, Arial, sans-serif;
-      background: #d4af37;
-      overflow: hidden; /* no scrolling – fits on TV */
+      /* Christmasy red + gold background */
+      background:
+        radial-gradient(circle at top, #fdf6d7 0, #f3d992 30%, #b87e1b 55%, #5a0010 100%);
+      overflow: hidden; /* no scrolling – fits TV */
     }
 
-    /* Whole screen container mimicking a poster with border */
     .screen {
       box-sizing: border-box;
       width: 100vw;
       height: 100vh;
       padding: 20px;
-      background:
-        radial-gradient(circle at top, #fdf6d7 0, #e7c86c 35%, #b58a34 100%);
-      border: 12px solid #e8d6a0;
-      box-shadow: 0 0 30px rgba(0,0,0,0.4);
+      border: 14px solid #f6e7c1;
+      box-shadow: 0 0 40px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
     }
@@ -39,97 +37,104 @@
       text-align: center;
       font-family: "Great Vibes", "Brush Script MT", cursive;
       font-size: 4vw;
-      color: #000;
+      color: #1b1204;
       margin-bottom: 1vh;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.25);
     }
 
-    /* MAIN AREA: two-column black board */
+    /* MAIN BOARD */
     .board {
       flex: 1;
       display: flex;
       justify-content: center;
       align-items: stretch;
-      padding: 1vh 2vw;
+      padding: 1vh 1.5vw;
     }
 
     .board-inner {
       width: 100%;
-      max-width: 1800px;
-      background: #000;
-      padding: 1vh 1vw;
+      max-width: 1900px;
+      background: rgba(0,0,0,0.9);
+      padding: 1.2vh 1vw;
       display: flex;
       gap: 1vw;
-      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+      box-shadow: 0 0 18px rgba(0,0,0,0.7);
+      border: 3px solid #f5dd9a;
     }
 
     .column {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 0.4vh;
+      gap: 0.45vh;
     }
 
     .bid-row {
       display: flex;
       align-items: center;
       background: #111;
-      border: 1px solid #444;
-      padding: 0.15vh 0.8vw;
-      color: #fff;
+      border: 1px solid #555;
+      padding: 0.18vh 0.7vw;
+      color: #fdf4dc; /* warm cream text */
       font-size: 1.1vw;
       letter-spacing: 0.04em;
     }
 
     .bid-item {
-      flex: 1;
+      flex: 1.1;
       text-transform: uppercase;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .bid-amount {
-      width: 7vw;
-      min-width: 6vw;
+    .bid-new {
+      flex: 0.5;
       text-align: right;
+      padding: 0 0.4vw;
+      color: #ffdf80; /* gold-ish for new bid */
       font-weight: bold;
     }
 
-    /* FOOTER WITH LOGOS / QR / WEBSITE */
+    .bid-amount {
+      flex: 0.6;
+      text-align: right;
+      padding-left: 0.4vw;
+      font-weight: bold;
+    }
+
+    /* Optional thin separators between numeric columns */
+    .bid-row::before {
+      content: "";
+      position: absolute;
+    }
+
+    /* FOOTER */
     .footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.7vh 2vw 0;
+      padding: 0.6vh 1.8vw 0;
       font-size: 1.1vw;
+      color: #1b1204;
     }
 
-    .footer-section {
+    .footer-left,
+    .footer-right {
       display: flex;
       align-items: center;
       gap: 1vw;
     }
 
-    .footer-logo {
-      height: 5vh;
-      object-fit: contain;
-    }
-
-    .footer-qr {
-      height: 7vh;
-      object-fit: contain;
-    }
-
     .footer-center {
       text-align: center;
       flex: 1;
-      font-size: 1.2vw;
+      font-size: 1.25vw;
       font-weight: bold;
     }
 
     .footer-center a {
-      color: #000;
+      color: #1b1204;
       text-decoration: none;
     }
 
@@ -137,13 +142,48 @@
       text-decoration: underline;
     }
 
-    /* If screen is smaller (e.g. laptop), keep things readable */
+    .footer-logo {
+      height: 5vh;
+      object-fit: contain;
+    }
+
+    .footer-qr-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.8vw;
+      background: rgba(0,0,0,0.65);
+      padding: 0.5vh 1vw;
+      border-radius: 10px;
+      border: 2px solid #f5dd9a;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      color: #fdf4dc;
+    }
+
+    .footer-qr-text {
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 0.12em;
+      font-size: 0.85vw;
+      text-align: center;
+    }
+
+    .footer-qr {
+      height: 7vh;
+      object-fit: contain;
+      background: #fff;
+      padding: 0.3vh;
+      border-radius: 6px;
+    }
+
     @media (max-width: 1200px) {
       .bid-row {
         font-size: 1.4vw;
       }
       .title {
         font-size: 5vw;
+      }
+      .footer-qr-text {
+        font-size: 1vw;
       }
     }
   </style>
@@ -164,48 +204,37 @@
       </div>
     </div>
 
-    <!-- FOOTER AREA: replace src values with your actual logos / QR codes -->
+    <!-- FOOTER -->
     <div class="footer">
-      <div class="footer-section">
-        <!-- Left Marymount logo -->
-        <img src="marymount-logo-left.png" alt="Marymount" class="footer-logo">
-      </div>
-
-      <div class="footer-section">
-        <!-- QR to bid -->
-        <div>SCAN<br>QR CODE TO BID</div>
-        <img src="qr-bid.png" alt="QR code to bid" class="footer-qr">
+      <div class="footer-left">
+        <img src="Marymount Logo.png" alt="Marymount" class="footer-logo">
       </div>
 
       <div class="footer-center">
-        <a href="https://www.marymountauction2025.ie" target="_blank">
-          https://www.marymountauction2025.ie
-        </a>
+        <div class="footer-qr-wrap">
+          <div class="footer-qr-text">
+            SCAN<br>QR CODE TO BID
+          </div>
+          <img src="2025 Marymount QR Code.jpeg" alt="QR code to bid" class="footer-qr">
+        </div>
       </div>
 
-      <div class="footer-section">
-        <img src="qr-site.png" alt="QR code to website" class="footer-qr">
-        <div>SCAN<br>QR CODE TO BID</div>
-      </div>
-
-      <div class="footer-section">
-        <!-- Right Marymount logo -->
-        <img src="marymount-logo-right.png" alt="Marymount" class="footer-logo">
+      <div class="footer-right">
+        <span>www.marymountauction2025.ie</span>
       </div>
     </div>
   </div>
 
   <script>
-    // === GOOGLE SHEET CONFIG ===
+    // ==== GOOGLE SHEET CONFIG ====
     const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
-    const range     = 'Q5:S42'; // Q: Item text, R: New bid, S: Leading bid
+    const range     = 'Q5:S42'; // Q: Item, R: New Bid, S: Leading Bid
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq` +
       `?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
-    // Format € values nicely
     function formatEuro(value) {
       if (value === '' || value == null || isNaN(value)) return '€0';
       return '€' + Number(value).toLocaleString('en-IE');
@@ -218,7 +247,7 @@
         const json = JSON.parse(text.substr(47).slice(0, -2));
         const rows = json.table.rows
           .map(r => r.c.map(c => c?.v || ''))
-          .filter(r => r[0]); // keep rows with an item
+          .filter(r => r[0]); // only rows with item text
 
         const leftCol  = document.getElementById('leftColumn');
         const rightCol = document.getElementById('rightColumn');
@@ -226,13 +255,12 @@
         leftCol.innerHTML = '';
         rightCol.innerHTML = '';
 
-        // Split rows into two columns: first half left, rest right
         const mid = Math.ceil(rows.length / 2);
 
         rows.forEach((r, index) => {
-          const itemText   = r[0];      // ITEM XX - description
-          const leadingVal = r[2];      // S column: Leading Bid
-          const amount     = formatEuro(leadingVal);
+          const itemText  = r[0]; // ITEM ## - description
+          const newBidVal = r[1]; // New Bid
+          const leadVal   = r[2]; // Leading Bid
 
           const rowEl = document.createElement('div');
           rowEl.className = 'bid-row';
@@ -241,12 +269,17 @@
           itemEl.className = 'bid-item';
           itemEl.textContent = itemText;
 
-          const amountEl = document.createElement('div');
-          amountEl.className = 'bid-amount';
-          amountEl.textContent = amount;
+          const newEl = document.createElement('div');
+          newEl.className = 'bid-new';
+          newEl.textContent = newBidVal ? formatEuro(newBidVal) : '';
+
+          const leadEl = document.createElement('div');
+          leadEl.className = 'bid-amount';
+          leadEl.textContent = formatEuro(leadVal);
 
           rowEl.appendChild(itemEl);
-          rowEl.appendChild(amountEl);
+          rowEl.appendChild(newEl);
+          rowEl.appendChild(leadEl);
 
           if (index < mid) {
             leftCol.appendChild(rowEl);
