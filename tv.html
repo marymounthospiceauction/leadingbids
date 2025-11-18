@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Starry Night Ball – Leading Bids</title>
+<title>The Starry Night Ball – Leading Bids</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -16,19 +16,33 @@
   }
 
   /* HEADER */
-  .header {
+  .title-bar {
+    width: 96vw;
+    margin: 10px auto 5px auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-logo {
+    height: 70px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
+  }
+  .title-text {
+    flex: 1;
     text-align: center;
     font-size: 3vw;
     font-weight: bold;
     color: #ffe8a3;
     text-shadow: 0 0 8px rgba(0,0,0,0.9);
-    margin: 10px 0;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
   }
   .last-update {
-    text-align: center;
+    min-width: 180px;
+    text-align: right;
     font-size: 1.2vw;
     color: #fff;
-    margin-bottom: 10px;
+    text-shadow: 0 0 6px rgba(0,0,0,0.8);
   }
 
   /* MAIN BOARD */
@@ -37,11 +51,12 @@
     justify-content: center;
     gap: 4vw;
     width: 96vw;
-    margin: auto;
+    margin: 10px auto;
     background: rgba(0,0,0,0.85);
     border: 2px solid #ffe599;
     padding: 10px;
     box-sizing: border-box;
+    height: 70vh;
   }
 
   table {
@@ -90,37 +105,45 @@
   /* FOOTER */
   .footer-row {
     width: 96vw;
-    margin: 10px auto;
+    margin: 4px auto 5px auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 2px solid #ffe599;
-    padding-top: 10px;
   }
   .footer-box {
-    text-align: center;
-    color: #ffe599;
-    font-size: 1.2vw;
+    background: #ffe599;
+    color: #000;
     font-weight: bold;
-    margin-bottom: 6px;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 1.2vw;
+    letter-spacing: 0.08em;
   }
   .qr {
     width: 150px;
+    margin-top: 6px;
     background: #fff;
     padding: 5px;
     border-radius: 4px;
   }
   .footer-sponsors {
-    max-height: 12vh;
+    max-height: 14vh;
+    width: auto;
     display: block;
   }
 </style>
 </head>
 <body>
 
-<div class="header">The Starry Night Ball – Leading Bids</div>
-<div class="last-update" id="lastUpdate">Last update: --:--:--</div>
+<!-- HEADER -->
+<div class="title-bar">
+  <img src="Marymount Logo.png" class="header-logo">
+  <div class="title-text">The Starry Night Ball</div>
+  <img src="Marymount Logo.png" class="header-logo">
+  <div class="last-update" id="lastUpdate">Last update: --:--:--</div>
+</div>
 
+<!-- MAIN BOARD -->
 <div class="board">
   <table>
     <thead>
@@ -139,19 +162,17 @@
 
 <!-- FOOTER -->
 <div class="footer-row">
-  <div>
+  <div style="text-align:center">
     <div class="footer-box">SCAN QR CODE TO BID</div>
-    <img src="2025 Marymount QR Code.jpeg" class="qr">
-  </div>
+   rs.png
 
-  <img src="Marymount Footer Sponsors.png" class="footer-sponsors">
-
-  <div>
+  <div style="text-align:center">
     <div class="footer-box">SCAN QR CODE TO BID</div>
     <img src="2025 Marymount QR Code.jpeg" class="qr">
   </div>
 </div>
 
+<!-- DATA SCRIPT -->
 <script>
 const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
 const sheetName = 'LEADING BIDS';
