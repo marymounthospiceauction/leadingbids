@@ -8,106 +8,194 @@
   <!-- FONT -->
   <link href="https://fonts.googleapis.com/css2?family=Alisha&display=swap" rel="stylesheet">
 
+  <!-- ======================= -->
+  <!--        TV STYLING       -->
+  <!-- ======================= -->
   <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      margin:0; padding:0;
       background: url("tvbackground.png") center/cover no-repeat fixed;
       font-family: Arial, sans-serif;
-      color:#ffe599;
-      overflow:hidden;
+      color: #ffe599;
+      overflow: hidden;
+
+      font-size: clamp(18px, 1vw + 0.3vh, 26px);
+
+      display: flex;
+      flex-direction: column;
+
+      cursor: none;
+      user-select: none;
     }
 
     /* HEADER BAR */
-    .title-bar{
-      width:96vw; margin:10px auto 5px auto;
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .header-logo{
-      height:60px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.7));
-    }
-    .title-text{
-      flex:1; text-align:center;
-      font-family:'Alisha', cursive;
-      font-size:3vw; color:#ffe8a3;
-      text-shadow:0 0 6px rgba(0,0,0,0.9);
-      letter-spacing:0.05em;
-      white-space:nowrap;
-    }
-    .last-update{
-      min-width:160px; text-align:right;
-      font-size:1vw; text-shadow:0 0 4px rgba(0,0,0,0.8);
+    .title-bar {
+      width: 96vw;
+      margin: 10px auto 5px auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    /* BOARD WRAPPER */
-    .board{
-      width:96vw; margin:5px auto;
-      height:70vh;
-      background:rgba(0,0,0,0.85);
-      border:2px solid #ffe599;
-      padding:10px;
-      display:flex; box-sizing:border-box;
-    }
-    .board-inner{ width:100%; display:flex; gap:1vw; }
-
-    /* TABLE BASE */
-    table{ width:100%; border-collapse:collapse; }
-    th,td{
-      border:1px solid #ffe599;
-      white-space:nowrap;
-      padding:0.35vh 0.5vw;
+    .header-logo {
+      height: clamp(50px, 5vh, 80px);
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
     }
 
-    /* REMOVE INTERNAL COLUMN BORDERS */
-    td:nth-child(1), th:nth-child(1) { border-right:none; }
-    td:nth-child(2), th:nth-child(2) { border-left:none; border-right:none; }
-    td:nth-child(3), th:nth-child(3) { border-left:none; }
-
-    /* HEADER STYLE */
-    th{
-      background:rgba(255,229,153,0.25); /* Slight gold tint */
-      font-size:0.75vw;                  /* Smaller headers */
-      text-transform:uppercase;
-      color:#ffe8a3;
-      text-shadow:0 0 3px rgba(0,0,0,0.8);
+    .title-text {
+      flex: 1;
+      text-align: center;
+      font-family: 'Alisha', cursive;
+      font-size: clamp(32px, 3vw, 60px);
+      color: #ffe8a3;
+      text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
+      letter-spacing: 0.05em;
+      white-space: nowrap;
     }
 
-    /* COLUMN WIDTHS */
-    td:nth-child(1), th:nth-child(1){
-      width:70%;
-      font-size:1.35vw;        /* larger item text */
-    }
-    td:nth-child(2), th:nth-child(2){
-      width:8%; text-align:center;
-      font-size:0.95vw;
-    }
-    td:nth-child(3), th:nth-child(3){
-      width:22%; text-align:right;
-      font-size:1.35vw;        /* SAME AS ITEM DESCRIPTION */
-      font-weight:bold;
+    .last-update {
+      min-width: 160px;
+      text-align: right;
+      font-size: clamp(14px, 1vw, 20px);
+      text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
     }
 
-    .newbid{
-      color:red; font-size:0.85vw; font-weight:bold;
+    /* MAIN BOARD */
+    .board {
+      width: 96vw;
+      margin: 0 auto;
+      flex: 1;
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid #ffe599;
+      padding: 10px;
+      display: flex;
+      box-sizing: border-box;
+    }
+
+    .board-inner {
+      width: 100%;
+      display: flex;
+      gap: 1vw;
+    }
+
+    .column {
+      flex: 1;
+    }
+
+    /* TABLE */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th, td {
+      border: 1px solid #ffe599;
+      white-space: nowrap;
+      padding: 0.35vh 0.5vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Remove internal borders */
+    td:nth-child(1), th:nth-child(1) { border-right: none; }
+    td:nth-child(2), th:nth-child(2) { border-left: none; border-right: none; }
+    td:nth-child(3), th:nth-child(3) { border-left: none; }
+
+    /* Header style */
+    th {
+      background: rgba(255, 229, 153, 0.25);
+      font-size: clamp(12px, 0.9vw, 16px);
+      text-transform: uppercase;
+      color: #ffe8a3;
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Column sizing */
+    td:nth-child(1), th:nth-child(1) {
+      width: 70%;
+      max-width: 0;
+      font-size: clamp(18px, 1.4vw, 30px);
+    }
+
+    td:nth-child(2), th:nth-child(2) {
+      width: 8%;
+      text-align: center;
+      font-size: clamp(14px, 1vw, 20px);
+    }
+
+    td:nth-child(3), th:nth-child(3) {
+      width: 22%;
+      text-align: right;
+      font-size: clamp(18px, 1.4vw, 30px);
+      font-weight: bold;
+    }
+
+    /* NEW BID badge */
+    .newbid {
+      display: inline-block;
+      color: #000;
+      background: #ff4d4d;
+      padding: 0.1em 0.4em;
+      border-radius: 999px;
+      font-size: clamp(14px, 1vw, 20px);
+      font-weight: bold;
+      text-align: center;
+    }
+
+    @keyframes pulseNewBid {
+      0%,100% {
+        transform: scale(1);
+        box-shadow: 0 0 6px rgba(255, 77, 77, 0.7);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 12px rgba(255, 77, 77, 1);
+      }
+    }
+
+    .newbid:not(:empty) {
+      animation: pulseNewBid 1.5s ease-in-out infinite;
     }
 
     /* FOOTER */
-    .footer-row{
-      width:96vw; margin:4px auto 5px auto;
-      display:flex; justify-content:space-between; align-items:center;
+    .footer-row {
+      width: 96vw;
+      margin: 4px auto 10px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .footer-box{
-      background:#ffe599; color:#000; font-weight:bold;
-      padding:4px 12px; border-radius:6px;
-      font-size:0.9vw; letter-spacing:0.08em;
+
+    .footer-box {
+      background: #ffe599;
+      color: #000;
+      font-weight: bold;
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: clamp(14px, 1vw, 18px);
+      letter-spacing: 0.08em;
     }
-    .qr{
-      width:110px; margin-top:6px;
-      background:#fff; padding:5px; border-radius:4px;
+
+    .qr {
+      width: clamp(110px, 7vw, 180px);
+      margin-top: 6px;
+      background: #fff;
+      padding: 8px;
+      border-radius: 4px;
     }
-    .footer-sponsors{
-      max-height:14vh;
-      width:auto; display:block;
+
+    .footer-sponsors {
+      max-height: 14vh;
+      width: auto;
+      display: block;
     }
+
   </style>
 </head>
 
@@ -118,14 +206,14 @@
     <img src="Marymount Logo.png" class="header-logo">
     <div class="title-text">The Starry Night Ball</div>
     <img src="Marymount Logo.png" class="header-logo">
-    <div class="last-update" id="lastUpdate">Last update: --:--:--</div>
+    <div class="last-update" id="lastUpdate">Loading…</div>
   </div>
 
-  <!-- MAIN TABLE -->
+  <!-- MAIN BOARD -->
   <div class="board">
     <div class="board-inner">
 
-      <!-- LEFT COLUMN -->
+      <!-- LEFT TABLE -->
       <div class="column">
         <table>
           <thead>
@@ -135,11 +223,13 @@
               <th>Leading Bid</th>
             </tr>
           </thead>
-          <tbody id="leftBody"></tbody>
+          <tbody id="leftBody">
+            <tr><td colspan="3">Loading bids…</td></tr>
+          </tbody>
         </table>
       </div>
 
-      <!-- RIGHT COLUMN -->
+      <!-- RIGHT TABLE -->
       <div class="column">
         <table>
           <thead>
@@ -149,7 +239,9 @@
               <th>Leading Bid</th>
             </tr>
           </thead>
-          <tbody id="rightBody"></tbody>
+          <tbody id="rightBody">
+            <tr><td colspan="3">Loading bids…</td></tr>
+          </tbody>
         </table>
       </div>
 
@@ -173,7 +265,9 @@
 
   </div>
 
-  <!-- DATA SCRIPT -->
+  <!-- ======================= -->
+  <!--          JS             -->
+  <!-- ======================= -->
   <script>
     const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
@@ -190,7 +284,7 @@
 
     async function loadData(){
       try{
-        const res  = await fetch(url);
+        const res  = await fetch(url, { cache: "no-store" });
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
 
@@ -202,6 +296,9 @@
         const right = rows.slice(mid);
 
         function build(list){
+          if (!list.length) {
+            return `<tr><td colspan="3">No items to display</td></tr>`;
+          }
           return list.map(r => `
             <tr>
               <td>${r[0]}</td>
@@ -217,7 +314,10 @@
         lastUpdate.textContent =
           "Last update: " + now.toLocaleTimeString("en-IE",{hour12:false});
       }
-      catch(e){ console.error(e); }
+      catch(e){
+        console.error(e);
+        lastUpdate.textContent = "Last update: ERROR – retrying…";
+      }
     }
 
     loadData();
