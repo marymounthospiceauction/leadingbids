@@ -1,327 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>The Starry Night Ball – Leading Bids</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Marymount Auction & Leading Bids</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
 
-  <!-- FONT -->
-  <link href="https://fonts.googleapis.com/css2?family=Alisha&display=swap" rel="stylesheet">
-
-  <!-- ======================= -->
-  <!--        TV STYLING       -->
-  <!-- ======================= -->
   <style>
+    /* ---- TV SCREEN OPTIMIZED STYLES ---- */
     html, body {
-      height: 100%;
       margin: 0;
       padding: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #121212; 
+      color: #E0E0E0; 
+      height: 100vh;
+      overflow: hidden;
     }
 
-    body {
-      background: url("tvbackground.png") center/cover no-repeat fixed;
-      font-family: Arial, sans-serif;
-      color: #ffe599;
-      overflow: hidden;
+    * { box-sizing: border-box; }
 
-      font-size: clamp(18px, 1vw + 0.3vh, 26px);
+    .button-section {
+      display: none; 
+    }
 
+    /* QR Code Container (Kept for external bidding link visibility) */
+    .qr-container {
+        position: absolute;
+        top: 2vw;
+        right: 2vw;
+        width: 10vw;
+        height: 10vw;
+        background: white;
+        padding: 0.5vw;
+        border-radius: 0.5vw;
+        box-shadow: 0 0 1vw rgba(0,0,0,0.7);
+        text-align: center;
+        z-index: 10;
+    }
+    .qr-container p {
+        font-size: 1.2vw;
+        color: black;
+        margin: 0.5vh 0 0;
+        font-weight: 700;
+    }
+    .qr-container img {
+        width: 100%;
+        height: 80%;
+        object-fit: contain;
+    }
+
+    /* TABLE SECTION */
+    .table-section {
+      height: 100vh; 
+      padding: 1vw 1.5vw;
       display: flex;
       flex-direction: column;
-
-      cursor: none;
-      user-select: none;
     }
 
-    /* HEADER BAR */
-    .title-bar {
-      width: 96vw;
-      margin: 10px auto 5px auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .header-logo {
-      height: clamp(50px, 5vh, 80px);
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
-    }
-
-    .title-text {
-      flex: 1;
+    .table-heading {
+      font-size: 3.5vw;
+      font-weight: 900;
+      color: #BC8B41; 
+      margin-bottom: 1.5vh;
       text-align: center;
-      font-family: 'Alisha', cursive;
-      font-size: clamp(32px, 3vw, 60px);
-      color: #ffe8a3;
-      text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
-      letter-spacing: 0.05em;
-      white-space: nowrap;
+      text-transform: uppercase;
     }
 
-    .last-update {
-      min-width: 160px;
-      text-align: right;
-      font-size: clamp(14px, 1vw, 20px);
-      text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
-    }
-
-    /* MAIN BOARD */
-    .board {
-      width: 96vw;
-      margin: 0 auto;
-      flex: 1;
-      background: rgba(0, 0, 0, 0.85);
-      border: 2px solid #ffe599;
-      padding: 10px;
-      display: flex;
-      box-sizing: border-box;
-    }
-
-    .board-inner {
+    .table-container {
       width: 100%;
-      display: flex;
-      gap: 1vw;
+      height: calc(100vh - 8vw); 
+      background: #212121;
+      border-radius: 0.5vw;
+      box-shadow: 0 0.5vw 2vw rgba(0,0,0,0.5);
+      overflow-y: hidden; 
     }
 
-    .column {
-      flex: 1;
-    }
-
-    /* TABLE */
     table {
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
+      font-size: 2.2vw;
     }
 
-    th, td {
-      border: 1px solid #ffe599;
-      white-space: nowrap;
-      padding: 0.35vh 0.5vw;
+    /* 2. HEADER UNIFORMITY & SCALABILITY */
+    thead th {
+      background-color: #000;
+      color: #BC8B41;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 1.5vh 0.5vw; 
+      font-size: 1.8vw; 
+      border: none;
+      border-bottom: 0.4vh solid #BC8B41;
+    }
+
+    /* 3. ROW & CELL STYLING */
+    tbody tr {
+      background-color: #212121; 
+      transition: background-color 0.5s ease;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #2c2c2c;
+    }
+
+    tbody td {
+      vertical-align: middle;
+      padding: 1vh 0.5vw;
+      border-bottom: 1px solid #444; 
+    }
+
+    /* --- COLUMN WIDTHS (Optimized for 3 Columns) --- */
+    tbody td:nth-child(1), thead th:nth-child(1) {
+      width: 60%;
+      text-align: left;
+      padding-left: 1.5vw;
+    }
+    tbody td:nth-child(2), thead th:nth-child(2) {
+      width: 15%; 
+      text-align: center;
+    }
+    tbody td:nth-child(3), thead th:nth-child(3) {
+      width: 25%;
+      text-align: right;
+      padding-right: 1.5vw;
+    }
+
+    /* --- DATA VISUAL HIERARCHY --- */
+    .item-desc {
+      font-size: 1em;
+      font-weight: 600;
+      white-space: normal;
+      max-height: 4.4vw;
       overflow: hidden;
       text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
 
-    /* Remove internal borders */
-    td:nth-child(1), th:nth-child(1) { border-right: none; }
-    td:nth-child(2), th:nth-child(2) { border-left: none; border-right: none; }
-    td:nth-child(3), th:nth-child(3) { border-left: none; }
+    .leading-bid {
+      font-size: 1.2em;
+      font-weight: 900;
+      color: #4CAF50;
+    }
 
-    /* Header style */
-    th {
-      background: rgba(255, 229, 153, 0.25);
-      font-size: clamp(12px, 0.9vw, 16px);
+    .new-bid-status {
+      font-size: 0.7em;
+      font-weight: bold;
+      color: #FFC107;
       text-transform: uppercase;
-      color: #ffe8a3;
-      text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+      animation: pulse 1.5s infinite alternate;
     }
-
-    /* Column sizing */
-    td:nth-child(1), th:nth-child(1) {
-      width: 70%;
-      max-width: 0;
-      font-size: clamp(18px, 1.4vw, 30px);
+    
+    .new-bid-status.empty {
+        color: #444;
+        font-weight: normal;
+        animation: none;
     }
-
-    td:nth-child(2), th:nth-child(2) {
-      width: 8%;
-      text-align: center;
-      font-size: clamp(14px, 1vw, 20px);
+    
+    @keyframes pulse {
+        from { transform: scale(1); opacity: 1; }
+        to { transform: scale(1.05); opacity: 0.7; }
     }
-
-    td:nth-child(3), th:nth-child(3) {
-      width: 22%;
-      text-align: right;
-      font-size: clamp(18px, 1.4vw, 30px);
-      font-weight: bold;
-    }
-
-    /* NEW BID badge */
-    .newbid {
-      display: inline-block;
-      color: #000;
-      background: #ff4d4d;
-      padding: 0.1em 0.4em;
-      border-radius: 999px;
-      font-size: clamp(14px, 1vw, 20px);
-      font-weight: bold;
-      text-align: center;
-    }
-
-    @keyframes pulseNewBid {
-      0%,100% {
-        transform: scale(1);
-        box-shadow: 0 0 6px rgba(255, 77, 77, 0.7);
-      }
-      50% {
-        transform: scale(1.05);
-        box-shadow: 0 0 12px rgba(255, 77, 77, 1);
-      }
-    }
-
-    .newbid:not(:empty) {
-      animation: pulseNewBid 1.5s ease-in-out infinite;
-    }
-
-    /* FOOTER */
-    .footer-row {
-      width: 96vw;
-      margin: 4px auto 10px auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .footer-box {
-      background: #ffe599;
-      color: #000;
-      font-weight: bold;
-      padding: 6px 16px;
-      border-radius: 6px;
-      font-size: clamp(14px, 1vw, 18px);
-      letter-spacing: 0.08em;
-    }
-
-    .qr {
-      width: clamp(110px, 7vw, 180px);
-      margin-top: 6px;
-      background: #fff;
-      padding: 8px;
-      border-radius: 4px;
-    }
-
-    .footer-sponsors {
-      max-height: 14vh;
-      width: auto;
-      display: block;
-    }
-
   </style>
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <div class="title-bar">
-    <img src="Marymount Logo.png" class="header-logo">
-    <div class="title-text">The Starry Night Ball</div>
-    <img src="Marymount Logo.png" class="header-logo">
-    <div class="last-update" id="lastUpdate">Loading…</div>
+  <div class="qr-container">
+    <img id="qr-code-img" src="" alt="Scan to Place Bid">
+    <p>SCAN TO BID</p>
+  </div>
+  
+  <div class="button-section">
+    <div class="button-container">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform" class="custom-button" target="_blank">
+        <span class="emoji">📝</span> Place an Auction Bid
+      </a>
+      <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing" class="custom-button" target="_blank">
+        <span class="emoji">📜</span> View Auction Listings
+      </a>
+      <a href="https://www.idonate.ie/donate/fundraiser/MarymountBall2025" class="custom-button" target="_blank">
+        <span class="emoji">❤️</span> Donate Now
+      </a>
+    </div>
   </div>
 
-  <!-- MAIN BOARD -->
-  <div class="board">
-    <div class="board-inner">
-
-      <!-- LEFT TABLE -->
-      <div class="column">
-        <table>
-          <thead>
-            <tr>
-              <th>Item Description</th>
-              <th>New Bid</th>
-              <th>Leading Bid</th>
-            </tr>
-          </thead>
-          <tbody id="leftBody">
-            <tr><td colspan="3">Loading bids…</td></tr>
+  <div class="table-section">
+    <div class="table-heading">LEADING BIDS</div>
+    <div class="table-container">
+      <table id="bidsTable">
+        <thead>
+          <tr>
+            <th>Item Description</th>
+            <th>New Bid Status</th> 
+            <th>Leading Bid</th>
+          </tr>
+        </thead>
+        <tbody>
           </tbody>
-        </table>
-      </div>
-
-      <!-- RIGHT TABLE -->
-      <div class="column">
-        <table>
-          <thead>
-            <tr>
-              <th>Item Description</th>
-              <th>New Bid</th>
-              <th>Leading Bid</th>
-            </tr>
-          </thead>
-          <tbody id="rightBody">
-            <tr><td colspan="3">Loading bids…</td></tr>
-          </tbody>
-        </table>
-      </div>
-
+      </table>
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <div class="footer-row">
-
-    <div style="text-align:center">
-      <div class="footer-box">SCAN QR CODE TO BID</div>
-      <img src="2025 Marymount QR Code.jpeg" class="qr">
-    </div>
-
-    <img src="Marymount Footer Sponsors.png" class="footer-sponsors">
-
-    <div style="text-align:center">
-      <div class="footer-box">SCAN QR CODE TO BID</div>
-      <img src="2025 Marymount QR Code.jpeg" class="qr">
-    </div>
-
-  </div>
-
-  <!-- ======================= -->
-  <!--          JS             -->
-  <!-- ======================= -->
   <script>
-    const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
+    const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
-    const range     = 'U4:W39';
+    
+    // --- UPDATED RANGE TO U5:W39 ---
+    const range = 'U5:W39'; 
+    
+    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
-    const url =
-      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
-      `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
-
-    function formatEuro(v){
-      if(!v || isNaN(v)) return '€0';
-      return '€' + Number(v).toLocaleString('en-IE');
+    function formatEuro(value) {
+      if (!value || isNaN(value)) return '€0';
+      return '€' + Number(value).toLocaleString('en-IE', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     }
 
-    async function loadData(){
-      try{
-        const res  = await fetch(url, { cache: "no-store" });
+    function boldFirstSeven(text) {
+      if (!text || text.length < 7) return `<strong>${text}</strong>`;
+      return '<strong>' + text.substring(0,7) + '</strong>' + text.substring(7);
+    }
+    
+    // Function to dynamically update table headers based on the fetched data
+    function updateHeaders(headers) {
+        const thead = document.querySelector('#bidsTable thead tr');
+        thead.innerHTML = '';
+        headers.forEach(headerText => {
+            const th = document.createElement('th');
+            th.textContent = headerText;
+            thead.appendChild(th);
+        });
+    }
+
+    async function loadData() {
+      try {
+        const res = await fetch(url);
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
-
+        
+        // Map all rows
         const allRows = json.table.rows.map(r => r.c.map(c => c?.v || ''));
-        const rows = allRows.slice(1).filter(r => r[0]);
+        
+        // --- LOGIC CHANGE: Separate headers (first row) from data (rest) ---
+        const headers = allRows[0];
+        const dataRows = allRows.slice(1);
 
-        const mid = Math.ceil(rows.length/2);
-        const left  = rows.slice(0, mid);
-        const right = rows.slice(mid);
+        // Update the table headers using the first row of fetched data
+        updateHeaders(headers);
 
-        function build(list){
-          if (!list.length) {
-            return `<tr><td colspan="3">No items to display</td></tr>`;
-          }
-          return list.map(r => `
+        const tbody = document.querySelector('#bidsTable tbody');
+        let html = '';
+        
+        // Loop through the data rows only
+        dataRows.forEach(r => {
+          // r[0] is Item Description (Col U)
+          // r[1] is New Bid Status (Col V)
+          // r[2] is Leading Bid (Col W)
+          const fullItemDesc = r[0] || 'Item Description Missing'; 
+          const item = boldFirstSeven(fullItemDesc);
+          const newBidValue = r[1] || '';
+          const leadingBid = formatEuro(r[2]);
+
+          const newBidClass = newBidValue ? 'new-bid-status' : 'new-bid-status empty';
+
+          html += `
             <tr>
-              <td>${r[0]}</td>
-              <td class="newbid">${r[1] ? 'NEW BID!' : ''}</td>
-              <td>${formatEuro(r[2])}</td>
-            </tr>`).join('');
-        }
+              <td class="item-desc">${item}</td>
+              <td class="${newBidClass}">${newBidValue}</td>
+              <td class="leading-bid">${leadingBid}</td>
+            </tr>
+          `;
+        });
 
-        leftBody.innerHTML  = build(left);
-        rightBody.innerHTML = build(right);
+        tbody.innerHTML = html;
 
-        const now = new Date();
-        lastUpdate.textContent =
-          "Last update: " + now.toLocaleTimeString("en-IE",{hour12:false});
-      }
-      catch(e){
-        console.error(e);
-        lastUpdate.textContent = "Last update: ERROR – retrying…";
+      } catch (err) {
+        console.error('Failed to load sheet', err);
+        document.querySelector('#bidsTable tbody').innerHTML = '<tr><td colspan="3" class="item-desc" style="text-align:center; color: red;">ERROR: Failed to load data. Check internet connection.</td></tr>';
       }
     }
 
+    // Initial load
     loadData();
-    setInterval(loadData, 5000);
+    // Refresh every 10 seconds
+    setInterval(loadData, 10000);
   </script>
 
 </body>
