@@ -5,6 +5,9 @@
 <title>The Starry Night Ball – Leading Bids</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Google Font for Alisha -->
+<link href="https://fonts.googleapis.com/css2?family=Alisha&display=swap" rel="stylesheet">
+
 <style>
   body {
     margin: 0;
@@ -30,8 +33,8 @@
   .title-text {
     flex: 1;
     text-align: center;
+    font-family: 'Alisha', cursive;
     font-size: 3vw;
-    font-weight: bold;
     color: #ffe8a3;
     text-shadow: 0 0 8px rgba(0,0,0,0.9);
     letter-spacing: 0.05em;
@@ -40,9 +43,9 @@
   .last-update {
     min-width: 180px;
     text-align: right;
-    font-size: 1.2vw;
-    color: #fff;
-    text-shadow: 0 0 6px rgba(0,0,0,0.8);
+    font-size: 0.9vw;
+    color: #000;
+    font-weight: bold;
   }
 
   /* MAIN BOARD */
@@ -81,20 +84,20 @@
   }
 
   .item-desc {
-    width: 70%;
+    width: 60%;
+  }
+  .new-bid {
+    text-align: center;
+    width: 15%;
+    color: red;
+    font-weight: bold;
+    font-size: 0.9vw;
+    animation: pulse 1s infinite alternate;
   }
   .bid {
     text-align: right;
     font-weight: bold;
-    width: 30%;
-  }
-
-  .newbid {
-    color: red;
-    font-size: 0.9vw;
-    font-weight: bold;
-    margin-left: 8px;
-    animation: pulse 1s infinite alternate;
+    width: 25%;
   }
 
   @keyframes pulse {
@@ -118,10 +121,10 @@
     border-radius: 6px;
     font-size: 1.2vw;
     letter-spacing: 0.08em;
+    margin-bottom: 6px;
   }
   .qr {
     width: 150px;
-    margin-top: 6px;
     background: #fff;
     padding: 5px;
     border-radius: 4px;
@@ -147,14 +150,14 @@
 <div class="board">
   <table>
     <thead>
-      <tr><th>Item</th><th>Leading Bid</th></tr>
+      <tr><th>Item Description</th><th>New Bid</th><th>Leading Bid</th></tr>
     </thead>
     <tbody id="leftBody"></tbody>
   </table>
 
   <table>
     <thead>
-      <tr><th>Item</th><th>Leading Bid</th></tr>
+      <tr><th>Item Description</th><th>New Bid</th><th>Leading Bid</th></tr>
     </thead>
     <tbody id="rightBody"></tbody>
   </table>
@@ -164,7 +167,10 @@
 <div class="footer-row">
   <div style="text-align:center">
     <div class="footer-box">SCAN QR CODE TO BID</div>
-   rs.png
+    <img src="2025 Marymount QR Code.jpeg" class="qr">
+  </div>
+
+  <img src="Marymount Footer Sponsors.png" class="footer-sponsors">
 
   <div style="text-align:center">
     <div class="footer-box">SCAN QR CODE TO BID</div>
@@ -203,7 +209,8 @@ async function loadData(){
     function build(list, offset){
       return list.map((r, i) => `
         <tr>
-          <td class="item-desc">ITEM ${offset + i + 1} – ${r[0]} ${r[1] ? '<span class="newbid">NEW BID!</span>' : ''}</td>
+          <td class="item-desc">ITEM ${offset + i + 1} – ${r[0]}</td>
+          <td class="new-bid">${r[1] ? 'NEW BID!' : ''}</td>
           <td class="bid">${formatEuro(r[2])}</td>
         </tr>`).join('');
     }
