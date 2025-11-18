@@ -8,24 +8,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
 
   <style>
-    /* ---- TV SCREEN OPTIMIZED STYLES ---- */
+    /* ---- GLOBAL HIGH-CONTRAST TV STYLES ---- */
     html, body {
       margin: 0;
       padding: 0;
-      font-family: 'Roboto', sans-serif;
-      background-color: #121212; 
-      color: #E0E0E0; 
+      font-family: 'Roboto', Calibri, Arial, sans-serif;
+      background-color: #121212; /* Dark Gray Background */
+      color: #E0E0E0; /* Light Gray Text */
       height: 100vh;
-      overflow: hidden;
+      overflow: hidden; /* Prevent scrolling on TV */
     }
 
     * { box-sizing: border-box; }
 
+    /* BUTTON SECTION (Hidden for TV Display) */
     .button-section {
       display: none; 
     }
-
-    /* QR Code Container (Kept for external bidding link visibility) */
+    
+    /* QR Code Container (For Scanning the Bid Link) */
     .qr-container {
         position: absolute;
         top: 2vw;
@@ -51,18 +52,20 @@
         object-fit: contain;
     }
 
-    /* TABLE SECTION */
+    /* TABLE LAYOUT */
     .table-section {
-      height: 100vh; 
-      padding: 1vw 1.5vw;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      padding: 1vw 1.5vw;
+      width: 100%;
+      height: 100vh;
     }
-
+    
     .table-heading {
       font-size: 3.5vw;
       font-weight: 900;
-      color: #BC8B41; 
+      color: #BC8B41; /* Gold Accent */
       margin-bottom: 1.5vh;
       text-align: center;
       text-transform: uppercase;
@@ -74,30 +77,33 @@
       background: #212121;
       border-radius: 0.5vw;
       box-shadow: 0 0.5vw 2vw rgba(0,0,0,0.5);
-      overflow-y: hidden; 
+      overflow-y: hidden;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      /* Adjusted base font size for better density */
+      font-size: 1.8vw; 
       table-layout: fixed;
-      font-size: 2.2vw;
     }
 
-    /* 2. HEADER UNIFORMITY & SCALABILITY */
+    /* HEADER STYLES */
     thead th {
       background-color: #000;
       color: #BC8B41;
       font-weight: 700;
       text-transform: uppercase;
-      text-align: center;
       padding: 1.5vh 0.5vw; 
       font-size: 1.8vw; 
       border: none;
       border-bottom: 0.4vh solid #BC8B41;
+      text-align: left; /* Default left align */
     }
+    thead th:nth-child(2) { text-align: center; } /* Status column header center */
+    thead th:nth-child(3) { text-align: right; } /* Bid column header right align */
 
-    /* 3. ROW & CELL STYLING */
+    /* ROW STYLES */
     tbody tr {
       background-color: #212121; 
       transition: background-color 0.5s ease;
@@ -111,60 +117,58 @@
       padding: 1vh 0.5vw;
       border-bottom: 1px solid #444; 
     }
-
-    /* --- COLUMN WIDTHS (Optimized for 3 Columns) --- */
+    
+    /* --- COLUMN WIDTHS (FIXED FOR 2-COLUMN VISUAL LAYOUT) --- */
+    
+    /* 1. Item Description: Takes up most space (Left Aligned) */
     tbody td:nth-child(1), thead th:nth-child(1) {
-      width: 60%;
+      width: 75%; 
       text-align: left;
       padding-left: 1.5vw;
     }
+
+    /* 2. New Bid Status: SHRUNK TO ACT AS A SMALL SEPARATOR */
     tbody td:nth-child(2), thead th:nth-child(2) {
-      width: 15%; 
+      width: 1%; 
+      padding: 0;
+      font-size: 0;
       text-align: center;
     }
+
+    /* 3. Leading Bid: Pushed to the far right */
     tbody td:nth-child(3), thead th:nth-child(3) {
-      width: 25%;
+      width: 24%;
       text-align: right;
       padding-right: 1.5vw;
     }
 
     /* --- DATA VISUAL HIERARCHY --- */
+    
+    /* Item Description: Largest font - FIXES CLIPPING BY FORCING SINGLE LINE */
     .item-desc {
-      font-size: 1em;
-      font-weight: 600;
-      white-space: normal;
-      max-height: 4.4vw;
+      font-size: 1em; 
+      font-weight: 700; 
+      white-space: nowrap; /* **CRITICAL FIX: Force single line** */
+      max-height: auto; 
       overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+      text-overflow: ellipsis; 
+      display: block; 
     }
 
+    /* Leading Bid: Medium font, Boldest, Green */
     .leading-bid {
-      font-size: 1.2em;
+      font-size: 1.2em; 
       font-weight: 900;
       color: #4CAF50;
     }
 
+    /* New Bid: Status (Shrunk/Hidden) */
     .new-bid-status {
-      font-size: 0.7em;
-      font-weight: bold;
-      color: #FFC107;
-      text-transform: uppercase;
-      animation: pulse 1.5s infinite alternate;
-    }
-    
-    .new-bid-status.empty {
-        color: #444;
-        font-weight: normal;
+        font-size: 0.1em; 
+        color: transparent;
         animation: none;
     }
     
-    @keyframes pulse {
-        from { transform: scale(1); opacity: 1; }
-        to { transform: scale(1.05); opacity: 0.7; }
-    }
   </style>
 </head>
 
@@ -210,7 +214,7 @@
     const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
     
-    // --- UPDATED RANGE TO U5:W39 ---
+    // Sheet range U5:W39 includes headers
     const range = 'U5:W39'; 
     
     const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
@@ -221,11 +225,11 @@
     }
 
     function boldFirstSeven(text) {
+      // Bolds the first 7 characters, which typically covers the Item ID
       if (!text || text.length < 7) return `<strong>${text}</strong>`;
       return '<strong>' + text.substring(0,7) + '</strong>' + text.substring(7);
     }
     
-    // Function to dynamically update table headers based on the fetched data
     function updateHeaders(headers) {
         const thead = document.querySelector('#bidsTable thead tr');
         thead.innerHTML = '';
@@ -242,25 +246,22 @@
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
         
-        // Map all rows
         const allRows = json.table.rows.map(r => r.c.map(c => c?.v || ''));
         
-        // --- LOGIC CHANGE: Separate headers (first row) from data (rest) ---
+        // Data Handling: First row is headers, rest is data
         const headers = allRows[0];
         const dataRows = allRows.slice(1);
 
-        // Update the table headers using the first row of fetched data
         updateHeaders(headers);
 
         const tbody = document.querySelector('#bidsTable tbody');
         let html = '';
         
-        // Loop through the data rows only
         dataRows.forEach(r => {
-          // r[0] is Item Description (Col U)
-          // r[1] is New Bid Status (Col V)
-          // r[2] is Leading Bid (Col W)
-          const fullItemDesc = r[0] || 'Item Description Missing'; 
+          // r[0] = Item Description (Col U)
+          // r[1] = New Bid Status (Col V)
+          // r[2] = Leading Bid (Col W)
+          const fullItemDesc = r[0] || ''; 
           const item = boldFirstSeven(fullItemDesc);
           const newBidValue = r[1] || '';
           const leadingBid = formatEuro(r[2]);
@@ -280,13 +281,12 @@
 
       } catch (err) {
         console.error('Failed to load sheet', err);
-        document.querySelector('#bidsTable tbody').innerHTML = '<tr><td colspan="3" class="item-desc" style="text-align:center; color: red;">ERROR: Failed to load data. Check internet connection.</td></tr>';
+        document.querySelector('#bidsTable tbody').innerHTML = '<tr><td colspan="3" class="item-desc" style="text-align:center; color: red;">ERROR: Failed to load data. Check network settings.</td></tr>';
       }
     }
 
-    // Initial load
+    // Initial load and auto-refresh
     loadData();
-    // Refresh every 10 seconds
     setInterval(loadData, 10000);
   </script>
 
