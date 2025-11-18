@@ -41,11 +41,12 @@
     white-space: nowrap;
   }
   .last-update {
-    min-width: 180px;
+    min-width: 120px;
     text-align: right;
-    font-size: 0.9vw;
+    font-size: 0.8vw;
     color: #000;
     font-weight: bold;
+    line-height: 1.2;
   }
 
   /* MAIN BOARD */
@@ -70,11 +71,11 @@
 
   th {
     text-align: left;
-    font-size: 1vw;
+    font-size: 0.8vw;
     color: #ffe8a3;
     text-transform: uppercase;
     border-bottom: 2px solid #ffe599;
-    padding-bottom: 6px;
+    padding-bottom: 4px;
   }
 
   td {
@@ -92,17 +93,11 @@
     color: red;
     font-weight: bold;
     font-size: 0.9vw;
-    animation: pulse 1s infinite alternate;
   }
   .bid {
-    text-align: right;
+    text-align: center;
     font-weight: bold;
     width: 25%;
-  }
-
-  @keyframes pulse {
-    from { opacity: 0.5; }
-    to { opacity: 1; }
   }
 
   /* FOOTER */
@@ -112,26 +107,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-top: 2px solid #ffe599;
+    padding-top: 10px;
   }
   .footer-box {
-    background: #ffe599;
     color: #000;
     font-weight: bold;
-    padding: 6px 16px;
-    border-radius: 6px;
     font-size: 1.2vw;
-    letter-spacing: 0.08em;
     margin-bottom: 6px;
   }
   .qr {
-    width: 150px;
+    width: 160px;
     background: #fff;
     padding: 5px;
     border-radius: 4px;
   }
   .footer-sponsors {
     max-height: 14vh;
-    width: auto;
     display: block;
   }
 </style>
@@ -141,9 +133,9 @@
 <!-- HEADER -->
 <div class="title-bar">
   <img src="Marymount Logo.png" class="header-logo">
-  <div class="title-text">The Starry Night Ball</div>
+  <div class="title-text">The Starry Night Ball<br><span style="font-size:1.5vw; text-transform:uppercase;">Leading Bids</span></div>
   <img src="Marymount Logo.png" class="header-logo">
-  <div class="last-update" id="lastUpdate">Last update: --:--:--</div>
+  <div class="last-update" id="lastUpdate">Last update:<br>--:--:--</div>
 </div>
 
 <!-- MAIN BOARD -->
@@ -219,8 +211,8 @@ async function loadData(){
     rightBody.innerHTML = build(right, mid);
 
     const now = new Date();
-    lastUpdate.textContent =
-      "Last update: " + now.toLocaleTimeString("en-IE",{hour12:false});
+    lastUpdate.innerHTML =
+      "Last update:<br>" + now.toLocaleTimeString("en-IE",{hour12:false});
   }
   catch(e){ console.error(e); }
 }
