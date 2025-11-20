@@ -120,7 +120,7 @@
       table-layout: fixed;
     }
 
-    /* HEADER CELLS — UPDATED SO ALL HEADERS MATCH */
+    /* HEADER CELLS */
     thead th {
       background-color: #000;
       color: #bc8b41;
@@ -129,13 +129,10 @@
       text-align: center;
       border: 1px solid #ccc;
       padding: 0.25em 0.2em;
-      font-size: 0.58rem;  /* <-- unified header font size */
+      font-size: 0.58rem;
       line-height: 1.1;
       white-space: normal;
     }
-
-    /* Removed the smaller font override */
-    /* thead th:nth-child(2) { font-size: 0.3rem; } */
 
     /* TABLE BODY CELLS */
     tbody td {
@@ -147,7 +144,6 @@
       white-space: nowrap;
     }
 
-    /* Item Description — wider */
     tbody td:nth-child(1),
     thead th:nth-child(1) {
       width: 75%;
@@ -156,7 +152,6 @@
       text-align: left;
     }
 
-    /* New Bid — smaller, wraps */
     tbody td:nth-child(2),
     thead th:nth-child(2) {
       width: 45px;
@@ -166,7 +161,6 @@
       word-wrap: break-word;
     }
 
-    /* Leading Bid */
     tbody td:nth-child(3),
     thead th:nth-child(3) {
       width: 20%;
@@ -197,8 +191,11 @@
         <span class="emoji">📝</span> Place an Auction Bid
       </a>
 
-      <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing"
-         class="custom-button" target="_blank">
+      <!-- UPDATED BUTTON WITH GITHUB + GOOGLE DRIVE FALLBACK -->
+      <a href="#"
+         class="custom-button"
+         onclick="window.open('https://raw.githubusercontent.com/marymounthospiceauction/leadingbids/main/2025%20MARYMOUNT%20Starry%20Night%20Booklet.pdf') 
+         || window.open('https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing');">
         <span class="emoji">📜</span> View Auction Listings
       </a>
 
