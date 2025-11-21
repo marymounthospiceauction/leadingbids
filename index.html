@@ -192,10 +192,13 @@
         <span class="emoji">📝</span> Place an Auction Bid
       </a>
 
-      <!-- FIXED BUTTON (always opens in new tab, with fallback) -->
-      <button class="custom-button" onclick="openAuctionPDF()">
+      <!-- ✔ UPDATED BUTTON THAT ALWAYS OPENS PDF IN NEW TAB -->
+      <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/preview"
+         class="custom-button"
+         target="_blank"
+         rel="noopener">
         <span class="emoji">📜</span> View Auction Listings
-      </button>
+      </a>
 
       <a href="https://www.idonate.ie/donate/fundraiser/MarymountBall2025"
          class="custom-button" target="_blank">
@@ -224,17 +227,6 @@
   </div>
 
   <script>
-    /* PDF OPEN FUNCTION */
-    function openAuctionPDF() {
-      const primary = "https://raw.githubusercontent.com/marymounthospiceauction/leadingbids/main/2025%20MARYMOUNT%20Starry%20Night%20Booklet.pdf";
-      const fallback = "https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing";
-
-      const win = window.open(primary, "_blank");
-      if (!win) {
-        window.open(fallback, "_blank");
-      }
-    }
-
     /* GOOGLE SHEET LOADING */
     const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
