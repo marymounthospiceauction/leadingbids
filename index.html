@@ -66,6 +66,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       transition: background-color 0.3s ease;
       white-space: nowrap;
+      cursor: pointer;
     }
 
     .custom-button:hover {
@@ -191,13 +192,10 @@
         <span class="emoji">📝</span> Place an Auction Bid
       </a>
 
-      <!-- UPDATED BUTTON WITH GITHUB + GOOGLE DRIVE FALLBACK -->
-      <a href="#"
-         class="custom-button"
-         onclick="window.open('https://raw.githubusercontent.com/marymounthospiceauction/leadingbids/main/2025%20MARYMOUNT%20Starry%20Night%20Booklet.pdf') 
-         || window.open('https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing');">
+      <!-- FIXED BUTTON (always opens in new tab, with fallback) -->
+      <button class="custom-button" onclick="openAuctionPDF()">
         <span class="emoji">📜</span> View Auction Listings
-      </a>
+      </button>
 
       <a href="https://www.idonate.ie/donate/fundraiser/MarymountBall2025"
          class="custom-button" target="_blank">
@@ -226,6 +224,18 @@
   </div>
 
   <script>
+    /* PDF OPEN FUNCTION */
+    function openAuctionPDF() {
+      const primary = "https://raw.githubusercontent.com/marymounthospiceauction/leadingbids/main/2025%20MARYMOUNT%20Starry%20Night%20Booklet.pdf";
+      const fallback = "https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing";
+
+      const win = window.open(primary, "_blank");
+      if (!win) {
+        window.open(fallback, "_blank");
+      }
+    }
+
+    /* GOOGLE SHEET LOADING */
     const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
     const range = 'Q5:S42';
