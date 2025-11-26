@@ -21,6 +21,29 @@
 
     * { box-sizing: border-box; }
 
+    /* TOP BAR – AUCTION TOTAL */
+    .top-bar {
+      width: 100%;
+      padding: 10px 16px 0 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      color: #000;
+    }
+
+    .auction-total-label {
+      font-size: 0.9rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .auction-total-value {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-top: 2px;
+    }
+
     /* HEADER IMAGE */
     .header-image img {
       width: 100%;
@@ -146,6 +169,12 @@
 
 <body>
 
+  <!-- TOP BAR: AUCTION TOTAL -->
+  <div class="top-bar">
+    <div class="auction-total-label">AUCTION TOTAL</div>
+    <div class="auction-total-value" id="auctionTotal">€0</div>
+  </div>
+
   <!-- HEADER IMAGE -->
   <div class="header-image">
     <img src="Marymount Header.png"
@@ -219,9 +248,9 @@
       'NUMBER OF BIDS'
     ];
 
-    const hiddenSet  = new Set(hiddenColumns.map(h => h.toUpperCase().trim()));
+    const hiddenSet   = new Set(hiddenColumns.map(h => h.toUpperCase().trim()));
     const currencySet = new Set(currencyColumns.map(h => h.toUpperCase().trim()));
-    const centerSet = new Set(centerColumns.map(h => h.toUpperCase().trim()));
+    const centerSet   = new Set(centerColumns.map(h => h.toUpperCase().trim()));
 
     function formatEuro(value) {
       if (value === '' || value === null || value === undefined) return '';
@@ -239,15 +268,33 @@
       // If Google Sheets number date/time
       if (typeof value === 'number' && !isNaN(value)) {
         const date = new Date((value - 25569) * 86400 * 1000);
-        // Use local time HH:MM
         const hours = date.getHours().toString().padStart(2, '0');
         const mins  = date.getMinutes().toString().padStart(2, '0');
         return `${hours}:${mins}`;
       }
 
-      // If it's a string with a time inside
-      const match = value.match(/(\d{1,2}:\d{2})/);
-      return match ? match[1] : value;
+      const str = String(value);
+
+      // If gviz format: Date(2025,10,24,21,42,16)
+      const m = str.match(/^Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)$/);
+      if (m) {
+        const [, y, mo, d, h, mi, s] = m;
+        const date = new Date(
+          Number(y),
+          Number(mo),
+          Number(d),
+          Number(h),
+          Number(mi),
+          Number(s)
+        );
+        const hours = date.getHours().toString().padStart(2, '0');
+        const mins  = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${mins}`;
+      }
+
+      // If it's a string with a time inside (e.g. "2025-11-24 21:42:16")
+      const match = str.match(/(\d{1,2}:\d{2})/);
+      return match ? match[1] : str;
     }
 
     async function loadData() {
@@ -276,16 +323,37 @@
           label => (label || "").toUpperCase().trim() === 'STATUS'
         );
 
+        // CURRENT BID column index (for total)
+        const currentBidIndex = cols.findIndex(
+          label => (label || "").toUpperCase().trim() === 'CURRENT BID'
+        );
+
         // Build header
         let headerHTML = "<tr>";
         visibleIndexes.forEach(i => {
-          const label = cols[i] || "";
-          const colName = label.toUpperCase().trim();
-          const style = centerSet.has(colName) ? 'text-align:center;' : '';
-          headerHTML += `<th style="${style}">${label || "&nbsp;"}</th>`;
+          const label  = cols[i] || "";
+          const colKey = label.toUpperCase().trim();
+          const style  = centerSet.has(colKey) ? 'text-align:center;' : '';
+          headerHTML  += `<th style="${style}">${label || "&nbsp;"}</th>`;
         });
         headerHTML += "</tr>";
         thead.innerHTML = headerHTML;
+
+        // Calculate AUCTION TOTAL from CURRENT BID
+        let auctionTotal = 0;
+        if (currentBidIndex !== -1) {
+          rows.forEach(row => {
+            const raw = row[currentBidIndex];
+            if (raw !== '' && raw !== null && raw !== undefined) {
+              const num = Number(String(raw).replace(/[^\d.-]/g, ''));
+              if (!isNaN(num)) auctionTotal += num;
+            }
+          });
+        }
+        const auctionTotalEl = document.getElementById('auctionTotal');
+        if (auctionTotalEl) {
+          auctionTotalEl.textContent = formatEuro(auctionTotal);
+        }
 
         // Build body
         let bodyHTML = "";
@@ -293,16 +361,17 @@
           bodyHTML += "<tr>";
 
           visibleIndexes.forEach(i => {
-            let cell = row[i];
-            const colName = (cols[i] || "").toUpperCase().trim();
+            let cell    = row[i];
+            const label = cols[i] || "";
+            const colKey = label.toUpperCase().trim();
 
             // Currency formatting
-            if (currencySet.has(colName)) {
+            if (currencySet.has(colKey)) {
               cell = formatEuro(cell);
             }
 
             // BID TIME formatting
-            if (colName === 'BID TIME') {
+            if (colKey === 'BID TIME') {
               cell = formatTimeOnly(cell);
             }
 
@@ -316,7 +385,7 @@
             }
 
             // Alignment
-            const style = centerSet.has(colName) ? 'text-align:center;' : '';
+            const style = centerSet.has(colKey) ? 'text-align:center;' : '';
 
             bodyHTML += `<td class="${tdClass}" style="${style}">${cell ?? ''}</td>`;
           });
