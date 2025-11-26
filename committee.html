@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+
+  <!-- VIEWPORT — ZOOM ENABLED -->
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
+
   <title>Marymount Auction Leading Bids</title>
 
   <style>
@@ -70,6 +73,17 @@
       font-size: 1.2em;
     }
 
+    @media (max-width: 480px) {
+      .custom-button {
+        max-width: 90%;
+        font-size: 16px;
+        padding: 12px;
+      }
+      .button-container {
+        max-width: 90%;
+      }
+    }
+
     /* TABLE SECTION */
     .table-section {
       padding: 20px;
@@ -82,6 +96,7 @@
       font-weight: bold;
       text-align: center;
       margin-bottom: 10px;
+      color: #000;
     }
 
     .table-container {
@@ -133,7 +148,8 @@
 
   <!-- HEADER IMAGE -->
   <div class="header-image">
-    <img src="Marymount Header.png" alt="Marymount Auction Header">
+    <img src="Marymount Header.png"
+         alt="The Starry Night Ball in aid of Marymount University Hospital and Hospice">
   </div>
 
   <!-- BUTTON SECTION -->
@@ -146,7 +162,9 @@
       </a>
 
       <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing"
-         class="custom-button" target="_blank" rel="noopener">
+         class="custom-button"
+         target="_blank"
+         rel="noopener">
         <span class="emoji">📜</span> View Auction Listings
       </a>
 
@@ -183,7 +201,7 @@
     const hiddenColumns = ['LOW', 'HIGH', 'JOINT TOP BID'];
 
     // Columns to format as € with thousand separator, no decimals
-    // 👉 Make these match your EXACT header text in the sheet
+    // Make these match your EXACT header text
     const currencyColumns = [
       'CURRENT BID',
       'COMMITTEE BID',
@@ -193,17 +211,43 @@
       'VALUE'
     ];
 
-    const hiddenSet = new Set(hiddenColumns.map(h => h.toUpperCase().trim()));
+    // Columns to centre-align
+    const centerColumns = [
+      'CURRENT BID',
+      'STATUS',
+      'BID TIME',
+      'NUMBER OF BIDS'
+    ];
+
+    const hiddenSet  = new Set(hiddenColumns.map(h => h.toUpperCase().trim()));
     const currencySet = new Set(currencyColumns.map(h => h.toUpperCase().trim()));
+    const centerSet = new Set(centerColumns.map(h => h.toUpperCase().trim()));
 
     function formatEuro(value) {
       if (value === '' || value === null || value === undefined) return '';
       const num = Number(value.toString().replace(/[^\d.-]/g, ''));
-      if (isNaN(num)) return value; // if not numeric, leave as-is
+      if (isNaN(num)) return value;
       return '€' + num.toLocaleString('en-IE', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
       });
+    }
+
+    function formatTimeOnly(value) {
+      if (value === '' || value === null || value === undefined) return '';
+
+      // If Google Sheets number date/time
+      if (typeof value === 'number' && !isNaN(value)) {
+        const date = new Date((value - 25569) * 86400 * 1000);
+        // Use local time HH:MM
+        const hours = date.getHours().toString().padStart(2, '0');
+        const mins  = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${mins}`;
+      }
+
+      // If it's a string with a time inside
+      const match = value.match(/(\d{1,2}:\d{2})/);
+      return match ? match[1] : value;
     }
 
     async function loadData() {
@@ -221,27 +265,29 @@
         // Determine indexes of visible columns
         const visibleIndexes = [];
         cols.forEach((label, idx) => {
-          const upper = label.toUpperCase().trim();
+          const upper = (label || "").toUpperCase().trim();
           if (!hiddenSet.has(upper)) {
             visibleIndexes.push(idx);
           }
         });
 
-        // Find STATUS column index (if it exists)
+        // STATUS column index
         const statusIndex = cols.findIndex(
-          label => label.toUpperCase().trim() === 'STATUS'
+          label => (label || "").toUpperCase().trim() === 'STATUS'
         );
 
-        // Build table header
+        // Build header
         let headerHTML = "<tr>";
         visibleIndexes.forEach(i => {
           const label = cols[i] || "";
-          headerHTML += `<th>${label || "&nbsp;"}</th>`;
+          const colName = label.toUpperCase().trim();
+          const style = centerSet.has(colName) ? 'text-align:center;' : '';
+          headerHTML += `<th style="${style}">${label || "&nbsp;"}</th>`;
         });
         headerHTML += "</tr>";
         thead.innerHTML = headerHTML;
 
-        // Build table body
+        // Build body
         let bodyHTML = "";
         rows.forEach(row => {
           bodyHTML += "<tr>";
@@ -255,6 +301,11 @@
               cell = formatEuro(cell);
             }
 
+            // BID TIME formatting
+            if (colName === 'BID TIME') {
+              cell = formatTimeOnly(cell);
+            }
+
             // Status colouring
             let tdClass = "";
             if (i === statusIndex) {
@@ -264,7 +315,10 @@
               else if (v === 'ON TARGET') tdClass = 'status-on-target';
             }
 
-            bodyHTML += `<td class="${tdClass}">${cell}</td>`;
+            // Alignment
+            const style = centerSet.has(colName) ? 'text-align:center;' : '';
+
+            bodyHTML += `<td class="${tdClass}" style="${style}">${cell ?? ''}</td>`;
           });
 
           bodyHTML += "</tr>";
