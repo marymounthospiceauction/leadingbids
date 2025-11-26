@@ -18,6 +18,7 @@
 
     * { box-sizing: border-box; }
 
+    /* HEADER IMAGE */
     .header-image img {
       width: 100%;
       max-width: 600px;
@@ -26,6 +27,7 @@
       border-radius: 6px;
     }
 
+    /* BUTTON SECTION */
     .button-section {
       display: flex;
       justify-content: center;
@@ -68,6 +70,7 @@
       font-size: 1.2em;
     }
 
+    /* TABLE SECTION */
     .table-section {
       padding: 20px;
       width: 100%;
@@ -101,6 +104,7 @@
       border: 1px solid #ccc;
       font-size: 0.8rem;
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     tbody td {
@@ -109,15 +113,30 @@
       font-size: 0.8rem;
       white-space: nowrap;
     }
+
+    /* STATUS COLOURING */
+    .status-below {
+      background-color: #f8d7da; /* light red */
+    }
+
+    .status-above {
+      background-color: #d4edda; /* light green */
+    }
+
+    .status-on-target {
+      background-color: #fff3cd; /* light yellow */
+    }
   </style>
 </head>
 
 <body>
 
+  <!-- HEADER IMAGE -->
   <div class="header-image">
     <img src="Marymount Header.png" alt="Marymount Auction Header">
   </div>
 
+  <!-- BUTTON SECTION -->
   <div class="button-section">
     <div class="button-container">
 
@@ -127,7 +146,7 @@
       </a>
 
       <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing"
-         class="custom-button" target="_blank">
+         class="custom-button" target="_blank" rel="noopener">
         <span class="emoji">📜</span> View Auction Listings
       </a>
 
@@ -139,8 +158,9 @@
     </div>
   </div>
 
+  <!-- TABLE SECTION -->
   <div class="table-section">
-    <div class="table-heading">LIVE STATUS (A → L)</div>
+    <div class="table-heading">LIVE STATUS</div>
 
     <div class="table-container">
       <table id="bidsTable">
@@ -159,6 +179,33 @@
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
       `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
+    // Columns to hide by HEADER NAME
+    const hiddenColumns = ['LOW', 'HIGH', 'JOINT TOP BID'];
+
+    // Columns to format as € with thousand separator, no decimals
+    // 👉 Make these match your EXACT header text in the sheet
+    const currencyColumns = [
+      'CURRENT BID',
+      'COMMITTEE BID',
+      'PUBLIC BID',
+      'TARGET',
+      'RESERVE',
+      'VALUE'
+    ];
+
+    const hiddenSet = new Set(hiddenColumns.map(h => h.toUpperCase().trim()));
+    const currencySet = new Set(currencyColumns.map(h => h.toUpperCase().trim()));
+
+    function formatEuro(value) {
+      if (value === '' || value === null || value === undefined) return '';
+      const num = Number(value.toString().replace(/[^\d.-]/g, ''));
+      if (isNaN(num)) return value; // if not numeric, leave as-is
+      return '€' + num.toLocaleString('en-IE', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      });
+    }
+
     async function loadData() {
       try {
         const res = await fetch(url);
@@ -171,10 +218,25 @@
         const thead = document.querySelector("#bidsTable thead");
         const tbody = document.querySelector("#bidsTable tbody");
 
-        // Build table headers A–L
+        // Determine indexes of visible columns
+        const visibleIndexes = [];
+        cols.forEach((label, idx) => {
+          const upper = label.toUpperCase().trim();
+          if (!hiddenSet.has(upper)) {
+            visibleIndexes.push(idx);
+          }
+        });
+
+        // Find STATUS column index (if it exists)
+        const statusIndex = cols.findIndex(
+          label => label.toUpperCase().trim() === 'STATUS'
+        );
+
+        // Build table header
         let headerHTML = "<tr>";
-        cols.forEach(col => {
-          headerHTML += `<th>${col || "&nbsp;"}</th>`;
+        visibleIndexes.forEach(i => {
+          const label = cols[i] || "";
+          headerHTML += `<th>${label || "&nbsp;"}</th>`;
         });
         headerHTML += "</tr>";
         thead.innerHTML = headerHTML;
@@ -183,9 +245,28 @@
         let bodyHTML = "";
         rows.forEach(row => {
           bodyHTML += "<tr>";
-          row.forEach(cell => {
-            bodyHTML += `<td>${cell}</td>`;
+
+          visibleIndexes.forEach(i => {
+            let cell = row[i];
+            const colName = (cols[i] || "").toUpperCase().trim();
+
+            // Currency formatting
+            if (currencySet.has(colName)) {
+              cell = formatEuro(cell);
+            }
+
+            // Status colouring
+            let tdClass = "";
+            if (i === statusIndex) {
+              const v = String(row[i] || "").toUpperCase().trim();
+              if (v === 'BELOW') tdClass = 'status-below';
+              else if (v === 'ABOVE') tdClass = 'status-above';
+              else if (v === 'ON TARGET') tdClass = 'status-on-target';
+            }
+
+            bodyHTML += `<td class="${tdClass}">${cell}</td>`;
           });
+
           bodyHTML += "</tr>";
         });
 
