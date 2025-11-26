@@ -2,14 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-
-  <!-- VIEWPORT — ZOOM ENABLED -->
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
-
   <title>Marymount Auction Leading Bids</title>
 
   <style>
-    /* BASIC PAGE SETUP */
     html, body {
       margin: 0;
       padding: 0;
@@ -18,13 +14,10 @@
       min-height: 100%;
     }
 
-    body {
-      overflow-x: hidden;
-    }
+    body { overflow-x: auto; }
 
     * { box-sizing: border-box; }
 
-    /* HEADER IMAGE */
     .header-image img {
       width: 100%;
       max-width: 600px;
@@ -33,7 +26,6 @@
       border-radius: 6px;
     }
 
-    /* BUTTON SECTION */
     .button-section {
       display: flex;
       justify-content: center;
@@ -65,125 +57,67 @@
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       transition: background-color 0.3s ease;
-      white-space: nowrap;
       cursor: pointer;
+      white-space: nowrap;
     }
 
-    .custom-button:hover {
-      background-color: #a87d3a;
-    }
+    .custom-button:hover { background-color: #a87d3a; }
 
     .custom-button .emoji {
       margin-right: 8px;
       font-size: 1.2em;
     }
 
-    @media (max-width: 480px) {
-      .custom-button {
-        max-width: 90%;
-        font-size: 16px;
-        padding: 12px;
-      }
-      .button-container {
-        max-width: 90%;
-      }
-    }
-
-    /* TABLE SECTION */
     .table-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       padding: 20px;
       width: 100%;
+      overflow-x: auto;
     }
 
     .table-heading {
       font-size: 1.5em;
       font-weight: bold;
-      color: #000;
-      margin-bottom: 10px;
       text-align: center;
+      margin-bottom: 10px;
     }
 
     .table-container {
-      width: 98vw;
+      width: 100%;
       background: white;
       border-radius: 0.5rem;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      overflow: hidden;
+      overflow-x: auto;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: clamp(0.6rem, 1.6vw, 0.9rem);
-      table-layout: fixed;
     }
 
-    /* HEADER CELLS */
     thead th {
       background-color: #000;
       color: #bc8b41;
-      font-weight: 700;
-      text-transform: uppercase;
-      text-align: center;
+      padding: 6px;
       border: 1px solid #ccc;
-      padding: 0.25em 0.2em;
-      font-size: 0.58rem;
-      line-height: 1.1;
-      white-space: normal;
+      font-size: 0.8rem;
+      text-transform: uppercase;
     }
 
-    /* TABLE BODY CELLS */
     tbody td {
       border: 1px solid #ccc;
-      vertical-align: middle;
-      padding: 0.3em;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      padding: 6px;
+      font-size: 0.8rem;
       white-space: nowrap;
-    }
-
-    tbody td:nth-child(1),
-    thead th:nth-child(1) {
-      width: 75%;
-      white-space: normal;
-      word-wrap: break-word;
-      text-align: left;
-    }
-
-    tbody td:nth-child(2),
-    thead th:nth-child(2) {
-      width: 45px;
-      max-width: 45px;
-      text-align: center;
-      white-space: normal;
-      word-wrap: break-word;
-    }
-
-    tbody td:nth-child(3),
-    thead th:nth-child(3) {
-      width: 20%;
-      text-align: center;
-    }
-
-    .new-bid {
-      color: red;
-      font-weight: bold;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- HEADER IMAGE -->
   <div class="header-image">
-    <img src="Marymount Header.png"
-         alt="The Starry Night Ball in aid of Marymount University Hospital and Hospice">
+    <img src="Marymount Header.png" alt="Marymount Auction Header">
   </div>
 
-  <!-- BUTTON SECTION -->
   <div class="button-section">
     <div class="button-container">
 
@@ -192,11 +126,8 @@
         <span class="emoji">📝</span> Place an Auction Bid
       </a>
 
-      <!-- ✔ UPDATED BUTTON THAT ALWAYS OPENS PDF IN NEW TAB -->
-      <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/preview"
-         class="custom-button"
-         target="_blank"
-         rel="noopener">
+      <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing"
+         class="custom-button" target="_blank">
         <span class="emoji">📜</span> View Auction Listings
       </a>
 
@@ -208,71 +139,60 @@
     </div>
   </div>
 
-  <!-- TABLE SECTION -->
   <div class="table-section">
-    <div class="table-heading">LEADING BIDS FOR COMMITTEE</div>
+    <div class="table-heading">LIVE STATUS (A → L)</div>
 
     <div class="table-container">
       <table id="bidsTable">
-        <thead>
-          <tr>
-            <th>Item Description</th>
-            <th>New Bid</th>
-            <th>Leading Bid</th>
-          </tr>
-        </thead>
+        <thead></thead>
         <tbody></tbody>
       </table>
     </div>
   </div>
 
   <script>
-    /* GOOGLE SHEET LOADING */
-    const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
-    const sheetName = 'LEADING BIDS';
-    const range = 'Q5:S42';
+    const sheetID = '1DKnonV1mO-irLiJ4b9M62XYOMEf3LqRvJtEvopvjAp0';
+    const sheetName = 'LIVE STATUS';
+    const range = 'A5:L44';
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
       `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
-
-    function formatEuro(value) {
-      if (!value || isNaN(value)) return '€0';
-      return '€' + Number(value).toLocaleString('en-IE');
-    }
-
-    function boldFirstSeven(text) {
-      if (!text) return '';
-      return '<strong>' + text.substring(0, 7) + '</strong>' + text.substring(7);
-    }
 
     async function loadData() {
       try {
         const res = await fetch(url);
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = json.table.rows.map(r => r.c.map(c => c?.v || ''));
 
-        const tbody = document.querySelector('#bidsTable tbody');
-        let html = '';
+        const cols = json.table.cols.map(c => c.label || "");
+        const rows = json.table.rows.map(r => r.c.map(c => c?.v || ""));
 
-        rows.forEach(r => {
-          const item = boldFirstSeven(r[0]);
-          const newBid = r[1] || '';
-          const leadingBid = formatEuro(r[2]);
+        const thead = document.querySelector("#bidsTable thead");
+        const tbody = document.querySelector("#bidsTable tbody");
 
-          html += `
-            <tr>
-              <td>${item}</td>
-              <td class="new-bid">${newBid}</td>
-              <td>${leadingBid}</td>
-            </tr>`;
+        // Build table headers A–L
+        let headerHTML = "<tr>";
+        cols.forEach(col => {
+          headerHTML += `<th>${col || "&nbsp;"}</th>`;
+        });
+        headerHTML += "</tr>";
+        thead.innerHTML = headerHTML;
+
+        // Build table body
+        let bodyHTML = "";
+        rows.forEach(row => {
+          bodyHTML += "<tr>";
+          row.forEach(cell => {
+            bodyHTML += `<td>${cell}</td>`;
+          });
+          bodyHTML += "</tr>";
         });
 
-        tbody.innerHTML = html;
+        tbody.innerHTML = bodyHTML;
 
       } catch (err) {
-        console.error('Failed to load sheet', err);
+        console.error("Failed to load sheet", err);
       }
     }
 
