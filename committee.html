@@ -21,29 +21,6 @@
 
     * { box-sizing: border-box; }
 
-    /* TOP BAR – AUCTION TOTAL */
-    .top-bar {
-      width: 100%;
-      padding: 10px 16px 0 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      color: #000;
-    }
-
-    .auction-total-label {
-      font-size: 0.9rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .auction-total-value {
-      font-size: 1.4rem;
-      font-weight: bold;
-      margin-top: 2px;
-    }
-
     /* HEADER IMAGE */
     .header-image img {
       width: 100%;
@@ -152,6 +129,25 @@
       white-space: nowrap;
     }
 
+    /* AUCTION TOTAL POSITION (ABOVE TABLE, LEFT) */
+    .auction-total-wrapper {
+      margin-bottom: 8px;
+      text-align: left;
+    }
+
+    .auction-total-label {
+      font-size: 0.9rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .auction-total-value {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-top: 2px;
+    }
+
     /* STATUS COLOURING */
     .status-below {
       background-color: #f8d7da; /* light red */
@@ -168,12 +164,6 @@
 </head>
 
 <body>
-
-  <!-- TOP BAR: AUCTION TOTAL -->
-  <div class="top-bar">
-    <div class="auction-total-label">AUCTION TOTAL</div>
-    <div class="auction-total-value" id="auctionTotal">€0</div>
-  </div>
 
   <!-- HEADER IMAGE -->
   <div class="header-image">
@@ -207,6 +197,13 @@
 
   <!-- TABLE SECTION -->
   <div class="table-section">
+
+    <!-- AUCTION TOTAL JUST ABOVE TABLE, LEFT -->
+    <div class="auction-total-wrapper">
+      <div class="auction-total-label">AUCTION TOTAL</div>
+      <div class="auction-total-value" id="auctionTotal">€0</div>
+    </div>
+
     <div class="table-heading">LIVE STATUS</div>
 
     <div class="table-container">
@@ -230,7 +227,6 @@
     const hiddenColumns = ['LOW', 'HIGH', 'JOINT TOP BID'];
 
     // Columns to format as € with thousand separator, no decimals
-    // Make these match your EXACT header text
     const currencyColumns = [
       'CURRENT BID',
       'COMMITTEE BID',
@@ -310,7 +306,7 @@
         const tbody = document.querySelector("#bidsTable tbody");
 
         // Determine indexes of visible columns
-        const visibleIndexes = [];
+        let visibleIndexes = [];
         cols.forEach((label, idx) => {
           const upper = (label || "").toUpperCase().trim();
           if (!hiddenSet.has(upper)) {
@@ -327,6 +323,19 @@
         const currentBidIndex = cols.findIndex(
           label => (label || "").toUpperCase().trim() === 'CURRENT BID'
         );
+
+        // NUMBER OF BIDS index – move it to 4th visible column if present
+        const numberOfBidsIndex = cols.findIndex(
+          label => (label || "").toUpperCase().trim() === 'NUMBER OF BIDS'
+        );
+        if (numberOfBidsIndex !== -1) {
+          const currentPos = visibleIndexes.indexOf(numberOfBidsIndex);
+          if (currentPos > -1) {
+            visibleIndexes.splice(currentPos, 1); // remove
+            const newPos = Math.min(3, visibleIndexes.length); // 3 = 4th column (0-based)
+            visibleIndexes.splice(newPos, 0, numberOfBidsIndex);
+          }
+        }
 
         // Build header
         let headerHTML = "<tr>";
