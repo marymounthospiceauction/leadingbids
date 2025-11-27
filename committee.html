@@ -127,7 +127,7 @@
       margin-top: 2px;
     }
 
-    /* STATUS SUMMARY - tight layout */
+    /* STATUS SUMMARY */
     .status-summary-wrapper {
       min-width: 150px;
       font-size: 0.8rem;
@@ -139,7 +139,6 @@
       font-weight: bold;
       margin-bottom: 4px;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
     }
 
     .status-summary-row {
@@ -173,12 +172,10 @@
     .status-colour-on-target { background-color: #fff3cd; }
     .status-colour-above { background-color: #d4edda; }
 
-    /* STATUS COLOURING IN TABLE */
     .status-below { background-color: #f8d7da; }
     .status-on-target { background-color: #fff3cd; }
     .status-above { background-color: #d4edda; }
 
-    /* ITEM COLUMN WIDTH */
     .narrow-col {
       max-width: 150px;
       overflow: hidden;
@@ -194,12 +191,10 @@
 
 <body>
 
-  <!-- HEADER IMAGE -->
   <div class="header-image">
     <img src="LiveHeader.png" alt="Marymount Live Header">
   </div>
 
-  <!-- BUTTON -->
   <div class="button-section">
     <div class="button-container">
       <a class="custom-button" target="_blank"
@@ -209,10 +204,8 @@
     </div>
   </div>
 
-  <!-- TABLE SECTION -->
   <div class="table-section">
 
-    <!-- TOP SUMMARY -->
     <div class="summary-row">
       <div>
         <div class="auction-total-label">AUCTION TOTAL</div>
@@ -224,34 +217,29 @@
 
         <div class="status-summary-row">
           <div class="status-summary-label">
-            <span class="status-colour-box status-colour-below"></span>
-            BELOW
+            <span class="status-colour-box status-colour-below"></span> BELOW
           </div>
           <div class="status-summary-count" id="countBelow">0</div>
         </div>
 
         <div class="status-summary-row">
           <div class="status-summary-label">
-            <span class="status-colour-box status-colour-on-target"></span>
-            ON TARGET
+            <span class="status-colour-box status-colour-on-target"></span> ON TARGET
           </div>
           <div class="status-summary-count" id="countOnTarget">0</div>
         </div>
 
         <div class="status-summary-row">
           <div class="status-summary-label">
-            <span class="status-colour-box status-colour-above"></span>
-            ABOVE
+            <span class="status-colour-box status-colour-above"></span> ABOVE
           </div>
           <div class="status-summary-count" id="countAbove">0</div>
         </div>
       </div>
     </div>
 
-    <!-- HEADING -->
     <div class="table-heading">COMMITTEE VIEW</div>
 
-    <!-- TABLE -->
     <div class="table-container">
       <table id="bidsTable">
         <thead></thead>
@@ -276,7 +264,7 @@
       'TABLE NUMBER/NAME'
     ];
 
-    // Currency-formatted columns (incl. LOW & HIGH)
+    // Columns with € formatting
     const currencyColumns = [
       'LOW',
       'HIGH',
@@ -372,7 +360,6 @@
         let label = cols[i] || "";
         const key = label.toUpperCase().trim();
 
-        // Rename a few columns for display
         if (key === "LOW") label = "LOW TARGET";
         if (key === "HIGH") label = "HIGH TARGET";
         if (key === "CURRENT BID") label = "LEADING BID";
@@ -429,7 +416,15 @@
             else if (v === "ON TARGET") tdClass = "status-on-target";
           }
 
-          const style = centerSet.has(key) ? "text-align:center;" : "";
+          /* ⭐ MAKE LEADING BID VALUES BOLD */
+          let extraStyle = "";
+          if (key === "CURRENT BID") {
+            extraStyle = "font-weight:bold;";
+          }
+
+          const alignStyle = centerSet.has(key) ? "text-align:center;" : "";
+          const style = alignStyle + extraStyle;
+
           const clsParts = [];
           if (tdClass) clsParts.push(tdClass);
           if (narrowSet.has(key)) clsParts.push("narrow-col");
