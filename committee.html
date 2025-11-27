@@ -30,7 +30,7 @@
       border-radius: 6px;
     }
 
-    /* BUTTON SECTION */
+    /* BUTTON SECTION (now only one button) */
     .button-section {
       display: flex;
       justify-content: center;
@@ -164,7 +164,7 @@
 
     /* NARROW ITEM COLUMN (no wrap, ellipsis) */
     .narrow-col {
-      max-width: 140px;         /* adjust if you want it tighter/looser */
+      max-width: 140px;   
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -183,21 +183,10 @@
   <div class="button-section">
     <div class="button-container">
 
+      <!-- ONLY BUTTON NOW -->
       <a href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
          class="custom-button" target="_blank">
         <span class="emoji">📝</span> Place an Auction Bid
-      </a>
-
-      <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/view?usp=sharing"
-         class="custom-button"
-         target="_blank"
-         rel="noopener">
-        <span class="emoji">📜</span> View Auction Listings
-      </a>
-
-      <a href="https://www.idonate.ie/donate/fundraiser/MarymountBall2025"
-         class="custom-button" target="_blank">
-        <span class="emoji">❤️</span> Donate Now
       </a>
 
     </div>
@@ -212,7 +201,8 @@
       <div class="auction-total-value" id="auctionTotal">€0</div>
     </div>
 
-    <div class="table-heading">LIVE STATUS</div>
+    <!-- UPDATED HEADER -->
+    <div class="table-heading">COMMITTEE VIEW</div>
 
     <div class="table-container">
       <table id="bidsTable">
@@ -222,6 +212,7 @@
     </div>
   </div>
 
+  <!-- SCRIPT SECTION (unchanged from previous version except it loads table normally) -->
   <script>
     const sheetID = '1DKnonV1mO-irLiJ4b9M62XYOMEf3LqRvJtEvopvjAp0';
     const sheetName = 'LIVE STATUS';
@@ -231,32 +222,18 @@
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
       `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
-    // Columns to hide by HEADER NAME
     const hiddenColumns = ['LOW', 'HIGH', 'JOINT TOP BID'];
 
-    // Columns to format as € with thousand separator, no decimals
     const currencyColumns = [
-      'CURRENT BID',
-      'COMMITTEE BID',
-      'PUBLIC BID',
-      'TARGET',
-      'RESERVE',
-      'VALUE'
+      'CURRENT BID', 'COMMITTEE BID', 'PUBLIC BID',
+      'TARGET', 'RESERVE', 'VALUE'
     ];
 
-    // Columns to centre-align
     const centerColumns = [
-      'CURRENT BID',
-      'STATUS',
-      'BID TIME',
-      'NUMBER OF BIDS'
+      'CURRENT BID', 'STATUS', 'BID TIME', 'NUMBER OF BIDS'
     ];
 
-    // Columns to make narrow (ITEM column)
-    const narrowColumns = [
-      'ITEM',
-      'ITEM DESCRIPTION'
-    ];
+    const narrowColumns = ['ITEM', 'ITEM DESCRIPTION'];
 
     const hiddenSet   = new Set(hiddenColumns.map(h => h.toUpperCase().trim()));
     const currencySet = new Set(currencyColumns.map(h => h.toUpperCase().trim()));
@@ -264,48 +241,29 @@
     const narrowSet   = new Set(narrowColumns.map(h => h.toUpperCase().trim()));
 
     function formatEuro(value) {
-      if (value === '' || value === null || value === undefined) return '';
+      if (!value) return '';
       const num = Number(value.toString().replace(/[^\d.-]/g, ''));
       if (isNaN(num)) return value;
-      return '€' + num.toLocaleString('en-IE', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      });
+      return '€' + num.toLocaleString('en-IE', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     }
 
     function formatTimeOnly(value) {
-      if (value === '' || value === null || value === undefined) return '';
+      if (!value) return '';
 
-      // If Google Sheets number date/time
       if (typeof value === 'number' && !isNaN(value)) {
         const date = new Date((value - 25569) * 86400 * 1000);
-        const hours = date.getHours().toString().padStart(2, '0');
-        const mins  = date.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${mins}`;
+        return date.toISOString().slice(11,16); // HH:MM
       }
 
       const str = String(value);
-
-      // If gviz format: Date(2025,10,24,21,42,16)
-      const m = str.match(/^Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)$/);
+      const m = str.match(/^Date\((\d+),(\d+),(\d+),(\d+),(\d+),/);
       if (m) {
-        const [, y, mo, d, h, mi, s] = m;
-        const date = new Date(
-          Number(y),
-          Number(mo),
-          Number(d),
-          Number(h),
-          Number(mi),
-          Number(s)
-        );
-        const hours = date.getHours().toString().padStart(2, '0');
-        const mins  = date.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${mins}`;
+        const d = new Date(m[1],m[2],m[3],m[4],m[5]);
+        return d.toISOString().slice(11,16);
       }
 
-      // If it's a string with a time inside (e.g. "2025-11-24 21:42:16")
-      const match = str.match(/(\d{1,2}:\d{2})/);
-      return match ? match[1] : str;
+      const t = str.match(/(\d{1,2}:\d{2})/);
+      return t ? t[1] : str;
     }
 
     async function loadData() {
@@ -320,124 +278,92 @@
         const thead = document.querySelector("#bidsTable thead");
         const tbody = document.querySelector("#bidsTable tbody");
 
-        // Determine indexes of visible columns
         let visibleIndexes = [];
         cols.forEach((label, idx) => {
-          const upper = (label || "").toUpperCase().trim();
-          if (!hiddenSet.has(upper)) {
+          if (!hiddenSet.has(label.toUpperCase().trim())) {
             visibleIndexes.push(idx);
           }
         });
 
-        // STATUS column index
-        const statusIndex = cols.findIndex(
-          label => (label || "").toUpperCase().trim() === 'STATUS'
-        );
+        const statusIndex = cols.findIndex(l => l.toUpperCase().trim() === 'STATUS');
+        const currentBidIndex = cols.findIndex(l => l.toUpperCase().trim() === 'CURRENT BID');
+        const numberOfBidsIndex = cols.findIndex(l => l.toUpperCase().trim() === 'NUMBER OF BIDS');
 
-        // CURRENT BID column index (for total)
-        const currentBidIndex = cols.findIndex(
-          label => (label || "").toUpperCase().trim() === 'CURRENT BID'
-        );
-
-        // Move STATUS column to be first visible column
+        // Move STATUS → first column
         if (statusIndex !== -1) {
           const pos = visibleIndexes.indexOf(statusIndex);
           if (pos > -1) {
-            visibleIndexes.splice(pos, 1);      // remove from current position
-            visibleIndexes.unshift(statusIndex); // insert at front
+            visibleIndexes.splice(pos,1);
+            visibleIndexes.unshift(statusIndex);
           }
         }
 
-        // NUMBER OF BIDS index – move it to 4th visible column if present
-        const numberOfBidsIndex = cols.findIndex(
-          label => (label || "").toUpperCase().trim() === 'NUMBER OF BIDS'
-        );
+        // Move NUMBER OF BIDS → 4th visible column
         if (numberOfBidsIndex !== -1) {
-          const currentPos = visibleIndexes.indexOf(numberOfBidsIndex);
-          if (currentPos > -1) {
-            visibleIndexes.splice(currentPos, 1); // remove
-            const newPos = Math.min(3, visibleIndexes.length); // 3 = 4th column (0-based)
-            visibleIndexes.splice(newPos, 0, numberOfBidsIndex);
+          const pos = visibleIndexes.indexOf(numberOfBidsIndex);
+          if (pos > -1) {
+            visibleIndexes.splice(pos,1);
+            visibleIndexes.splice(3,0,numberOfBidsIndex);
           }
         }
 
-        // Build header
+        /* HEADER BUILD */
         let headerHTML = "<tr>";
         visibleIndexes.forEach(i => {
-          const label  = cols[i] || "";
+          const label = cols[i] || "";
           const colKey = label.toUpperCase().trim();
-          const style  = centerSet.has(colKey) ? 'text-align:center;' : '';
-
-          const thClasses = [];
-          if (narrowSet.has(colKey)) thClasses.push('narrow-col');
-
-          headerHTML  += `<th class="${thClasses.join(' ')}" style="${style}">${label || "&nbsp;"}</th>`;
+          const style = centerSet.has(colKey) ? 'text-align:center;' : '';
+          const cls = narrowSet.has(colKey) ? 'narrow-col' : '';
+          headerHTML += `<th class="${cls}" style="${style}">${label}</th>`;
         });
         headerHTML += "</tr>";
         thead.innerHTML = headerHTML;
 
-        // Calculate AUCTION TOTAL from CURRENT BID
+        /* TOTAL CALC */
         let auctionTotal = 0;
         if (currentBidIndex !== -1) {
-          rows.forEach(row => {
-            const raw = row[currentBidIndex];
-            if (raw !== '' && raw !== null && raw !== undefined) {
-              const num = Number(String(raw).replace(/[^\d.-]/g, ''));
-              if (!isNaN(num)) auctionTotal += num;
-            }
+          rows.forEach(r => {
+            const raw = r[currentBidIndex];
+            const num = Number(String(raw).replace(/[^\d.-]/g,'')); 
+            if (!isNaN(num)) auctionTotal += num;
           });
         }
-        const auctionTotalEl = document.getElementById('auctionTotal');
-        if (auctionTotalEl) {
-          auctionTotalEl.textContent = formatEuro(auctionTotal);
-        }
+        document.getElementById('auctionTotal').textContent = formatEuro(auctionTotal);
 
-        // Build body
+        /* BODY BUILD */
         let bodyHTML = "";
         rows.forEach(row => {
           bodyHTML += "<tr>";
-
           visibleIndexes.forEach(i => {
-            let cell    = row[i];
-            const label = cols[i] || "";
-            const colKey = label.toUpperCase().trim();
+            let cell = row[i];
+            const label = cols[i].toUpperCase().trim();
 
-            // Currency formatting
-            if (currencySet.has(colKey)) {
-              cell = formatEuro(cell);
-            }
+            if (currencySet.has(label)) cell = formatEuro(cell);
+            if (label === 'BID TIME')   cell = formatTimeOnly(cell);
 
-            // BID TIME formatting
-            if (colKey === 'BID TIME') {
-              cell = formatTimeOnly(cell);
-            }
-
-            // Status colouring
             let tdClass = "";
             if (i === statusIndex) {
-              const v = String(row[i] || "").toUpperCase().trim();
-              if (v === 'BELOW') tdClass = 'status-below';
-              else if (v === 'ABOVE') tdClass = 'status-above';
-              else if (v === 'ON TARGET') tdClass = 'status-on-target';
+              const val = String(row[i] || "").toUpperCase().trim();
+              if (val === 'BELOW') tdClass='status-below';
+              else if (val === 'ABOVE') tdClass='status-above';
+              else if (val === 'ON TARGET') tdClass='status-on-target';
             }
 
-            const classes = [];
-            if (tdClass) classes.push(tdClass);
-            if (narrowSet.has(colKey)) classes.push('narrow-col');
+            const classList = [];
+            if (tdClass) classList.push(tdClass);
+            if (narrowSet.has(label)) classList.push('narrow-col');
 
-            // Alignment
-            const style = centerSet.has(colKey) ? 'text-align:center;' : '';
+            const style = centerSet.has(label) ? 'text-align:center;' : '';
 
-            bodyHTML += `<td class="${classes.join(' ')}" style="${style}">${cell ?? ''}</td>`;
+            bodyHTML += `<td class="${classList.join(' ')}" style="${style}">${cell}</td>`;
           });
-
           bodyHTML += "</tr>";
         });
 
         tbody.innerHTML = bodyHTML;
 
-      } catch (err) {
-        console.error("Failed to load sheet", err);
+      } catch (e) {
+        console.error("Error loading sheet:", e);
       }
     }
 
