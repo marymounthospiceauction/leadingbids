@@ -155,22 +155,8 @@
 
     tbody td:nth-child(2),
     thead th:nth-child(2) {
-      width: 45px;
-      max-width: 45px;
+      width: 25%;
       text-align: center;
-      white-space: normal;
-      word-wrap: break-word;
-    }
-
-    tbody td:nth-child(3),
-    thead th:nth-child(3) {
-      width: 20%;
-      text-align: center;
-    }
-
-    .new-bid {
-      color: red;
-      font-weight: bold;
     }
   </style>
 </head>
@@ -192,7 +178,7 @@
         <span class="emoji">📝</span> Place an Auction Bid
       </a>
 
-      <!-- ✔ UPDATED BUTTON THAT ALWAYS OPENS PDF IN NEW TAB -->
+      <!-- BUTTON THAT OPENS PDF IN NEW TAB -->
       <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/preview"
          class="custom-button"
          target="_blank"
@@ -217,7 +203,6 @@
         <thead>
           <tr>
             <th>Item Description</th>
-            <th>New Bid</th>
             <th>Leading Bid</th>
           </tr>
         </thead>
@@ -230,7 +215,7 @@
     /* GOOGLE SHEET LOADING */
     const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
-    const range = 'U5:W44';
+    const range = 'U5:V41';
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
@@ -257,14 +242,12 @@
         let html = '';
 
         rows.forEach(r => {
-          const item = boldFirstSeven(r[0]);
-          const newBid = r[1] || '';
-          const leadingBid = formatEuro(r[2]);
+          const item = boldFirstSeven(r[0]);    // Col U
+          const leadingBid = formatEuro(r[1]);  // Col V
 
           html += `
             <tr>
               <td>${item}</td>
-              <td class="new-bid">${newBid}</td>
               <td>${leadingBid}</td>
             </tr>`;
         });
@@ -282,5 +265,3 @@
 
 </body>
 </html>
-
-
