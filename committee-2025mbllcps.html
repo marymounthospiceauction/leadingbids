@@ -92,7 +92,7 @@
 
     #protectedContent { display: none; }
 
-    /* ===== HEADER ===== */
+    /* ===== HEADER IMAGE ===== */
     .header-image img {
       width: 100%;
       max-width: 600px;
@@ -120,7 +120,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
-    /* ===== SUMMARY SECTION ===== */
+    /* ===== SUMMARY BAR ===== */
     .summary-row {
       display: flex;
       justify-content: space-between;
@@ -255,7 +255,7 @@
   <div id="protectedContent">
 
     <div class="header-image">
-      <img src="LiveHeader.png">
+      <img src="LiveHeader.png" alt="Marymount Header">
     </div>
 
     <div class="button-section">
@@ -323,35 +323,33 @@
     const sheetName = "LIVE STATUS";
     const range = "A5:L44";
 
-    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}&range=${range}`;
+    const url =
+      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
-    /* Hidden Columns */
     const hiddenColumns = [
-      "EMAIL ADDRESS", "CONTACT NUMBER", "TABLE NUMBER/NAME",
-      "BID TIME"
-    ];
+      "EMAIL ADDRESS", "CONTACT NUMBER", "TABLE NUMBER/NAME", "BID TIME"
+    ].map(h => h.toUpperCase().trim());
 
-    /* Currency Columns */
     const currencyColumns = [
       "LOW", "HIGH", "CURRENT BID", "COMMITTEE BID", "PUBLIC BID",
       "TARGET", "RESERVE", "VALUE"
-    ];
+    ].map(h => h.toUpperCase().trim());
 
-    /* Center-aligned Columns – UPDATED */
     const centerColumns = [
-      "LOW TARGET",               // LOW TARGET (centered)
-      "HIGH",              // HIGH TARGET (centered)
-      "JOINT TOP BID", // NEW: centre-aligned
+      "LOW",
+      "HIGH",
+      "JOINT HIGHEST BID",
       "CURRENT BID",
       "STATUS",
       "NUMBER OF BIDS"
-    ];
+    ].map(h => h.toUpperCase().trim());
 
-    const narrowColumns = ["ITEM", "ITEM DESCRIPTION"];
+    const narrowColumns = ["ITEM", "ITEM DESCRIPTION"].map(h => h.toUpperCase().trim());
 
+    const hiddenSet  = new Set(hiddenColumns);
     const currencySet = new Set(currencyColumns);
-    const centerSet = new Set(centerColumns);
-    const narrowSet = new Set(narrowColumns);
+    const centerSet   = new Set(centerColumns);
+    const narrowSet   = new Set(narrowColumns);
 
     function formatEuro(v) {
       if (!v) return "";
@@ -374,12 +372,13 @@
       /* Determine visible columns */
       let visible = [];
       cols.forEach((lbl, i) => {
-        if (!hiddenColumns.includes(lbl.toUpperCase())) visible.push(i);
+        const key = (lbl || "").toUpperCase().trim();
+        if (!hiddenSet.has(key)) visible.push(i);
       });
 
-      const statusIndex = cols.findIndex(c => c.toUpperCase() === "STATUS");
-      const bidIndex = cols.findIndex(c => c.toUpperCase() === "CURRENT BID");
-      const bidsIndex = cols.findIndex(c => c.toUpperCase() === "NUMBER OF BIDS");
+      const statusIndex = cols.findIndex(c => (c || "").toUpperCase().trim() === "STATUS");
+      const bidIndex    = cols.findIndex(c => (c || "").toUpperCase().trim() === "CURRENT BID");
+      const bidsIndex   = cols.findIndex(c => (c || "").toUpperCase().trim() === "NUMBER OF BIDS");
 
       /* STATUS first */
       if (statusIndex > -1) {
@@ -387,7 +386,7 @@
         visible.unshift(statusIndex);
       }
 
-      /* BIDS moves to column #4 */
+      /* BIDS as 4th column */
       if (bidsIndex > -1) {
         visible = visible.filter(v => v !== bidsIndex);
         visible.splice(3, 0, bidsIndex);
@@ -396,17 +395,20 @@
       /* ===== HEADER ===== */
       let h = "<tr>";
       visible.forEach(i => {
-        let label = cols[i];
-        const key = label.toUpperCase();
+        const rawLabel = cols[i] || "";
+        const key = rawLabel.toUpperCase().trim();
+        let label = rawLabel;
 
-        if (key.includes("LOW")) label = "LOW TARGET";
+        if (key.includes("LOW"))  label = "LOW TARGET";
         if (key.includes("HIGH")) label = "HIGH TARGET";
-        if (key === "CURRENT BID") label = "LEADING BID";
-        if (key === "NUMBER OF BIDS") label = "BIDS";
-        if (key === "NAME") label = "WINNER NAME";
+        if (key === "CURRENT BID")     label = "LEADING BID";
+        if (key === "NUMBER OF BIDS")  label = "BIDS";
+        if (key === "NAME")            label = "WINNER NAME";
 
-        const cls = narrowSet.has(key) ? "narrow-col" : "";
-        const style = centerSet.has(key) ? "text-align:center;" : "";
+        const cls   = narrowSet.has(key) ? "narrow-col" : "";
+        const style = centerSet.has(key) || key.includes("LOW") || key.includes("HIGH")
+          ? "text-align:center;"
+          : "";
 
         h += `<th class="${cls}" style="${style}">${label}</th>`;
       });
@@ -418,17 +420,21 @@
       let counts = { BELOW: 0, "ON TARGET": 0, ABOVE: 0 };
 
       rows.forEach(r => {
-        const v = Number(String(r[bidIndex]).replace(/[^\d.-]/g, ""));
-        if (!isNaN(v)) total += v;
+        if (bidIndex > -1) {
+          const n = Number(String(r[bidIndex]).replace(/[^\d.-]/g, ""));
+          if (!isNaN(n)) total += n;
+        }
 
-        const s = String(r[statusIndex]).toUpperCase();
-        if (counts[s] !== undefined) counts[s]++;
+        if (statusIndex > -1) {
+          const s = String(r[statusIndex] || "").toUpperCase().trim();
+          if (counts[s] !== undefined) counts[s]++;
+        }
       });
 
       document.getElementById("auctionTotal").textContent = formatEuro(total);
-      document.getElementById("countBelow").textContent = counts["BELOW"];
+      document.getElementById("countBelow").textContent   = counts["BELOW"];
       document.getElementById("countOnTarget").textContent = counts["ON TARGET"];
-      document.getElementById("countAbove").textContent = counts["ABOVE"];
+      document.getElementById("countAbove").textContent   = counts["ABOVE"];
 
       /* ===== BODY ===== */
       let bodyHTML = "";
@@ -437,34 +443,42 @@
         bodyHTML += "<tr>";
 
         visible.forEach(i => {
-          const key = cols[i].toUpperCase();
+          const rawLabel = cols[i] || "";
+          const key = rawLabel.toUpperCase().trim();
           let v = row[i];
 
-          if (currencySet.has(key) || key.includes("LOW") || key.includes("HIGH"))
+          if (currencySet.has(key) || key.includes("LOW") || key.includes("HIGH")) {
             v = formatEuro(v);
-
-          let cls = "";
-
-          if (key === "STATUS") {
-            const s = String(v).toUpperCase();
-            if (s === "BELOW") cls = "status-below";
-            if (s === "ON TARGET") cls = "status-on-target";
-            if (s === "ABOVE") cls = "status-above";
           }
 
-          if (key.includes("LOW") || key.includes("HIGH"))
-            cls += " lowhigh-bg";
+          let classes = [];
 
-          if (narrowSet.has(key))
-            cls += " narrow-col";
+          if (i === statusIndex) {
+            const s = String(row[i] || "").toUpperCase().trim();
+            if (s === "BELOW")      classes.push("status-below");
+            else if (s === "ABOVE") classes.push("status-above");
+            else if (s === "ON TARGET") classes.push("status-on-target");
+          }
+
+          if (key.includes("LOW") || key.includes("HIGH")) {
+            classes.push("lowhigh-bg");
+          }
+
+          if (narrowSet.has(key)) {
+            classes.push("narrow-col");
+          }
 
           let style = "";
-          if (centerSet.has(key))
-            style += "text-align:center;";
-          if (key === "CURRENT BID")
-            style += "font-weight:bold;";
 
-          bodyHTML += `<td class="${cls}" style="${style}">${v ?? ""}</td>`;
+          // Centre any columns in centerSet + LOW/HIGH columns explicitly
+          if (centerSet.has(key) || key.includes("LOW") || key.includes("HIGH")) {
+            style += "text-align:center;";
+          }
+          if (key === "CURRENT BID") {
+            style += "font-weight:bold;";
+          }
+
+          bodyHTML += `<td class="${classes.join(" ")}" style="${style}">${v ?? ""}</td>`;
         });
 
         bodyHTML += "</tr>";
@@ -481,5 +495,3 @@
 
 </body>
 </html>
-
-
