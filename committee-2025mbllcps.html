@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
   <title>Marymount Auction – Committee View</title>
 
   <style>
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       font-family: Calibri, Arial, sans-serif;
@@ -14,8 +16,13 @@
       min-height: 100%;
     }
 
-    body { overflow-x: auto; }
-    * { box-sizing: border-box; }
+    body {
+      overflow-x: auto;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
 
     /* ===== LOGIN SCREEN ===== */
     #loginScreen {
@@ -24,103 +31,88 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(circle at top, #2c325a 0%, #15182e 45%, #040510 100%);
-      color: #ffe9a9;
+
+      /* ⭐ Updated to match your theme */
+      background: linear-gradient(135deg, #e6d4ad 0%, #f5e7c3 55%, #e6d4ad 100%);
+
       z-index: 9999;
+      color: #000;
     }
 
     .login-card {
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(255, 255, 255, 0.85);
       border-radius: 16px;
-      padding: 24px 26px 22px;
+      padding: 26px 28px;
       width: 90%;
       max-width: 380px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
       text-align: center;
     }
 
     .login-title {
       font-size: 1.5rem;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       letter-spacing: 0.08em;
+      font-weight: bold;
       text-transform: uppercase;
-      color: #ffe29f;
+      color: #000;
     }
 
     .login-subtitle {
       font-size: 0.9rem;
       margin-bottom: 18px;
-      color: #ffe9c9;
-    }
-
-    .login-input-group {
-      text-align: left;
-      margin-bottom: 12px;
+      color: #222;
     }
 
     .login-label {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       margin-bottom: 4px;
-      display: block;
-      color: #ffe9c9;
+      text-align: left;
+      font-weight: bold;
+      color: #444;
     }
 
     .login-input {
       width: 100%;
-      padding: 9px 10px;
-      border-radius: 6px;
-      border: 1px solid #555;
-      font-size: 0.95rem;
-      font-family: inherit;
-      outline: none;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+      font-size: 1rem;
     }
 
     .login-input:focus {
-      border-color: #ffe29f;
-      box-shadow: 0 0 0 1px rgba(255, 226, 159, 0.5);
+      border-color: #bc8b41;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(188, 139, 65, 0.3);
     }
 
     .login-button {
       width: 100%;
-      margin-top: 6px;
-      padding: 10px;
-      border-radius: 999px;
+      padding: 12px;
       border: none;
+      margin-top: 12px;
+      border-radius: 999px;
       font-weight: bold;
-      font-size: 0.95rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      background: linear-gradient(135deg, #bc8b41, #f7d38a);
-      color: #000;
+      background: linear-gradient(135deg, #bc8b41, #e6ce91);
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    }
-
-    .login-button:active {
-      transform: translateY(1px);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     }
 
     .login-error {
-      min-height: 16px;
-      margin-top: 8px;
+      margin-top: 6px;
       font-size: 0.8rem;
-      color: #ffb3b3;
+      color: red;
+      min-height: 16px;
       text-align: left;
     }
 
-    .login-hint {
-      margin-top: 10px;
-      font-size: 0.75rem;
-      opacity: 0.7;
-    }
-
-    /* ===== MAIN PAGE STYLES (PROTECTED CONTENT) ===== */
+    /* ===== MAIN PAGE (AFTER LOGIN) ===== */
 
     #protectedContent {
-      display: none; /* shown only after correct password */
+      display: none;
     }
 
     .header-image img {
@@ -128,9 +120,9 @@
       max-width: 600px;
       display: block;
       margin: 10px auto 20px auto;
-      border-radius: 6px;
     }
 
+    /* BUTTON */
     .button-section {
       display: flex;
       justify-content: center;
@@ -147,35 +139,26 @@
     }
 
     .custom-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       width: 100%;
       max-width: 320px;
       padding: 10px 16px;
       font-size: 17px;
       font-weight: bold;
-      color: #000;
       background-color: #bc8b41;
-      text-align: center;
-      text-decoration: none;
       border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      white-space: nowrap;
-      margin: 0 auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      text-decoration: none;
+      text-align: center;
+      color: #000;
     }
-
-    .custom-button:hover { background-color: #a87d3a; }
-    .custom-button .emoji { margin-right: 8px; font-size: 1.2em; }
 
     @media (max-width: 480px) {
       .custom-button {
         max-width: 260px;
-        font-size: 16px;
-        padding: 12px;
       }
     }
 
+    /* TABLE SECTION */
     .table-section {
       padding: 20px;
       width: 100%;
@@ -183,32 +166,33 @@
     }
 
     .table-heading {
-      font-size: 1.5em;
+      font-size: 1.6rem;
       font-weight: bold;
       text-align: center;
       margin-bottom: 10px;
-      color: #000;
     }
 
     .table-container {
       width: 100%;
       background: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       overflow-x: auto;
     }
 
-    table { border-collapse: collapse; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
 
     thead th {
       background-color: #000;
       color: #bc8b41;
-      padding: 6px;
-      border: 1px solid #ccc;
+      padding: 8px;
+      border: 1px solid #ddd;
       font-size: 0.8rem;
-      white-space: nowrap;
       text-transform: uppercase;
-      text-align: center;
+      white-space: nowrap;
     }
 
     tbody td {
@@ -218,84 +202,79 @@
       white-space: nowrap;
     }
 
+    /* STATUS COLOURS */
+    .status-below {
+      background-color: #f8d7da;
+    }
+
+    .status-on-target {
+      background-color: #fff3cd;
+    }
+
+    .status-above {
+      background-color: #d4edda;
+    }
+
+    /* ⭐ LIGHT GREY BACKGROUND FOR LOW/HIGH TARGET */
+    .lowhigh-bg {
+      background-color: #f1f1f1 !important;
+    }
+
+    /* SUMMARY ROW */
     .summary-row {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
       flex-wrap: wrap;
-      margin-bottom: 8px;
-      gap: 8px;
+      margin-bottom: 12px;
     }
 
     .auction-total-label {
-      font-size: 0.9rem;
       font-weight: bold;
       text-transform: uppercase;
+      font-size: 0.9rem;
     }
 
     .auction-total-value {
       font-size: 1.4rem;
       font-weight: bold;
-      margin-top: 2px;
     }
 
     .status-summary-wrapper {
-      min-width: 150px;
-      font-size: 0.8rem;
       text-align: right;
-    }
-
-    .status-summary-title {
-      font-size: 0.9rem;
-      font-weight: bold;
-      margin-bottom: 4px;
-      text-transform: uppercase;
+      min-width: 160px;
     }
 
     .status-summary-row {
       display: grid;
       grid-template-columns: auto auto;
-      gap: 2px;
-      align-items: center;
+      gap: 3px;
       margin-bottom: 2px;
-    }
-
-    .status-summary-label {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .status-summary-count {
-      font-weight: bold;
-      text-align: right;
-      min-width: 12px;
+      font-size: 0.8rem;
     }
 
     .status-colour-box {
       width: 12px;
       height: 12px;
       border-radius: 3px;
-      border: 1px solid #777;
+      border: 1px solid #333;
     }
 
-    .status-colour-below { background-color: #f8d7da; }
-    .status-colour-on-target { background-color: #fff3cd; }
-    .status-colour-above { background-color: #d4edda; }
+    .status-colour-below {
+      background-color: #f8d7da;
+    }
 
-    .status-below { background-color: #f8d7da; }
-    .status-on-target { background-color: #fff3cd; }
-    .status-above { background-color: #d4edda; }
+    .status-colour-on-target {
+      background-color: #fff3cd;
+    }
+
+    .status-colour-above {
+      background-color: #d4edda;
+    }
 
     .narrow-col {
       max-width: 150px;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-
-    @media (max-width: 768px) {
-      #bidsTable { width: auto; min-width: 100%; }
-      #bidsTable th, #bidsTable td { padding: 4px; }
     }
   </style>
 </head>
@@ -306,24 +285,15 @@
   <div id="loginScreen">
     <div class="login-card">
       <div class="login-title">Committee Login</div>
-      <div class="login-subtitle">Enter the password to view the live committee dashboard.</div>
+      <div class="login-subtitle">Enter the password to view the committee dashboard.</div>
 
       <form id="loginForm">
-        <div class="login-input-group">
-          <label class="login-label" for="passwordInput">Password</label>
-          <input
-            type="password"
-            id="passwordInput"
-            class="login-input"
-            autocomplete="off"
-            placeholder="Enter password"
-            required
-          />
-        </div>
+        <label class="login-label">Password</label>
+        <input type="password" id="passwordInput" class="login-input" required />
 
         <button type="submit" class="login-button">Unlock</button>
+
         <div id="loginError" class="login-error"></div>
-        <div class="login-hint">For committee use only.</div>
       </form>
     </div>
   </div>
@@ -332,48 +302,41 @@
   <div id="protectedContent">
 
     <div class="header-image">
-      <img src="LiveHeader.png" alt="Marymount Live Header">
+      <img src="LiveHeader.png" alt="Marymount Header">
     </div>
 
     <div class="button-section">
       <div class="button-container">
-        <a class="custom-button" target="_blank"
-           href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform">
-          <span class="emoji">📝</span> Place an Auction Bid
-        </a>
+        <a class="custom-button" href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
+          target="_blank">📝 Place an Auction Bid</a>
       </div>
     </div>
 
     <div class="table-section">
 
+      <!-- Summary Row -->
       <div class="summary-row">
         <div>
-          <div class="auction-total-label">AUCTION TOTAL</div>
+          <div class="auction-total-label">Auction Total</div>
           <div class="auction-total-value" id="auctionTotal">€0</div>
         </div>
 
         <div class="status-summary-wrapper">
-          <div class="status-summary-title">STATUS SUMMARY</div>
+          <div class="status-summary-title">Status Summary</div>
 
           <div class="status-summary-row">
-            <div class="status-summary-label">
-              <span class="status-colour-box status-colour-below"></span> BELOW
-            </div>
-            <div class="status-summary-count" id="countBelow">0</div>
+            <span><span class="status-colour-box status-colour-below"></span> BELOW</span>
+            <span id="countBelow">0</span>
           </div>
 
           <div class="status-summary-row">
-            <div class="status-summary-label">
-              <span class="status-colour-box status-colour-on-target"></span> ON TARGET
-            </div>
-            <div class="status-summary-count" id="countOnTarget">0</div>
+            <span><span class="status-colour-box status-colour-on-target"></span> ON TARGET</span>
+            <span id="countOnTarget">0</span>
           </div>
 
           <div class="status-summary-row">
-            <div class="status-summary-label">
-              <span class="status-colour-box status-colour-above"></span> ABOVE
-            </div>
-            <div class="status-summary-count" id="countAbove">0</div>
+            <span><span class="status-colour-box status-colour-above"></span> ABOVE</span>
+            <span id="countAbove">0</span>
           </div>
         </div>
       </div>
@@ -391,51 +354,32 @@
   </div>
 
   <script>
-    // ===== SIMPLE PASSWORD PROTECTION =====
+    /* ====== PASSWORD LOGIC ====== */
     const PASSWORD = "starrynight";
 
     function showProtectedContent() {
-      const loginScreen = document.getElementById("loginScreen");
-      const protectedContent = document.getElementById("protectedContent");
-      if (loginScreen) loginScreen.style.display = "none";
-      if (protectedContent) protectedContent.style.display = "block";
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("protectedContent").style.display = "block";
+      startData();
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const form = document.getElementById("loginForm");
-      const input = document.getElementById("passwordInput");
-      const errorEl = document.getElementById("loginError");
-
-      // If user already logged in this session, skip prompt
-      if (sessionStorage.getItem("committeeAuthed") === "true") {
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const pw = document.getElementById("passwordInput").value.trim();
+      if (pw === PASSWORD) {
         showProtectedContent();
-        return;
-      }
-
-      if (form) {
-        form.addEventListener("submit", (e) => {
-          e.preventDefault();
-          const value = (input.value || "").trim();
-
-          if (value === PASSWORD) {
-            sessionStorage.setItem("committeeAuthed", "true");
-            showProtectedContent();
-          } else {
-            errorEl.textContent = "Incorrect password. Please try again.";
-            input.value = "";
-            input.focus();
-          }
-        });
+      } else {
+        document.getElementById("loginError").textContent = "Incorrect password.";
       }
     });
 
-    // ===== EXISTING DATA-LOADING SCRIPT =====
+    /* ====== TABLE LOGIC ====== */
+
     const sheetID = '1DKnonV1mO-irLiJ4b9M62XYOMEf3LqRvJtEvopvjAp0';
     const sheetName = 'LIVE STATUS';
     const range = 'A5:L44';
 
-    const url =
-      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
+    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
     const hiddenColumns = [
       'EMAIL ADDRESS',
@@ -444,33 +388,153 @@
     ];
 
     const currencyColumns = [
-      'LOW',
-      'HIGH',
-      'CURRENT BID',
-      'COMMITTEE BID',
-      'PUBLIC BID',
-      'TARGET',
-      'RESERVE',
-      'VALUE'
+      'LOW', 'HIGH', 'CURRENT BID', 'COMMITTEE BID',
+      'PUBLIC BID', 'TARGET', 'RESERVE', 'VALUE'
     ];
 
     const centerColumns = [
-      'LOW',
-      'HIGH',
-      'CURRENT BID',
-      'STATUS',
-      'BID TIME',
-      'NUMBER OF BIDS',
-      'JOINT HIGHEST BID',
-      'JOINT TOP BID'
+      'LOW', 'HIGH', 'CURRENT BID', 'STATUS',
+      'BID TIME', 'NUMBER OF BIDS', 'JOINT HIGHEST BID'
     ];
 
-    const narrowColumns = ['ITEM','ITEM DESCRIPTION'];
+    const narrowColumns = ['ITEM', 'ITEM DESCRIPTION'];
 
     const currencySet = new Set(currencyColumns.map(a => a.toUpperCase()));
-    const centerSet   = new Set(centerColumns.map(a => a.toUpperCase()));
-    const narrowSet   = new Set(narrowColumns.mapa => a.toUpperCase());
+    const centerSet = new Set(centerColumns.map(a => a.toUpperCase()));
+    const narrowSet = new Set(narrowColumns.map(a => a.toUpperCase()));
+
+    function isHidden(label) {
+      return hiddenColumns.includes((label || "").toUpperCase());
+    }
+
+    function formatEuro(v) {
+      if (!v) return "";
+      const num = Number(String(v).replace(/[^\d.-]/g, ""));
+      return isNaN(num) ? v : "€" + num.toLocaleString("en-IE");
+    }
+
+    function formatTime(v) {
+      if (!v) return "";
+      if (typeof v === "number") {
+        const d = new Date((v - 25569) * 86400 * 1000);
+        return d.toTimeString().slice(0, 5);
+      }
+      const m = String(v).match(/(\d{1,2}:\d{2})/);
+      return m ? m[1] : v;
+    }
+
+    async function loadData() {
+      const res = await fetch(url);
+      const raw = await res.text();
+      const json = JSON.parse(raw.substr(47).slice(0, -2));
+
+      const cols = json.table.cols.map(c => c.label || "");
+      const rows = json.table.rows.map(r => r.c.map(c => c?.v || ""));
+
+      const thead = document.querySelector("#bidsTable thead");
+      const tbody = document.querySelector("#bidsTable tbody");
+
+      let visible = [];
+      cols.forEach((lbl, i) => { if (!isHidden(lbl)) visible.push(i); });
+
+      const statusIndex = cols.findIndex(c => (c || "").toUpperCase() === "STATUS");
+      const bidIndex = cols.findIndex(c => (c || "").toUpperCase() === "CURRENT BID");
+      const bidsIndex = cols.findIndex(c => (c || "").toUpperCase() === "NUMBER OF BIDS");
+
+      /* STATUS FIRST */
+      if (statusIndex > -1) {
+        visible.splice(visible.indexOf(statusIndex), 1);
+        visible.unshift(statusIndex);
+      }
+
+      /* BIDS AS COLUMN #4 */
+      if (bidsIndex > -1) {
+        visible.splice(visible.indexOf(bidsIndex), 1);
+        visible.splice(3, 0, bidsIndex);
+      }
+
+      /* ===== HEADER ===== */
+      let headerHTML = "<tr>";
+      visible.forEach(i => {
+        let label = cols[i];
+        const key = label.toUpperCase();
+
+        if (key === "LOW") label = "LOW TARGET";
+        if (key === "HIGH") label = "HIGH TARGET";
+        if (key === "CURRENT BID") label = "LEADING BID";
+        if (key === "NUMBER OF BIDS") label = "BIDS";
+
+        const cls = narrowSet.has(key) ? "narrow-col" : "";
+        const align = centerSet.has(key) ? "text-align:center;" : "";
+
+        headerHTML += `<th class="${cls}" style="${align}">${label}</th>`;
+      });
+      headerHTML += "</tr>";
+      thead.innerHTML = headerHTML;
+
+      /* ===== TOTALS ===== */
+      let total = 0;
+      let statusCounts = { 'BELOW': 0, 'ON TARGET': 0, 'ABOVE': 0 };
+
+      rows.forEach(r => {
+        if (bidIndex > -1) {
+          const val = Number(String(r[bidIndex]).replace(/[^\d.-]/g, ""));
+          if (!isNaN(val)) total += val;
+        }
+        if (statusIndex > -1) {
+          const s = String(r[statusIndex]).toUpperCase();
+          if (statusCounts[s] !== undefined) statusCounts[s]++;
+        }
+      });
+
+      document.getElementById("auctionTotal").textContent = formatEuro(total);
+      document.getElementById("countBelow").textContent = statusCounts["BELOW"];
+      document.getElementById("countOnTarget").textContent = statusCounts["ON TARGET"];
+      document.getElementById("countAbove").textContent = statusCounts["ABOVE"];
+
+      /* ===== BODY ===== */
+      let bodyHTML = "";
+
+      rows.forEach(row => {
+        bodyHTML += "<tr>";
+
+        visible.forEach(i => {
+          let val = row[i];
+          const key = (cols[i] || "").toUpperCase();
+
+          if (currencySet.has(key)) val = formatEuro(val);
+          if (key === "BID TIME") val = formatTime(val);
+
+          let cls = "";
+          if (i === statusIndex) {
+            const s = String(row[i]).toUpperCase();
+            if (s === "BELOW") cls = "status-below";
+            if (s === "ABOVE") cls = "status-above";
+            if (s === "ON TARGET") cls = "status-on-target";
+          }
+
+          /* ⭐ Light grey background for LOW/HIGH */
+          if (key === "LOW" || key === "HIGH") cls += " lowhigh-bg";
+
+          let style = "";
+          if (key === "CURRENT BID") style = "font-weight:bold;";
+          if (centerSet.has(key)) style += "text-align:center;";
+
+          bodyHTML += `<td class="${cls}" style="${style}">${val}</td>`;
+        });
+
+        bodyHTML += "</tr>";
+      });
+
+      tbody.innerHTML = bodyHTML;
+    }
+
+    function startData() {
+      loadData();
+      setInterval(loadData, 5000);
+    }
   </script>
 
 </body>
+
 </html>
