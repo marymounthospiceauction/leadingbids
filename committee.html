@@ -30,7 +30,7 @@
       border-radius: 6px;
     }
 
-    /* BUTTON SECTION (now only one button) */
+    /* BUTTON SECTION */
     .button-section {
       display: flex;
       justify-content: center;
@@ -108,9 +108,7 @@
     }
 
     table {
-      width: 100%;
       border-collapse: collapse;
-      table-layout: fixed; /* helps respect column widths */
     }
 
     thead th {
@@ -164,9 +162,22 @@
 
     /* NARROW ITEM COLUMN (no wrap, ellipsis) */
     .narrow-col {
-      max-width: 140px;   
+      max-width: 90px;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    /* MOBILE: make table wider than viewport so you can scroll sideways */
+    @media (max-width: 768px) {
+      #bidsTable {
+        width: auto;       /* let content decide width */
+        min-width: 100%;   /* at least screen width */
+      }
+
+      #bidsTable th,
+      #bidsTable td {
+        padding: 4px;
+      }
     }
   </style>
 </head>
@@ -182,13 +193,11 @@
   <!-- BUTTON SECTION -->
   <div class="button-section">
     <div class="button-container">
-
       <!-- ONLY BUTTON NOW -->
       <a href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
          class="custom-button" target="_blank">
         <span class="emoji">📝</span> Place an Auction Bid
       </a>
-
     </div>
   </div>
 
@@ -212,7 +221,6 @@
     </div>
   </div>
 
-  <!-- SCRIPT SECTION (unchanged from previous version except it loads table normally) -->
   <script>
     const sheetID = '1DKnonV1mO-irLiJ4b9M62XYOMEf3LqRvJtEvopvjAp0';
     const sheetName = 'LIVE STATUS';
@@ -244,7 +252,10 @@
       if (!value) return '';
       const num = Number(value.toString().replace(/[^\d.-]/g, ''));
       if (isNaN(num)) return value;
-      return '€' + num.toLocaleString('en-IE', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      return '€' + num.toLocaleString('en-IE', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      });
     }
 
     function formatTimeOnly(value) {
@@ -252,14 +263,14 @@
 
       if (typeof value === 'number' && !isNaN(value)) {
         const date = new Date((value - 25569) * 86400 * 1000);
-        return date.toISOString().slice(11,16); // HH:MM
+        return date.toTimeString().slice(0, 5); // HH:MM
       }
 
       const str = String(value);
       const m = str.match(/^Date\((\d+),(\d+),(\d+),(\d+),(\d+),/);
       if (m) {
-        const d = new Date(m[1],m[2],m[3],m[4],m[5]);
-        return d.toISOString().slice(11,16);
+        const d = new Date(m[1], m[2], m[3], m[4], m[5]);
+        return d.toTimeString().slice(0, 5);
       }
 
       const t = str.match(/(\d{1,2}:\d{2})/);
@@ -280,20 +291,20 @@
 
         let visibleIndexes = [];
         cols.forEach((label, idx) => {
-          if (!hiddenSet.has(label.toUpperCase().trim())) {
+          if (!hiddenSet.has((label || "").toUpperCase().trim())) {
             visibleIndexes.push(idx);
           }
         });
 
-        const statusIndex = cols.findIndex(l => l.toUpperCase().trim() === 'STATUS');
-        const currentBidIndex = cols.findIndex(l => l.toUpperCase().trim() === 'CURRENT BID');
-        const numberOfBidsIndex = cols.findIndex(l => l.toUpperCase().trim() === 'NUMBER OF BIDS');
+        const statusIndex = cols.findIndex(l => (l || "").toUpperCase().trim() === 'STATUS');
+        const currentBidIndex = cols.findIndex(l => (l || "").toUpperCase().trim() === 'CURRENT BID');
+        const numberOfBidsIndex = cols.findIndex(l => (l || "").toUpperCase().trim() === 'NUMBER OF BIDS');
 
         // Move STATUS → first column
         if (statusIndex !== -1) {
           const pos = visibleIndexes.indexOf(statusIndex);
           if (pos > -1) {
-            visibleIndexes.splice(pos,1);
+            visibleIndexes.splice(pos, 1);
             visibleIndexes.unshift(statusIndex);
           }
         }
@@ -302,8 +313,8 @@
         if (numberOfBidsIndex !== -1) {
           const pos = visibleIndexes.indexOf(numberOfBidsIndex);
           if (pos > -1) {
-            visibleIndexes.splice(pos,1);
-            visibleIndexes.splice(3,0,numberOfBidsIndex);
+            visibleIndexes.splice(pos, 1);
+            visibleIndexes.splice(3, 0, numberOfBidsIndex);
           }
         }
 
@@ -324,7 +335,7 @@
         if (currentBidIndex !== -1) {
           rows.forEach(r => {
             const raw = r[currentBidIndex];
-            const num = Number(String(raw).replace(/[^\d.-]/g,'')); 
+            const num = Number(String(raw).replace(/[^\d.-]/g, ''));
             if (!isNaN(num)) auctionTotal += num;
           });
         }
@@ -336,26 +347,27 @@
           bodyHTML += "<tr>";
           visibleIndexes.forEach(i => {
             let cell = row[i];
-            const label = cols[i].toUpperCase().trim();
+            const label = cols[i] || "";
+            const colKey = label.toUpperCase().trim();
 
-            if (currencySet.has(label)) cell = formatEuro(cell);
-            if (label === 'BID TIME')   cell = formatTimeOnly(cell);
+            if (currencySet.has(colKey)) cell = formatEuro(cell);
+            if (colKey === 'BID TIME')   cell = formatTimeOnly(cell);
 
             let tdClass = "";
             if (i === statusIndex) {
               const val = String(row[i] || "").toUpperCase().trim();
-              if (val === 'BELOW') tdClass='status-below';
-              else if (val === 'ABOVE') tdClass='status-above';
-              else if (val === 'ON TARGET') tdClass='status-on-target';
+              if (val === 'BELOW') tdClass = 'status-below';
+              else if (val === 'ABOVE') tdClass = 'status-above';
+              else if (val === 'ON TARGET') tdClass = 'status-on-target';
             }
 
             const classList = [];
             if (tdClass) classList.push(tdClass);
-            if (narrowSet.has(label)) classList.push('narrow-col');
+            if (narrowSet.has(colKey)) classList.push('narrow-col');
 
-            const style = centerSet.has(label) ? 'text-align:center;' : '';
+            const style = centerSet.has(colKey) ? 'text-align:center;' : '';
 
-            bodyHTML += `<td class="${classList.join(' ')}" style="${style}">${cell}</td>`;
+            bodyHTML += `<td class="${classList.join(' ')}" style="${style}">${cell ?? ''}</td>`;
           });
           bodyHTML += "</tr>";
         });
