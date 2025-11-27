@@ -160,9 +160,9 @@
       background-color: #fff3cd; /* light yellow */
     }
 
-    /* NARROW ITEM COLUMN (no wrap, ellipsis) */
+    /* WIDER (BUT STILL SINGLE-LINE) ITEM COLUMN */
     .narrow-col {
-      max-width: 90px;
+      max-width: 150px;   /* increased so more text is visible */
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -193,7 +193,7 @@
   <!-- BUTTON SECTION -->
   <div class="button-section">
     <div class="button-container">
-      <!-- ONLY BUTTON NOW -->
+      <!-- ONLY BUTTON -->
       <a href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
          class="custom-button" target="_blank">
         <span class="emoji">📝</span> Place an Auction Bid
@@ -210,7 +210,7 @@
       <div class="auction-total-value" id="auctionTotal">€0</div>
     </div>
 
-    <!-- UPDATED HEADER -->
+    <!-- HEADER -->
     <div class="table-heading">COMMITTEE VIEW</div>
 
     <div class="table-container">
@@ -325,7 +325,14 @@
           const colKey = label.toUpperCase().trim();
           const style = centerSet.has(colKey) ? 'text-align:center;' : '';
           const cls = narrowSet.has(colKey) ? 'narrow-col' : '';
-          headerHTML += `<th class="${cls}" style="${style}">${label}</th>`;
+
+          // Override visible header names
+          let displayLabel = label;
+          if (colKey === 'CURRENT BID')       displayLabel = 'LEADING BID';
+          else if (colKey === 'NUMBER OF BIDS') displayLabel = 'BIDS';
+          else if (colKey === 'NAME')         displayLabel = 'WINNER NAME';
+
+          headerHTML += `<th class="${cls}" style="${style}">${displayLabel}</th>`;
         });
         headerHTML += "</tr>";
         thead.innerHTML = headerHTML;
