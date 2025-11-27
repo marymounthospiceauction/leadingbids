@@ -110,6 +110,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
+      table-layout: fixed; /* helps respect column widths */
     }
 
     thead th {
@@ -126,7 +127,7 @@
       border: 1px solid #ccc;
       padding: 6px;
       font-size: 0.8rem;
-      white-space: nowrap;
+      white-space: nowrap; /* DO NOT WRAP cell details */
     }
 
     /* AUCTION TOTAL POSITION (ABOVE TABLE, LEFT) */
@@ -159,6 +160,13 @@
 
     .status-on-target {
       background-color: #fff3cd; /* light yellow */
+    }
+
+    /* NARROW ITEM COLUMN (no wrap, ellipsis) */
+    .narrow-col {
+      max-width: 140px;         /* adjust if you want it tighter/looser */
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   </style>
 </head>
@@ -244,9 +252,16 @@
       'NUMBER OF BIDS'
     ];
 
+    // Columns to make narrow (ITEM column)
+    const narrowColumns = [
+      'ITEM',
+      'ITEM DESCRIPTION'
+    ];
+
     const hiddenSet   = new Set(hiddenColumns.map(h => h.toUpperCase().trim()));
     const currencySet = new Set(currencyColumns.map(h => h.toUpperCase().trim()));
     const centerSet   = new Set(centerColumns.map(h => h.toUpperCase().trim()));
+    const narrowSet   = new Set(narrowColumns.map(h => h.toUpperCase().trim()));
 
     function formatEuro(value) {
       if (value === '' || value === null || value === undefined) return '';
@@ -324,6 +339,15 @@
           label => (label || "").toUpperCase().trim() === 'CURRENT BID'
         );
 
+        // Move STATUS column to be first visible column
+        if (statusIndex !== -1) {
+          const pos = visibleIndexes.indexOf(statusIndex);
+          if (pos > -1) {
+            visibleIndexes.splice(pos, 1);      // remove from current position
+            visibleIndexes.unshift(statusIndex); // insert at front
+          }
+        }
+
         // NUMBER OF BIDS index – move it to 4th visible column if present
         const numberOfBidsIndex = cols.findIndex(
           label => (label || "").toUpperCase().trim() === 'NUMBER OF BIDS'
@@ -343,7 +367,11 @@
           const label  = cols[i] || "";
           const colKey = label.toUpperCase().trim();
           const style  = centerSet.has(colKey) ? 'text-align:center;' : '';
-          headerHTML  += `<th style="${style}">${label || "&nbsp;"}</th>`;
+
+          const thClasses = [];
+          if (narrowSet.has(colKey)) thClasses.push('narrow-col');
+
+          headerHTML  += `<th class="${thClasses.join(' ')}" style="${style}">${label || "&nbsp;"}</th>`;
         });
         headerHTML += "</tr>";
         thead.innerHTML = headerHTML;
@@ -393,10 +421,14 @@
               else if (v === 'ON TARGET') tdClass = 'status-on-target';
             }
 
+            const classes = [];
+            if (tdClass) classes.push(tdClass);
+            if (narrowSet.has(colKey)) classes.push('narrow-col');
+
             // Alignment
             const style = centerSet.has(colKey) ? 'text-align:center;' : '';
 
-            bodyHTML += `<td class="${tdClass}" style="${style}">${cell ?? ''}</td>`;
+            bodyHTML += `<td class="${classes.join(' ')}" style="${style}">${cell ?? ''}</td>`;
           });
 
           bodyHTML += "</tr>";
