@@ -139,6 +139,7 @@
       font-weight: bold;
       margin-bottom: 4px;
       text-transform: uppercase;
+      letter-spacing: 0.08em;
     }
 
     .status-summary-row {
@@ -172,7 +173,7 @@
     .status-colour-on-target { background-color: #fff3cd; }
     .status-colour-above { background-color: #d4edda; }
 
-    /* STATUS COLOURING */
+    /* STATUS COLOURING IN TABLE */
     .status-below { background-color: #f8d7da; }
     .status-on-target { background-color: #fff3cd; }
     .status-above { background-color: #d4edda; }
@@ -193,10 +194,12 @@
 
 <body>
 
+  <!-- HEADER IMAGE -->
   <div class="header-image">
     <img src="LiveHeader.png" alt="Marymount Live Header">
   </div>
 
+  <!-- BUTTON -->
   <div class="button-section">
     <div class="button-container">
       <a class="custom-button" target="_blank"
@@ -206,8 +209,10 @@
     </div>
   </div>
 
+  <!-- TABLE SECTION -->
   <div class="table-section">
 
+    <!-- TOP SUMMARY -->
     <div class="summary-row">
       <div>
         <div class="auction-total-label">AUCTION TOTAL</div>
@@ -243,8 +248,10 @@
       </div>
     </div>
 
+    <!-- HEADING -->
     <div class="table-heading">COMMITTEE VIEW</div>
 
+    <!-- TABLE -->
     <div class="table-container">
       <table id="bidsTable">
         <thead></thead>
@@ -262,14 +269,14 @@
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
-    // HIDE THESE ONLY
+    // Columns to hide
     const hiddenColumns = [
       'EMAIL ADDRESS',
       'CONTACT NUMBER',
       'TABLE NUMBER/NAME'
     ];
 
-    // NOW INCLUDES LOW + HIGH
+    // Currency-formatted columns (incl. LOW & HIGH)
     const currencyColumns = [
       'LOW',
       'HIGH',
@@ -282,8 +289,12 @@
     ];
 
     const centerColumns = [
-      'CURRENT BID','STATUS','BID TIME','NUMBER OF BIDS',
-      'JOINT HIGHEST BID','JOINT TOP BID'
+      'CURRENT BID',
+      'STATUS',
+      'BID TIME',
+      'NUMBER OF BIDS',
+      'JOINT HIGHEST BID',
+      'JOINT TOP BID'
     ];
 
     const narrowColumns = ['ITEM','ITEM DESCRIPTION'];
@@ -329,94 +340,112 @@
 
       // Visible columns
       let visibleIndexes = [];
-      cols.forEach((label, idx) => { if (!isHidden(label)) visibleIndexes.push(idx); });
+      cols.forEach((label, idx) => {
+        if (!isHidden(label)) visibleIndexes.push(idx);
+      });
 
-      const statusIndex = cols.findIndex(c => c.toUpperCase()==="STATUS");
-      const cbIndex = cols.findIndex(c => c.toUpperCase()==="CURRENT BID");
-      const nobIndex = cols.findIndex(c => c.toUpperCase()==="NUMBER OF BIDS");
+      const statusIndex = cols.findIndex(c => (c || '').toUpperCase() === "STATUS");
+      const currentBidIndex = cols.findIndex(c => (c || '').toUpperCase() === "CURRENT BID");
+      const numberOfBidsIndex = cols.findIndex(c => (c || '').toUpperCase() === "NUMBER OF BIDS");
 
       // STATUS first
-      if (statusIndex>-1) {
-        const p=visibleIndexes.indexOf(statusIndex);
-        if(p>-1){visibleIndexes.splice(p,1);visibleIndexes.unshift(statusIndex);}
+      if (statusIndex > -1) {
+        const p = visibleIndexes.indexOf(statusIndex);
+        if (p > -1) {
+          visibleIndexes.splice(p, 1);
+          visibleIndexes.unshift(statusIndex);
+        }
       }
 
-      // BIDS 4th
-      if (nobIndex>-1) {
-        const p=visibleIndexes.indexOf(nobIndex);
-        if(p>-1){visibleIndexes.splice(p,1);visibleIndexes.splice(3,0,nobIndex);}
+      // NUMBER OF BIDS as 4th visible
+      if (numberOfBidsIndex > -1) {
+        const p = visibleIndexes.indexOf(numberOfBidsIndex);
+        if (p > -1) {
+          visibleIndexes.splice(p, 1);
+          visibleIndexes.splice(3, 0, numberOfBidsIndex);
+        }
       }
 
       /* HEADER */
-      let h="<tr>";
-      visibleIndexes.forEach(i=>{
-        let label=cols[i];
-        const key=label.toUpperCase();
+      let headerHTML = "<tr>";
+      visibleIndexes.forEach(i => {
+        let label = cols[i] || "";
+        const key = label.toUpperCase().trim();
 
-        if (key==="CURRENT BID") label="LEADING BID";
-        if (key==="NUMBER OF BIDS") label="BIDS";
-        if (key==="NAME") label="WINNER NAME";
+        // Rename a few columns for display
+        if (key === "LOW") label = "LOW TARGET";
+        if (key === "HIGH") label = "HIGH TARGET";
+        if (key === "CURRENT BID") label = "LEADING BID";
+        if (key === "NUMBER OF BIDS") label = "BIDS";
+        if (key === "NAME") label = "WINNER NAME";
 
-        const style=centerSet.has(key)?"text-align:center;":"";
-        const cls=narrowSet.has(key)?"narrow-col":"";
+        const style = centerSet.has(key) ? "text-align:center;" : "";
+        const cls = narrowSet.has(key) ? "narrow-col" : "";
 
-        h+=`<th class="${cls}" style="${style}">${label}</th>`;
+        headerHTML += `<th class="${cls}" style="${style}">${label}</th>`;
       });
-      h+="</tr>";
-      thead.innerHTML=h;
+      headerHTML += "</tr>";
+      thead.innerHTML = headerHTML;
 
-      /* TOTAL + STATUS */
-      let total=0;
-      let sc={BELOW:0,"ON TARGET":0,ABOVE:0};
+      /* TOTAL + STATUS COUNTS */
+      let total = 0;
+      let statusCounts = { 'BELOW': 0, 'ON TARGET': 0, 'ABOVE': 0 };
 
-      rows.forEach(r=>{
-        if(cbIndex>-1){
-          const n=Number(String(r[cbIndex]).replace(/[^\d.-]/g,""));
-          if(!isNaN(n)) total+=n;
+      rows.forEach(row => {
+        if (currentBidIndex > -1) {
+          const raw = row[currentBidIndex];
+          const num = Number(String(raw).replace(/[^\d.-]/g, ""));
+          if (!isNaN(num)) total += num;
         }
-        if(statusIndex>-1){
-          const v=String(r[statusIndex]).toUpperCase().trim();
-          if(sc[v]!==undefined) sc[v]++;
+
+        if (statusIndex > -1) {
+          const v = String(row[statusIndex]).toUpperCase().trim();
+          if (statusCounts[v] !== undefined) statusCounts[v]++;
         }
       });
 
       document.getElementById("auctionTotal").textContent = formatEuro(total);
-      document.getElementById("countBelow").textContent = sc["BELOW"];
-      document.getElementById("countOnTarget").textContent = sc["ON TARGET"];
-      document.getElementById("countAbove").textContent = sc["ABOVE"];
+      document.getElementById("countBelow").textContent = statusCounts["BELOW"] || 0;
+      document.getElementById("countOnTarget").textContent = statusCounts["ON TARGET"] || 0;
+      document.getElementById("countAbove").textContent = statusCounts["ABOVE"] || 0;
 
       /* BODY */
-      let b="";
-      rows.forEach(row=>{
-        b+="<tr>";
-        visibleIndexes.forEach(i=>{
-          let cell=row[i];
-          const key=cols[i].toUpperCase();
+      let bodyHTML = "";
+      rows.forEach(row => {
+        bodyHTML += "<tr>";
 
-          if(currencySet.has(key)) cell=formatEuro(cell);
-          if(key==="BID TIME") cell=formatTimeOnly(cell);
+        visibleIndexes.forEach(i => {
+          let cell = row[i];
+          const key = (cols[i] || "").toUpperCase().trim();
 
-          let tdClass="";
-          if(i===statusIndex){
-            const v=String(row[i]).toUpperCase().trim();
-            if(v==="BELOW") tdClass="status-below";
-            if(v==="ON TARGET") tdClass="status-on-target";
-            if(v==="ABOVE") tdClass="status-above";
+          if (currencySet.has(key)) cell = formatEuro(cell);
+          if (key === "BID TIME")   cell = formatTimeOnly(cell);
+
+          let tdClass = "";
+          if (i === statusIndex) {
+            const v = String(row[i]).toUpperCase().trim();
+            if (v === "BELOW") tdClass = "status-below";
+            else if (v === "ABOVE") tdClass = "status-above";
+            else if (v === "ON TARGET") tdClass = "status-on-target";
           }
 
-          const style=centerSet.has(key)?"text-align:center;":"";
-          const cls=(tdClass?tdClass+" ":"")+(narrowSet.has(key)?"narrow-col":"");
+          const style = centerSet.has(key) ? "text-align:center;" : "";
+          const clsParts = [];
+          if (tdClass) clsParts.push(tdClass);
+          if (narrowSet.has(key)) clsParts.push("narrow-col");
+          const cls = clsParts.join(" ");
 
-          b+=`<td class="${cls}" style="${style}">${cell}</td>`;
+          bodyHTML += `<td class="${cls}" style="${style}">${cell ?? ''}</td>`;
         });
-        b+="</tr>";
+
+        bodyHTML += "</tr>";
       });
 
-      tbody.innerHTML=b;
+      tbody.innerHTML = bodyHTML;
     }
 
     loadData();
-    setInterval(loadData,5000);
+    setInterval(loadData, 5000);
   </script>
 
 </body>
