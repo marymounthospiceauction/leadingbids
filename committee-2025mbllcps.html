@@ -31,16 +31,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-
-      /* ⭐ Updated to match your theme */
       background: linear-gradient(135deg, #e6d4ad 0%, #f5e7c3 55%, #e6d4ad 100%);
-
       z-index: 9999;
       color: #000;
     }
 
     .login-card {
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.9);
       border-radius: 16px;
       padding: 26px 28px;
       width: 90%;
@@ -226,6 +223,7 @@
       justify-content: space-between;
       flex-wrap: wrap;
       margin-bottom: 12px;
+      gap: 8px;
     }
 
     .auction-total-label {
@@ -239,17 +237,39 @@
       font-weight: bold;
     }
 
+    /* ===== STATUS SUMMARY – pretty layout ===== */
     .status-summary-wrapper {
+      min-width: 170px;
+      font-size: 0.8rem;
       text-align: right;
-      min-width: 160px;
+    }
+
+    .status-summary-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 4px;
     }
 
     .status-summary-row {
       display: grid;
-      grid-template-columns: auto auto;
-      gap: 3px;
+      grid-template-columns: 1fr auto;
+      gap: 2px 6px;
+      align-items: center;
       margin-bottom: 2px;
-      font-size: 0.8rem;
+    }
+
+    .status-summary-label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      justify-content: flex-start;
+    }
+
+    .status-summary-count {
+      font-weight: bold;
+      text-align: right;
+      min-width: 1.5em;
     }
 
     .status-colour-box {
@@ -257,6 +277,7 @@
       height: 12px;
       border-radius: 3px;
       border: 1px solid #333;
+      display: inline-block;
     }
 
     .status-colour-below {
@@ -288,11 +309,9 @@
       <div class="login-subtitle">Enter the password to view the committee dashboard.</div>
 
       <form id="loginForm">
-        <label class="login-label">Password</label>
+        <label class="login-label" for="passwordInput">Password</label>
         <input type="password" id="passwordInput" class="login-input" required />
-
         <button type="submit" class="login-button">Unlock</button>
-
         <div id="loginError" class="login-error"></div>
       </form>
     </div>
@@ -307,7 +326,8 @@
 
     <div class="button-section">
       <div class="button-container">
-        <a class="custom-button" href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
+        <a class="custom-button"
+          href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
           target="_blank">📝 Place an Auction Bid</a>
       </div>
     </div>
@@ -325,18 +345,24 @@
           <div class="status-summary-title">Status Summary</div>
 
           <div class="status-summary-row">
-            <span><span class="status-colour-box status-colour-below"></span> BELOW</span>
-            <span id="countBelow">0</span>
+            <div class="status-summary-label">
+              <span class="status-colour-box status-colour-below"></span> BELOW
+            </div>
+            <div class="status-summary-count" id="countBelow">0</div>
           </div>
 
           <div class="status-summary-row">
-            <span><span class="status-colour-box status-colour-on-target"></span> ON TARGET</span>
-            <span id="countOnTarget">0</span>
+            <div class="status-summary-label">
+              <span class="status-colour-box status-colour-on-target"></span> ON TARGET
+            </div>
+            <div class="status-summary-count" id="countOnTarget">0</div>
           </div>
 
           <div class="status-summary-row">
-            <span><span class="status-colour-box status-colour-above"></span> ABOVE</span>
-            <span id="countAbove">0</span>
+            <div class="status-summary-label">
+              <span class="status-colour-box status-colour-above"></span> ABOVE
+            </div>
+            <div class="status-summary-count" id="countAbove">0</div>
           </div>
         </div>
       </div>
@@ -379,12 +405,14 @@
     const sheetName = 'LIVE STATUS';
     const range = 'A5:L44';
 
-    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
+    const url =
+      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
     const hiddenColumns = [
       'EMAIL ADDRESS',
       'CONTACT NUMBER',
-      'TABLE NUMBER/NAME'
+      'TABLE NUMBER/NAME',
+      'BID TIME' // BID TIME removed
     ];
 
     const currencyColumns = [
@@ -394,7 +422,7 @@
 
     const centerColumns = [
       'LOW', 'HIGH', 'CURRENT BID', 'STATUS',
-      'BID TIME', 'NUMBER OF BIDS', 'JOINT HIGHEST BID'
+      'NUMBER OF BIDS', 'JOINT HIGHEST BID'
     ];
 
     const narrowColumns = ['ITEM', 'ITEM DESCRIPTION'];
@@ -410,17 +438,11 @@
     function formatEuro(v) {
       if (!v) return "";
       const num = Number(String(v).replace(/[^\d.-]/g, ""));
-      return isNaN(num) ? v : "€" + num.toLocaleString("en-IE");
-    }
-
-    function formatTime(v) {
-      if (!v) return "";
-      if (typeof v === "number") {
-        const d = new Date((v - 25569) * 86400 * 1000);
-        return d.toTimeString().slice(0, 5);
-      }
-      const m = String(v).match(/(\d{1,2}:\d{2})/);
-      return m ? m[1] : v;
+      if (isNaN(num)) return v;
+      return "€" + num.toLocaleString("en-IE", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      });
     }
 
     async function loadData() {
@@ -443,26 +465,33 @@
 
       /* STATUS FIRST */
       if (statusIndex > -1) {
-        visible.splice(visible.indexOf(statusIndex), 1);
-        visible.unshift(statusIndex);
+        const pos = visible.indexOf(statusIndex);
+        if (pos > -1) {
+          visible.splice(pos, 1);
+          visible.unshift(statusIndex);
+        }
       }
 
       /* BIDS AS COLUMN #4 */
       if (bidsIndex > -1) {
-        visible.splice(visible.indexOf(bidsIndex), 1);
-        visible.splice(3, 0, bidsIndex);
+        const pos = visible.indexOf(bidsIndex);
+        if (pos > -1) {
+          visible.splice(pos, 1);
+          visible.splice(3, 0, bidsIndex);
+        }
       }
 
       /* ===== HEADER ===== */
       let headerHTML = "<tr>";
       visible.forEach(i => {
         let label = cols[i];
-        const key = label.toUpperCase();
+        const key = (label || "").toUpperCase();
 
         if (key === "LOW") label = "LOW TARGET";
         if (key === "HIGH") label = "HIGH TARGET";
         if (key === "CURRENT BID") label = "LEADING BID";
         if (key === "NUMBER OF BIDS") label = "BIDS";
+        if (key === "NAME") label = "WINNER NAME";
 
         const cls = narrowSet.has(key) ? "narrow-col" : "";
         const align = centerSet.has(key) ? "text-align:center;" : "";
@@ -503,7 +532,6 @@
           const key = (cols[i] || "").toUpperCase();
 
           if (currencySet.has(key)) val = formatEuro(val);
-          if (key === "BID TIME") val = formatTime(val);
 
           let cls = "";
           if (i === statusIndex) {
@@ -513,14 +541,19 @@
             if (s === "ON TARGET") cls = "status-on-target";
           }
 
-          /* ⭐ Light grey background for LOW/HIGH */
-          if (key === "LOW" || key === "HIGH") cls += " lowhigh-bg";
+          /* ⭐ Light grey background for LOW & HIGH (LOW TARGET / HIGH TARGET) */
+          if (key === "LOW" || key === "HIGH") {
+            cls += (cls ? " " : "") + "lowhigh-bg";
+          }
 
           let style = "";
-          if (key === "CURRENT BID") style = "font-weight:bold;";
+          if (key === "CURRENT BID") style += "font-weight:bold;";
           if (centerSet.has(key)) style += "text-align:center;";
 
-          bodyHTML += `<td class="${cls}" style="${style}">${val}</td>`;
+          const extraCls = narrowSet.has(key) ? "narrow-col" : "";
+          if (extraCls) cls += (cls ? " " : "") + extraCls;
+
+          bodyHTML += `<td class="${cls}" style="${style}">${val ?? ""}</td>`;
         });
 
         bodyHTML += "</tr>";
