@@ -128,9 +128,18 @@
       white-space: nowrap; /* DO NOT WRAP cell details */
     }
 
-    /* AUCTION TOTAL POSITION (ABOVE TABLE, LEFT) */
-    .auction-total-wrapper {
+    /* TOP ROW: total (left) + status summary (right) */
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      flex-wrap: wrap;
       margin-bottom: 8px;
+    }
+
+    /* AUCTION TOTAL (LEFT) */
+    .auction-total-wrapper {
       text-align: left;
     }
 
@@ -147,7 +156,40 @@
       margin-top: 2px;
     }
 
-    /* STATUS COLOURING */
+    /* STATUS SUMMARY (RIGHT) */
+    .status-summary-wrapper {
+      text-align: right;
+      font-size: 0.8rem;
+    }
+
+    .status-summary-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .status-summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .status-colour-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid #aaa;
+    }
+
+    .status-colour-below { background-color: #f8d7da; }
+    .status-colour-above { background-color: #d4edda; }
+    .status-colour-on-target { background-color: #fff3cd; }
+
+    /* STATUS COLOURING IN TABLE */
     .status-below {
       background-color: #f8d7da; /* light red */
     }
@@ -162,7 +204,7 @@
 
     /* WIDER (BUT STILL SINGLE-LINE) ITEM COLUMN */
     .narrow-col {
-      max-width: 150px;   /* increased so more text is visible */
+      max-width: 150px;   /* visible but still keeps table compact */
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -170,7 +212,7 @@
     /* MOBILE: make table wider than viewport so you can scroll sideways */
     @media (max-width: 768px) {
       #bidsTable {
-        width: auto;       /* let content decide width */
+        width: auto;       /* content decides width */
         min-width: 100%;   /* at least screen width */
       }
 
@@ -184,16 +226,15 @@
 
 <body>
 
-  <!-- HEADER IMAGE -->
+  <!-- HEADER IMAGE (now LiveHeader.png) -->
   <div class="header-image">
-    <img src="Marymount Header.png"
+    <img src="LiveHeader.png"
          alt="The Starry Night Ball in aid of Marymount University Hospital and Hospice">
   </div>
 
   <!-- BUTTON SECTION -->
   <div class="button-section">
     <div class="button-container">
-      <!-- ONLY BUTTON -->
       <a href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
          class="custom-button" target="_blank">
         <span class="emoji">📝</span> Place an Auction Bid
@@ -204,13 +245,32 @@
   <!-- TABLE SECTION -->
   <div class="table-section">
 
-    <!-- AUCTION TOTAL JUST ABOVE TABLE, LEFT -->
-    <div class="auction-total-wrapper">
-      <div class="auction-total-label">AUCTION TOTAL</div>
-      <div class="auction-total-value" id="auctionTotal">€0</div>
+    <!-- SUMMARY ROW: TOTAL (LEFT) + STATUS SUMMARY (RIGHT) -->
+    <div class="summary-row">
+      <div class="auction-total-wrapper">
+        <div class="auction-total-label">AUCTION TOTAL</div>
+        <div class="auction-total-value" id="auctionTotal">€0</div>
+      </div>
+
+      <div class="status-summary-wrapper">
+        <div class="status-summary-title">STATUS SUMMARY</div>
+
+        <div class="status-summary-row">
+          <span class="status-colour-box status-colour-below"></span>
+          <span>BELOW: <span id="countBelow">0</span></span>
+        </div>
+        <div class="status-summary-row">
+          <span class="status-colour-box status-colour-on-target"></span>
+          <span>ON TARGET: <span id="countOnTarget">0</span></span>
+        </div>
+        <div class="status-summary-row">
+          <span class="status-colour-box status-colour-above"></span>
+          <span>ABOVE: <span id="countAbove">0</span></span>
+        </div>
+      </div>
     </div>
 
-    <!-- HEADER -->
+    <!-- HEADING -->
     <div class="table-heading">COMMITTEE VIEW</div>
 
     <div class="table-container">
@@ -230,7 +290,8 @@
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
       `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
-    const hiddenColumns = ['LOW', 'HIGH', 'JOINT TOP BID'];
+    // Columns we still hide
+    const hiddenColumns = ['LOW', 'HIGH']; // JOINT HIGHEST BID / JOINT TOP BID is now INCLUDED
 
     const currencyColumns = [
       'CURRENT BID', 'COMMITTEE BID', 'PUBLIC BID',
@@ -238,7 +299,7 @@
     ];
 
     const centerColumns = [
-      'CURRENT BID', 'STATUS', 'BID TIME', 'NUMBER OF BIDS'
+      'CURRENT BID', 'STATUS', 'BID TIME', 'NUMBER OF BIDS', 'JOINT HIGHEST BID', 'JOINT TOP BID'
     ];
 
     const narrowColumns = ['ITEM', 'ITEM DESCRIPTION'];
@@ -328,25 +389,40 @@
 
           // Override visible header names
           let displayLabel = label;
-          if (colKey === 'CURRENT BID')       displayLabel = 'LEADING BID';
-          else if (colKey === 'NUMBER OF BIDS') displayLabel = 'BIDS';
-          else if (colKey === 'NAME')         displayLabel = 'WINNER NAME';
+          if (colKey === 'CURRENT BID')          displayLabel = 'LEADING BID';
+          else if (colKey === 'NUMBER OF BIDS')  displayLabel = 'BIDS';
+          else if (colKey === 'NAME')            displayLabel = 'WINNER NAME';
 
           headerHTML += `<th class="${cls}" style="${style}">${displayLabel}</th>`;
         });
         headerHTML += "</tr>";
         thead.innerHTML = headerHTML;
 
-        /* TOTAL CALC */
+        /* TOTAL CALC + STATUS COUNTS */
         let auctionTotal = 0;
-        if (currentBidIndex !== -1) {
-          rows.forEach(r => {
+        const statusCounts = { 'BELOW': 0, 'ON TARGET': 0, 'ABOVE': 0 };
+
+        rows.forEach(r => {
+          // total
+          if (currentBidIndex !== -1) {
             const raw = r[currentBidIndex];
             const num = Number(String(raw).replace(/[^\d.-]/g, ''));
             if (!isNaN(num)) auctionTotal += num;
-          });
-        }
+          }
+
+          // status counts
+          if (statusIndex !== -1) {
+            const v = String(r[statusIndex] || '').toUpperCase().trim();
+            if (statusCounts.hasOwnProperty(v)) {
+              statusCounts[v]++;
+            }
+          }
+        });
+
         document.getElementById('auctionTotal').textContent = formatEuro(auctionTotal);
+        document.getElementById('countBelow').textContent    = statusCounts['BELOW'] || 0;
+        document.getElementById('countOnTarget').textContent = statusCounts['ON TARGET'] || 0;
+        document.getElementById('countAbove').textContent    = statusCounts['ABOVE'] || 0;
 
         /* BODY BUILD */
         let bodyHTML = "";
