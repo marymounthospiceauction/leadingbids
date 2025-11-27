@@ -57,8 +57,8 @@
       white-space: nowrap;
     }
 
-    .custom-button .emoji { margin-right: 8px; font-size: 1.2em; }
     .custom-button:hover { background-color: #a87d3a; }
+    .custom-button .emoji { margin-right: 8px; font-size: 1.2em; }
 
     .table-section {
       padding: 20px;
@@ -71,6 +71,7 @@
       font-weight: bold;
       text-align: center;
       margin-bottom: 10px;
+      color: #000;
     }
 
     .table-container {
@@ -103,41 +104,57 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 8px;
+      gap: 10px;
       flex-wrap: wrap;
+      margin-bottom: 8px;
     }
 
-    .auction-total-label { font-size: 0.9rem; font-weight: bold; }
+    .auction-total-label { font-size: 0.9rem; font-weight: bold; text-transform: uppercase; }
     .auction-total-value { font-size: 1.4rem; font-weight: bold; }
 
     .status-summary-wrapper { min-width: 160px; font-size: 0.8rem; }
-    .status-summary-title { font-weight: bold; text-align: right; margin-bottom: 6px; }
+    .status-summary-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 6px;
+      text-align: right;
+      text-transform: uppercase;
+    }
 
     .status-summary-row {
       display: grid;
       grid-template-columns: 1fr 32px;
-      gap: 4px;
       align-items: center;
+      gap: 4px;
       margin-bottom: 3px;
     }
 
-    .status-summary-label { display: flex; align-items: center; gap: 6px; }
-    .status-summary-count { text-align: right; font-weight: bold; min-width: 24px; }
+    .status-summary-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-summary-count {
+      font-weight: bold;
+      text-align: right;
+      min-width: 24px;
+    }
 
     .status-colour-box {
       width: 14px;
       height: 14px;
-      border: 1px solid #888;
       border-radius: 3px;
+      border: 1px solid #aaa;
     }
 
     .status-colour-below { background-color: #f8d7da; }
-    .status-colour-above { background-color: #d4edda; }
     .status-colour-on-target { background-color: #fff3cd; }
+    .status-colour-above { background-color: #d4edda; }
 
     .status-below { background-color: #f8d7da; }
-    .status-above { background-color: #d4edda; }
     .status-on-target { background-color: #fff3cd; }
+    .status-above { background-color: #d4edda; }
 
     .narrow-col {
       max-width: 150px;
@@ -217,11 +234,8 @@
     const sheetName = 'LIVE STATUS';
     const range = 'A5:L44';
 
-    const url =
-      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}&range=${range}`;
-
-    /* --- UPDATED: hide anything containing "LOW" --- */
-    const hiddenColumns = [/LOW/i];
+    /* NOW HIDING BOTH LOW & HIGH (any header containing the words) */
+    const hiddenColumns = [/LOW/i, /HIGH/i];
 
     const currencyColumns = [
       'CURRENT BID','COMMITTEE BID','PUBLIC BID','TARGET','RESERVE','VALUE'
@@ -239,9 +253,7 @@
     const narrowSet   = new Set(narrowColumns.map(a => a.toUpperCase()));
 
     function isHidden(label) {
-      return hiddenColumns.some(rule =>
-        rule instanceof RegExp ? rule.test(label) : rule === label.toUpperCase()
-      );
+      return hiddenColumns.some(rule => rule.test(label));
     }
 
     function formatEuro(v) {
@@ -268,7 +280,9 @@
     }
 
     async function loadData() {
-      const res = await fetch(url);
+      const res = await fetch(
+        `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}&range=${range}`
+      );
       const text = await res.text();
       const json = JSON.parse(text.substr(47).slice(0, -2));
 
@@ -279,34 +293,26 @@
       const tbody = document.querySelector("#bidsTable tbody");
 
       let visibleIndexes = [];
-      cols.forEach((label, idx) => {
-        if (!isHidden(label)) visibleIndexes.push(idx);
-      });
+      cols.forEach((label, idx) => { if (!isHidden(label)) visibleIndexes.push(idx); });
 
       const statusIndex = cols.findIndex(c => c.toUpperCase() === "STATUS");
-      const currentBidIndex = cols.findIndex(c => c.toUpperCase() === "CURRENT BID");
-      const bidsIndex = cols.findIndex(c => c.toUpperCase() === "NUMBER OF BIDS");
+      const cbIndex = cols.findIndex(c => c.toUpperCase() === "CURRENT BID");
+      const nobIndex = cols.findIndex(c => c.toUpperCase() === "NUMBER OF BIDS");
 
-      /* Move STATUS to first column */
+      /* Move STATUS first */
       if (statusIndex > -1) {
-        const pos = visibleIndexes.indexOf(statusIndex);
-        if (pos > -1) {
-          visibleIndexes.splice(pos, 1);
-          visibleIndexes.unshift(statusIndex);
-        }
+        const p = visibleIndexes.indexOf(statusIndex);
+        if (p > -1) { visibleIndexes.splice(p, 1); visibleIndexes.unshift(statusIndex); }
       }
 
-      /* Move NUMBER OF BIDS to 4th position */
-      if (bidsIndex > -1) {
-        const pos = visibleIndexes.indexOf(bidsIndex);
-        if (pos > -1) {
-          visibleIndexes.splice(pos, 1);
-          visibleIndexes.splice(3, 0, bidsIndex);
-        }
+      /* Move NUMBER OF BIDS to 4th */
+      if (nobIndex > -1) {
+        const p = visibleIndexes.indexOf(nobIndex);
+        if (p > -1) { visibleIndexes.splice(p, 1); visibleIndexes.splice(3, 0, nobIndex); }
       }
 
       /* HEADER */
-      let headerHTML = "<tr>";
+      let h = "<tr>";
       visibleIndexes.forEach(i => {
         let label = cols[i];
         const key = label.toUpperCase();
@@ -318,37 +324,37 @@
         const style = centerSet.has(key) ? "text-align:center;" : "";
         const cls = narrowSet.has(key) ? "narrow-col" : "";
 
-        headerHTML += `<th class="${cls}" style="${style}">${label}</th>`;
+        h += `<th class="${cls}" style="${style}">${label}</th>`;
       });
-      headerHTML += "</tr>";
-      thead.innerHTML = headerHTML;
+      h += "</tr>";
+      thead.innerHTML = h;
 
       /* TOTAL + STATUS COUNTS */
       let total = 0;
-      let statusCounts = { BELOW: 0, "ON TARGET": 0, ABOVE: 0 };
+      let sc = { BELOW: 0, "ON TARGET": 0, ABOVE: 0 };
 
       rows.forEach(row => {
-        if (currentBidIndex > -1) {
-          const raw = row[currentBidIndex];
+        if (cbIndex > -1) {
+          const raw = row[cbIndex];
           const num = Number(String(raw).replace(/[^\d.-]/g, ""));
           if (!isNaN(num)) total += num;
         }
+
         if (statusIndex > -1) {
           const v = String(row[statusIndex]).toUpperCase().trim();
-          if (statusCounts[v] !== undefined) statusCounts[v]++;
+          if (sc[v] !== undefined) sc[v]++;
         }
       });
 
       document.getElementById("auctionTotal").textContent = formatEuro(total);
-      document.getElementById("countBelow").textContent = statusCounts["BELOW"];
-      document.getElementById("countOnTarget").textContent = statusCounts["ON TARGET"];
-      document.getElementById("countAbove").textContent = statusCounts["ABOVE"];
+      document.getElementById("countBelow").textContent = sc["BELOW"];
+      document.getElementById("countOnTarget").textContent = sc["ON TARGET"];
+      document.getElementById("countAbove").textContent = sc["ABOVE"];
 
       /* BODY */
-      let bodyHTML = "";
+      let b = "";
       rows.forEach(row => {
-        bodyHTML += "<tr>";
-
+        b += "<tr>";
         visibleIndexes.forEach(i => {
           let cell = row[i];
           const key = cols[i].toUpperCase();
@@ -359,22 +365,20 @@
           let tdClass = "";
           if (i === statusIndex) {
             const v = String(row[i]).toUpperCase().trim();
-            tdClass =
-              v === "BELOW" ? "status-below" :
-              v === "ABOVE" ? "status-above" :
-              v === "ON TARGET" ? "status-on-target" : "";
+            if (v === "BELOW") tdClass = "status-below";
+            if (v === "ABOVE") tdClass = "status-above";
+            if (v === "ON TARGET") tdClass = "status-on-target";
           }
 
           const style = centerSet.has(key) ? "text-align:center;" : "";
           const cls = (tdClass ? tdClass + " " : "") + (narrowSet.has(key) ? "narrow-col" : "");
 
-          bodyHTML += `<td class="${cls}" style="${style}">${cell}</td>`;
+          b += `<td class="${cls}" style="${style}">${cell}</td>`;
         });
-
-        bodyHTML += "</tr>";
+        b += "</tr>";
       });
 
-      tbody.innerHTML = bodyHTML;
+      tbody.innerHTML = b;
     }
 
     loadData();
