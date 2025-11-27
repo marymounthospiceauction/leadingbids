@@ -59,9 +59,6 @@
       white-space: nowrap;
     }
 
-    .custom-button:hover { background-color: #a87d3a; }
-    .custom-button .emoji { margin-right: 8px; font-size: 1.2em; }
-
     /* TABLE SECTION */
     .table-section {
       padding: 20px;
@@ -95,6 +92,7 @@
       font-size: 0.8rem;
       white-space: nowrap;
       text-transform: uppercase;
+      text-align: center;
     }
 
     tbody td {
@@ -118,7 +116,6 @@
       font-size: 0.9rem;
       font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
     }
 
     .auction-total-value {
@@ -217,21 +214,24 @@
 
         <div class="status-summary-row">
           <div class="status-summary-label">
-            <span class="status-colour-box status-colour-below"></span> BELOW
+            <span class="status-colour-box status-colour-below"></span>
+            BELOW
           </div>
           <div class="status-summary-count" id="countBelow">0</div>
         </div>
 
         <div class="status-summary-row">
           <div class="status-summary-label">
-            <span class="status-colour-box status-colour-on-target"></span> ON TARGET
+            <span class="status-colour-box status-colour-on-target"></span>
+            ON TARGET
           </div>
           <div class="status-summary-count" id="countOnTarget">0</div>
         </div>
 
         <div class="status-summary-row">
           <div class="status-summary-label">
-            <span class="status-colour-box status-colour-above"></span> ABOVE
+            <span class="status-colour-box status-colour-above"></span>
+            ABOVE
           </div>
           <div class="status-summary-count" id="countAbove">0</div>
         </div>
@@ -264,7 +264,7 @@
       'TABLE NUMBER/NAME'
     ];
 
-    // Columns with € formatting
+    // Currency columns
     const currencyColumns = [
       'LOW',
       'HIGH',
@@ -276,7 +276,10 @@
       'VALUE'
     ];
 
+    // ⭐ LOW + HIGH now centered
     const centerColumns = [
+      'LOW',
+      'HIGH',
       'CURRENT BID',
       'STATUS',
       'BID TIME',
@@ -345,7 +348,7 @@
         }
       }
 
-      // NUMBER OF BIDS as 4th visible
+      // NUMBER OF BIDS 4th
       if (numberOfBidsIndex > -1) {
         const p = visibleIndexes.indexOf(numberOfBidsIndex);
         if (p > -1) {
@@ -416,11 +419,8 @@
             else if (v === "ON TARGET") tdClass = "status-on-target";
           }
 
-          /* ⭐ MAKE LEADING BID VALUES BOLD */
           let extraStyle = "";
-          if (key === "CURRENT BID") {
-            extraStyle = "font-weight:bold;";
-          }
+          if (key === "CURRENT BID") extraStyle = "font-weight:bold;";
 
           const alignStyle = centerSet.has(key) ? "text-align:center;" : "";
           const style = alignStyle + extraStyle;
