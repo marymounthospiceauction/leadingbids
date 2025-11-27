@@ -7,24 +7,18 @@
   <title>Marymount Auction – Committee View</title>
 
   <style>
-    html,
-    body {
+    html, body {
       margin: 0;
       padding: 0;
       font-family: Calibri, Arial, sans-serif;
       background-color: #e6d4ad;
-      min-height: 100%;
     }
 
-    body {
-      overflow-x: auto;
-    }
+    body { overflow-x: auto; }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
-    /* ===== LOGIN SCREEN ===== */
+    /* LOGIN SCREEN */
     #loginScreen {
       position: fixed;
       inset: 0;
@@ -33,42 +27,22 @@
       justify-content: center;
       background: linear-gradient(135deg, #e6d4ad 0%, #f5e7c3 55%, #e6d4ad 100%);
       z-index: 9999;
-      color: #000;
     }
 
     .login-card {
       background: rgba(255, 255, 255, 0.9);
       border-radius: 16px;
       padding: 26px 28px;
-      width: 90%;
       max-width: 380px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
       text-align: center;
     }
 
     .login-title {
       font-size: 1.5rem;
+      font-weight: bold;
       margin-bottom: 6px;
-      letter-spacing: 0.08em;
-      font-weight: bold;
       text-transform: uppercase;
-      color: #000;
-    }
-
-    .login-subtitle {
-      font-size: 0.9rem;
-      margin-bottom: 18px;
-      color: #222;
-    }
-
-    .login-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 4px;
-      text-align: left;
-      font-weight: bold;
-      color: #444;
     }
 
     .login-input {
@@ -76,118 +50,71 @@
       padding: 10px;
       border-radius: 8px;
       border: 1px solid #aaa;
-      font-size: 1rem;
-    }
-
-    .login-input:focus {
-      border-color: #bc8b41;
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(188, 139, 65, 0.3);
     }
 
     .login-button {
       width: 100%;
-      padding: 12px;
-      border: none;
       margin-top: 12px;
+      padding: 12px;
       border-radius: 999px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
       background: linear-gradient(135deg, #bc8b41, #e6ce91);
+      border: none;
+      font-weight: bold;
       cursor: pointer;
     }
 
-    .login-error {
-      margin-top: 6px;
-      font-size: 0.8rem;
-      color: red;
-      min-height: 16px;
-      text-align: left;
-    }
+    #protectedContent { display: none; }
 
-    /* ===== MAIN PAGE (AFTER LOGIN) ===== */
-
-    #protectedContent {
-      display: none;
-    }
-
+    /* HEADER IMAGE */
     .header-image img {
       width: 100%;
       max-width: 600px;
-      display: block;
       margin: 10px auto 20px auto;
+      display: block;
     }
 
     /* BUTTON */
-    .button-section {
-      display: flex;
-      justify-content: center;
-      padding: 20px 0;
-    }
-
-    .button-container {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      width: 100%;
-      max-width: 360px;
-      align-items: center;
-    }
-
     .custom-button {
-      width: 100%;
       max-width: 320px;
       padding: 10px 16px;
-      font-size: 17px;
-      font-weight: bold;
-      background-color: #bc8b41;
+      background: #bc8b41;
       border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      text-decoration: none;
       text-align: center;
-      color: #000;
+      color: black;
+      font-weight: bold;
+      display: block;
+      margin: 0 auto;
     }
 
-    @media (max-width: 480px) {
-      .custom-button {
-        max-width: 260px;
-      }
+    @media(max-width:480px) {
+      .custom-button { max-width: 260px; }
     }
 
-    /* TABLE SECTION */
-    .table-section {
-      padding: 20px;
-      width: 100%;
-      overflow-x: auto;
-    }
-
+    /* TABLE */
     .table-heading {
+      text-align: center;
       font-size: 1.6rem;
       font-weight: bold;
-      text-align: center;
-      margin-bottom: 10px;
     }
 
     .table-container {
-      width: 100%;
       background: white;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       overflow-x: auto;
+      margin-top: 10px;
     }
 
     table {
-      border-collapse: collapse;
       width: 100%;
+      border-collapse: collapse;
     }
 
     thead th {
-      background-color: #000;
+      background: black;
       color: #bc8b41;
       padding: 8px;
       border: 1px solid #ddd;
-      font-size: 0.8rem;
       text-transform: uppercase;
       white-space: nowrap;
     }
@@ -195,107 +122,58 @@
     tbody td {
       border: 1px solid #ccc;
       padding: 6px;
-      font-size: 0.8rem;
       white-space: nowrap;
     }
 
-    /* STATUS COLOURS */
-    .status-below {
-      background-color: #f8d7da;
-    }
+    .status-below { background:#f8d7da; }
+    .status-on-target { background:#fff3cd; }
+    .status-above { background:#d4edda; }
 
-    .status-on-target {
-      background-color: #fff3cd;
-    }
-
-    .status-above {
-      background-color: #d4edda;
-    }
-
-    /* ⭐ LIGHT GREY BACKGROUND FOR LOW/HIGH TARGET */
+    /* Light grey for LOW & HIGH TARGET */
     .lowhigh-bg {
-      background-color: #f1f1f1 !important;
+      background:#f1f1f1 !important;
     }
 
-    /* SUMMARY ROW */
+    /* STATUS SUMMARY */
     .summary-row {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-      gap: 8px;
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:12px;
+      flex-wrap:wrap;
     }
 
-    .auction-total-label {
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 0.9rem;
-    }
-
-    .auction-total-value {
-      font-size: 1.4rem;
-      font-weight: bold;
-    }
-
-    /* ===== STATUS SUMMARY – pretty layout ===== */
     .status-summary-wrapper {
-      min-width: 170px;
-      font-size: 0.8rem;
-      text-align: right;
-    }
-
-    .status-summary-title {
-      font-size: 0.9rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      margin-bottom: 4px;
+      min-width:170px;
+      text-align:right;
     }
 
     .status-summary-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 2px 6px;
-      align-items: center;
-      margin-bottom: 2px;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:3px 6px;
+      align-items:center;
     }
 
     .status-summary-label {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      justify-content: flex-start;
-    }
-
-    .status-summary-count {
-      font-weight: bold;
-      text-align: right;
-      min-width: 1.5em;
+      display:flex;
+      align-items:center;
+      gap:4px;
     }
 
     .status-colour-box {
-      width: 12px;
-      height: 12px;
-      border-radius: 3px;
-      border: 1px solid #333;
-      display: inline-block;
+      width:12px; height:12px;
+      border-radius:3px;
+      border:1px solid #333;
     }
 
-    .status-colour-below {
-      background-color: #f8d7da;
-    }
-
-    .status-colour-on-target {
-      background-color: #fff3cd;
-    }
-
-    .status-colour-above {
-      background-color: #d4edda;
-    }
+    .status-colour-below { background:#f8d7da; }
+    .status-colour-on-target { background:#fff3cd; }
+    .status-colour-above { background:#d4edda; }
 
     .narrow-col {
-      max-width: 150px;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      max-width:150px;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
   </style>
 </head>
@@ -306,13 +184,10 @@
   <div id="loginScreen">
     <div class="login-card">
       <div class="login-title">Committee Login</div>
-      <div class="login-subtitle">Enter the password to view the committee dashboard.</div>
-
       <form id="loginForm">
-        <label class="login-label" for="passwordInput">Password</label>
-        <input type="password" id="passwordInput" class="login-input" required />
+        <input type="password" id="passwordInput" class="login-input" placeholder="Password" required />
         <button type="submit" class="login-button">Unlock</button>
-        <div id="loginError" class="login-error"></div>
+        <div id="loginError" style="color:red;font-size:0.8rem;margin-top:6px;"></div>
       </form>
     </div>
   </div>
@@ -324,17 +199,12 @@
       <img src="LiveHeader.png" alt="Marymount Header">
     </div>
 
-    <div class="button-section">
-      <div class="button-container">
-        <a class="custom-button"
-          href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
-          target="_blank">📝 Place an Auction Bid</a>
-      </div>
-    </div>
+    <a class="custom-button"
+      href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
+      target="_blank">📝 Place an Auction Bid</a>
 
     <div class="table-section">
 
-      <!-- Summary Row -->
       <div class="summary-row">
         <div>
           <div class="auction-total-label">Auction Total</div>
@@ -348,22 +218,23 @@
             <div class="status-summary-label">
               <span class="status-colour-box status-colour-below"></span> BELOW
             </div>
-            <div class="status-summary-count" id="countBelow">0</div>
+            <div id="countBelow">0</div>
           </div>
 
           <div class="status-summary-row">
             <div class="status-summary-label">
               <span class="status-colour-box status-colour-on-target"></span> ON TARGET
             </div>
-            <div class="status-summary-count" id="countOnTarget">0</div>
+            <div id="countOnTarget">0</div>
           </div>
 
           <div class="status-summary-row">
             <div class="status-summary-label">
               <span class="status-colour-box status-colour-above"></span> ABOVE
             </div>
-            <div class="status-summary-count" id="countAbove">0</div>
+            <div id="countAbove">0</div>
           </div>
+
         </div>
       </div>
 
@@ -375,12 +246,11 @@
           <tbody></tbody>
         </table>
       </div>
-
     </div>
+
   </div>
 
   <script>
-    /* ====== PASSWORD LOGIC ====== */
     const PASSWORD = "starrynight";
 
     function showProtectedContent() {
@@ -391,48 +261,41 @@
 
     document.getElementById("loginForm").addEventListener("submit", (e) => {
       e.preventDefault();
-      const pw = document.getElementById("passwordInput").value.trim();
-      if (pw === PASSWORD) {
+      if (document.getElementById("passwordInput").value.trim() === PASSWORD) {
         showProtectedContent();
       } else {
         document.getElementById("loginError").textContent = "Incorrect password.";
       }
     });
 
-    /* ====== TABLE LOGIC ====== */
-
-    const sheetID = '1DKnonV1mO-irLiJ4b9M62XYOMEf3LqRvJtEvopvjAp0';
-    const sheetName = 'LIVE STATUS';
-    const range = 'A5:L44';
+    /* ===== DATA LOADING ===== */
+    const sheetID = "1DKnonV1mO-irLiJ4b9M62XYOMEf3LqRvJtEvopvjAp0";
+    const sheetName = "LIVE STATUS";
+    const range = "A5:L44";
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
     const hiddenColumns = [
-      'EMAIL ADDRESS',
-      'CONTACT NUMBER',
-      'TABLE NUMBER/NAME',
-      'BID TIME' // BID TIME removed
+      "EMAIL ADDRESS", "CONTACT NUMBER", "TABLE NUMBER/NAME", "BID TIME"
     ];
 
     const currencyColumns = [
-      'LOW', 'HIGH', 'CURRENT BID', 'COMMITTEE BID',
-      'PUBLIC BID', 'TARGET', 'RESERVE', 'VALUE'
+      "LOW", "HIGH", "CURRENT BID", "COMMITTEE BID", "PUBLIC BID", "TARGET", "RESERVE", "VALUE"
     ];
 
     const centerColumns = [
-      'LOW', 'HIGH', 'CURRENT BID', 'STATUS',
-      'NUMBER OF BIDS', 'JOINT HIGHEST BID'
+      "LOW", "HIGH", "CURRENT BID", "STATUS", "NUMBER OF BIDS", "JOINT HIGHEST BID"
     ];
 
-    const narrowColumns = ['ITEM', 'ITEM DESCRIPTION'];
+    const narrowColumns = ["ITEM", "ITEM DESCRIPTION"];
 
-    const currencySet = new Set(currencyColumns.map(a => a.toUpperCase()));
-    const centerSet = new Set(centerColumns.map(a => a.toUpperCase()));
-    const narrowSet = new Set(narrowColumns.map(a => a.toUpperCase()));
+    const currencySet = new Set(currencyColumns);
+    const centerSet = new Set(centerColumns);
+    const narrowSet = new Set(narrowColumns);
 
     function isHidden(label) {
-      return hiddenColumns.includes((label || "").toUpperCase());
+      return hiddenColumns.includes(label.toUpperCase());
     }
 
     function formatEuro(v) {
@@ -459,41 +322,35 @@
       let visible = [];
       cols.forEach((lbl, i) => { if (!isHidden(lbl)) visible.push(i); });
 
-      const statusIndex = cols.findIndex(c => (c || "").toUpperCase() === "STATUS");
-      const bidIndex = cols.findIndex(c => (c || "").toUpperCase() === "CURRENT BID");
-      const bidsIndex = cols.findIndex(c => (c || "").toUpperCase() === "NUMBER OF BIDS");
+      const statusIndex = cols.findIndex(c => c.toUpperCase() === "STATUS");
+      const bidIndex = cols.findIndex(c => c.toUpperCase() === "CURRENT BID");
+      const bidsIndex = cols.findIndex(c => c.toUpperCase() === "NUMBER OF BIDS");
 
       /* STATUS FIRST */
       if (statusIndex > -1) {
-        const pos = visible.indexOf(statusIndex);
-        if (pos > -1) {
-          visible.splice(pos, 1);
-          visible.unshift(statusIndex);
-        }
+        visible = visible.filter(v => v !== statusIndex);
+        visible.unshift(statusIndex);
       }
 
-      /* BIDS AS COLUMN #4 */
+      /* BIDS as 4th column */
       if (bidsIndex > -1) {
-        const pos = visible.indexOf(bidsIndex);
-        if (pos > -1) {
-          visible.splice(pos, 1);
-          visible.splice(3, 0, bidsIndex);
-        }
+        visible = visible.filter(v => v !== bidsIndex);
+        visible.splice(3, 0, bidsIndex);
       }
 
       /* ===== HEADER ===== */
       let headerHTML = "<tr>";
       visible.forEach(i => {
         let label = cols[i];
-        const key = (label || "").toUpperCase();
+        const key = label.toUpperCase();
 
-        if (key === "LOW") label = "LOW TARGET";
-        if (key === "HIGH") label = "HIGH TARGET";
+        if (key.includes("LOW")) label = "LOW TARGET";
+        if (key.includes("HIGH")) label = "HIGH TARGET";
         if (key === "CURRENT BID") label = "LEADING BID";
         if (key === "NUMBER OF BIDS") label = "BIDS";
         if (key === "NAME") label = "WINNER NAME";
 
-        const cls = narrowSet.has(key) ? "narrow-col" : "";
+        const cls = narrowSet.has(label) ? "narrow-col" : "";
         const align = centerSet.has(key) ? "text-align:center;" : "";
 
         headerHTML += `<th class="${cls}" style="${align}">${label}</th>`;
@@ -503,17 +360,14 @@
 
       /* ===== TOTALS ===== */
       let total = 0;
-      let statusCounts = { 'BELOW': 0, 'ON TARGET': 0, 'ABOVE': 0 };
+      let statusCounts = { BELOW: 0, "ON TARGET": 0, ABOVE: 0 };
 
       rows.forEach(r => {
-        if (bidIndex > -1) {
-          const val = Number(String(r[bidIndex]).replace(/[^\d.-]/g, ""));
-          if (!isNaN(val)) total += val;
-        }
-        if (statusIndex > -1) {
-          const s = String(r[statusIndex]).toUpperCase();
-          if (statusCounts[s] !== undefined) statusCounts[s]++;
-        }
+        const val = Number(String(r[bidIndex]).replace(/[^\d.-]/g, ""));
+        if (!isNaN(val)) total += val;
+
+        const s = String(r[statusIndex]).toUpperCase();
+        if (statusCounts[s] !== undefined) statusCounts[s]++;
       });
 
       document.getElementById("auctionTotal").textContent = formatEuro(total);
@@ -529,9 +383,12 @@
 
         visible.forEach(i => {
           let val = row[i];
-          const key = (cols[i] || "").toUpperCase();
+          const key = cols[i].toUpperCase();
 
-          if (currencySet.has(key)) val = formatEuro(val);
+          /* Currency formatting */
+          if (currencySet.has(key) || key.includes("LOW") || key.includes("HIGH")) {
+            val = formatEuro(val);
+          }
 
           let cls = "";
           if (i === statusIndex) {
@@ -541,19 +398,19 @@
             if (s === "ON TARGET") cls = "status-on-target";
           }
 
-          /* ⭐ Light grey background for LOW & HIGH (LOW TARGET / HIGH TARGET) */
-          if (key === "LOW" || key === "HIGH") {
-            cls += (cls ? " " : "") + "lowhigh-bg";
+          /* Light grey background LOW & HIGH */
+          if (key.includes("LOW") || key.includes("HIGH")) {
+            cls += " lowhigh-bg";
           }
 
           let style = "";
-          if (key === "CURRENT BID") style += "font-weight:bold;";
+          if (key === "CURRENT BID") style = "font-weight:bold;";
           if (centerSet.has(key)) style += "text-align:center;";
 
           const extraCls = narrowSet.has(key) ? "narrow-col" : "";
-          if (extraCls) cls += (cls ? " " : "") + extraCls;
+          if (extraCls) cls += " " + extraCls;
 
-          bodyHTML += `<td class="${cls}" style="${style}">${val ?? ""}</td>`;
+          bodyHTML += `<td class="${cls}" style="${style}">${val}</td>`;
         });
 
         bodyHTML += "</tr>";
