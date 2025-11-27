@@ -158,8 +158,8 @@
 
     /* STATUS SUMMARY (RIGHT) */
     .status-summary-wrapper {
-      text-align: right;
       font-size: 0.8rem;
+      min-width: 180px;
     }
 
     .status-summary-title {
@@ -167,17 +167,33 @@
       font-weight: bold;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      text-align: right;
     }
 
+    /* Each row as a two-column layout: label left, count right */
     .status-summary-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 3px;
+    }
+
+    .status-summary-label {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
       gap: 6px;
-      margin-bottom: 2px;
+      text-align: left;
     }
 
+    .status-summary-count {
+      font-weight: bold;
+      text-align: right;
+      min-width: 28px;
+    }
+
+    /* status colour boxes */
     .status-colour-box {
       width: 14px;
       height: 14px;
@@ -204,7 +220,7 @@
 
     /* WIDER (BUT STILL SINGLE-LINE) ITEM COLUMN */
     .narrow-col {
-      max-width: 150px;   /* visible but still keeps table compact */
+      max-width: 150px;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -226,7 +242,7 @@
 
 <body>
 
-  <!-- HEADER IMAGE (now LiveHeader.png) -->
+  <!-- HEADER IMAGE -->
   <div class="header-image">
     <img src="LiveHeader.png"
          alt="The Starry Night Ball in aid of Marymount University Hospital and Hospice">
@@ -256,16 +272,27 @@
         <div class="status-summary-title">STATUS SUMMARY</div>
 
         <div class="status-summary-row">
-          <span class="status-colour-box status-colour-below"></span>
-          <span>BELOW: <span id="countBelow">0</span></span>
+          <div class="status-summary-label">
+            <span class="status-colour-box status-colour-below"></span>
+            <span>BELOW</span>
+          </div>
+          <div class="status-summary-count" id="countBelow">0</div>
         </div>
+
         <div class="status-summary-row">
-          <span class="status-colour-box status-colour-on-target"></span>
-          <span>ON TARGET: <span id="countOnTarget">0</span></span>
+          <div class="status-summary-label">
+            <span class="status-colour-box status-colour-on-target"></span>
+            <span>ON TARGET</span>
+          </div>
+          <div class="status-summary-count" id="countOnTarget">0</div>
         </div>
+
         <div class="status-summary-row">
-          <span class="status-colour-box status-colour-above"></span>
-          <span>ABOVE: <span id="countAbove">0</span></span>
+          <div class="status-summary-label">
+            <span class="status-colour-box status-colour-above"></span>
+            <span>ABOVE</span>
+          </div>
+          <div class="status-summary-count" id="countAbove">0</div>
         </div>
       </div>
     </div>
@@ -291,7 +318,7 @@
       `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
     // Columns we still hide
-    const hiddenColumns = ['LOW', 'HIGH']; // JOINT HIGHEST BID / JOINT TOP BID is now INCLUDED
+    const hiddenColumns = ['LOW', 'HIGH']; // JOINT HIGHEST BID / JOINT TOP BID now included
 
     const currencyColumns = [
       'CURRENT BID', 'COMMITTEE BID', 'PUBLIC BID',
@@ -299,7 +326,8 @@
     ];
 
     const centerColumns = [
-      'CURRENT BID', 'STATUS', 'BID TIME', 'NUMBER OF BIDS', 'JOINT HIGHEST BID', 'JOINT TOP BID'
+      'CURRENT BID', 'STATUS', 'BID TIME', 'NUMBER OF BIDS',
+      'JOINT HIGHEST BID', 'JOINT TOP BID'
     ];
 
     const narrowColumns = ['ITEM', 'ITEM DESCRIPTION'];
