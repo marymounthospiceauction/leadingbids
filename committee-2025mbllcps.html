@@ -7,8 +7,7 @@
   <title>Marymount Auction – Committee View</title>
 
   <style>
-    html,
-    body {
+    html, body {
       margin: 0;
       padding: 0;
       font-family: Calibri, Arial, sans-serif;
@@ -16,13 +15,9 @@
       min-height: 100%;
     }
 
-    body {
-      overflow-x: auto;
-    }
+    body { overflow-x: auto; }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     /* ===== LOGIN SCREEN ===== */
     #loginScreen {
@@ -33,16 +28,15 @@
       justify-content: center;
       background: linear-gradient(135deg, #e6d4ad 0%, #f5e7c3 55%, #e6d4ad 100%);
       z-index: 9999;
-      color: #000;
     }
 
     .login-card {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
       border-radius: 16px;
       padding: 26px 28px;
       width: 90%;
       max-width: 380px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
       text-align: center;
     }
 
@@ -52,13 +46,11 @@
       letter-spacing: 0.08em;
       font-weight: bold;
       text-transform: uppercase;
-      color: #000;
     }
 
     .login-subtitle {
       font-size: 0.9rem;
       margin-bottom: 18px;
-      color: #222;
     }
 
     .login-label {
@@ -68,7 +60,6 @@
       margin-bottom: 4px;
       text-align: left;
       font-weight: bold;
-      color: #444;
     }
 
     .login-input {
@@ -79,12 +70,6 @@
       font-size: 1rem;
     }
 
-    .login-input:focus {
-      border-color: #bc8b41;
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(188, 139, 65, 0.3);
-    }
-
     .login-button {
       width: 100%;
       padding: 12px;
@@ -93,7 +78,6 @@
       border-radius: 999px;
       font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
       background: linear-gradient(135deg, #bc8b41, #e6ce91);
       cursor: pointer;
     }
@@ -106,150 +90,61 @@
       text-align: left;
     }
 
-    /* ===== MAIN PAGE (AFTER LOGIN) ===== */
+    #protectedContent { display: none; }
 
-    #protectedContent {
-      display: none;
-    }
-
+    /* ===== HEADER ===== */
     .header-image img {
       width: 100%;
       max-width: 600px;
-      display: block;
       margin: 10px auto 20px auto;
+      display: block;
     }
 
-    /* BUTTON */
+    /* ===== BUTTON ===== */
     .button-section {
       display: flex;
       justify-content: center;
       padding: 20px 0;
     }
 
-    .button-container {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      width: 100%;
-      max-width: 360px;
-      align-items: center;
-    }
-
     .custom-button {
       width: 100%;
-      max-width: 320px;
+      max-width: 280px;
       padding: 10px 16px;
-      font-size: 17px;
-      font-weight: bold;
-      background-color: #bc8b41;
+      background: #bc8b41;
       border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      font-weight: bold;
+      color: black;
       text-decoration: none;
-      text-align: center;
-      color: #000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
-    @media (max-width: 480px) {
-      .custom-button {
-        max-width: 260px;
-      }
-    }
-
-    /* TABLE SECTION */
-    .table-section {
-      padding: 20px;
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    .table-heading {
-      font-size: 1.6rem;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .table-container {
-      width: 100%;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      overflow-x: auto;
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-
-    thead th {
-      background-color: #000;
-      color: #bc8b41;
-      padding: 8px;
-      border: 1px solid #ddd;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    tbody td {
-      border: 1px solid #ccc;
-      padding: 6px;
-      font-size: 0.8rem;
-      white-space: nowrap;
-    }
-
-    /* STATUS COLOURS */
-    .status-below {
-      background-color: #f8d7da;
-    }
-
-    .status-on-target {
-      background-color: #fff3cd;
-    }
-
-    .status-above {
-      background-color: #d4edda;
-    }
-
-    /* Light grey background for LOW/HIGH TARGET */
-    .lowhigh-bg {
-      background-color: #f1f1f1 !important;
-    }
-
-    /* ===== SUMMARY BAR (AUCTION TOTAL + STATUS SUMMARY) ===== */
+    /* ===== SUMMARY SECTION ===== */
     .summary-row {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       padding: 0 5px;
       flex-wrap: wrap;
       gap: 8px;
     }
 
-    .auction-total-block {
-      display: flex;
-      flex-direction: column;
-    }
-
     .auction-total-label {
       font-size: 0.85rem;
-      font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 2px;
+      font-weight: bold;
+      letter-spacing: 0.06em;
     }
 
     .auction-total-value {
       font-size: 1.6rem;
       font-weight: bold;
-      letter-spacing: 0.02em;
     }
 
     .status-summary-wrapper {
-      min-width: 170px;
-      font-size: 0.8rem;
+      min-width: 160px;
       text-align: right;
     }
 
@@ -257,7 +152,6 @@
       font-size: 0.85rem;
       font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
       margin-bottom: 4px;
     }
 
@@ -266,24 +160,22 @@
       grid-template-columns: 1fr auto;
       gap: 4px 8px;
       align-items: center;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .status-summary-label {
       display: flex;
       align-items: center;
       gap: 5px;
-      justify-content: flex-start;
-      font-size: 0.83rem;
+      font-size: 0.8rem;
       font-weight: bold;
       text-transform: uppercase;
     }
 
     .status-summary-count {
-      font-size: 0.83rem;
+      font-size: 0.8rem;
       font-weight: bold;
       text-align: right;
-      min-width: 20px;
     }
 
     .status-colour-box {
@@ -291,66 +183,92 @@
       height: 13px;
       border-radius: 3px;
       border: 1px solid #333;
-      display: inline-block;
     }
 
-    .status-colour-below {
-      background-color: #f8d7da;
+    .status-colour-below { background:#f8d7da; }
+    .status-colour-on-target { background:#fff3cd; }
+    .status-colour-above { background:#d4edda; }
+
+    /* ===== TABLE ===== */
+    .table-section { padding: 15px; width: 100%; }
+
+    .table-container {
+      background:white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      overflow-x: auto;
     }
 
-    .status-colour-on-target {
-      background-color: #fff3cd;
+    table { width:100%; border-collapse:collapse; }
+
+    thead th {
+      background:black;
+      color:#bc8b41;
+      padding:8px;
+      border:1px solid #ddd;
+      font-size:0.8rem;
+      text-transform:uppercase;
+      white-space:nowrap;
     }
 
-    .status-colour-above {
-      background-color: #d4edda;
+    tbody td {
+      border:1px solid #ccc;
+      padding:6px;
+      white-space:nowrap;
+      font-size:0.8rem;
+    }
+
+    .status-below { background:#f8d7da; }
+    .status-on-target { background:#fff3cd; }
+    .status-above { background:#d4edda; }
+
+    .lowhigh-bg {
+      background:#f1f1f1 !important;
     }
 
     .narrow-col {
-      max-width: 150px;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      max-width:150px;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- LOGIN SCREEN -->
+  <!-- LOGIN -->
   <div id="loginScreen">
     <div class="login-card">
       <div class="login-title">Committee Login</div>
-      <div class="login-subtitle">Enter the password to view the committee dashboard.</div>
+      <div class="login-subtitle">Enter the password to view the dashboard.</div>
 
       <form id="loginForm">
-        <label class="login-label" for="passwordInput">Password</label>
+        <label class="login-label">Password</label>
         <input type="password" id="passwordInput" class="login-input" required />
-        <button type="submit" class="login-button">Unlock</button>
+        <button class="login-button">Unlock</button>
         <div id="loginError" class="login-error"></div>
       </form>
     </div>
   </div>
 
-  <!-- PROTECTED CONTENT -->
+  <!-- CONTENT -->
   <div id="protectedContent">
 
     <div class="header-image">
-      <img src="LiveHeader.png" alt="Marymount Header">
+      <img src="LiveHeader.png">
     </div>
 
     <div class="button-section">
-      <div class="button-container">
-        <a class="custom-button"
-          href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
-          target="_blank">📝 Place an Auction Bid</a>
-      </div>
+      <a class="custom-button"
+        href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
+        target="_blank">📝 Place an Auction Bid</a>
     </div>
 
     <div class="table-section">
 
-      <!-- Summary Row -->
+      <!-- SUMMARY -->
       <div class="summary-row">
-        <div class="auction-total-block">
+        <div>
           <div class="auction-total-label">AUCTION TOTAL</div>
           <div class="auction-total-value" id="auctionTotal">€0</div>
         </div>
@@ -359,29 +277,21 @@
           <div class="status-summary-title">STATUS SUMMARY</div>
 
           <div class="status-summary-row">
-            <div class="status-summary-label">
-              <span class="status-colour-box status-colour-below"></span> BELOW
-            </div>
+            <div class="status-summary-label"><span class="status-colour-box status-colour-below"></span> BELOW</div>
             <div class="status-summary-count" id="countBelow">0</div>
           </div>
 
           <div class="status-summary-row">
-            <div class="status-summary-label">
-              <span class="status-colour-box status-colour-on-target"></span> ON TARGET
-            </div>
+            <div class="status-summary-label"><span class="status-colour-box status-colour-on-target"></span> ON TARGET</div>
             <div class="status-summary-count" id="countOnTarget">0</div>
           </div>
 
           <div class="status-summary-row">
-            <div class="status-summary-label">
-              <span class="status-colour-box status-colour-above"></span> ABOVE
-            </div>
+            <div class="status-summary-label"><span class="status-colour-box status-colour-above"></span> ABOVE</div>
             <div class="status-summary-count" id="countAbove">0</div>
           </div>
         </div>
       </div>
-
-      <div class="table-heading">COMMITTEE VIEW</div>
 
       <div class="table-container">
         <table id="bidsTable">
@@ -394,69 +304,60 @@
   </div>
 
   <script>
-    /* ====== PASSWORD LOGIC ====== */
     const PASSWORD = "starrynight";
 
-    function showProtectedContent() {
-      document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("protectedContent").style.display = "block";
-      startData();
-    }
-
-    document.getElementById("loginForm").addEventListener("submit", (e) => {
+    /* ===== LOGIN ===== */
+    document.getElementById("loginForm").addEventListener("submit", e => {
       e.preventDefault();
-      const pw = document.getElementById("passwordInput").value.trim();
-      if (pw === PASSWORD) {
-        showProtectedContent();
+      if (document.getElementById("passwordInput").value === PASSWORD) {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("protectedContent").style.display = "block";
+        startData();
       } else {
         document.getElementById("loginError").textContent = "Incorrect password.";
       }
     });
 
-    /* ====== TABLE LOGIC ====== */
+    /* ===== DATA ===== */
+    const sheetID = "1DKnonV1mO-irLiJ4b9M62XYOMEf3LqRvJtEvopvjAp0";
+    const sheetName = "LIVE STATUS";
+    const range = "A5:L44";
 
-    const sheetID = '1DKnonV1mO-irLiJ4b9M62XYOMEf3LqRvJtEvopvjAp0';
-    const sheetName = 'LIVE STATUS';
-    const range = 'A5:L44';
+    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}&range=${range}`;
 
-    const url =
-      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
-
+    /* Hidden Columns */
     const hiddenColumns = [
-      'EMAIL ADDRESS',
-      'CONTACT NUMBER',
-      'TABLE NUMBER/NAME',
-      'BID TIME' // removed from view
+      "EMAIL ADDRESS", "CONTACT NUMBER", "TABLE NUMBER/NAME",
+      "BID TIME"
     ];
 
+    /* Currency Columns */
     const currencyColumns = [
-      'LOW', 'HIGH', 'CURRENT BID', 'COMMITTEE BID',
-      'PUBLIC BID', 'TARGET', 'RESERVE', 'VALUE'
+      "LOW", "HIGH", "CURRENT BID", "COMMITTEE BID", "PUBLIC BID",
+      "TARGET", "RESERVE", "VALUE"
     ];
 
+    /* Center-aligned Columns – UPDATED */
     const centerColumns = [
-      'LOW TARGET', 'HIGH', 'CURRENT BID', 'STATUS',
-      'NUMBER OF BIDS', 'JOINT HIGHEST BID'
+      "LOW",               // LOW TARGET (centered)
+      "HIGH",              // HIGH TARGET (centered)
+      "JOINT HIGHEST BID", // NEW: centre-aligned
+      "CURRENT BID",
+      "STATUS",
+      "NUMBER OF BIDS"
     ];
 
-    const narrowColumns = ['ITEM', 'ITEM DESCRIPTION'];
+    const narrowColumns = ["ITEM", "ITEM DESCRIPTION"];
 
-    const currencySet = new Set(currencyColumns.map(a => a.toUpperCase()));
-    const centerSet = new Set(centerColumns.map(a => a.toUpperCase()));
-    const narrowSet = new Set(narrowColumns.map(a => a.toUpperCase()));
-
-    function isHidden(label) {
-      return hiddenColumns.includes((label || "").toUpperCase());
-    }
+    const currencySet = new Set(currencyColumns);
+    const centerSet = new Set(centerColumns);
+    const narrowSet = new Set(narrowColumns);
 
     function formatEuro(v) {
       if (!v) return "";
-      const num = Number(String(v).replace(/[^\d.-]/g, ""));
-      if (isNaN(num)) return v;
-      return "€" + num.toLocaleString("en-IE", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      });
+      const n = Number(String(v).replace(/[^\d.-]/g, ""));
+      if (isNaN(n)) return v;
+      return "€" + n.toLocaleString("en-IE", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     }
 
     async function loadData() {
@@ -470,35 +371,32 @@
       const thead = document.querySelector("#bidsTable thead");
       const tbody = document.querySelector("#bidsTable tbody");
 
+      /* Determine visible columns */
       let visible = [];
-      cols.forEach((lbl, i) => { if (!isHidden(lbl)) visible.push(i); });
+      cols.forEach((lbl, i) => {
+        if (!hiddenColumns.includes(lbl.toUpperCase())) visible.push(i);
+      });
 
-      const statusIndex = cols.findIndex(c => (c || "").toUpperCase() === "STATUS");
-      const bidIndex = cols.findIndex(c => (c || "").toUpperCase() === "CURRENT BID");
-      const bidsIndex = cols.findIndex(c => (c || "").toUpperCase() === "NUMBER OF BIDS");
+      const statusIndex = cols.findIndex(c => c.toUpperCase() === "STATUS");
+      const bidIndex = cols.findIndex(c => c.toUpperCase() === "CURRENT BID");
+      const bidsIndex = cols.findIndex(c => c.toUpperCase() === "NUMBER OF BIDS");
 
-      /* STATUS FIRST */
+      /* STATUS first */
       if (statusIndex > -1) {
-        const pos = visible.indexOf(statusIndex);
-        if (pos > -1) {
-          visible.splice(pos, 1);
-          visible.unshift(statusIndex);
-        }
+        visible = visible.filter(v => v !== statusIndex);
+        visible.unshift(statusIndex);
       }
 
-      /* BIDS AS COLUMN #4 */
+      /* BIDS moves to column #4 */
       if (bidsIndex > -1) {
-        const pos = visible.indexOf(bidsIndex);
-        if (pos > -1) {
-          visible.splice(pos, 1);
-          visible.splice(3, 0, bidsIndex);
-        }
+        visible = visible.filter(v => v !== bidsIndex);
+        visible.splice(3, 0, bidsIndex);
       }
 
       /* ===== HEADER ===== */
-      let headerHTML = "<tr>";
+      let h = "<tr>";
       visible.forEach(i => {
-        let label = cols[i] || "";
+        let label = cols[i];
         const key = label.toUpperCase();
 
         if (key.includes("LOW")) label = "LOW TARGET";
@@ -508,32 +406,29 @@
         if (key === "NAME") label = "WINNER NAME";
 
         const cls = narrowSet.has(key) ? "narrow-col" : "";
-        const align = centerSet.has(key) ? "text-align:center;" : "";
+        const style = centerSet.has(key) ? "text-align:center;" : "";
 
-        headerHTML += `<th class="${cls}" style="${align}">${label}</th>`;
+        h += `<th class="${cls}" style="${style}">${label}</th>`;
       });
-      headerHTML += "</tr>";
-      thead.innerHTML = headerHTML;
+      h += "</tr>";
+      thead.innerHTML = h;
 
       /* ===== TOTALS ===== */
       let total = 0;
-      let statusCounts = { 'BELOW': 0, 'ON TARGET': 0, 'ABOVE': 0 };
+      let counts = { BELOW: 0, "ON TARGET": 0, ABOVE: 0 };
 
       rows.forEach(r => {
-        if (bidIndex > -1) {
-          const val = Number(String(r[bidIndex]).replace(/[^\d.-]/g, ""));
-          if (!isNaN(val)) total += val;
-        }
-        if (statusIndex > -1) {
-          const s = String(r[statusIndex]).toUpperCase();
-          if (statusCounts[s] !== undefined) statusCounts[s]++;
-        }
+        const v = Number(String(r[bidIndex]).replace(/[^\d.-]/g, ""));
+        if (!isNaN(v)) total += v;
+
+        const s = String(r[statusIndex]).toUpperCase();
+        if (counts[s] !== undefined) counts[s]++;
       });
 
       document.getElementById("auctionTotal").textContent = formatEuro(total);
-      document.getElementById("countBelow").textContent = statusCounts["BELOW"];
-      document.getElementById("countOnTarget").textContent = statusCounts["ON TARGET"];
-      document.getElementById("countAbove").textContent = statusCounts["ABOVE"];
+      document.getElementById("countBelow").textContent = counts["BELOW"];
+      document.getElementById("countOnTarget").textContent = counts["ON TARGET"];
+      document.getElementById("countAbove").textContent = counts["ABOVE"];
 
       /* ===== BODY ===== */
       let bodyHTML = "";
@@ -542,35 +437,34 @@
         bodyHTML += "<tr>";
 
         visible.forEach(i => {
-          let val = row[i];
-          const key = (cols[i] || "").toUpperCase();
+          const key = cols[i].toUpperCase();
+          let v = row[i];
 
-          /* Currency – include LOW/HIGH too */
-          if (currencySet.has(key) || key.includes("LOW") || key.includes("HIGH")) {
-            val = formatEuro(val);
+          if (currencySet.has(key) || key.includes("LOW") || key.includes("HIGH"))
+            v = formatEuro(v);
+
+          let cls = "";
+
+          if (key === "STATUS") {
+            const s = String(v).toUpperCase();
+            if (s === "BELOW") cls = "status-below";
+            if (s === "ON TARGET") cls = "status-on-target";
+            if (s === "ABOVE") cls = "status-above";
           }
 
-          let classes = [];
-          if (i === statusIndex) {
-            const s = String(row[i]).toUpperCase();
-            if (s === "BELOW") classes.push("status-below");
-            else if (s === "ABOVE") classes.push("status-above");
-            else if (s === "ON TARGET") classes.push("status-on-target");
-          }
+          if (key.includes("LOW") || key.includes("HIGH"))
+            cls += " lowhigh-bg";
 
-          if (key.includes("LOW") || key.includes("HIGH")) {
-            classes.push("lowhigh-bg");
-          }
-
-          if (narrowSet.has(key)) {
-            classes.push("narrow-col");
-          }
+          if (narrowSet.has(key))
+            cls += " narrow-col";
 
           let style = "";
-          if (key === "CURRENT BID") style += "font-weight:bold;";
-          if (centerSet.has(key)) style += "text-align:center;";
+          if (centerSet.has(key))
+            style += "text-align:center;";
+          if (key === "CURRENT BID")
+            style += "font-weight:bold;";
 
-          bodyHTML += `<td class="${classes.join(" ")}" style="${style}">${val ?? ""}</td>`;
+          bodyHTML += `<td class="${cls}" style="${style}">${v ?? ""}</td>`;
         });
 
         bodyHTML += "</tr>";
@@ -586,6 +480,4 @@
   </script>
 
 </body>
-
 </html>
-
