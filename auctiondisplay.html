@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Marymount Auction – Slideshow & Live Bids</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    /* BASIC RESET */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Calibri, Arial, sans-serif;
+      background-color: #000; /* helps the slideshow pop on TVs */
+      color: #ffe599;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* MAIN LAYOUT: LEFT SLIDESHOW, RIGHT LIVE BIDS */
+    .layout {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .left-slideshow {
+      flex: 2;
+      position: relative;
+      overflow: hidden;
+      background-color: #000;
+    }
+
+    .right-bids {
+      flex: 1;
+      background-color: #e6d4ad;
+      border-left: 3px solid #bc8b41;
+    }
+
+    .right-bids iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* SLIDES */
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* CONTENT SLIDE STYLE */
+    .slide-content {
+      width: 95%;
+      height: 95%;
+      border-radius: 16px;
+      padding: 20px 28px;
+      background: radial-gradient(circle at top, #1f1b45 0%, #05030f 60%, #000 100%);
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .slide-title-block {
+      flex: 1;
+      text-align: center;
+    }
+
+    .slide-title {
+      font-size: 2.4vw;
+      font-weight: bold;
+      color: #ffe599;
+    }
+
+    .slide-subtitle {
+      font-size: 1.3vw;
+      color: #f4cccc;
+      margin-top: 0.3em;
+    }
+
+    .slide-logo {
+      height: 60px;
+      max-width: 120px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
+    }
+
+    .slide-body-text {
+      flex: 1;
+      font-size: 1.5vw;
+      line-height: 1.4;
+      margin-top: 10px;
+      white-space: pre-line;
+    }
+
+    .bullet {
+      margin-bottom: 0.4em;
+    }
+
+    .slide-footer {
+      text-align: right;
+      font-size: 1.1vw;
+      opacity: 0.85;
+      margin-top: 8px;
+    }
+
+    /* ITEM LABEL (e.g. ITEM 01) */
+    .item-label {
+      font-size: 1.4vw;
+      font-weight: bold;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.2em;
+      color: #ffd966;
+    }
+
+    .item-name {
+      font-size: 2vw;
+      font-weight: bold;
+      margin-bottom: 0.5em;
+      text-transform: uppercase;
+      color: #fff2cc;
+    }
+
+    .current-bid-note {
+      margin-top: 0.8em;
+      font-size: 1.2vw;
+      font-style: italic;
+      color: #fce5cd;
+    }
+
+    .donor-note {
+      margin-top: 0.4em;
+      font-size: 1.2vw;
+      color: #cfe2f3;
+    }
+
+    /* VIDEO SLIDE */
+    .video-wrapper {
+      width: 95%;
+      height: 95%;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.8);
+      background: #000;
+    }
+
+    .video-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* RESPONSIVE: ON SMALL SCREENS, STACK VERTICALLY */
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+      .left-slideshow {
+        flex: 3;
+        height: 60vh;
+      }
+      .right-bids {
+        flex: 2;
+        height: 40vh;
+      }
+      .slide-title {
+        font-size: 5vw;
+      }
+      .slide-subtitle {
+        font-size: 3.3vw;
+      }
+      .slide-body-text {
+        font-size: 3.5vw;
+      }
+      .slide-footer {
+        font-size: 3vw;
+      }
+      .item-label {
+        font-size: 3.4vw;
+      }
+      .item-name {
+        font-size: 4.5vw;
+      }
+      .current-bid-note,
+      .donor-note {
+        font-size: 3vw;
+      }
+      .slide-logo {
+        height: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- LEFT: CUSTOM HTML SLIDESHOW -->
+    <div class="left-slideshow" id="slideshow">
+      
+      <!-- SLIDE 1 – Title slide (from your Slide #1) -->
+      <div class="slide active">
+        <div class="slide-content">
+          <div class="slide-header">
+            <img src="marymount-logo-left.png" alt="Marymount Logo" class="slide-logo">
+            <div class="slide-title-block">
+              <div class="slide-title">The Starry Night Ball</div>
+              <div class="slide-subtitle">
+                In aid of Marymount University Hospital &amp; Hospice
+              </div>
+            </div>
+            <img src="marymount-logo-right.png" alt="Marymount Logo" class="slide-logo">
+          </div>
+
+          <div class="slide-body-text">
+            <div class="bullet">
+              Friday 5th December 2025
+            </div>
+            <div class="bullet">
+              Radisson Blu Hotel, Little Island, Cork
+            </div>
+          </div>
+
+          <div class="slide-footer">
+            Thank you for your incredible support this evening.
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2 – How to bid (from your Slide #3) -->
+      <div class="slide">
+        <div class="slide-content">
+          <div class="slide-header">
+            <img src="marymount-logo-left.png" alt="Marymount Logo" class="slide-logo">
+            <div class="slide-title-block">
+              <div class="slide-title">Live &amp; Silent Auction</div>
+              <div class="slide-subtitle">How to place a bid</div>
+            </div>
+            <img src="marymount-logo-right.png" alt="Marymount Logo" class="slide-logo">
+          </div>
+
+          <div class="slide-body-text">
+            <div class="bullet">
+              • Scan the QR code on your brochure
+            </div>
+            <div class="bullet">
+              • Or visit <strong>www.marymountauction2025.ie</strong>
+            </div>
+            <div class="bullet">
+              • Or call out to the team in the foyer
+            </div>
+
+            <div class="current-bid-note">
+              Watch the right-hand panel for live leading bids throughout the night.
+            </div>
+          </div>
+
+          <div class="slide-footer">
+            Please bid generously – every euro supports Marymount.
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3 – ITEM 01 (Wimbledon) -->
+      <div class="slide">
+        <div class="slide-content">
+          <div class="slide-header">
+            <img src="marymount-logo-left.png" alt="Marymount Logo" class="slide-logo">
+            <div class="slide-title-block">
+              <div class="item-label">ITEM 01</div>
+              <div class="item-name">Wimbledon Ladies Final</div>
+            </div>
+            <img src="marymount-logo-right.png" alt="Marymount Logo" class="slide-logo">
+          </div>
+
+          <div class="slide-body-text">
+            <div class="bullet">
+              • Two tickets for the Wimbledon Ladies Final on 11 July 2026.
+            </div>
+            <div class="bullet">
+              • Champagne reception and gourmet lunch in the Champions Room.
+            </div>
+            <div class="bullet">
+              • Experience world-class tennis and the full Wimbledon atmosphere.
+            </div>
+            <div class="bullet">
+              • <em>Note: flights and accommodation are not included.</em>
+            </div>
+
+            <div class="current-bid-note">
+              Current leading bid: see live panel on the right.
+            </div>
+            <div class="donor-note">
+              Kindly donated by Dan &amp; Linda Kiely.
+            </div>
+          </div>
+
+          <div class="slide-footer">
+            Raise your game for Marymount – every bid makes a difference.
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4 – ITEM 02 (EU Commissioner Tour & Dinner) -->
+      <div class="slide">
+        <div class="slide-content">
+          <div class="slide-header">
+            <img src="marymount-logo-left.png" alt="Marymount Logo" class="slide-logo">
+            <div class="slide-title-block">
+              <div class="item-label">ITEM 02</div>
+              <div class="item-name">EU Commissioner Tour &amp; Dinner</div>
+            </div>
+            <img src="marymount-logo-right.png" alt="Marymount Logo" class="slide-logo">
+          </div>
+
+          <div class="slide-body-text">
+            <div class="bullet">
+              • Tour of the EU Commission HQ and Parliament in Brussels for four people.
+            </div>
+            <div class="bullet">
+              • Guided by EU Commissioner McGrath, with dinner that evening.
+            </div>
+            <div class="bullet">
+              • Includes a contribution towards flights and accommodation in Brussels.
+            </div>
+
+            <div class="current-bid-note">
+              Current leading bid: see the right-hand panel.
+            </div>
+            <div class="donor-note">
+              Kindly donated by Commissioner McGrath &amp; supporters.
+            </div>
+          </div>
+
+          <div class="slide-footer">
+            A unique political and cultural experience – bid early, bid often.
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5 – Example VIDEO SLIDE (replace VIDEO_ID_X with your YouTube ID) -->
+      <div class="slide">
+        <div class="video-wrapper">
+          <!-- PUT YOUR FIRST VIDEO ID HERE -->
+          <!-- Example URL: https://www.youtube.com/watch?v=ABC123XYZ
+               VIDEO_ID_X = ABC123XYZ -->
+          <iframe 
+            src="https://www.youtube.com/embed/VIDEO_ID_X?autoplay=1&mute=1&controls=0&modestbranding=1&showinfo=0&rel=0&loop=1&playlist=VIDEO_ID_X"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+
+      <!--
+        👉 To add more slides (ITEM 03, 04, ...):
+        1. Copy one of the ITEM slides above.
+        2. Update:
+           - .item-label (e.g. ITEM 03)
+           - .item-name (e.g. BARCELONA FORMULA 1)
+           - bullet text and donor text.
+        3. For more video slides, copy the VIDEO slide and replace VIDEO_ID_X
+           with the YouTube ID for each of your embedded videos.
+      -->
+
+    </div>
+
+    <!-- RIGHT: LIVE BIDS PAGE (YOUR EXISTING LEADINGBIDS) -->
+    <div class="right-bids">
+      <iframe
+        src="https://marymounthospiceauction.github.io/leadingbids"
+        title="Live Leading Bids"
+      ></iframe>
+    </div>
+  </div>
+
+  <script>
+    // SIMPLE SLIDESHOW LOGIC
+    const slides = document.querySelectorAll('.slide');
+    let currentIndex = 0;
+
+    // Change this if you want slides to stay longer/shorter
+    const SLIDE_DURATION_MS = 15000; // 15 seconds per slide
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+      });
+    }
+
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % slides.length;
+      showSlide(currentIndex);
+    }
+
+    setInterval(nextSlide, SLIDE_DURATION_MS);
+  </script>
+</body>
+</html>
