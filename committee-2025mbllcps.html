@@ -239,6 +239,17 @@
       text-overflow:ellipsis;
     }
 
+    /* Narrower STATUS + LEADING BID columns */
+    .col-status {
+      width: 40px;
+      max-width: 40px;
+    }
+
+    .col-leading {
+      width: 80px;
+      max-width: 80px;
+    }
+
     /* Alternating row colour – subtle gold, preserving STATUS cell colours */
     tbody tr.alt-gold td:not(.status-below):not(.status-on-target):not(.status-above) {
       background-color: #f5ebd0;
@@ -359,13 +370,14 @@
     const centerColumns = [
       "LOW",
       "HIGH",
-      "JOINT TOP BID",   // ✅ centre this
+      "JOINT TOP BID",
       "CURRENT BID",
       "STATUS",
       "NUMBER OF BIDS"
     ].map(h => h.toUpperCase().trim());
 
-    const narrowColumns = ["ITEM", "ITEM DESCRIPTION"].map(h => h.toUpperCase().trim());
+    /* Only ITEM DESCRIPTION is narrow now – ITEM can expand */
+    const narrowColumns = ["ITEM DESCRIPTION"].map(h => h.toUpperCase().trim());
 
     const hiddenSet   = new Set(hiddenColumns);
     const currencySet = new Set(currencyColumns);
@@ -437,11 +449,16 @@
         if (key === "NAME")            label = "WINNER NAME";
 
         const thKey = key;
-        const cls   = narrowSet.has(thKey) ? "narrow-col" : "";
+        let clsArr  = [];
+
+        if (narrowSet.has(thKey)) clsArr.push("narrow-col");
+        if (thKey === "STATUS")       clsArr.push("col-status");
+        if (thKey === "CURRENT BID")  clsArr.push("col-leading");
+
         const style = (centerSet.has(thKey) || key.includes("LOW") || key.includes("HIGH"))
           ? "text-align:center;" : "";
 
-        h += `<th class="${cls}" style="${style}">${label}</th>`;
+        h += `<th class="${clsArr.join(" ")}" style="${style}">${label}</th>`;
       });
       h += "</tr>";
       thead.innerHTML = h;
@@ -518,6 +535,7 @@
 
           let classes = [];
 
+          // Status colouring
           if (i === statusIndex) {
             const s = String(row[i] || "").toUpperCase().trim();
             if (s === "BELOW")      classes.push("status-below");
@@ -533,6 +551,9 @@
             classes.push("narrow-col");
           }
 
+          if (key === "STATUS")       classes.push("col-status");
+          if (key === "CURRENT BID")  classes.push("col-leading");
+
           let style = "";
           if (centerSet.has(key) || key.includes("LOW") || key.includes("HIGH")) {
             style += "text-align:center;";
@@ -541,7 +562,21 @@
             style += "font-weight:bold;";
           }
 
-          bodyHTML += `<td class="${classes.join(" ")}" style="${style}">${v ?? ""}</td>`;
+          // STATUS icons instead of text, with colours:
+          // red down ↓ for BELOW, orange right → for ON TARGET, green up ↑ for ABOVE
+          let displayVal = v;
+          if (i === statusIndex) {
+            const s = String(row[i] || "").toUpperCase().trim();
+            if (s === "BELOW") {
+              displayVal = '<span style="color:#c0392b;font-size:1.1em;">⬇</span>';
+            } else if (s === "ABOVE") {
+              displayVal = '<span style="color:#27ae60;font-size:1.1em;">⬆</span>';
+            } else if (s === "ON TARGET") {
+              displayVal = '<span style="color:#e67e22;font-size:1.1em;">➜</span>';
+            }
+          }
+
+          bodyHTML += `<td class="${classes.join(" ")}" style="${style}">${displayVal ?? ""}</td>`;
         });
 
         bodyHTML += "</tr>";
