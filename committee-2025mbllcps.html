@@ -209,7 +209,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      table-layout: fixed; /* predictable column widths */
+      /* no table-layout: fixed so widths can grow */
     }
 
     thead th {
@@ -243,7 +243,7 @@
       text-overflow:ellipsis;
     }
 
-    /* STATUS + LEADING BID + ITEM column sizing */
+    /* STATUS + LEADING BID + ITEM column sizing (desktop defaults) */
     .col-status {
       width: 40px;
       max-width: 40px;
@@ -260,10 +260,29 @@
       white-space: nowrap;
     }
 
-    /* On small screens, force ITEM to take the remaining width so first 3 fit */
+    /* On small screens, force STATUS + ITEM + LEADING to fill width.
+       Remaining columns extend table to the right (scroll to view). */
     @media (max-width: 600px) {
+      table {
+        width: auto; /* allow table to be wider than viewport */
+      }
+
+      .col-status {
+        width: 10vw;
+        min-width: 10vw;
+        max-width: 10vw;
+      }
+
       .col-item {
-        max-width: calc(100vw - 120px); /* 40 (status) + 80 (leading) */
+        width: 55vw;
+        min-width: 55vw;
+        max-width: 55vw;
+      }
+
+      .col-leading {
+        width: 25vw;
+        min-width: 25vw;
+        max-width: 25vw;
       }
     }
 
@@ -406,7 +425,6 @@
       "NUMBER OF BIDS"
     ].map(h => h.toUpperCase().trim());
 
-    /* Only ITEM DESCRIPTION is narrow now – ITEM can expand */
     const narrowColumns = ["ITEM DESCRIPTION"].map(h => h.toUpperCase().trim());
 
     const hiddenSet   = new Set(hiddenColumns);
@@ -499,7 +517,6 @@
       const itemBest = new Map(); // normalizedItemKey -> { bid, status }
 
       rows.forEach((row, rowIndex) => {
-        // Auction total: sum of all CURRENT BID values (all rows)
         if (bidIndex > -1) {
           const bidNum = Number(String(row[bidIndex] ?? "").replace(/[^\d.-]/g, ""));
           if (!isNaN(bidNum)) auctionTotal += bidNum;
@@ -538,14 +555,13 @@
       /* ===== BODY WITH ALTERNATING GOLD ROWS (grouped by normalised ITEM) ===== */
       let bodyHTML = "";
       let lastItemKey = null;
-      let stripeToggle = 0; // 0/1 for alternation
+      let stripeToggle = 0;
 
       rows.forEach((row, rowIndex) => {
         const itemKey = (itemIndex !== -1)
           ? normalizeItemKey(row[itemIndex], rowIndex)
           : String(rowIndex);
 
-        // Only change stripe when itemKey changes
         if (itemKey !== lastItemKey) {
           stripeToggle = 1 - stripeToggle;
           lastItemKey = itemKey;
@@ -559,14 +575,12 @@
           const key = rawLabel.toUpperCase().trim();
           let v = row[i];
 
-          // Currency formatting, including LOW/HIGH (targets)
           if (currencySet.has(key) || key.includes("LOW") || key.includes("HIGH")) {
             v = formatEuro(v);
           }
 
           let classes = [];
 
-          // Status colouring
           if (i === statusIndex) {
             const s = String(row[i] || "").toUpperCase().trim();
             if (s === "BELOW")      classes.push("status-below");
@@ -594,8 +608,7 @@
             style += "font-weight:bold;";
           }
 
-          // STATUS icons instead of text, with colours:
-          // red down ↓ for BELOW, orange right → for ON TARGET, green up ↑ for ABOVE
+          // STATUS icons instead of text
           let displayVal = v;
           if (i === statusIndex) {
             const s = String(row[i] || "").toUpperCase().trim();
