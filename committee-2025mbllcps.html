@@ -209,7 +209,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      /* no table-layout: fixed so widths can grow */
+      /* allow table to grow wider than viewport */
     }
 
     thead th {
@@ -264,7 +264,7 @@
        Remaining columns extend table to the right (scroll to view). */
     @media (max-width: 600px) {
       table {
-        width: auto; /* allow table to be wider than viewport */
+        width: auto;
       }
 
       .col-status {
@@ -291,18 +291,30 @@
       background-color: #f5ebd0;
     }
 
-    /* STATUS icons unified */
+    /* STATUS icons unified – all use ▲, rotated */
     .status-icon {
       font-size: 1.1em;
       display: inline-block;
-      width: 1em;
-      line-height: 1;
+      width: 1.2em;
+      height: 1.2em;
+      line-height: 1.2em;
       text-align: center;
     }
 
-    .status-icon-below  { color:#c0392b; } /* red down */
-    .status-icon-target { color:#e67e22; } /* orange right */
-    .status-icon-above  { color:#27ae60; } /* green up */
+    .status-icon-below  {
+      color:#c0392b;          /* red */
+      transform: rotate(180deg);
+    }
+
+    .status-icon-target {
+      color:#e67e22;          /* orange */
+      transform: rotate(90deg);
+    }
+
+    .status-icon-above  {
+      color:#27ae60;          /* green */
+      transform: rotate(0deg);
+    }
   </style>
 </head>
 
@@ -608,16 +620,16 @@
             style += "font-weight:bold;";
           }
 
-          // STATUS icons instead of text
+          // STATUS icons instead of text (all use ▲, rotated)
           let displayVal = v;
           if (i === statusIndex) {
             const s = String(row[i] || "").toUpperCase().trim();
             if (s === "BELOW") {
-              displayVal = '<span class="status-icon status-icon-below">⬇</span>';
+              displayVal = '<span class="status-icon status-icon-below">▲</span>';
             } else if (s === "ABOVE") {
-              displayVal = '<span class="status-icon status-icon-above">⬆</span>';
+              displayVal = '<span class="status-icon status-icon-above">▲</span>';
             } else if (s === "ON TARGET") {
-              displayVal = '<span class="status-icon status-icon-target">➜</span>';
+              displayVal = '<span class="status-icon status-icon-target">▲</span>';
             }
           }
 
