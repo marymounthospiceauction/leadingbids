@@ -206,7 +206,11 @@
       overflow-x: auto;
     }
 
-    table { width:100%; border-collapse:collapse; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed; /* predictable column widths */
+    }
 
     thead th {
       background:black;
@@ -239,7 +243,7 @@
       text-overflow:ellipsis;
     }
 
-    /* Narrower STATUS + LEADING BID columns */
+    /* STATUS + LEADING BID + ITEM column sizing */
     .col-status {
       width: 40px;
       max-width: 40px;
@@ -250,10 +254,36 @@
       max-width: 80px;
     }
 
+    .col-item {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* On small screens, force ITEM to take the remaining width so first 3 fit */
+    @media (max-width: 600px) {
+      .col-item {
+        max-width: calc(100vw - 120px); /* 40 (status) + 80 (leading) */
+      }
+    }
+
     /* Alternating row colour – subtle gold, preserving STATUS cell colours */
     tbody tr.alt-gold td:not(.status-below):not(.status-on-target):not(.status-above) {
       background-color: #f5ebd0;
     }
+
+    /* STATUS icons unified */
+    .status-icon {
+      font-size: 1.1em;
+      display: inline-block;
+      width: 1em;
+      line-height: 1;
+      text-align: center;
+    }
+
+    .status-icon-below  { color:#c0392b; } /* red down */
+    .status-icon-target { color:#e67e22; } /* orange right */
+    .status-icon-above  { color:#27ae60; } /* green up */
   </style>
 </head>
 
@@ -454,6 +484,7 @@
         if (narrowSet.has(thKey)) clsArr.push("narrow-col");
         if (thKey === "STATUS")       clsArr.push("col-status");
         if (thKey === "CURRENT BID")  clsArr.push("col-leading");
+        if (thKey === "ITEM")         clsArr.push("col-item");
 
         const style = (centerSet.has(thKey) || key.includes("LOW") || key.includes("HIGH"))
           ? "text-align:center;" : "";
@@ -553,6 +584,7 @@
 
           if (key === "STATUS")       classes.push("col-status");
           if (key === "CURRENT BID")  classes.push("col-leading");
+          if (key === "ITEM")         classes.push("col-item");
 
           let style = "";
           if (centerSet.has(key) || key.includes("LOW") || key.includes("HIGH")) {
@@ -568,11 +600,11 @@
           if (i === statusIndex) {
             const s = String(row[i] || "").toUpperCase().trim();
             if (s === "BELOW") {
-              displayVal = '<span style="color:#c0392b;font-size:1.1em;">⬇</span>';
+              displayVal = '<span class="status-icon status-icon-below">⬇</span>';
             } else if (s === "ABOVE") {
-              displayVal = '<span style="color:#27ae60;font-size:1.1em;">⬆</span>';
+              displayVal = '<span class="status-icon status-icon-above">⬆</span>';
             } else if (s === "ON TARGET") {
-              displayVal = '<span style="color:#e67e22;font-size:1.1em;">➜</span>';
+              displayVal = '<span class="status-icon status-icon-target">➜</span>';
             }
           }
 
