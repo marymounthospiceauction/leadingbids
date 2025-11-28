@@ -209,7 +209,6 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      /* allow table to grow wider than viewport */
     }
 
     thead th {
@@ -260,8 +259,7 @@
       white-space: nowrap;
     }
 
-    /* On small screens, force STATUS + ITEM + LEADING to fill width.
-       Remaining columns extend table to the right (scroll to view). */
+    /* On small screens, force STATUS + ITEM + LEADING to fill width. */
     @media (max-width: 600px) {
       table {
         width: auto;
@@ -302,17 +300,17 @@
     }
 
     .status-icon-below  {
-      color:#c0392b;          /* red */
+      color:#c0392b;
       transform: rotate(180deg);
     }
 
     .status-icon-target {
-      color:#e67e22;          /* orange */
+      color:#e67e22;
       transform: rotate(90deg);
     }
 
     .status-icon-above  {
-      color:#27ae60;          /* green */
+      color:#27ae60;
       transform: rotate(0deg);
     }
   </style>
@@ -399,7 +397,6 @@
   <script>
     const PASSWORD = "starrynight";
 
-    /* ===== LOGIN ===== */
     document.getElementById("loginForm").addEventListener("submit", e => {
       e.preventDefault();
       if (document.getElementById("passwordInput").value === PASSWORD) {
@@ -411,7 +408,6 @@
       }
     });
 
-    /* ===== DATA CONFIG ===== */
     const sheetID   = "1DKnonV1mO-irLiJ4b9M62XYOMEf3LqRvJtEvopvjAp0";
     const sheetName = "LIVE STATUS";
     const range     = "A5:L44";
@@ -451,8 +447,6 @@
       return "€" + n.toLocaleString("en-IE", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     }
 
-    // Normalise an item label to its ITEM number (e.g. "ITEM 04"),
-    // so ITEM 04 SET 1 / SET 2 / SET 3 all group together.
     function normalizeItemKey(value, fallback) {
       if (value == null) return String(fallback);
       const str = String(value).trim();
@@ -471,7 +465,6 @@
       const thead = document.querySelector("#bidsTable thead");
       const tbody = document.querySelector("#bidsTable tbody");
 
-      /* Determine visible columns */
       let visible = [];
       cols.forEach((lbl, i) => {
         const key = (lbl || "").toUpperCase().trim();
@@ -483,25 +476,24 @@
       const bidsIndex   = cols.findIndex(c => (c || "").toUpperCase().trim() === "NUMBER OF BIDS");
       const itemIndex   = cols.findIndex(c => (c || "").toUpperCase().trim() === "ITEM");
 
-      /* STATUS first */
       if (statusIndex > -1) {
         visible = visible.filter(v => v !== statusIndex);
         visible.unshift(statusIndex);
       }
 
-      /* BIDS as 4th column */
       if (bidsIndex > -1) {
         visible = visible.filter(v => v !== bidsIndex);
         visible.splice(3, 0, bidsIndex);
       }
 
-      /* ===== HEADER ===== */
+      /* HEADER */
       let h = "<tr>";
       visible.forEach(i => {
         const rawLabel = cols[i] || "";
         const key = rawLabel.toUpperCase().trim();
         let label = rawLabel;
 
+        if (key === "STATUS") label = "";                 // << BLANK STATUS HEADER
         if (key.includes("LOW"))  label = "LOW TARGET";
         if (key.includes("HIGH")) label = "HIGH TARGET";
         if (key === "CURRENT BID")     label = "LEADING BID";
@@ -524,9 +516,9 @@
       h += "</tr>";
       thead.innerHTML = h;
 
-      /* ===== AUCTION TOTAL + STATUS COUNTS (per normalised ITEM, highest bid) ===== */
+      /* AUCTION TOTAL + STATUS COUNTS */
       let auctionTotal = 0;
-      const itemBest = new Map(); // normalizedItemKey -> { bid, status }
+      const itemBest = new Map();
 
       rows.forEach((row, rowIndex) => {
         if (bidIndex > -1) {
@@ -564,7 +556,7 @@
       document.getElementById("countOnTarget").textContent = statusCounts["ON TARGET"];
       document.getElementById("countAbove").textContent   = statusCounts["ABOVE"];
 
-      /* ===== BODY WITH ALTERNATING GOLD ROWS (grouped by normalised ITEM) ===== */
+      /* BODY */
       let bodyHTML = "";
       let lastItemKey = null;
       let stripeToggle = 0;
@@ -620,7 +612,6 @@
             style += "font-weight:bold;";
           }
 
-          // STATUS icons instead of text (all use ▲, rotated)
           let displayVal = v;
           if (i === statusIndex) {
             const s = String(row[i] || "").toUpperCase().trim();
