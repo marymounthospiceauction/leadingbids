@@ -239,7 +239,7 @@
       text-overflow:ellipsis;
     }
 
-    /* Alternating row colour – subtle gold, while preserving STATUS cell colours */
+    /* Alternating row colour – subtle gold, preserving STATUS cell colours */
     tbody tr.alt-gold td:not(.status-below):not(.status-on-target):not(.status-above) {
       background-color: #f5ebd0;
     }
@@ -359,7 +359,7 @@
     const centerColumns = [
       "LOW",
       "HIGH",
-      "JOINT HIGHEST BID",
+      "JOINT TOP BID",   // ✅ centre this
       "CURRENT BID",
       "STATUS",
       "NUMBER OF BIDS"
@@ -377,6 +377,15 @@
       const n = Number(String(v).replace(/[^\d.-]/g, ""));
       if (isNaN(n)) return v;
       return "€" + n.toLocaleString("en-IE", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
+
+    // Normalise an item label to its ITEM number (e.g. "ITEM 04"),
+    // so ITEM 04 SET 1 / SET 2 / SET 3 all group together.
+    function normalizeItemKey(value, fallback) {
+      if (value == null) return String(fallback);
+      const str = String(value).trim();
+      const m = str.match(/ITEM\s*\d+/i);
+      return (m ? m[0] : str).toUpperCase();
     }
 
     async function loadData() {
@@ -427,20 +436,19 @@
         if (key === "NUMBER OF BIDS")  label = "BIDS";
         if (key === "NAME")            label = "WINNER NAME";
 
-        const thKey = key; // for sets
+        const thKey = key;
         const cls   = narrowSet.has(thKey) ? "narrow-col" : "";
         const style = (centerSet.has(thKey) || key.includes("LOW") || key.includes("HIGH"))
-          ? "text-align:center;"
-          : "";
+          ? "text-align:center;" : "";
 
         h += `<th class="${cls}" style="${style}">${label}</th>`;
       });
       h += "</tr>";
       thead.innerHTML = h;
 
-      /* ===== AUCTION TOTAL + STATUS COUNTS (per ITEM, highest bid) ===== */
+      /* ===== AUCTION TOTAL + STATUS COUNTS (per normalised ITEM, highest bid) ===== */
       let auctionTotal = 0;
-      const itemBest = new Map(); // itemKey -> { bid, status }
+      const itemBest = new Map(); // normalizedItemKey -> { bid, status }
 
       rows.forEach((row, rowIndex) => {
         // Auction total: sum of all CURRENT BID values (all rows)
@@ -449,10 +457,9 @@
           if (!isNaN(bidNum)) auctionTotal += bidNum;
         }
 
-        // Per-item status based on highest CURRENT BID
         const itemKey = (itemIndex !== -1)
-          ? String(row[itemIndex] ?? "").trim()
-          : String(rowIndex); // fallback if no ITEM col
+          ? normalizeItemKey(row[itemIndex], rowIndex)
+          : String(rowIndex);
 
         const statusKey = (statusIndex !== -1)
           ? String(row[statusIndex] ?? "").toUpperCase().trim()
@@ -480,14 +487,14 @@
       document.getElementById("countOnTarget").textContent = statusCounts["ON TARGET"];
       document.getElementById("countAbove").textContent   = statusCounts["ABOVE"];
 
-      /* ===== BODY WITH ALTERNATING GOLD ROWS (grouped by ITEM) ===== */
+      /* ===== BODY WITH ALTERNATING GOLD ROWS (grouped by normalised ITEM) ===== */
       let bodyHTML = "";
       let lastItemKey = null;
       let stripeToggle = 0; // 0/1 for alternation
 
       rows.forEach((row, rowIndex) => {
         const itemKey = (itemIndex !== -1)
-          ? String(row[itemIndex] ?? "").trim()
+          ? normalizeItemKey(row[itemIndex], rowIndex)
           : String(rowIndex);
 
         // Only change stripe when itemKey changes
