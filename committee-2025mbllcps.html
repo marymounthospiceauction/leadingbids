@@ -192,6 +192,13 @@
     /* ===== TABLE ===== */
     .table-section { padding: 15px; width: 100%; }
 
+    .table-heading {
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
     .table-container {
       background:white;
       border-radius: 8px;
@@ -230,6 +237,11 @@
       max-width:150px;
       overflow:hidden;
       text-overflow:ellipsis;
+    }
+
+    /* Alternating row colour – subtle gold, while preserving STATUS cell colours */
+    tbody tr.alt-gold td:not(.status-below):not(.status-on-target):not(.status-above) {
+      background-color: #f5ebd0;
     }
   </style>
 </head>
@@ -277,21 +289,30 @@
           <div class="status-summary-title">STATUS SUMMARY</div>
 
           <div class="status-summary-row">
-            <div class="status-summary-label"><span class="status-colour-box status-colour-below"></span> BELOW</div>
+            <div class="status-summary-label">
+              <span class="status-colour-box status-colour-below"></span> BELOW
+            </div>
             <div class="status-summary-count" id="countBelow">0</div>
           </div>
 
           <div class="status-summary-row">
-            <div class="status-summary-label"><span class="status-colour-box status-colour-on-target"></span> ON TARGET</div>
+            <div class="status-summary-label">
+              <span class="status-colour-box status-colour-on-target"></span> ON TARGET
+            </div>
             <div class="status-summary-count" id="countOnTarget">0</div>
           </div>
 
           <div class="status-summary-row">
-            <div class="status-summary-label"><span class="status-colour-box status-colour-above"></span> ABOVE</div>
+            <div class="status-summary-label">
+              <span class="status-colour-box status-colour-above"></span> ABOVE
+            </div>
             <div class="status-summary-count" id="countAbove">0</div>
           </div>
         </div>
       </div>
+
+      <!-- COMMITTEE VIEW TITLE -->
+      <div class="table-heading">COMMITTEE VIEW</div>
 
       <div class="table-container">
         <table id="bidsTable">
@@ -318,10 +339,10 @@
       }
     });
 
-    /* ===== DATA ===== */
-    const sheetID = "1DKnonV1mO-irLiJ4b9M62XYOMEf3LqRvJtEvopvjAp0";
+    /* ===== DATA CONFIG ===== */
+    const sheetID   = "1DKnonV1mO-irLiJ4b9M62XYOMEf3LqRvJtEvopvjAp0";
     const sheetName = "LIVE STATUS";
-    const range = "A5:L44";
+    const range     = "A5:L44";
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
@@ -346,7 +367,7 @@
 
     const narrowColumns = ["ITEM", "ITEM DESCRIPTION"].map(h => h.toUpperCase().trim());
 
-    const hiddenSet  = new Set(hiddenColumns);
+    const hiddenSet   = new Set(hiddenColumns);
     const currencySet = new Set(currencyColumns);
     const centerSet   = new Set(centerColumns);
     const narrowSet   = new Set(narrowColumns);
@@ -379,6 +400,7 @@
       const statusIndex = cols.findIndex(c => (c || "").toUpperCase().trim() === "STATUS");
       const bidIndex    = cols.findIndex(c => (c || "").toUpperCase().trim() === "CURRENT BID");
       const bidsIndex   = cols.findIndex(c => (c || "").toUpperCase().trim() === "NUMBER OF BIDS");
+      const itemIndex   = cols.findIndex(c => (c || "").toUpperCase().trim() === "ITEM");
 
       /* STATUS first */
       if (statusIndex > -1) {
@@ -405,8 +427,9 @@
         if (key === "NUMBER OF BIDS")  label = "BIDS";
         if (key === "NAME")            label = "WINNER NAME";
 
-        const cls   = narrowSet.has(key) ? "narrow-col" : "";
-        const style = centerSet.has(key) || key.includes("LOW") || key.includes("HIGH")
+        const thKey = key; // for sets
+        const cls   = narrowSet.has(thKey) ? "narrow-col" : "";
+        const style = (centerSet.has(thKey) || key.includes("LOW") || key.includes("HIGH"))
           ? "text-align:center;"
           : "";
 
@@ -415,38 +438,73 @@
       h += "</tr>";
       thead.innerHTML = h;
 
-      /* ===== TOTALS ===== */
-      let total = 0;
-      let counts = { BELOW: 0, "ON TARGET": 0, ABOVE: 0 };
+      /* ===== AUCTION TOTAL + STATUS COUNTS (per ITEM, highest bid) ===== */
+      let auctionTotal = 0;
+      const itemBest = new Map(); // itemKey -> { bid, status }
 
-      rows.forEach(r => {
+      rows.forEach((row, rowIndex) => {
+        // Auction total: sum of all CURRENT BID values (all rows)
         if (bidIndex > -1) {
-          const n = Number(String(r[bidIndex]).replace(/[^\d.-]/g, ""));
-          if (!isNaN(n)) total += n;
+          const bidNum = Number(String(row[bidIndex] ?? "").replace(/[^\d.-]/g, ""));
+          if (!isNaN(bidNum)) auctionTotal += bidNum;
         }
 
-        if (statusIndex > -1) {
-          const s = String(r[statusIndex] || "").toUpperCase().trim();
-          if (counts[s] !== undefined) counts[s]++;
+        // Per-item status based on highest CURRENT BID
+        const itemKey = (itemIndex !== -1)
+          ? String(row[itemIndex] ?? "").trim()
+          : String(rowIndex); // fallback if no ITEM col
+
+        const statusKey = (statusIndex !== -1)
+          ? String(row[statusIndex] ?? "").toUpperCase().trim()
+          : "";
+
+        const bidNum = (bidIndex !== -1)
+          ? Number(String(row[bidIndex] ?? "").replace(/[^\d.-]/g, ""))
+          : NaN;
+
+        const existing = itemBest.get(itemKey);
+        if (!existing || (!isNaN(bidNum) && bidNum > existing.bid)) {
+          itemBest.set(itemKey, { bid: bidNum, status: statusKey });
         }
       });
 
-      document.getElementById("auctionTotal").textContent = formatEuro(total);
-      document.getElementById("countBelow").textContent   = counts["BELOW"];
-      document.getElementById("countOnTarget").textContent = counts["ON TARGET"];
-      document.getElementById("countAbove").textContent   = counts["ABOVE"];
+      const statusCounts = { 'BELOW': 0, 'ON TARGET': 0, 'ABOVE': 0 };
+      for (const { status } of itemBest.values()) {
+        if (statusCounts[status] !== undefined) {
+          statusCounts[status]++;
+        }
+      }
 
-      /* ===== BODY ===== */
+      document.getElementById("auctionTotal").textContent = formatEuro(auctionTotal);
+      document.getElementById("countBelow").textContent   = statusCounts["BELOW"];
+      document.getElementById("countOnTarget").textContent = statusCounts["ON TARGET"];
+      document.getElementById("countAbove").textContent   = statusCounts["ABOVE"];
+
+      /* ===== BODY WITH ALTERNATING GOLD ROWS (grouped by ITEM) ===== */
       let bodyHTML = "";
+      let lastItemKey = null;
+      let stripeToggle = 0; // 0/1 for alternation
 
-      rows.forEach(row => {
-        bodyHTML += "<tr>";
+      rows.forEach((row, rowIndex) => {
+        const itemKey = (itemIndex !== -1)
+          ? String(row[itemIndex] ?? "").trim()
+          : String(rowIndex);
+
+        // Only change stripe when itemKey changes
+        if (itemKey !== lastItemKey) {
+          stripeToggle = 1 - stripeToggle;
+          lastItemKey = itemKey;
+        }
+        const rowClass = stripeToggle === 1 ? "alt-gold" : "";
+
+        bodyHTML += `<tr class="${rowClass}">`;
 
         visible.forEach(i => {
           const rawLabel = cols[i] || "";
           const key = rawLabel.toUpperCase().trim();
           let v = row[i];
 
+          // Currency formatting, including LOW/HIGH (targets)
           if (currencySet.has(key) || key.includes("LOW") || key.includes("HIGH")) {
             v = formatEuro(v);
           }
@@ -469,8 +527,6 @@
           }
 
           let style = "";
-
-          // Centre any columns in centerSet + LOW/HIGH columns explicitly
           if (centerSet.has(key) || key.includes("LOW") || key.includes("HIGH")) {
             style += "text-align:center;";
           }
