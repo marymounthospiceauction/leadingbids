@@ -178,11 +178,26 @@
         <span class="emoji">📝</span> Place an Auction Bid
       </a>
 
-      <!-- BUTTON THAT OPENS PDF IN NEW TAB -->
-      <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/preview"
+      <!-- VIEW AUCTION LISTINGS – DRIVE PRIMARY, GITHUB FALLBACK -->
+      <a href="https://drive.google.com/file/d/1ooKDPMn_7ALMIvux-RXPBAs4rq3es3eh/view?usp=sharing"
          class="custom-button"
          target="_blank"
-         rel="noopener">
+         rel="noopener"
+         onclick="
+           // Try to open the Google Drive PDF in a new tab
+           const primaryUrl = 'https://drive.google.com/file/d/1ooKDPMn_7ALMIvux-RXPBAs4rq3es3eh/view?usp=sharing';
+           const fallbackUrl = 'https://raw.githubusercontent.com/marymounthospiceauction/leadingbids/main/2025%20MARYMOUNT%20Starry%20Night%20Booklet.pdf';
+
+           const win = window.open(primaryUrl, '_blank');
+
+           // If the browser blocks the popup, try the GitHub PDF instead
+           if (!win) {
+             window.open(fallbackUrl, '_blank');
+           }
+
+           // Prevent the default link behaviour (we already handled opening)
+           return false;
+         ">
         <span class="emoji">📜</span> View Auction Listings
       </a>
 
@@ -215,7 +230,7 @@
     /* GOOGLE SHEET LOADING */
     const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
-    const range = 'U5:V41';
+    const range = 'U5:V42';
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
