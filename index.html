@@ -174,20 +174,19 @@
     <div class="button-container">
 
       <a href="https://docs.google.com/forms/d/e/1FAIpQLSf7DrJwXkG6gFfN_8JWCpyFt04tEsA5kFhpPHjRHSJx4C37rg/viewform"
-         class="custom-button" target="_blank">
+         class="custom-button" target="_blank" rel="noopener">
         <span class="emoji">📝</span> Place an Auction Bid
       </a>
 
-      <!-- BUTTON THAT OPENS PDF IN NEW TAB -->
-      <a href="https://drive.google.com/file/d/18NcQO5xBLJUWFBCL343en6Y0P5gKrBO9/preview"
+      <!-- BUTTON THAT OPENS PDF (PRIMARY: GOOGLE DRIVE, FALLBACK: GITHUB) -->
+      <a href="#" id="viewListingsBtn"
          class="custom-button"
-         target="_blank"
          rel="noopener">
         <span class="emoji">📜</span> View Auction Listings
       </a>
 
       <a href="https://www.idonate.ie/donate/fundraiser/MarymountBall2025"
-         class="custom-button" target="_blank">
+         class="custom-button" target="_blank" rel="noopener">
         <span class="emoji">❤️</span> Donate Now
       </a>
 
@@ -212,10 +211,54 @@
   </div>
 
   <script>
+    /* PDF URLS */
+    const primaryPdfUrl =
+      'https://drive.google.com/file/d/1ooKDPMn_7ALMIvux-RXPBAs4rq3es3eh/view?usp=sharing';
+
+    // TODO: change this to the actual URL of the PDF on your GitHub Pages
+    const fallbackPdfUrl =
+      'https://marymounthospiceauction.github.io/path-to-your-auction-listings.pdf';
+
+    function openAuctionPdf() {
+      try {
+        const win = window.open(primaryPdfUrl, '_blank', 'noopener');
+        // If popup blocked, fall back to opening in same tab
+        if (!win) {
+          window.location.href = primaryPdfUrl;
+        }
+      } catch (e) {
+        console.error('Primary PDF failed, falling back', e);
+        try {
+          const win2 = window.open(fallbackPdfUrl, '_blank', 'noopener');
+          if (!win2) {
+            window.location.href = fallbackPdfUrl;
+          }
+        } catch (e2) {
+          console.error('Fallback PDF also failed', e2);
+        }
+      }
+    }
+
+    // Button click opens the PDF
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('viewListingsBtn');
+      if (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          openAuctionPdf();
+        });
+      }
+    });
+
+    // Try to auto-open PDF when the page loads
+    window.addEventListener('load', () => {
+      openAuctionPdf();
+    });
+
     /* GOOGLE SHEET LOADING */
     const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
-    const range = 'U5:V41';
+    const range = 'U5:V42';
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
