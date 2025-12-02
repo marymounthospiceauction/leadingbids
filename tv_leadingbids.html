@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Starry Night Ball – Live Bids</title>
+
+  <!-- VIEWPORT -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
+
+  <!-- SCRIPT-STYLE TITLE FONT (similar to screenshot) -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
+
+  <style>
+    /* PAGE BACKGROUND – SWAP URL FOR YOUR BACKGROUND IMAGE */
+    body {
+      margin: 0;
+      font-family: Calibri, Arial, sans-serif;
+      background: #000 url("BACKGROUND_IMAGE_PLACEHOLDER.jpg") center/cover no-repeat fixed; /* background image */
+      color: #fff;
+      overflow: hidden;
+    }
+
+    * { box-sizing: border-box; }
+
+    /* MAIN GOLDEN FRAME */
+    .frame {
+      width: 96vw;
+      height: 96vh;
+      margin: 2vh auto;
+      border: 6px solid #d1b67a;
+      box-shadow: 0 0 25px rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.55);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 2vh 2vw 1.5vh 2vw;
+    }
+
+    /* HEADER AREA */
+    .header {
+      text-align: center;
+      margin-bottom: 1.5vh;
+    }
+
+    /* If you want to use an IMAGE header instead of text, 
+       uncomment the img and remove the .title-text div. */
+    .header img {
+      max-height: 14vh;
+      max-width: 80%;
+      object-fit: contain;
+    }
+
+    .title-text {
+      font-family: "Great Vibes", cursive;
+      font-size: 5vw;
+      color: #f8e3b5;
+      text-shadow: 0 0 10px rgba(0,0,0,0.9);
+    }
+
+    /* ITEMS GRID (2 COLUMNS) */
+    .items-grid {
+      flex: 1;
+      display: flex;
+      gap: 2vw;
+      margin-top: 1vh;
+      margin-bottom: 2vh;
+    }
+
+    .column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4vh;
+    }
+
+    .item-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      background: #000;
+      border: 1px solid #3a3a3a;
+      box-shadow: 0 0 6px rgba(0,0,0,0.6);
+      overflow: hidden;
+    }
+
+    .item-label {
+      padding: 0.35em 0.75em;
+      font-size: clamp(0.7rem, 0.95vw, 1.1rem);
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: #000;
+      color: #ffffff;
+    }
+
+    .item-amount {
+      padding: 0.35em 0.9em;
+      text-align: right;
+      min-width: 6vw;
+      font-size: clamp(0.7rem, 0.95vw, 1.1rem);
+      font-weight: bold;
+      background: #000;
+      color: #f6d58b;
+      border-left: 1px solid #555;
+    }
+
+    /* BOLD THE “ITEM 01 -” PREFIX A BIT MORE */
+    .item-label strong {
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    /* FOOTER AREA */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2vw;
+    }
+
+    .footer-left,
+    .footer-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(0.6rem, 0.8vw, 0.9rem);
+      text-transform: uppercase;
+      color: #f6e3b8;
+    }
+
+    .footer-center {
+      flex: 1;
+      text-align: center;
+      font-size: clamp(0.8rem, 1vw, 1.2rem);
+      font-weight: bold;
+      color: #f6e3b8;
+    }
+
+    .footer img {
+      max-height: 9vh;
+      object-fit: contain;
+      margin-bottom: 0.3vh;
+    }
+
+    .marymount-logo {
+      max-height: 10vh;
+    }
+
+    @media (max-width: 900px) {
+      .frame {
+        height: auto;
+      }
+      .items-grid {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="frame">
+
+    <!-- HEADER -->
+    <div class="header">
+      <!-- OPTION 1: TEXT HEADER (matches screenshot style) -->
+      <div class="title-text">The Starry Night Ball</div>
+
+      <!-- OPTION 2: IMAGE HEADER (comment in if you have a header image)
+      <img src="HEADER_IMAGE_PLACEHOLDER.png" alt="Header Image Placeholder" />
+      -->
+    </div>
+
+    <!-- TWO-COLUMN ITEMS GRID -->
+    <div class="items-grid">
+      <div class="column" id="column-left"></div>
+      <div class="column" id="column-right"></div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <!-- LEFT QR CODE -->
+      <div class="footer-left">
+        <!-- QR CODE PLACEHOLDER (LEFT) -->
+        <img src="QR_CODE_LEFT_PLACEHOLDER.png" alt="QR Code Left" />
+        <div>Scan QR code to bid</div>
+      </div>
+
+      <!-- CENTER WEBSITE TEXT -->
+      <div class="footer-center">
+        www.marymountauction2025.ie
+      </div>
+
+      <!-- RIGHT SIDE: QR + LOGO -->
+      <div class="footer-right">
+        <!-- QR CODE PLACEHOLDER (RIGHT) -->
+        <img src="QR_CODE_RIGHT_PLACEHOLDER.png" alt="QR Code Right" />
+        <div>Scan QR code to bid</div>
+      </div>
+
+      <!-- MARYMOUNT LOGO PLACEHOLDER (BOTTOM RIGHT CORNER) -->
+      <img class="marymount-logo"
+           src="MARYMOUNT_LOGO_PLACEHOLDER.png"
+           alt="Marymount Logo" />
+    </div>
+
+  </div>
+
+  <script>
+    /* GOOGLE SHEET CONFIG
+       Uses range X5:Z42 so that we can use the “NEW BID” column.
+       Assumption:
+         X = Item label (e.g., "ITEM 01 - WIMBLEDON LADIES FINAL")
+         Y = Existing bid (optional)
+         Z = NEW BID value – preferred for display
+    */
+
+    const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
+    const sheetName = 'LEADING BIDS';      // change if needed
+    const range     = 'X5:Z42';            // ITEM | (maybe old bid) | NEW BID
+
+    const url =
+      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
+      `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
+
+    function formatEuro(value) {
+      if (value === null || value === '' || isNaN(value)) return '';
+      return '€' + Number(value).toLocaleString('en-IE', {
+        maximumFractionDigits: 0
+      });
+    }
+
+    // Bold “ITEM 01 - ” (first 7 chars) like the screenshot
+    function boldFirstSeven(text) {
+      if (!text) return '';
+      return '<strong>' + text.substring(0, 7) + '</strong>' + text.substring(7);
+    }
+
+    async function loadData() {
+      try {
+        const res  = await fetch(url);
+        const text = await res.text();
+
+        // Google Visualization API response wrapper
+        const json = JSON.parse(text.substr(47).slice(0, -2));
+        const rows = json.table.rows.map(r => r.c.map(c => c ? c.v : ''));
+
+        const leftCol  = document.getElementById('column-left');
+        const rightCol = document.getElementById('column-right');
+
+        let leftHTML  = '';
+        let rightHTML = '';
+
+        // Split items into two columns (left first half, right second half)
+        const half = Math.ceil(rows.length / 2);
+
+        rows.forEach((row, index) => {
+          const labelRaw = row[0] || '';
+          const newBid   = row[2] !== '' ? row[2] : row[1]; // prefer NEW BID (Z); fall back to Y
+          const amount   = formatEuro(newBid);
+
+          const labelHTML = boldFirstSeven(labelRaw);
+
+          const rowHTML = `
+            <div class="item-row">
+              <div class="item-label">${labelHTML}</div>
+              <div class="item-amount">${amount}</div>
+            </div>
+          `;
+
+          if (index < half) {
+            leftHTML += rowHTML;
+          } else {
+            rightHTML += rowHTML;
+          }
+        });
+
+        leftCol.innerHTML  = leftHTML;
+        rightCol.innerHTML = rightHTML;
+
+      } catch (err) {
+        console.error('Failed to load sheet data', err);
+      }
+    }
+
+    loadData();
+    // Refresh every 5 seconds so NEW BID values stay current
+    setInterval(loadData, 5000);
+  </script>
+
+</body>
+</html>
