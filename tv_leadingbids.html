@@ -27,32 +27,44 @@
 
     * { box-sizing: border-box; }
 
-    /* MAIN FRAME – NO SHADED BACKGROUND NOW */
+    /* MAIN FRAME – transparent so background shows through */
     .frame {
       width: 96vw;
       height: 96vh;
       margin: 2vh auto;
       border: 6px solid var(--gold);
       box-shadow: 0 0 25px rgba(0,0,0,0.9);
-      background: transparent;       /* removed shaded background */
+      background: transparent;
       position: relative;
       display: flex;
       flex-direction: column;
       padding: 1.5vh 2vw 1vh 2vw;
     }
 
-    /* HEADER AREA – USE LiveHeader.png */
+    /* HEADER AREA – LiveHeader centered, Marymount logo top right */
     .header {
+      position: relative;
       text-align: center;
       margin-bottom: 1vh;
       flex: 0 0 auto;
     }
 
-    .header img {
+    .header-img {
       max-height: 13vh;
-      max-width: 80%;
+      max-width: 70%;
       object-fit: contain;
       filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
+      display: block;
+      margin: 0 auto;
+    }
+
+    .marymount-logo-top {
+      position: absolute;
+      right: 0;
+      top: 0;
+      max-height: 10vh;
+      object-fit: contain;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.9));
     }
 
     /* ITEMS GRID (2 COLUMNS, SCROLLABLE IF NEEDED) */
@@ -83,27 +95,36 @@
       border: 1px solid #3a3a3a;
       box-shadow: 0 0 6px rgba(0,0,0,0.6);
       overflow: hidden;
-      align-items: center;          /* vertical alignment */
+      align-items: center;          /* vertical centring of grid cells */
+    }
+
+    /* Vertically centre contents in each cell */
+    .item-label,
+    .item-amount {
+      display: flex;
+      align-items: center;          /* vertical */
     }
 
     .item-label {
-      padding: 0.3em 0.7em;
+      padding: 0.25em 0.7em;
       font-size: clamp(0.8rem, 1vw, 1.2rem);
       text-transform: uppercase;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       color: var(--offwhite);
+      justify-content: flex-start;  /* left align text */
     }
 
     .item-amount {
-      padding: 0.3em 0.9em;
-      text-align: right;
+      padding: 0.25em 0.9em;
       min-width: 6vw;
       font-size: clamp(0.8rem, 1vw, 1.2rem);
       font-weight: bold;
       color: var(--gold-soft);
       border-left: 1px solid #555;
+      justify-content: flex-end;    /* right align amount */
+      text-align: right;
     }
 
     .item-label strong {
@@ -128,11 +149,11 @@
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.7));
     }
 
-    /* FOOTER AREA */
+    /* FOOTER AREA – QR | URL | QR equally spaced */
     .footer {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      justify-content: space-between;
       gap: 1.6vw;
       margin-top: 0.2vh;
       flex: 0 0 auto;
@@ -145,7 +166,6 @@
       justify-content: center;
       text-transform: uppercase;
       font-size: clamp(0.6rem, 0.8vw, 0.95rem);
-      color: var(--gold);
       text-align: center;
     }
 
@@ -153,36 +173,38 @@
       max-height: 9vh;
       margin-bottom: 0.4vh;
       object-fit: contain;
-      background: rgba(255,255,255,0.95);
+      background: rgba(255,255,255,0.98);
       padding: 0.4vh;
       border-radius: 0.3rem;
       box-shadow: 0 0 8px rgba(0,0,0,0.8);
     }
 
+    /* More readable "SCAN QR CODE TO BID" text */
+    .footer-block span {
+      color: var(--gold);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 4px rgba(0,0,0,0.9);
+    }
+
     /* ENHANCED, CENTRED WEBSITE TEXT */
     .footer-center {
-      flex: 0 0 auto;
       text-align: center;
       font-size: clamp(1rem, 1.3vw, 1.6rem);
       font-weight: 800;
       color: var(--gold);
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      padding: 0.3em 0.8em;
+      padding: 0.3em 1.8em;
       border-radius: 999px;
       border: 2px solid var(--gold);
       box-shadow: 0 0 12px rgba(0,0,0,0.9);
       background: rgba(0,0,0,0.85);
+      justify-self: center;
     }
 
     .footer-center span {
       text-shadow: 0 0 6px rgba(0,0,0,0.9);
-    }
-
-    .marymount-logo {
-      max-height: 8vh;
-      object-fit: contain;
-      filter: drop-shadow(0 0 6px rgba(0,0,0,0.9));
     }
 
     @media (max-width: 900px) {
@@ -193,9 +215,9 @@
         flex-direction: column;
       }
       .footer {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 1vh;
+        grid-template-columns: 1fr;
+        row-gap: 1vh;
+        justify-items: center;
       }
     }
   </style>
@@ -205,10 +227,14 @@
 
   <div class="frame">
 
-    <!-- HEADER USING LiveHeader.png -->
+    <!-- HEADER USING LiveHeader.png and Marymount logo in top-right -->
     <div class="header">
-      <img src="LiveHeader.png"
+      <img class="header-img"
+           src="LiveHeader.png"
            alt="Live Auction Header" />
+      <img class="marymount-logo-top"
+           src="Marymount%20Logo.png"
+           alt="Marymount Logo" />
     </div>
 
     <!-- TWO-COLUMN ITEMS GRID (SCROLLABLE IF TOO TALL) -->
@@ -223,14 +249,14 @@
            alt="Marymount Sponsors" />
     </div>
 
-    <!-- FOOTER WITH TWO QR CODES + LOGO -->
+    <!-- FOOTER WITH TWO QR CODES + CENTRED URL -->
     <div class="footer">
       <!-- LEFT QR CODE -->
       <div class="footer-block">
         <img class="qr-img"
              src="2025%20Marymount%20QR%20Code.jpeg"
              alt="QR Code to Bid (Left)" />
-        <div>Scan QR code to bid</div>
+        <span>SCAN QR CODE TO BID</span>
       </div>
 
       <!-- CENTRED & ENHANCED WEBSITE TEXT -->
@@ -243,13 +269,8 @@
         <img class="qr-img"
              src="2025%20Marymount%20QR%20Code.jpeg"
              alt="QR Code to Bid (Right)" />
-        <div>Scan QR code to bid</div>
+        <span>SCAN QR CODE TO BID</span>
       </div>
-
-      <!-- MARYMOUNT LOGO -->
-      <img class="marymount-logo"
-           src="Marymount%20Logo.png"
-           alt="Marymount Logo" />
     </div>
 
   </div>
