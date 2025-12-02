@@ -7,7 +7,7 @@
   <!-- VIEWPORT -->
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
 
-  <!-- Elegant script font similar to your screenshot -->
+  <!-- Script-style font -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
 
   <style>
@@ -37,24 +37,24 @@
       background: transparent;
       display: flex;
       flex-direction: column;
-      padding: 1.5vh 2vw 1vh 2vw;
+      padding: 1vh 1.8vw 0.8vh 1.8vw; /* tighter padding to fit more rows */
     }
 
     /* HEADER TEXT + LOGO */
     .header {
       position: relative;
       flex: 0 0 auto;
-      margin-bottom: 1vh;
-      padding-top: 0.5vh;
+      margin-bottom: 0.4vh;
+      padding-top: 0.2vh;
       text-align: center;
     }
 
     .header-title {
       font-family: 'Great Vibes', cursive;
-      font-size: clamp(3rem, 5vw, 6rem);
+      font-size: clamp(2.4rem, 3.6vw, 4.2rem); /* slightly smaller but still elegant */
       font-weight: 400;
-      color: var(--gold);
-      text-shadow: 0 0 10px rgba(0,0,0,0.9);
+      color: #fffdf0; /* lighter = more readable */
+      text-shadow: 0 0 10px rgba(0,0,0,0.95);
       letter-spacing: 0.04em;
     }
 
@@ -62,7 +62,7 @@
       position: absolute;
       right: 0;
       top: 0;
-      max-height: 10vh;
+      max-height: 9vh;
       object-fit: contain;
       filter: drop-shadow(0 0 6px rgba(0,0,0,0.9));
     }
@@ -72,17 +72,19 @@
       flex: 1 1 auto;
       min-height: 0;
       display: flex;
-      gap: 1.6vw;
+      gap: 1.2vw;
       opacity: 0;
-      overflow-y: auto;
+      overflow-y: auto; /* safety, but aim for all 37 visible */
       transition: opacity 0.3s ease;
+      margin-top: 0.2vh;
+      margin-bottom: 0.2vh;
     }
 
     .column {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 0.25vh;
+      gap: 0.15vh;  /* tighter between rows */
     }
 
     .item-row {
@@ -91,18 +93,18 @@
       background: rgba(0,0,0,0.9);
       border: 1px solid #3a3a3a;
       align-items: center;
-      box-shadow: 0 0 6px rgba(0,0,0,0.6);
+      box-shadow: 0 0 4px rgba(0,0,0,0.5);
     }
 
     .item-label,
     .item-amount {
       display: flex;
-      align-items: center;
+      align-items: center; /* vertical centring */
     }
 
     .item-label {
-      padding: 0.3em 0.7em;
-      font-size: clamp(0.8rem, 1vw, 1.2rem);
+      padding: 0.18em 0.6em;
+      font-size: clamp(0.7rem, 0.9vw, 1.05rem);
       text-transform: uppercase;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -115,69 +117,78 @@
     }
 
     .item-amount {
-      padding: 0.3em 1em;
-      font-size: clamp(0.8rem, 1vw, 1.2rem);
+      padding: 0.18em 0.8em;
+      font-size: clamp(0.7rem, 0.9vw, 1.05rem);
       font-weight: bold;
-      min-width: 6vw;
+      min-width: 5.5vw;
       justify-content: flex-end;
       color: var(--gold-soft);
       border-left: 1px solid #555;
+      text-align: right;
     }
 
-    /* SPONSOR STRIP */
+    /* SPONSOR STRIP – made slightly larger */
     .sponsors {
       flex: 0 0 auto;
       text-align: center;
-      margin: 0.4vh 0;
+      margin: 0.2vh 0 0.1vh;
     }
 
     .sponsors img {
-      max-height: 7vh;
+      max-height: 8vh; /* a bit larger */
+      max-width: 100%;
+      object-fit: contain;
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
     }
 
-    /* FOOTER (3 equal blocks) */
+    /* SMALLER WEBSITE TEXT, MOVED LOWER */
+    .website-bar {
+      flex: 0 0 auto;
+      text-align: center;
+      margin: 0.1vh 0 0.3vh;
+      font-size: clamp(0.8rem, 1vw, 1.2rem);
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      text-shadow: 0 0 4px rgba(0,0,0,0.9);
+    }
+
+    /* FOOTER – just two QR columns now */
     .footer {
       flex: 0 0 auto;
       display: grid;
-      grid-template-columns: 1fr auto 1fr;
+      grid-template-columns: 1fr 1fr;
       align-items: center;
-      gap: 2vw;
+      gap: 3vw;
+      margin-top: 0.1vh;
     }
 
     .footer-block {
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     .qr-img {
-      max-height: 9vh;
+      max-height: 8.5vh;
       background: rgba(255,255,255,0.98);
       padding: 0.4vh;
       border-radius: 0.3rem;
       box-shadow: 0 0 8px rgba(0,0,0,0.9);
-      margin-bottom: 0.4vh;
+      margin-bottom: 0.2vh;
     }
 
+    /* Plain black text under QR codes */
     .footer-block span {
-      font-size: clamp(0.7rem, 1vw, 1.1rem);
-      font-weight: 700;
-      color: var(--gold);
-      letter-spacing: 0.06em;
-      text-shadow: 0 0 4px rgba(0,0,0,0.9);
-    }
-
-    .footer-center {
-      text-align: center;
-      font-size: clamp(1rem, 1.4vw, 1.9rem);
-      font-weight: 800;
-      color: var(--gold);
+      font-size: clamp(0.7rem, 0.9vw, 1.1rem);
+      font-weight: 600;
+      color: #000000;
+      letter-spacing: 0.05em;
+      text-shadow: none;
       text-transform: uppercase;
-      padding: 0.4em 2em;
-      border-radius: 999px;
-      border: 2px solid var(--gold);
-      background: rgba(0,0,0,0.85);
-      letter-spacing: 0.18em;
-      text-shadow: 0 0 6px rgba(0,0,0,0.9);
     }
   </style>
 </head>
@@ -189,7 +200,6 @@
     <!-- HEADER TEXT -->
     <div class="header">
       <div class="header-title">The Starry Night Ball</div>
-
       <img class="marymount-logo-top"
            src="Marymount%20Logo.png"
            alt="Marymount Logo" />
@@ -206,88 +216,86 @@
       <img src="Marymount%20Footer%20Sponsors.png" alt="Sponsors" />
     </div>
 
-    <!-- FOOTER -->
+    <!-- Smaller, lower website text -->
+    <div class="website-bar">www.marymountauction2025.ie</div>
+
+    <!-- FOOTER – QR codes -->
     <div class="footer">
-
       <div class="footer-block">
-        <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" />
-        <span>SCAN QR CODE TO BID</span>
-      </div>
-
-      <div class="footer-center">
-        www.marymountauction2025.ie
+        <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid (Left)" />
+        <span>Scan QR code to bid</span>
       </div>
 
       <div class="footer-block">
-        <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" />
-        <span>SCAN QR CODE TO BID</span>
+        <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid (Right)" />
+        <span>Scan QR code to bid</span>
       </div>
-
     </div>
 
   </div>
 
-<script>
-const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
-const sheetName = 'LEADING BIDS';
-const range     = 'X5:Z42';
+  <script>
+    const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
+    const sheetName = 'LEADING BIDS';
+    const range     = 'X5:Z42'; // should give you 37 items
 
-const url =
-  `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
-  `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
+    const url =
+      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
+      `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
-function formatEuro(v) {
-  if (!v || isNaN(v)) return '€0';
-  return '€' + Number(v).toLocaleString('en-IE');
-}
+    function formatEuro(v) {
+      if (!v || isNaN(v)) return '€0';
+      return '€' + Number(v).toLocaleString('en-IE', { maximumFractionDigits: 0 });
+    }
 
-function boldFirstSeven(t) {
-  return '<strong>' + t.substring(0,7) + '</strong>' + t.substring(7);
-}
+    function boldFirstSeven(t) {
+      if (!t) return '';
+      return '<strong>' + t.substring(0,7) + '</strong>' + t.substring(7);
+    }
 
-async function loadData() {
-  try {
-    const res  = await fetch(url);
-    const text = await res.text();
-    const json = JSON.parse(text.substr(47).slice(0, -2));
-    const rows = json.table.rows.map(r => r.c.map(c => c ? c.v : ''));
+    async function loadData() {
+      try {
+        const res  = await fetch(url);
+        const text = await res.text();
+        const json = JSON.parse(text.substr(47).slice(0, -2));
+        const rows = json.table.rows.map(r => r.c.map(c => c ? c.v : ''));
 
-    const left  = document.getElementById('column-left');
-    const right = document.getElementById('column-right');
+        const left  = document.getElementById('column-left');
+        const right = document.getElementById('column-right');
 
-    let leftHTML = '';
-    let rightHTML = '';
+        let leftHTML  = '';
+        let rightHTML = '';
 
-    const half = Math.ceil(rows.length / 2);
+        const half = Math.ceil(rows.length / 2);
 
-    rows.forEach((r, i) => {
-      const item = boldFirstSeven(r[0]);
-      const bid  = formatEuro(r[2] || r[1]);
+        rows.forEach((r, i) => {
+          const item = boldFirstSeven(r[0] || '');
+          const bid  = formatEuro(r[2] || r[1]);
 
-      const row = `
-        <div class="item-row">
-          <div class="item-label">${item}</div>
-          <div class="item-amount">${bid}</div>
-        </div>
-      `;
+          const row = `
+            <div class="item-row">
+              <div class="item-label">${item}</div>
+              <div class="item-amount">${bid}</div>
+            </div>
+          `;
 
-      if (i < half) leftHTML += row;
-      else rightHTML += row;
-    });
+          if (i < half) leftHTML += row;
+          else rightHTML += row;
+        });
 
-    left.innerHTML = leftHTML;
-    right.innerHTML = rightHTML;
+        left.innerHTML  = leftHTML;
+        right.innerHTML = rightHTML;
 
-    document.querySelector('.items-grid').style.opacity = 1;
+        document.querySelector('.items-grid').style.opacity = 1;
 
-  } catch (e) {
-    console.error("Sheet load error", e);
-  }
-}
+      } catch (e) {
+        console.error("Sheet load error", e);
+      }
+    }
 
-loadData();
-setInterval(loadData, 5000);
-</script>
+    loadData();
+    setInterval(loadData, 5000);
+  </script>
 
 </body>
 </html>
