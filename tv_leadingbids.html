@@ -27,18 +27,18 @@
 
     * { box-sizing: border-box; }
 
-    /* MAIN GOLDEN FRAME */
+    /* MAIN FRAME – NO SHADED BACKGROUND NOW */
     .frame {
       width: 96vw;
-      height: 96vh;              /* fixed to screen height */
+      height: 96vh;
       margin: 2vh auto;
       border: 6px solid var(--gold);
       box-shadow: 0 0 25px rgba(0,0,0,0.9);
-      background: rgba(0,0,0,0.75);
+      background: transparent;       /* removed shaded background */
       position: relative;
       display: flex;
       flex-direction: column;
-      padding: 1.5vh 2vw 1vh 2vw; /* slightly tighter padding */
+      padding: 1.5vh 2vw 1vh 2vw;
     }
 
     /* HEADER AREA – USE LiveHeader.png */
@@ -57,16 +57,16 @@
 
     /* ITEMS GRID (2 COLUMNS, SCROLLABLE IF NEEDED) */
     .items-grid {
-      flex: 1 1 auto;      /* allow it to grow and shrink */
-      min-height: 0;       /* IMPORTANT: let flexbox shrink this area */
+      flex: 1 1 auto;
+      min-height: 0;
       display: flex;
       gap: 1.6vw;
       margin-top: 0.5vh;
       margin-bottom: 0.6vh;
       opacity: 0;
       transition: opacity 0.3s ease;
-      overflow-y: auto;    /* internal scroll if too many rows */
-      padding-right: 0.4vw;/* small room for scrollbar */
+      overflow-y: auto;
+      padding-right: 0.4vw;
     }
 
     .column {
@@ -79,10 +79,11 @@
     .item-row {
       display: grid;
       grid-template-columns: 1fr auto;
-      background: var(--black);
+      background: rgba(0,0,0,0.9);
       border: 1px solid #3a3a3a;
       box-shadow: 0 0 6px rgba(0,0,0,0.6);
       overflow: hidden;
+      align-items: center;          /* vertical alignment */
     }
 
     .item-label {
@@ -92,7 +93,6 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      background: var(--black);
       color: var(--offwhite);
     }
 
@@ -102,7 +102,6 @@
       min-width: 6vw;
       font-size: clamp(0.8rem, 1vw, 1.2rem);
       font-weight: bold;
-      background: var(--black);
       color: var(--gold-soft);
       border-left: 1px solid #555;
     }
@@ -160,13 +159,24 @@
       box-shadow: 0 0 8px rgba(0,0,0,0.8);
     }
 
+    /* ENHANCED, CENTRED WEBSITE TEXT */
     .footer-center {
-      flex: 1;
+      flex: 0 0 auto;
       text-align: center;
-      font-size: clamp(0.85rem, 1vw, 1.2rem);
-      font-weight: bold;
+      font-size: clamp(1rem, 1.3vw, 1.6rem);
+      font-weight: 800;
       color: var(--gold);
-      text-shadow: 0 0 6px rgba(0,0,0,0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      padding: 0.3em 0.8em;
+      border-radius: 999px;
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 12px rgba(0,0,0,0.9);
+      background: rgba(0,0,0,0.85);
+    }
+
+    .footer-center span {
+      text-shadow: 0 0 6px rgba(0,0,0,0.9);
     }
 
     .marymount-logo {
@@ -185,6 +195,7 @@
       .footer {
         flex-wrap: wrap;
         justify-content: center;
+        gap: 1vh;
       }
     }
   </style>
@@ -222,9 +233,9 @@
         <div>Scan QR code to bid</div>
       </div>
 
-      <!-- CENTER WEBSITE TEXT -->
+      <!-- CENTRED & ENHANCED WEBSITE TEXT -->
       <div class="footer-center">
-        www.marymountauction2025.ie
+        <span>www.marymountauction2025.ie</span>
       </div>
 
       <!-- RIGHT QR CODE -->
