@@ -28,16 +28,17 @@
 
     * { box-sizing: border-box; }
 
+    /* FULL-SCREEN CONTAINER – NO INNER FRAME/BORDER */
     .frame {
-      width: 96vw;
-      height: 96vh;
-      margin: 2vh auto;
-      border: 6px solid var(--gold);
-      box-shadow: 0 0 25px rgba(0,0,0,0.9);
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      border: none;            /* remove inner frame */
+      box-shadow: none;
       background: transparent;
       display: flex;
       flex-direction: column;
-      padding: 1vh 1.8vw 0.8vh 1.8vw;
+      padding: 1vh 3vw 1.2vh 3vw; /* light padding to sit inside background frame */
     }
 
     /* HEADER TEXT + LOGO */
@@ -54,7 +55,6 @@
       font-size: clamp(2.6rem, 3.9vw, 4.5rem);
       font-weight: 400;
       color: #000000; /* black for readability */
-      /* starry gold glow */
       text-shadow:
         0 0 6px rgba(246,213,139,0.9),
         0 0 12px rgba(246,213,139,0.7),
@@ -78,7 +78,7 @@
       display: flex;
       gap: 1.2vw;
       opacity: 0;
-      overflow-y: auto; /* safety overflow if needed */
+      overflow-y: hidden;  /* no scrollbar; all rows should fit */
       transition: opacity 0.3s ease;
       margin-top: 0.1vh;
       margin-bottom: 0.1vh;
@@ -88,7 +88,7 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 0.12vh;  /* tight vertical spacing */
+      gap: 0.1vh;  /* tight vertical spacing for 37 items */
     }
 
     .item-row {
@@ -107,8 +107,8 @@
     }
 
     .item-label {
-      padding: 0.18em 0.6em;
-      font-size: clamp(0.75rem, 1.0vw, 1.1rem); /* a touch larger */
+      padding: 0.16em 0.55em;
+      font-size: clamp(0.75rem, 1.0vw, 1.1rem);
       text-transform: uppercase;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -121,50 +121,37 @@
     }
 
     .item-amount {
-      padding: 0.18em 0.8em;
+      padding: 0.16em 0.75em;
       font-size: clamp(0.75rem, 1.0vw, 1.1rem);
       font-weight: bold;
-      min-width: 5.5vw;
+      min-width: 5.2vw;
       justify-content: flex-end;
       color: var(--gold-soft);
       border-left: 1px solid #555;
       text-align: right;
     }
 
-    /* SUPPLIERS – larger & a bit lower */
+    /* SUPPLIERS – larger & dropped down a bit */
     .sponsors {
       flex: 0 0 auto;
       text-align: center;
-      margin: 0.25vh 0 0.1vh;
+      margin: 0.4vh 0 0.2vh;
     }
 
     .sponsors img {
-      max-height: 10vh; /* larger sponsors strip */
+      max-height: 11vh;  /* larger strip */
       max-width: 100%;
       object-fit: contain;
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
     }
 
-    /* WEBSITE – black text, lower down */
-    .website-bar {
-      flex: 0 0 auto;
-      text-align: center;
-      margin: 0.1vh 0 0.25vh;
-      font-size: clamp(0.85rem, 1.05vw, 1.3rem);
-      font-weight: 700;
-      color: #000000;               /* black text */
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      text-shadow: 0 0 4px rgba(255,255,255,0.7);
-    }
-
-    /* FOOTER – QR codes in bottom left & right */
+    /* FOOTER – QR codes in bottom corners */
     .footer {
       flex: 0 0 auto;
       display: flex;
-      justify-content: space-between; /* corners */
+      justify-content: space-between; /* left & right */
       align-items: flex-end;
-      margin-top: 0.1vh;
+      margin-top: 0.2vh;
     }
 
     .footer-block {
@@ -181,7 +168,7 @@
       padding: 0.4vh;
       border-radius: 0.3rem;
       box-shadow: 0 0 8px rgba(0,0,0,0.9);
-      margin-bottom: 0.2vh;
+      margin-bottom: 0.15vh;
     }
 
     /* Plain black text under QR codes */
@@ -192,6 +179,21 @@
       letter-spacing: 0.05em;
       text-shadow: 0 0 3px rgba(255,255,255,0.7);
       text-transform: uppercase;
+    }
+
+    /* WEBSITE ADDRESS – at the very bottom centre */
+    .website-bar {
+      position: absolute;
+      left: 50%;
+      bottom: 0.9vh;
+      transform: translateX(-50%);
+      font-size: clamp(0.85rem, 1.05vw, 1.3rem);
+      font-weight: 700;
+      color: #000000;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      text-shadow: 0 0 4px rgba(255,255,255,0.7);
+      pointer-events: none;
     }
   </style>
 </head>
@@ -214,13 +216,10 @@
       <div class="column" id="column-right"></div>
     </div>
 
-    <!-- SUPPLIERS (LARGER) -->
+    <!-- SUPPLIERS (LARGER, LOWER) -->
     <div class="sponsors">
       <img src="Marymount%20Footer%20Sponsors.png" alt="Sponsors" />
     </div>
-
-    <!-- WEBSITE – BLACK TEXT -->
-    <div class="website-bar">www.marymountauction2025.ie</div>
 
     <!-- FOOTER – QR CODES IN BOTTOM CORNERS -->
     <div class="footer">
@@ -234,6 +233,9 @@
         <span>Scan QR code to bid</span>
       </div>
     </div>
+
+    <!-- WEBSITE – fixed to very bottom centre -->
+    <div class="website-bar">www.marymountauction2025.ie</div>
 
   </div>
 
