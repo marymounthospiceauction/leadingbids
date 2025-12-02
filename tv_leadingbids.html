@@ -7,16 +7,20 @@
   <!-- VIEWPORT -->
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
 
-  <!-- SCRIPT-STYLE TITLE FONT (fallback if header image not loaded) -->
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
-
   <style>
-    /* PAGE BACKGROUND – USE TV BACKGROUND IMAGE */
+    :root {
+      --gold: #f6d58b;
+      --gold-soft: #f4d28a;
+      --black: #000000;
+      --offwhite: #ffffff;
+    }
+
+    /* PAGE BACKGROUND – TV BACKGROUND IMAGE */
     body {
       margin: 0;
       font-family: Calibri, Arial, sans-serif;
       background: #000 url("tvbackground.png") center/cover no-repeat fixed;
-      color: #fff;
+      color: var(--offwhite);
       overflow: hidden;
     }
 
@@ -27,16 +31,16 @@
       width: 96vw;
       height: 96vh;
       margin: 2vh auto;
-      border: 6px solid #d1b67a;
-      box-shadow: 0 0 25px rgba(0,0,0,0.8);
-      background: rgba(0,0,0,0.55);
+      border: 6px solid var(--gold);
+      box-shadow: 0 0 25px rgba(0,0,0,0.9);
+      background: rgba(0,0,0,0.75);
       position: relative;
       display: flex;
       flex-direction: column;
       padding: 2vh 2vw 1vh 2vw;
     }
 
-    /* HEADER AREA */
+    /* HEADER AREA – USE LiveHeader.png */
     .header {
       text-align: center;
       margin-bottom: 1.5vh;
@@ -46,13 +50,7 @@
       max-height: 14vh;
       max-width: 80%;
       object-fit: contain;
-    }
-
-    .title-text {
-      font-family: "Great Vibes", cursive;
-      font-size: 5vw;
-      color: #f8e3b5;
-      text-shadow: 0 0 10px rgba(0,0,0,0.9);
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
     }
 
     /* ITEMS GRID (2 COLUMNS) */
@@ -62,6 +60,8 @@
       gap: 2vw;
       margin-top: 1vh;
       margin-bottom: 1.5vh;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
     .column {
@@ -74,37 +74,53 @@
     .item-row {
       display: grid;
       grid-template-columns: 1fr auto;
-      background: #000;
+      background: var(--black);
       border: 1px solid #3a3a3a;
       box-shadow: 0 0 6px rgba(0,0,0,0.6);
       overflow: hidden;
     }
 
     .item-label {
-      padding: 0.35em 0.75em;
-      font-size: clamp(0.7rem, 0.95vw, 1.1rem);
+      padding: 0.4em 0.8em;
+      font-size: clamp(0.85rem, 1.1vw, 1.3rem);
       text-transform: uppercase;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      background: #000;
-      color: #ffffff;
+      background: var(--black);
+      color: var(--offwhite);
     }
 
     .item-amount {
-      padding: 0.35em 0.9em;
+      padding: 0.4em 1em;
       text-align: right;
       min-width: 6vw;
-      font-size: clamp(0.7rem, 0.95vw, 1.1rem);
+      font-size: clamp(0.85rem, 1.1vw, 1.3rem);
       font-weight: bold;
-      background: #000;
-      color: #f6d58b;
+      background: var(--black);
+      color: var(--gold-soft);
       border-left: 1px solid #555;
     }
 
     .item-label strong {
       font-weight: 700;
       letter-spacing: 0.03em;
+      color: var(--gold-soft);
+    }
+
+    /* SPONSOR STRIP */
+    .sponsors {
+      width: 100%;
+      text-align: center;
+      margin-top: 0.3vh;
+      margin-bottom: 0.3vh;
+    }
+
+    .sponsors img {
+      max-height: 8vh;
+      max-width: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,0.7));
     }
 
     /* FOOTER AREA */
@@ -113,50 +129,43 @@
       align-items: center;
       justify-content: space-between;
       gap: 2vw;
-      margin-top: 0.2vh;
+      margin-top: 0.4vh;
     }
 
-    .footer-left,
-    .footer-right {
+    .footer-block {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: clamp(0.6rem, 0.8vw, 0.9rem);
       text-transform: uppercase;
-      color: #f6e3b8;
+      font-size: clamp(0.6rem, 0.85vw, 1rem);
+      color: var(--gold);
+      text-align: center;
+    }
+
+    .qr-img {
+      max-height: 11vh;
+      margin-bottom: 0.4vh;
+      object-fit: contain;
+      background: rgba(255,255,255,0.95);
+      padding: 0.4vh;
+      border-radius: 0.3rem;
+      box-shadow: 0 0 8px rgba(0,0,0,0.8);
     }
 
     .footer-center {
       flex: 1;
       text-align: center;
-      font-size: clamp(0.8rem, 1vw, 1.2rem);
+      font-size: clamp(0.9rem, 1.1vw, 1.3rem);
       font-weight: bold;
-      color: #f6e3b8;
-    }
-
-    .footer img {
-      max-height: 9vh;
-      object-fit: contain;
-      margin-bottom: 0.3vh;
+      color: var(--gold);
+      text-shadow: 0 0 6px rgba(0,0,0,0.7);
     }
 
     .marymount-logo {
       max-height: 10vh;
       object-fit: contain;
-    }
-
-    /* SPONSOR STRIP */
-    .sponsors {
-      width: 100%;
-      text-align: center;
-      margin-top: 0.6vh;
-    }
-
-    .sponsors img {
-      max-height: 7vh;
-      max-width: 100%;
-      object-fit: contain;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.9));
     }
 
     @media (max-width: 900px) {
@@ -166,6 +175,10 @@
       .items-grid {
         flex-direction: column;
       }
+      .footer {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -174,13 +187,10 @@
 
   <div class="frame">
 
-    <!-- HEADER IMAGE FROM REPO -->
+    <!-- HEADER USING LiveHeader.png -->
     <div class="header">
-      <img src="Marymount%20Header.png"
-           alt="The Starry Night Ball – Marymount Header" />
-      <!-- Fallback text if image fails:
-      <div class="title-text">The Starry Night Ball</div>
-      -->
+      <img src="LiveHeader.png"
+           alt="Live Auction Header" />
     </div>
 
     <!-- TWO-COLUMN ITEMS GRID -->
@@ -192,14 +202,16 @@
     <!-- SPONSOR FOOTER STRIP -->
     <div class="sponsors">
       <img src="Marymount%20Footer%20Sponsors.png"
-           alt="Marymount Footer Sponsors" />
+           alt="Marymount Sponsors" />
     </div>
 
-    <!-- FOOTER -->
+    <!-- FOOTER WITH TWO QR CODES + LOGO -->
     <div class="footer">
-      <!-- LEFT QR CODE (same image on both sides) -->
-      <div class="footer-left">
-        <img src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code Left" />
+      <!-- LEFT QR CODE -->
+      <div class="footer-block">
+        <img class="qr-img"
+             src="2025%20Marymount%20QR%20Code.jpeg"
+             alt="QR Code to Bid (Left)" />
         <div>Scan QR code to bid</div>
       </div>
 
@@ -209,8 +221,10 @@
       </div>
 
       <!-- RIGHT QR CODE -->
-      <div class="footer-right">
-        <img src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code Right" />
+      <div class="footer-block">
+        <img class="qr-img"
+             src="2025%20Marymount%20QR%20Code.jpeg"
+             alt="QR Code to Bid (Right)" />
         <div>Scan QR code to bid</div>
       </div>
 
@@ -293,6 +307,9 @@
 
         leftCol.innerHTML  = leftHTML;
         rightCol.innerHTML = rightHTML;
+
+        // Show grid once data is ready
+        document.querySelector('.items-grid').style.opacity = 1;
 
       } catch (err) {
         console.error('Failed to load sheet data', err);
