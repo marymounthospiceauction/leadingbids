@@ -7,15 +7,15 @@
   <!-- VIEWPORT -->
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
 
-  <!-- SCRIPT-STYLE TITLE FONT (similar to screenshot) -->
+  <!-- SCRIPT-STYLE TITLE FONT (fallback if header image not loaded) -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
 
   <style>
-    /* PAGE BACKGROUND – SWAP URL FOR YOUR BACKGROUND IMAGE */
+    /* PAGE BACKGROUND – USE TV BACKGROUND IMAGE */
     body {
       margin: 0;
       font-family: Calibri, Arial, sans-serif;
-      background: #000 url("BACKGROUND_IMAGE_PLACEHOLDER.jpg") center/cover no-repeat fixed; /* background image */
+      background: #000 url("tvbackground.png") center/cover no-repeat fixed;
       color: #fff;
       overflow: hidden;
     }
@@ -33,7 +33,7 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      padding: 2vh 2vw 1.5vh 2vw;
+      padding: 2vh 2vw 1vh 2vw;
     }
 
     /* HEADER AREA */
@@ -42,8 +42,6 @@
       margin-bottom: 1.5vh;
     }
 
-    /* If you want to use an IMAGE header instead of text, 
-       uncomment the img and remove the .title-text div. */
     .header img {
       max-height: 14vh;
       max-width: 80%;
@@ -63,7 +61,7 @@
       display: flex;
       gap: 2vw;
       margin-top: 1vh;
-      margin-bottom: 2vh;
+      margin-bottom: 1.5vh;
     }
 
     .column {
@@ -104,7 +102,6 @@
       border-left: 1px solid #555;
     }
 
-    /* BOLD THE “ITEM 01 -” PREFIX A BIT MORE */
     .item-label strong {
       font-weight: 700;
       letter-spacing: 0.03em;
@@ -116,6 +113,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 2vw;
+      margin-top: 0.2vh;
     }
 
     .footer-left,
@@ -145,6 +143,20 @@
 
     .marymount-logo {
       max-height: 10vh;
+      object-fit: contain;
+    }
+
+    /* SPONSOR STRIP */
+    .sponsors {
+      width: 100%;
+      text-align: center;
+      margin-top: 0.6vh;
+    }
+
+    .sponsors img {
+      max-height: 7vh;
+      max-width: 100%;
+      object-fit: contain;
     }
 
     @media (max-width: 900px) {
@@ -162,13 +174,12 @@
 
   <div class="frame">
 
-    <!-- HEADER -->
+    <!-- HEADER IMAGE FROM REPO -->
     <div class="header">
-      <!-- OPTION 1: TEXT HEADER (matches screenshot style) -->
+      <img src="Marymount%20Header.png"
+           alt="The Starry Night Ball – Marymount Header" />
+      <!-- Fallback text if image fails:
       <div class="title-text">The Starry Night Ball</div>
-
-      <!-- OPTION 2: IMAGE HEADER (comment in if you have a header image)
-      <img src="HEADER_IMAGE_PLACEHOLDER.png" alt="Header Image Placeholder" />
       -->
     </div>
 
@@ -178,12 +189,17 @@
       <div class="column" id="column-right"></div>
     </div>
 
+    <!-- SPONSOR FOOTER STRIP -->
+    <div class="sponsors">
+      <img src="Marymount%20Footer%20Sponsors.png"
+           alt="Marymount Footer Sponsors" />
+    </div>
+
     <!-- FOOTER -->
     <div class="footer">
-      <!-- LEFT QR CODE -->
+      <!-- LEFT QR CODE (same image on both sides) -->
       <div class="footer-left">
-        <!-- QR CODE PLACEHOLDER (LEFT) -->
-        <img src="QR_CODE_LEFT_PLACEHOLDER.png" alt="QR Code Left" />
+        <img src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code Left" />
         <div>Scan QR code to bid</div>
       </div>
 
@@ -192,16 +208,15 @@
         www.marymountauction2025.ie
       </div>
 
-      <!-- RIGHT SIDE: QR + LOGO -->
+      <!-- RIGHT QR CODE -->
       <div class="footer-right">
-        <!-- QR CODE PLACEHOLDER (RIGHT) -->
-        <img src="QR_CODE_RIGHT_PLACEHOLDER.png" alt="QR Code Right" />
+        <img src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code Right" />
         <div>Scan QR code to bid</div>
       </div>
 
-      <!-- MARYMOUNT LOGO PLACEHOLDER (BOTTOM RIGHT CORNER) -->
+      <!-- MARYMOUNT LOGO -->
       <img class="marymount-logo"
-           src="MARYMOUNT_LOGO_PLACEHOLDER.png"
+           src="Marymount%20Logo.png"
            alt="Marymount Logo" />
     </div>
 
@@ -231,7 +246,7 @@
       });
     }
 
-    // Bold “ITEM 01 - ” (first 7 chars) like the screenshot
+    // Bold “ITEM 01 - ” (first 7 chars)
     function boldFirstSeven(text) {
       if (!text) return '';
       return '<strong>' + text.substring(0, 7) + '</strong>' + text.substring(7);
@@ -252,7 +267,7 @@
         let leftHTML  = '';
         let rightHTML = '';
 
-        // Split items into two columns (left first half, right second half)
+        // Split items into two columns
         const half = Math.ceil(rows.length / 2);
 
         rows.forEach((row, index) => {
