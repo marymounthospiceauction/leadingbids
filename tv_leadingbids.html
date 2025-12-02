@@ -39,7 +39,6 @@
       display: flex;
       flex-direction: column;
       padding: 1vh 3vw 1vh 3vw;
-      position: relative;
     }
 
     /* HEADER TEXT + LOGO */
@@ -71,22 +70,24 @@
       filter: drop-shadow(0 0 6px rgba(0,0,0,0.9));
     }
 
-    /* ITEMS GRID – TALL, FIXED AREA SO ROWS CAN BE BIGGER */
+    /* ITEMS GRID – FLEXES TO FILL AVAILABLE VERTICAL SPACE */
     .items-grid {
-      flex: 0 0 62vh;      /* ~62% of screen height for rows */
+      flex: 1 1 auto;
+      min-height: 0;
       display: flex;
-      gap: 1.2vw;
+      gap: 1.1vw;
       opacity: 0;
       transition: opacity 0.3s ease;
       margin-top: 0.2vh;
-      overflow: hidden;    /* no scrollbar; all 37 should fit */
+      margin-bottom: 0.5vh;
+      overflow: hidden;  /* no scrollbars on TV */
     }
 
     .column {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 0.12vh;
+      gap: 0.08vh;       /* tight spacing so all 19 rows fit */
     }
 
     .item-row {
@@ -101,12 +102,12 @@
     .item-label,
     .item-amount {
       display: flex;
-      align-items: center; /* vertical centre */
+      align-items: center; /* vertical centring */
     }
 
     .item-label {
-      padding: 0.2em 0.6em;
-      font-size: clamp(0.8rem, 1.15vw, 1.3rem); /* larger */
+      padding: 0.16em 0.55em;
+      font-size: clamp(0.78rem, 0.95vw, 1.1rem);
       text-transform: uppercase;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -119,42 +120,37 @@
     }
 
     .item-amount {
-      padding: 0.2em 0.9em;
-      font-size: clamp(0.8rem, 1.15vw, 1.3rem); /* larger */
+      padding: 0.16em 0.8em;
+      font-size: clamp(0.78rem, 0.95vw, 1.1rem);
       font-weight: bold;
-      min-width: 5.4vw;
+      min-width: 5.2vw;
       justify-content: flex-end;
       color: var(--gold-soft);
       border-left: 1px solid #555;
       text-align: right;
     }
 
-    /* SUPPLIERS – LARGER & PUSHED FURTHER DOWN */
+    /* SUPPLIERS – larger & dropped down, in normal flow */
     .sponsors {
-      position: absolute;
-      left: 50%;
-      bottom: 8vh;              /* lower on the screen */
-      transform: translateX(-50%);
+      flex: 0 0 auto;
       text-align: center;
+      margin: 0.4vh 0 0.3vh;
     }
 
     .sponsors img {
-      max-height: 12vh;         /* larger strip */
+      max-height: 12vh;
       max-width: 100%;
       object-fit: contain;
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
     }
 
-    /* FOOTER – QR codes in very bottom corners */
+    /* FOOTER – QR codes row */
     .footer {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 3.5vh;
+      flex: 0 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      padding: 0 3vw;
+      margin-top: 0.1vh;
     }
 
     .footer-block {
@@ -182,19 +178,18 @@
       text-transform: uppercase;
     }
 
-    /* WEBSITE ADDRESS – VERY BOTTOM CENTRE */
+    /* WEBSITE ADDRESS – bottom centre, lifted slightly off the frame */
     .website-bar {
-      position: absolute;
-      left: 50%;
-      bottom: 1.1vh;
-      transform: translateX(-50%);
+      flex: 0 0 auto;
+      text-align: center;
+      margin-top: 0.2vh;
+      margin-bottom: 0.8vh;     /* moved up from the very edge */
       font-size: clamp(0.85rem, 1.05vw, 1.3rem);
       font-weight: 700;
       color: #000000;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       text-shadow: 0 0 4px rgba(255,255,255,0.7);
-      pointer-events: none;
     }
   </style>
 </head>
@@ -222,7 +217,7 @@
       <img src="Marymount%20Footer%20Sponsors.png" alt="Sponsors" />
     </div>
 
-    <!-- FOOTER – QR CODES IN BOTTOM CORNERS -->
+    <!-- FOOTER – QR CODES -->
     <div class="footer">
       <div class="footer-block">
         <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid (Left)" />
@@ -235,7 +230,7 @@
       </div>
     </div>
 
-    <!-- WEBSITE – BOTTOM CENTRE -->
+    <!-- WEBSITE – BOTTOM CENTRE, ABOVE FRAME -->
     <div class="website-bar">www.marymountauction2025.ie</div>
 
   </div>
@@ -272,7 +267,7 @@
         let leftHTML  = '';
         let rightHTML = '';
 
-        const half = Math.ceil(rows.length / 2);
+        const half = Math.ceil(rows.length / 2); // 19 on left, 18 on right for 37
 
         rows.forEach((r, i) => {
           const item = boldFirstSeven(r[0] || '');
