@@ -33,12 +33,13 @@
       width: 100vw;
       height: 100vh;
       margin: 0;
-      border: none;            /* remove inner frame */
+      border: none;
       box-shadow: none;
       background: transparent;
       display: flex;
       flex-direction: column;
-      padding: 1vh 3vw 1.2vh 3vw; /* light padding to sit inside background frame */
+      padding: 1vh 3vw 1vh 3vw;
+      position: relative;
     }
 
     /* HEADER TEXT + LOGO */
@@ -46,7 +47,6 @@
       position: relative;
       flex: 0 0 auto;
       margin-bottom: 0.4vh;
-      padding-top: 0.2vh;
       text-align: center;
     }
 
@@ -71,24 +71,22 @@
       filter: drop-shadow(0 0 6px rgba(0,0,0,0.9));
     }
 
-    /* ITEMS GRID */
+    /* ITEMS GRID – TALL, FIXED AREA SO ROWS CAN BE BIGGER */
     .items-grid {
-      flex: 1 1 auto;
-      min-height: 0;
+      flex: 0 0 62vh;      /* ~62% of screen height for rows */
       display: flex;
       gap: 1.2vw;
       opacity: 0;
-      overflow-y: hidden;  /* no scrollbar; all rows should fit */
       transition: opacity 0.3s ease;
-      margin-top: 0.1vh;
-      margin-bottom: 0.1vh;
+      margin-top: 0.2vh;
+      overflow: hidden;    /* no scrollbar; all 37 should fit */
     }
 
     .column {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 0.1vh;  /* tight vertical spacing for 37 items */
+      gap: 0.12vh;
     }
 
     .item-row {
@@ -107,8 +105,8 @@
     }
 
     .item-label {
-      padding: 0.16em 0.55em;
-      font-size: clamp(0.75rem, 1.0vw, 1.1rem);
+      padding: 0.2em 0.6em;
+      font-size: clamp(0.8rem, 1.15vw, 1.3rem); /* larger */
       text-transform: uppercase;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -121,37 +119,42 @@
     }
 
     .item-amount {
-      padding: 0.16em 0.75em;
-      font-size: clamp(0.75rem, 1.0vw, 1.1rem);
+      padding: 0.2em 0.9em;
+      font-size: clamp(0.8rem, 1.15vw, 1.3rem); /* larger */
       font-weight: bold;
-      min-width: 5.2vw;
+      min-width: 5.4vw;
       justify-content: flex-end;
       color: var(--gold-soft);
       border-left: 1px solid #555;
       text-align: right;
     }
 
-    /* SUPPLIERS – larger & dropped down a bit */
+    /* SUPPLIERS – LARGER & PUSHED FURTHER DOWN */
     .sponsors {
-      flex: 0 0 auto;
+      position: absolute;
+      left: 50%;
+      bottom: 8vh;              /* lower on the screen */
+      transform: translateX(-50%);
       text-align: center;
-      margin: 0.4vh 0 0.2vh;
     }
 
     .sponsors img {
-      max-height: 11vh;  /* larger strip */
+      max-height: 12vh;         /* larger strip */
       max-width: 100%;
       object-fit: contain;
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
     }
 
-    /* FOOTER – QR codes in bottom corners */
+    /* FOOTER – QR codes in very bottom corners */
     .footer {
-      flex: 0 0 auto;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 3.5vh;
       display: flex;
-      justify-content: space-between; /* left & right */
+      justify-content: space-between;
       align-items: flex-end;
-      margin-top: 0.2vh;
+      padding: 0 3vw;
     }
 
     .footer-block {
@@ -159,7 +162,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
     }
 
     .qr-img {
@@ -171,7 +173,6 @@
       margin-bottom: 0.15vh;
     }
 
-    /* Plain black text under QR codes */
     .footer-block span {
       font-size: clamp(0.7rem, 0.9vw, 1.1rem);
       font-weight: 600;
@@ -181,11 +182,11 @@
       text-transform: uppercase;
     }
 
-    /* WEBSITE ADDRESS – at the very bottom centre */
+    /* WEBSITE ADDRESS – VERY BOTTOM CENTRE */
     .website-bar {
       position: absolute;
       left: 50%;
-      bottom: 0.9vh;
+      bottom: 1.1vh;
       transform: translateX(-50%);
       font-size: clamp(0.85rem, 1.05vw, 1.3rem);
       font-weight: 700;
@@ -234,7 +235,7 @@
       </div>
     </div>
 
-    <!-- WEBSITE – fixed to very bottom centre -->
+    <!-- WEBSITE – BOTTOM CENTRE -->
     <div class="website-bar">www.marymountauction2025.ie</div>
 
   </div>
