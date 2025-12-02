@@ -21,7 +21,8 @@
       font-family: Calibri, Arial, sans-serif;
       background: #000 url("tvbackground.png") center/cover no-repeat fixed;
       color: var(--offwhite);
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: hidden; /* no page scroll – everything managed inside the frame */
     }
 
     * { box-sizing: border-box; }
@@ -29,7 +30,7 @@
     /* MAIN GOLDEN FRAME */
     .frame {
       width: 96vw;
-      height: 96vh;
+      height: 96vh;              /* fixed to screen height */
       margin: 2vh auto;
       border: 6px solid var(--gold);
       box-shadow: 0 0 25px rgba(0,0,0,0.9);
@@ -37,38 +38,42 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      padding: 2vh 2vw 1vh 2vw;
+      padding: 1.5vh 2vw 1vh 2vw; /* slightly tighter padding */
     }
 
     /* HEADER AREA – USE LiveHeader.png */
     .header {
       text-align: center;
-      margin-bottom: 1.5vh;
+      margin-bottom: 1vh;
+      flex: 0 0 auto;
     }
 
     .header img {
-      max-height: 14vh;
+      max-height: 13vh;
       max-width: 80%;
       object-fit: contain;
       filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
     }
 
-    /* ITEMS GRID (2 COLUMNS) */
+    /* ITEMS GRID (2 COLUMNS, SCROLLABLE IF NEEDED) */
     .items-grid {
-      flex: 1;
+      flex: 1 1 auto;      /* allow it to grow and shrink */
+      min-height: 0;       /* IMPORTANT: let flexbox shrink this area */
       display: flex;
-      gap: 2vw;
-      margin-top: 1vh;
-      margin-bottom: 1.5vh;
+      gap: 1.6vw;
+      margin-top: 0.5vh;
+      margin-bottom: 0.6vh;
       opacity: 0;
       transition: opacity 0.3s ease;
+      overflow-y: auto;    /* internal scroll if too many rows */
+      padding-right: 0.4vw;/* small room for scrollbar */
     }
 
     .column {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 0.4vh;
+      gap: 0.25vh;
     }
 
     .item-row {
@@ -81,8 +86,8 @@
     }
 
     .item-label {
-      padding: 0.4em 0.8em;
-      font-size: clamp(0.85rem, 1.1vw, 1.3rem);
+      padding: 0.3em 0.7em;
+      font-size: clamp(0.8rem, 1vw, 1.2rem);
       text-transform: uppercase;
       white-space: nowrap;
       overflow: hidden;
@@ -92,10 +97,10 @@
     }
 
     .item-amount {
-      padding: 0.4em 1em;
+      padding: 0.3em 0.9em;
       text-align: right;
       min-width: 6vw;
-      font-size: clamp(0.85rem, 1.1vw, 1.3rem);
+      font-size: clamp(0.8rem, 1vw, 1.2rem);
       font-weight: bold;
       background: var(--black);
       color: var(--gold-soft);
@@ -112,12 +117,13 @@
     .sponsors {
       width: 100%;
       text-align: center;
-      margin-top: 0.3vh;
-      margin-bottom: 0.3vh;
+      margin-top: 0.2vh;
+      margin-bottom: 0.2vh;
+      flex: 0 0 auto;
     }
 
     .sponsors img {
-      max-height: 8vh;
+      max-height: 7vh;
       max-width: 100%;
       object-fit: contain;
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.7));
@@ -128,8 +134,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 2vw;
-      margin-top: 0.4vh;
+      gap: 1.6vw;
+      margin-top: 0.2vh;
+      flex: 0 0 auto;
     }
 
     .footer-block {
@@ -138,13 +145,13 @@
       align-items: center;
       justify-content: center;
       text-transform: uppercase;
-      font-size: clamp(0.6rem, 0.85vw, 1rem);
+      font-size: clamp(0.6rem, 0.8vw, 0.95rem);
       color: var(--gold);
       text-align: center;
     }
 
     .qr-img {
-      max-height: 11vh;
+      max-height: 9vh;
       margin-bottom: 0.4vh;
       object-fit: contain;
       background: rgba(255,255,255,0.95);
@@ -156,14 +163,14 @@
     .footer-center {
       flex: 1;
       text-align: center;
-      font-size: clamp(0.9rem, 1.1vw, 1.3rem);
+      font-size: clamp(0.85rem, 1vw, 1.2rem);
       font-weight: bold;
       color: var(--gold);
       text-shadow: 0 0 6px rgba(0,0,0,0.7);
     }
 
     .marymount-logo {
-      max-height: 10vh;
+      max-height: 8vh;
       object-fit: contain;
       filter: drop-shadow(0 0 6px rgba(0,0,0,0.9));
     }
@@ -193,7 +200,7 @@
            alt="Live Auction Header" />
     </div>
 
-    <!-- TWO-COLUMN ITEMS GRID -->
+    <!-- TWO-COLUMN ITEMS GRID (SCROLLABLE IF TOO TALL) -->
     <div class="items-grid">
       <div class="column" id="column-left"></div>
       <div class="column" id="column-right"></div>
