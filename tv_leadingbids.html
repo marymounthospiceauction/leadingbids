@@ -21,7 +21,7 @@
 
       /* Safe-area padding to counter TV overscan (tune these) */
       --safe-top: 1.6vh;
-      --safe-bottom: 6vh;    /* ⬅️ moved footer further up slightly */
+      --safe-bottom: 6vh;    /* ⬅️ moves footer up inside the visible frame */
       --safe-horiz: 3vw;
 
       /* Footer band height (QR + Sponsors centred) */
@@ -195,7 +195,8 @@
     }
 
     .qr-img {
-      max-height: calc(var(--footer-h) * 0.70);  /* QR fits within footer */
+      /* ⬆️ QR codes slightly larger now */
+      max-height: calc(var(--footer-h) * 0.80);  /* was 0.70 */
       background: rgba(255,255,255,0.98);
       padding: 0.4vh;
       border-radius: 0.3rem;
@@ -237,7 +238,9 @@
     <!-- HEADER -->
     <div class="header">
       <div class="header-title">The Starry Night Ball</div>
-      <img class="marymount-logo-top" src="Marymount%20Logo.png" alt="Marymount Logo" />
+      <img class="marymount-logo-top"
+           src="Marymount%20Logo.png"
+           alt="Marymount Logo" />
     </div>
 
     <!-- 2-COLUMN GRID -->
@@ -391,3 +394,4 @@
   </script>
 
 </body>
+</html>
