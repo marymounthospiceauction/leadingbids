@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,42 +17,43 @@
       --gold-soft: #f4d28a;
       --black: #000000;
       --offwhite: #ffffff;
+
+      /* Safe-area padding to counter TV overscan */
+      --frame-pad-vh: 1.2vh;
+      --frame-pad-vw: 3vw;
     }
+
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       font-family: Calibri, Arial, sans-serif;
       background: #000 url("tvbackground.png") center/cover no-repeat fixed;
       color: var(--offwhite);
-      overflow: hidden;
+      overflow: hidden; /* TVs must not show scrollbars */
     }
-
-    * { box-sizing: border-box; }
 
     /* FULL-SCREEN CONTAINER – NO INNER FRAME/BORDER */
     .frame {
       width: 100vw;
       height: 100vh;
-      margin: 0;
-      border: none;
-      box-shadow: none;
-      background: transparent;
+      padding: var(--frame-pad-vh) var(--frame-pad-vw);
       display: flex;
       flex-direction: column;
-      padding: 1vh 3vw 1vh 3vw;
+      background: transparent;
     }
 
     /* HEADER TEXT + LOGO */
     .header {
       position: relative;
       flex: 0 0 auto;
-      margin-bottom: 0.4vh;
+      margin-bottom: 0.5vh;
       text-align: center;
     }
 
     .header-title {
       font-family: 'Great Vibes', cursive;
-      font-size: clamp(2.6rem, 3.9vw, 4.5rem);
+      font-size: clamp(2.3rem, 3.6vw, 4.2rem);
       font-weight: 400;
       color: #000000; /* black for readability */
       text-shadow:
@@ -59,43 +61,48 @@
         0 0 12px rgba(246,213,139,0.7),
         0 0 18px rgba(0,0,0,0.9);
       letter-spacing: 0.04em;
+      line-height: 1.05;
     }
 
     .marymount-logo-top {
       position: absolute;
       right: 0;
       top: 0;
-      max-height: 9vh;
+      max-height: 8.5vh;
       object-fit: contain;
       filter: drop-shadow(0 0 6px rgba(0,0,0,0.9));
     }
 
-    /* ITEMS GRID – FLEXES TO FILL AVAILABLE VERTICAL SPACE */
+    /* ITEMS GRID – fills remaining vertical space explicitly */
     .items-grid {
       flex: 1 1 auto;
       min-height: 0;
       display: flex;
-      gap: 1.1vw;
+      gap: 1.1vw;       /* horizontal gap between columns */
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease-in-out;
       margin-top: 0.2vh;
       margin-bottom: 0.5vh;
-      overflow: hidden;  /* no scrollbars on TV */
+      overflow: hidden; /* no scrollbars on TV */
     }
 
     .column {
-      flex: 1;
+      flex: 1 1 0;
       display: flex;
       flex-direction: column;
-      gap: 0.08vh;       /* tight spacing so all 19 rows fit */
+      /* Vertical gap between rows (used in height calculations) */
+      gap: 0.25vh;
+      /* Each column gets its own computed row height via --rowH */
+      --rowH: 36px; /* will be overridden by JS per column */
     }
 
     .item-row {
       display: grid;
-      grid-template-columns: 1fr auto;
-      background: rgba(0,0,0,0.9);
-      border: 1px solid #3a3a3a;
+      grid-template-columns: 1fr max-content;
       align-items: center;
+      height: var(--rowH);              /* exact height per row */
+      background: rgba(0,0,0,0.88);
+      border: 1px solid #3a3a3a;
       box-shadow: 0 0 4px rgba(0,0,0,0.5);
     }
 
@@ -103,11 +110,13 @@
     .item-amount {
       display: flex;
       align-items: center; /* vertical centring */
+      /* font scales with row height but is clamped to stay crisp on 4K */
+      font-size: clamp(12px, calc(var(--rowH) * 0.42), 28px);
+      line-height: 1.1;
     }
 
     .item-label {
       padding: 0.16em 0.55em;
-      font-size: clamp(0.78rem, 0.95vw, 1.1rem);
       text-transform: uppercase;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -120,10 +129,10 @@
     }
 
     .item-amount {
-      padding: 0.16em 0.8em;
-      font-size: clamp(0.78rem, 0.95vw, 1.1rem);
-      font-weight: bold;
-      min-width: 5.2vw;
+      padding: 0.16em 0.85em;
+      font-weight: 700;
+      /* reserve space for big € amounts; stays responsive on 1080p/4K */
+      min-width: clamp(8ch, 10vw, 18vw);
       justify-content: flex-end;
       color: var(--gold-soft);
       border-left: 1px solid #555;
@@ -138,7 +147,7 @@
     }
 
     .sponsors img {
-      max-height: 12vh;
+      max-height: 11.5vh; /* keep footer visible on TVs with overscan */
       max-width: 100%;
       object-fit: contain;
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
@@ -161,7 +170,7 @@
     }
 
     .qr-img {
-      max-height: 8.5vh;
+      max-height: 8.2vh;
       background: rgba(255,255,255,0.98);
       padding: 0.4vh;
       border-radius: 0.3rem;
@@ -183,7 +192,7 @@
       flex: 0 0 auto;
       text-align: center;
       margin-top: 0.2vh;
-      margin-bottom: 0.8vh;     /* moved up from the very edge */
+      margin-bottom: 0.8vh;
       font-size: clamp(0.85rem, 1.05vw, 1.3rem);
       font-weight: 700;
       color: #000000;
@@ -254,48 +263,105 @@
       return '<strong>' + t.substring(0,7) + '</strong>' + t.substring(7);
     }
 
+    /**
+     * Compute exact row heights so all items fit without scroll/overlap.
+     * Each column gets its own height based on item count and vertical gaps.
+     */
+    function applyDeterministicHeights(leftCount, rightCount) {
+      const itemsGrid = document.querySelector('.items-grid');
+      const leftCol   = document.getElementById('column-left');
+      const rightCol  = document.getElementById('column-right');
+
+      // Available height inside items-grid
+      const gridRect = itemsGrid.getBoundingClientRect();
+      const availableH = gridRect.height;
+
+      // Column vertical gaps (px) – take the first value of gap shorthand
+      const leftStyles = getComputedStyle(leftCol);
+      const gapStr     = leftStyles.gap || '0px';
+      const gapPx      = parseFloat(gapStr.split(' ')[0]) || 0;
+
+      // Exact per-row heights (fill space minus gaps)
+      const leftTotalGaps  = Math.max(0, (leftCount - 1)) * gapPx;
+      const rightTotalGaps = Math.max(0, (rightCount - 1)) * gapPx;
+
+      const leftRowH  = Math.floor((availableH - leftTotalGaps) / leftCount);
+      const rightRowH = Math.floor((availableH - rightTotalGaps) / rightCount);
+
+      // Apply to columns via CSS vars
+      leftCol.style.setProperty('--rowH', leftRowH + 'px');
+      rightCol.style.setProperty('--rowH', rightRowH + 'px');
+    }
+
+    function renderRows(rows) {
+      const leftCol  = document.getElementById('column-left');
+      const rightCol = document.getElementById('column-right');
+
+      const half = Math.ceil(rows.length / 2); // 19 on left, 18 on right for 37
+
+      const leftHTML  = rows.slice(0, half).map(r => {
+        const item = boldFirstSeven((r[0] ?? '').toString());
+        const bid  = formatEuro(r[2] ?? r[1]);
+        return `
+          <div class="item-row">
+            <div class="item-label">${item}</div>
+            <div class="item-amount">${bid}</div>
+          </div>
+        `;
+      }).join('');
+
+      const rightHTML = rows.slice(half).map(r => {
+        const item = boldFirstSeven((r[0] ?? '').toString());
+        const bid  = formatEuro(r[2] ?? r[1]);
+        return `
+          <div class="item-row">
+            <div class="item-label">${item}</div>
+            <div class="item-amount">${bid}</div>
+          </div>
+        `;
+      }).join('');
+
+      leftCol.innerHTML  = leftHTML;
+      rightCol.innerHTML = rightHTML;
+
+      // After DOM update, compute exact heights and reveal
+      requestAnimationFrame(() => {
+        applyDeterministicHeights(half, rows.length - half);
+        document.querySelector('.items-grid').style.opacity = 1;
+      });
+    }
+
     async function loadData() {
       try {
         const res  = await fetch(url);
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = json.table.rows.map(r => r.c.map(c => c ? c.v : ''));
+        const rows = json.table.rows.map(r => r.c.map(c => (c ? c.v : '')));
 
-        const left  = document.getElementById('column-left');
-        const right = document.getElementById('column-right');
-
-        let leftHTML  = '';
-        let rightHTML = '';
-
-        const half = Math.ceil(rows.length / 2); // 19 on left, 18 on right for 37
-
-        rows.forEach((r, i) => {
-          const item = boldFirstSeven(r[0] || '');
-          const bid  = formatEuro(r[2] || r[1]);
-
-          const row = `
-            <div class="item-row">
-              <div class="item-label">${item}</div>
-              <div class="item-amount">${bid}</div>
-            </div>
-          `;
-
-          if (i < half) leftHTML += row;
-          else rightHTML += row;
-        });
-
-        left.innerHTML  = leftHTML;
-        right.innerHTML = rightHTML;
-
-        document.querySelector('.items-grid').style.opacity = 1;
-
+        renderRows(rows);
       } catch (e) {
         console.error("Sheet load error", e);
       }
     }
 
+    // Initial load and refresh
     loadData();
-    setInterval(loadData, 5000);
+    const REFRESH_MS = 5000;
+    const refreshTimer = setInterval(loadData, REFRESH_MS);
+
+    // Re-apply heights on resize/orientation changes (TVs can scale differently)
+    const reflow = () => {
+      const leftCol  = document.getElementById('column-left');
+      const rightCol = document.getElementById('column-right');
+      const leftCount  = leftCol.children.length;
+      const rightCount = rightCol.children.length;
+      if (leftCount && rightCount) {
+        applyDeterministicHeights(leftCount, rightCount);
+      }
+    };
+    window.addEventListener('resize', reflow);
+    window.addEventListener('orientationchange', reflow);
+    document.addEventListener('fullscreenchange', reflow);
   </script>
 
 </body>
