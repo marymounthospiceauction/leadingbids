@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
 
   <!-- Script-style font -->
-  https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
 
   <style>
     :root {
@@ -20,11 +20,11 @@
 
       /* Safe-area padding to counter TV overscan (tune these) */
       --safe-top: 1.6vh;
-      --safe-bottom: 3.2vh; /* ⬅️ bigger bottom inset to avoid cropping */
+      --safe-bottom: 4vh;   /* ⬅️ larger bottom inset to avoid cropping */
       --safe-horiz: 3vw;
 
       /* Footer band height (QR + Sponsors centred) */
-      --footer-h: 8vh;     /* ⬅️ slightly smaller; increase if you want bigger */
+      --footer-h: 7.8vh;    /* ⬅️ slightly smaller, sits comfortably in safe area */
 
       /* Shared row height (set by JS) so rows align perfectly across columns */
       --rowH: 40px;
@@ -220,7 +220,7 @@
     <!-- HEADER -->
     <div class="header">
       <div class="header-title">The Starry Night Ball</div>
-      Marymount%20Logo.png
+      <img class="marymount-logo-top" src="Marymount%20Logo.png" alt="Marymount Logo" />
     </div>
 
     <!-- 2-COLUMN GRID -->
@@ -231,19 +231,19 @@
 
   </div>
 
-  <!-- FOOTER – QR | SPONSORS | QR -->
+  <!-- FOOTER – QR | SPONSORS | QR (inside safe area) -->
   <div class="footer">
     <div class="footer-block">
-      2025%20Marymount%20QR%20Code.jpeg
+      <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid (Left)" />
       <span>Scan QR code to bid</span>
     </div>
 
     <div class="footer-sponsors">
-      Marymount%20Footer%20Sponsors.png
+      <img src="Marymount%20Footer%20Sponsors.png" alt="Sponsors" />
     </div>
 
     <div class="footer-block">
-      2025%20Marymount%20QR%20Code.jpeg
+      <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid (Right)" />
       <span>Scan QR code to bid</span>
     </div>
   </div>
