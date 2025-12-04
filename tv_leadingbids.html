@@ -17,14 +17,15 @@
       --gold-soft: #f4d28a;
       --black: #000000;
       --offwhite: #ffffff;
+      --red: #ff3b30; /* middle NEW BID colour */
 
       /* Safe-area padding to counter TV overscan (tune these) */
       --safe-top: 1.6vh;
-      --safe-bottom: 4vh;   /* ⬅️ larger bottom inset to avoid cropping */
+      --safe-bottom: 5.2vh;  /* ⬅️ moved footer further up */
       --safe-horiz: 3vw;
 
       /* Footer band height (QR + Sponsors centred) */
-      --footer-h: 7.8vh;    /* ⬅️ slightly smaller, sits comfortably in safe area */
+      --footer-h: 7.2vh;     /* ⬅️ slightly smaller band */
 
       /* Shared row height (set by JS) so rows align perfectly across columns */
       --rowH: 40px;
@@ -107,7 +108,8 @@
 
     .item-row {
       display: grid;
-      grid-template-columns: 1fr max-content;
+      /* 3 columns: label | NEW BID | amount  */
+      grid-template-columns: 1fr 9ch max-content; /* 9ch keeps NEW BID aligned */
       align-items: center;
       height: var(--rowH);              /* exact, shared height per row */
       background: rgba(0,0,0,0.9);
@@ -116,10 +118,11 @@
     }
 
     .item-label,
+    .item-newbid,
     .item-amount {
       display: flex;
       align-items: center;
-      /* font scales with shared row height, clamped for crispness */
+      /* Labels & Amounts scale a bit larger than NEW BID to satisfy "slightly smaller" */
       font-size: clamp(14px, calc(var(--rowH) * 0.52), 32px);
       line-height: 1.12;
     }
@@ -135,6 +138,17 @@
     .item-label strong {
       font-weight: 800;
       color: var(--gold-soft);
+      letter-spacing: 0.02em;
+    }
+
+    .item-newbid {
+      /* slightly smaller than other columns, centered, red */
+      justify-content: center;
+      text-align: center;
+      color: var(--red);
+      font-weight: 800;
+      /* slightly smaller than label/amount */
+      font-size: clamp(12px, calc(var(--rowH) * 0.46), 28px);
       letter-spacing: 0.02em;
     }
 
@@ -234,7 +248,7 @@
   <!-- FOOTER – QR | SPONSORS | QR (inside safe area) -->
   <div class="footer">
     <div class="footer-block">
-      <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid (Left)" />
+      <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="Scan to bid (left)" />
       <span>Scan QR code to bid</span>
     </div>
 
@@ -243,7 +257,7 @@
     </div>
 
     <div class="footer-block">
-      <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid (Right)" />
+      <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="Scan to bid (right)" />
       <span>Scan QR code to bid</span>
     </div>
   </div>
@@ -307,30 +321,20 @@
 
       const half = Math.ceil(rows.length / 2); // 19 left, 18 right for 37
 
-      const leftHTML  = rows.slice(0, half).map(r => {
+      const makeRow = (r) => {
         const item = boldFirstSeven((r[0] ?? '').toString());
         const bid  = formatEuro(r[2] ?? r[1]);
         return `
           <div class="item-row">
             <div class="item-label">${item}</div>
+            <div class="item-newbid">NEW BID</div>
             <div class="item-amount">${bid}</div>
           </div>
         `;
-      }).join('');
+      };
 
-      const rightHTML = rows.slice(half).map(r => {
-        const item = boldFirstSeven((r[0] ?? '').toString());
-        const bid  = formatEuro(r[2] ?? r[1]);
-        return `
-          <div class="item-row">
-            <div class="item-label">${item}</div>
-            <div class="item-amount">${bid}</div>
-          </div>
-        `;
-      }).join('');
-
-      leftCol.innerHTML  = leftHTML;
-      rightCol.innerHTML = rightHTML;
+      leftCol.innerHTML  = rows.slice(0, half).map(makeRow).join('');
+      rightCol.innerHTML = rows.slice(half).map(makeRow).join('');
 
       // After DOM update, compute shared height and reveal
       requestAnimationFrame(() => {
