@@ -21,6 +21,9 @@
       /* Safe-area padding to counter TV overscan */
       --frame-pad-vh: 1.2vh;
       --frame-pad-vw: 3vw;
+
+      /* Footer band height (QR + Sponsors centred) */
+      --footer-h: 9vh;
     }
 
     * { box-sizing: border-box; }
@@ -33,35 +36,36 @@
       overflow: hidden; /* TVs must not show scrollbars */
     }
 
-    /* FULL-SCREEN CONTAINER – NO INNER FRAME/BORDER */
+    /* FULL-SCREEN CONTAINER – reserve space for footer */
     .frame {
       width: 100vw;
       height: 100vh;
       padding: var(--frame-pad-vh) var(--frame-pad-vw);
+      padding-bottom: calc(var(--frame-pad-vh) + var(--footer-h));
       display: flex;
       flex-direction: column;
       background: transparent;
     }
 
-    /* HEADER TEXT + LOGO */
+    /* HEADER */
     .header {
       position: relative;
       flex: 0 0 auto;
-      margin-bottom: 0.5vh;
+      margin-bottom: 0.4vh;
       text-align: center;
     }
 
     .header-title {
       font-family: 'Great Vibes', cursive;
-      font-size: clamp(2.3rem, 3.6vw, 4.2rem);
+      font-size: clamp(2.6rem, 4.2vw, 5rem);
       font-weight: 400;
-      color: #000000; /* black for readability */
+      color: #000; /* black for readability */
       text-shadow:
         0 0 6px rgba(246,213,139,0.9),
         0 0 12px rgba(246,213,139,0.7),
         0 0 18px rgba(0,0,0,0.9);
       letter-spacing: 0.04em;
-      line-height: 1.05;
+      line-height: 1.06;
     }
 
     .marymount-logo-top {
@@ -75,31 +79,31 @@
 
     /* ITEMS GRID – fills remaining vertical space explicitly */
     .items-grid {
-      flex: 1 1 auto;     /* maximise available height for items */
+      flex: 1 1 auto;
       min-height: 0;
       display: flex;
-      gap: 1.1vw;         /* horizontal gap between columns */
+      gap: 1.1vw;       /* horizontal gap between columns */
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
       margin-top: 0.2vh;
-      margin-bottom: 0.4vh; /* tightened to free space below */
-      overflow: hidden;   /* no scrollbars on TV */
+      margin-bottom: 0.2vh;
+      overflow: hidden; /* no scrollbars on TV */
     }
 
     .column {
       flex: 1 1 0;
       display: flex;
       flex-direction: column;
-      gap: 0.25vh;        /* vertical gap between rows */
-      --rowH: 36px;       /* will be overridden by JS per column */
+      gap: 0.22vh;        /* small vertical gap between rows */
+      --rowH: 40px;       /* overridden by JS per column */
     }
 
     .item-row {
       display: grid;
       grid-template-columns: 1fr max-content;
       align-items: center;
-      height: var(--rowH);              /* exact height per row */
-      background: rgba(0,0,0,0.88);
+      height: var(--rowH);
+      background: rgba(0,0,0,0.9);
       border: 1px solid #3a3a3a;
       box-shadow: 0 0 4px rgba(0,0,0,0.5);
     }
@@ -107,13 +111,13 @@
     .item-label,
     .item-amount {
       display: flex;
-      align-items: center; /* vertical centring */
-      font-size: clamp(12px, calc(var(--rowH) * 0.42), 28px);
-      line-height: 1.1;
+      align-items: center;
+      font-size: clamp(14px, calc(var(--rowH) * 0.52), 32px); /* larger text */
+      line-height: 1.14;
     }
 
     .item-label {
-      padding: 0.16em 0.55em;
+      padding: 0.16em 0.6em;
       text-transform: uppercase;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -121,68 +125,76 @@
     }
 
     .item-label strong {
-      font-weight: 700;
+      font-weight: 800;
       color: var(--gold-soft);
+      letter-spacing: 0.02em;
     }
 
     .item-amount {
-      padding: 0.16em 0.85em;
-      font-weight: 700;
-      min-width: clamp(8ch, 10vw, 18vw); /* reserve width for big € amounts */
+      padding: 0.16em 1.0em;
+      font-weight: 800;
+      min-width: clamp(9ch, 11vw, 20vw); /* reserve width for big € amounts */
       justify-content: flex-end;
       color: var(--gold-soft);
       border-left: 1px solid #555;
       text-align: right;
     }
 
-    /* SUPPLIERS – placed closer to the bottom by sitting above footer */
-    .sponsors {
-      flex: 0 0 auto;
-      text-align: center;
-      margin: 0.2vh 0 0.2vh; /* reduced to maximise grid space */
-    }
-
-    .sponsors img {
-      max-height: 11vh; /* keep footer visible on TVs with overscan */
-      max-width: 100%;
-      object-fit: contain;
-      filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
-    }
-
-    /* FOOTER – QR codes row (bottom-most) */
+    /* FOOTER – fixed at bottom, 3-column grid: QR | Sponsors | QR */
     .footer {
-      flex: 0 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-top: 0.1vh;
+      position: fixed;
+      left: var(--frame-pad-vw);
+      right: var(--frame-pad-vw);
+      bottom: var(--frame-pad-vh);
+      height: var(--footer-h);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 2vw; /* space between QR and sponsors */
     }
 
     .footer-block {
-      text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
     }
 
     .qr-img {
-      max-height: 8vh;
+      max-height: calc(var(--footer-h) * 0.72);  /* QR fits within footer */
       background: rgba(255,255,255,0.98);
       padding: 0.4vh;
       border-radius: 0.3rem;
       box-shadow: 0 0 8px rgba(0,0,0,0.9);
-      margin-bottom: 0.15vh;
+      margin-bottom: 0.4vh;
     }
 
     .footer-block span {
-      font-size: clamp(0.7rem, 0.9vw, 1.1rem);
-      font-weight: 600;
+      font-size: clamp(0.8rem, 1vw, 1.2rem);
+      font-weight: 700;
       color: #000000;
       letter-spacing: 0.05em;
       text-shadow: 0 0 3px rgba(255,255,255,0.7);
       text-transform: uppercase;
     }
-    /* Removed .website-bar entirely */
+
+    /* Sponsors sits centred between QR blocks */
+    .footer-sponsors {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      pointer-events: none; /* avoids accidental focus */
+    }
+
+    .footer-sponsors img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
+    }
   </style>
 </head>
 
@@ -190,12 +202,10 @@
 
   <div class="frame">
 
-    <!-- HEADER TEXT -->
+    <!-- HEADER -->
     <div class="header">
       <div class="header-title">The Starry Night Ball</div>
-      <img class="marymount-logo-top"
-           src="Marymount%20Logo.png"
-           alt="Marymount Logo" />
+      <img class="marymount-logo-top" src="Marymount%20Logo.png" alt="Marymount Logo" />
     </div>
 
     <!-- 2-COLUMN GRID -->
@@ -204,25 +214,23 @@
       <div class="column" id="column-right"></div>
     </div>
 
-    <!-- SPONSORS (closer to bottom, above footer) -->
-    <div class="sponsors">
+  </div>
+
+  <!-- FOOTER – QR | SPONSORS | QR -->
+  <div class="footer">
+    <div class="footer-block">
+      <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid (Left)" />
+      <span>Scan QR code to bid</span>
+    </div>
+
+    <div class="footer-sponsors">
       <img src="Marymount%20Footer%20Sponsors.png" alt="Sponsors" />
     </div>
 
-    <!-- FOOTER – QR CODES -->
-    <div class="footer">
-      <div class="footer-block">
-        <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid (Left)" />
-        <span>Scan QR code to bid</span>
-      </div>
-
-      <div class="footer-block">
-        <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid (Right)" />
-        <span>Scan QR code to bid</span>
-      </div>
+    <div class="footer-block">
+      <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid (Right)" />
+      <span>Scan QR code to bid</span>
     </div>
-
-    <!-- Website bar removed -->
   </div>
 
   <script>
@@ -235,18 +243,20 @@
       `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
     function formatEuro(v) {
-      if (!v || isNaN(v)) return '€0';
+      if (v === null || v === undefined || v === '' || isNaN(v)) return '€0';
       return '€' + Number(v).toLocaleString('en-IE', { maximumFractionDigits: 0 });
     }
 
     function boldFirstSeven(t) {
       if (!t) return '';
-      return '<strong>' + t.substring(0,7) + '</strong>' + t.substring(7);
+      const s = t.toString();
+      return '<strong>' + s.substring(0,7) + '</strong>' + s.substring(7);
     }
 
     /**
      * Compute exact row heights so all items fit without scroll/overlap.
      * Each column gets its own height based on item count and vertical gaps.
+     * The footer is fixed and its height reserved via frame padding.
      */
     function applyDeterministicHeights(leftCount, rightCount) {
       const itemsGrid = document.querySelector('.items-grid');
@@ -254,16 +264,17 @@
       const rightCol  = document.getElementById('column-right');
 
       // Available height inside items-grid
-      const gridRect = itemsGrid.getBoundingClientRect();
+      const gridRect   = itemsGrid.getBoundingClientRect();
       const availableH = gridRect.height;
 
-      // Column vertical gaps (px)
+      // Column vertical gap (px)
       const gapPx = parseFloat(getComputedStyle(leftCol).gap) || 0;
 
-      // Exact per-row heights (fill space minus gaps)
+      // Total gap height
       const leftTotalGaps  = Math.max(0, (leftCount - 1)) * gapPx;
       const rightTotalGaps = Math.max(0, (rightCount - 1)) * gapPx;
 
+      // Exact per-row heights
       const leftRowH  = Math.floor((availableH - leftTotalGaps) / leftCount);
       const rightRowH = Math.floor((availableH - rightTotalGaps) / rightCount);
 
@@ -316,7 +327,6 @@
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
         const rows = json.table.rows.map(r => r.c.map(c => (c ? c.v : '')));
-
         renderRows(rows);
       } catch (e) {
         console.error("Sheet load error", e);
@@ -326,12 +336,12 @@
     // Initial load and refresh
     loadData();
     const REFRESH_MS = 5000;
-    const refreshTimer = setInterval(loadData, REFRESH_MS);
+    setInterval(loadData, REFRESH_MS);
 
-    // Re-apply heights on resize/orientation changes (TVs can scale differently)
+    // Re-apply heights on resize/orientation/fullscreen changes
     const reflow = () => {
-      const leftCol  = document.getElementById('column-left');
-      const rightCol = document.getElementById('column-right');
+      const leftCol    = document.getElementById('column-left');
+      const rightCol   = document.getElementById('column-right');
       const leftCount  = leftCol.children.length;
       const rightCount = rightCol.children.length;
       if (leftCount && rightCount) {
@@ -342,6 +352,5 @@
     window.addEventListener('orientationchange', reflow);
     document.addEventListener('fullscreenchange', reflow);
   </script>
-
 </body>
 </html>
