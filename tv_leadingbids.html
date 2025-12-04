@@ -17,17 +17,17 @@
       --gold-soft: #f4d28a;
       --black: #000000;
       --offwhite: #ffffff;
-      --red: #ff3b30; /* middle NEW BID colour */
+      --red: #ff3b30; /* NEW BID colour */
 
       /* Safe-area padding to counter TV overscan (tune these) */
       --safe-top: 1.6vh;
-      --safe-bottom: 6vh;    /* ⬅️ moves footer up inside the visible frame */
+      --safe-bottom: 6vh;    /* keeps footer fully inside the visible frame */
       --safe-horiz: 3vw;
 
-      /* Footer band height (QR + Sponsors centred) */
-      --footer-h: 7.2vh;     /* compact band to stay inside safe area */
+      /* Footer band height (QR + Sponsors centered) */
+      --footer-h: 7.2vh;     /* compact, safe band */
 
-      /* Shared row height (set by JS) so rows align across both columns */
+      /* Shared row height (set by JS) so rows align across columns */
       --rowH: 40px;
 
       /* Unified vertical gap between rows in both columns */
@@ -181,7 +181,7 @@
       grid-template-columns: auto 1fr auto;
       align-items: center;
       gap: 2vw; /* space between QR and sponsors */
-      /* Optional subtle backdrop for readability:
+      /* Optional subtle backdrop:
          background: rgba(0,0,0,0.10); border-radius: 0.4rem; */
     }
 
@@ -195,8 +195,8 @@
     }
 
     .qr-img {
-      /* ⬆️ QR codes slightly larger now */
-      max-height: calc(var(--footer-h) * 0.80);  /* was 0.70 */
+      /* QR codes larger now */
+      max-height: calc(var(--footer-h) * 0.90);  /* was 0.80 */
       background: rgba(255,255,255,0.98);
       padding: 0.4vh;
       border-radius: 0.3rem;
@@ -238,9 +238,7 @@
     <!-- HEADER -->
     <div class="header">
       <div class="header-title">The Starry Night Ball</div>
-      <img class="marymount-logo-top"
-           src="Marymount%20Logo.png"
-           alt="Marymount Logo" />
+      <img class="marymount-logo-top" src="Marymount%20Logo.png" alt="Marymount Logo" />
     </div>
 
     <!-- 2-COLUMN GRID -->
