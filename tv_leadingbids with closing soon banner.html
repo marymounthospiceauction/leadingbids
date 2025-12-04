@@ -1,0 +1,478 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Starry Night Ball – Live Bids</title>
+
+  <!-- VIEWPORT -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
+
+  <!-- Script-style font -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --gold: #f6d58b;
+      --gold-soft: #f4d28a;
+      --black: #000000;
+      --offwhite: #ffffff;
+      --red: #ff3b30; /* NEW BID colour */
+
+      /* Safe-area padding to counter TV overscan (tune these) */
+      --safe-top: 1.6vh;
+      --safe-bottom: 6vh;    /* keeps footer fully inside the visible frame */
+      --safe-horiz: 3vw;
+
+      /* Footer band height (QR + Sponsors centered) */
+      --footer-h: 7.2vh;     /* compact, safe band */
+
+      /* Shared row height (set by JS) so rows align across columns */
+      --rowH: 40px;
+
+      /* Unified vertical gap between rows in both columns */
+      --row-gap: 0.22vh;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Calibri, Arial, sans-serif;
+      background: #000 url("tvbackground.png") center/cover no-repeat fixed;
+      color: var(--offwhite);
+      overflow: hidden; /* TVs must not show scrollbars */
+    }
+
+    /* FULL-SCREEN CONTAINER – reserve space for footer inside safe area */
+    .frame {
+      width: 100vw;
+      height: 100vh;
+      padding: var(--safe-top) var(--safe-horiz) var(--safe-bottom) var(--safe-horiz);
+      /* Reserve footer height so items-grid can size correctly and never sit under it */
+      padding-bottom: calc(var(--safe-bottom) + var(--footer-h));
+      display: flex;
+      flex-direction: column;
+      background: transparent;
+    }
+
+    /* HEADER */
+    .header {
+      position: relative;
+      flex: 0 0 auto;
+      margin-bottom: 0.4vh;
+      text-align: center;
+    }
+
+    .header-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(2.6rem, 4.2vw, 5rem);
+      font-weight: 400;
+      color: #000; /* black for readability */
+      text-shadow:
+        0 0 6px rgba(246,213,139,0.9),
+        0 0 12px rgba(246,213,139,0.7),
+        0 0 18px rgba(0,0,0,0.9);
+      letter-spacing: 0.04em;
+      line-height: 1.06;
+    }
+
+    /* ITEMS GRID – fills remaining vertical space explicitly */
+    .items-grid {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      gap: 1.1vw;       /* horizontal gap between columns */
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      margin-top: 0.2vh;
+      margin-bottom: 0.2vh;
+      overflow: hidden; /* no scrollbars on TV */
+    }
+
+    .column {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--row-gap);  /* unified gap used in calculations */
+    }
+
+    .item-row {
+      display: grid;
+      /* 3 columns: label | NEW BID (Y) | LATEST BID (Z) */
+      grid-template-columns: 1fr minmax(8ch, 12ch) max-content;
+      align-items: center;
+      height: var(--rowH);              /* exact, shared height per row */
+      background: rgba(0,0,0,0.9);
+      border: 1px solid #3a3a3a;
+      box-shadow: 0 0 4px rgba(0,0,0,0.5);
+    }
+
+    .item-label,
+    .item-newbid,
+    .item-amount {
+      display: flex;
+      align-items: center;
+      line-height: 1.12;
+    }
+
+    /* Labels & LATEST BID scale a touch larger */
+    .item-label,
+    .item-amount {
+      font-size: clamp(14px, calc(var(--rowH) * 0.52), 32px);
+    }
+
+    .item-label {
+      padding: 0.16em 0.6em;
+      text-transform: uppercase;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .item-label strong {
+      font-weight: 800;
+      color: var(--gold-soft);
+      letter-spacing: 0.02em;
+    }
+
+    .item-newbid {
+      /* slightly smaller than other columns, centered, red */
+      justify-content: center;
+      text-align: center;
+      color: var(--red);
+      font-weight: 800;
+      font-size: clamp(12px, calc(var(--rowH) * 0.46), 28px);
+      letter-spacing: 0.02em;
+    }
+
+    .item-amount {
+      padding: 0.16em 1.0em;
+      font-weight: 800;
+
+      /* reserve width for big € amounts; keeps layout stable */
+      min-width: clamp(9ch, 11vw, 20vw);
+
+      /* Center the LATEST BID column text */
+      justify-content: center;
+      text-align: center;
+
+      color: var(--gold-soft);
+      border-left: 1px solid #555;
+    }
+
+    /* FOOTER – fixed inside the frame safe area, 3-column grid: QR | Sponsors | QR */
+    .footer {
+      position: fixed;
+      left: var(--safe-horiz);
+      right: var(--safe-horiz);
+      bottom: var(--safe-bottom);   /* sit fully inside the visible safe area */
+      height: var(--footer-h);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 2vw; /* space between QR and sponsors */
+    }
+
+    .footer-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+    }
+
+    .qr-img {
+      /* QR codes larger */
+      max-height: calc(var(--footer-h) * 0.90);
+      background: rgba(255,255,255,0.98);
+      padding: 0.4vh;
+      border-radius: 0.3rem;
+      box-shadow: 0 0 8px rgba(0,0,0,0.9);
+      margin-bottom: 0.35vh;
+    }
+
+    .footer-block span {
+      font-size: clamp(0.8rem, 1vw, 1.2rem);
+      font-weight: 700;
+      color: #000000;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 3px rgba(255,255,255,0.7);
+      text-transform: uppercase;
+    }
+
+    .footer-sponsors {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      pointer-events: none; /* avoids accidental focus */
+    }
+
+    .footer-sponsors img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
+    }
+
+    /* ===== Closing Banner (flash, 30s cycles) ===== */
+    #closing-banner {
+      position: fixed;
+      top: calc(var(--safe-top) + 1vh);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      display: none;            /* hidden by default; JS will show/hide cyclically */
+      width: min(92vw, 1200px);
+      padding: 0.6rem 1rem;
+      text-align: center;
+
+      background: linear-gradient(180deg, rgba(255,0,0,0.92), rgba(200,0,0,0.92));
+      border: 2px solid var(--gold);
+      border-radius: 0.6rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      font-size: clamp(20px, 3.0vw, 56px);
+      text-transform: uppercase;
+
+      pointer-events: none; /* TV-safe: no accidental focus/click */
+      animation: cb-pulse 1.2s infinite alternate;
+    }
+
+    @keyframes cb-pulse {
+      0%   { transform: translateX(-50%) scale(1.00); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+      100% { transform: translateX(-50%) scale(1.05); box-shadow: 0 14px 36px rgba(0,0,0,0.6); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Closing Banner (hidden until scheduled, then flashes on/off) -->
+  <div id="closing-banner" aria-live="polite" aria-atomic="true">
+    🚨 Auction Closing Soon! Get Your Final Bids In! 🚨
+  </div>
+
+  <div class="frame">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-title">The Starry Night Ball</div>
+      <!-- If you display the Marymount logo here, ensure the <img> tag is used -->
+      <!-- <img class="marymount-logo-top" src="Marymount Logo.png" alt="Marymount Logo" /> -->
+    </div>
+
+    <!-- 2-COLUMN GRID -->
+    <div class="items-grid">
+      <div class="column" id="column-left"></div>
+      <div class="column" id="column-right"></div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER – QR | SPONSORS | QR (inside safe area) -->
+  <div class="footer">
+    <div class="footer-block">
+      <img class="qr-img" src="2025 Marymount QR Code.jpeg" alt="QR Code to Bid (Left)" />
+      <span>Scan QR code to bid</span>
+    </div>
+
+    <div class="footer-sponsors">
+      <img src="Marymount Footer Sponsors.png" alt="Sponsors" />
+    </div>
+
+    <div class="footer-block">
+      <img class="qr-img" src="2025 Marymount QR Code.jpeg" alt="QR Code to Bid (Right)" />
+      <span>Scan QR code to bid</span>
+    </div>
+  </div>
+
+  <script>
+    /* =======================
+       DATA + RENDERING LOGIC
+       ======================= */
+    const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
+    const sheetName = 'LEADING BIDS';
+    // X=item, Y=new bid, Z=latest bid (37 items expected)
+    const range     = 'X5:Z42';
+
+    const url =
+      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
+      `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
+
+    function formatEuro(v) {
+      if (v === null || v === undefined || v === '' || isNaN(v)) return '€0';
+      return '€' + Number(v).toLocaleString('en-IE', { maximumFractionDigits: 0 });
+    }
+
+    // NEW BID column: if numeric, show € formatted; else show text as-is (e.g., "NEW BID")
+    function formatNewBidCell(v) {
+      if (v === null || v === undefined) return '';
+      if (v === '') return '';
+      if (!isNaN(v)) {
+        return '€' + Number(v).toLocaleString('en-IE', { maximumFractionDigits: 0 });
+      }
+      return String(v);
+    }
+
+    function boldFirstSeven(t) {
+      if (!t) return '';
+      const s = t.toString();
+      return '<strong>' + s.substring(0,7) + '</strong>' + s.substring(7);
+    }
+
+    /**
+     * Compute a SINGLE shared row height so both columns align perfectly.
+     * We use the available items-grid height minus total vertical gaps.
+     * Footer height is reserved via .frame padding-bottom.
+     */
+    function applyAlignedRowHeights(totalRows, leftCount, rightCount) {
+      const itemsGrid = document.querySelector('.items-grid');
+      const leftCol   = document.getElementById('column-left');
+
+      // Available height inside items-grid
+      const gridRect   = itemsGrid.getBoundingClientRect();
+      const availableH = gridRect.height;
+
+      // Unified column vertical gap (px) from computed style
+      const gapStr = getComputedStyle(leftCol).gap || '0px';
+      const gapPx  = parseFloat(gapStr.split(' ')[0]) || 0;
+
+      // Total gaps per column
+      const leftGaps  = Math.max(0, (leftCount  - 1)) * gapPx;
+      const rightGaps = Math.max(0, (rightCount - 1)) * gapPx;
+
+      // Row height required per column; choose the MIN to guarantee fit
+      const leftRowHRequired  = (availableH - leftGaps)  / leftCount;
+      const rightRowHRequired = (availableH - rightGaps) / rightCount;
+      const sharedRowH = Math.floor(Math.min(leftRowHRequired, rightRowHRequired));
+
+      // Apply shared row height via CSS var (both columns read --rowH)
+      document.documentElement.style.setProperty('--rowH', sharedRowH + 'px');
+
+      // Reveal after setting aligned heights
+      document.querySelector('.items-grid').style.opacity = 1;
+    }
+
+    function renderRows(rows) {
+      const leftCol  = document.getElementById('column-left');
+      const rightCol = document.getElementById('column-right');
+
+      const half = Math.ceil(rows.length / 2); // 19 left, 18 right for 37
+
+      const makeRow = (r) => {
+        const item    = boldFirstSeven((r[0] ?? '').toString());    // X
+        const newBid  = formatNewBidCell(r[1]);                     // Y
+        const latest  = formatEuro(r[2] ?? r[1]);                   // Z (fallback to Y)
+
+        return `
+          <div class="item-row">
+            <div class="item-label">${item}</div>
+            <div class="item-newbid">${newBid}</div>
+            <div class="item-amount">${latest}</div>
+          </div>
+        `;
+      };
+
+      leftCol.innerHTML  = rows.slice(0, half).map(makeRow).join('');
+      rightCol.innerHTML = rows.slice(half).map(makeRow).join('');
+
+      // After DOM update, compute shared height and reveal
+      requestAnimationFrame(() => {
+        applyAlignedRowHeights(rows.length, half, rows.length - half);
+      });
+    }
+
+    async function loadData() {
+      try {
+        const res  = await fetch(url);
+        const text = await res.text();
+        const json = JSON.parse(text.substr(47).slice(0, -2));
+        const rows = json.table.rows.map(r => r.c.map(c => (c ? c.v : '')));
+
+        renderRows(rows);
+      } catch (e) {
+        console.error("Sheet load error", e);
+      }
+    }
+
+    // Initial load and periodic refresh
+    loadData();
+    const REFRESH_MS = 5000;
+    setInterval(loadData, REFRESH_MS);
+
+    // Re-apply heights on resize/orientation/fullscreen changes
+    const reflow = () => {
+      const leftCol    = document.getElementById('column-left');
+      const rightCol   = document.getElementById('column-right');
+      const leftCount  = leftCol.children.length;
+      const rightCount = rightCol.children.length;
+      if (leftCount && rightCount) {
+        applyAlignedRowHeights(leftCount + rightCount, leftCount, rightCount);
+      }
+    };
+    window.addEventListener('resize', reflow);
+    window.addEventListener('orientationchange', reflow);
+    document.addEventListener('fullscreenchange', reflow);
+
+    /* =======================
+       CLOSING BANNER LOGIC
+       ======================= */
+
+    // Helper: parse 'HH:mm' to Date today (or tomorrow if already passed)
+    function getTargetDateFromHHMM(hhmm) {
+      const [hh, mm] = (hhmm || '').split(':').map(Number);
+      if (isNaN(hh) || isNaN(mm)) return null;
+      const now = new Date();
+      const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
+      if (target.getTime() <= now.getTime()) {
+        target.setDate(target.getDate() + 1); // schedule for tomorrow if time already passed
+      }
+      return target;
+    }
+
+    // Show/hide banner
+    function showClosingBanner() { document.getElementById('closing-banner').style.display = 'block'; }
+    function hideClosingBanner() { document.getElementById('closing-banner').style.display = 'none'; }
+
+    // Start flashing cycle: 30s ON, 30s OFF, repeat
+    function startBannerFlashCycle(onMs, offMs) {
+      // Immediately show, then alternate
+      showClosingBanner();
+      let showing = true;
+      setInterval(() => {
+        showing = !showing;
+        if (showing) showClosingBanner();
+        else hideClosingBanner();
+      }, showing ? onMs : offMs); // first interval uses onMs; subsequent toggles use the same duration
+      // To ensure precise 30/30 alternation, we can also implement two alternating setTimeouts:
+      // (This simple setInterval approach is adequate for a kiosk/TV display.)
+    }
+
+    // === Closing banner config ===
+    const BANNER_ENABLED      = true;
+    const BANNER_TIME         = '22:30';   // HH:mm (24-hour) — set your specific show time
+    const BANNER_ON_MS        = 30 * 1000; // 30 seconds visible
+    const BANNER_OFF_MS       = 30 * 1000; // 30 seconds hidden
+
+    (function scheduleClosingBanner() {
+      if (!BANNER_ENABLED) return;
+      const targetDate = getTargetDateFromHHMM(BANNER_TIME);
+      if (!targetDate) {
+        console.warn('Invalid BANNER_TIME; banner not scheduled.');
+        return;
+      }
+      const delay = Math.max(0, targetDate.getTime() - Date.now());
+      setTimeout(() => {
+        startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
+      }, delay);
+    })();
+  </script>
+
+</body>
+</html>
