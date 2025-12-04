@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
 
   <!-- Script-style font -->
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
+  https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap
 
   <style>
     :root {
@@ -18,12 +18,13 @@
       --black: #000000;
       --offwhite: #ffffff;
 
-      /* Safe-area padding to counter TV overscan */
-      --frame-pad-vh: 1.4vh;    /* bump if your TV trims edges */
-      --frame-pad-vw: 3vw;
+      /* Safe-area padding to counter TV overscan (tune these) */
+      --safe-top: 1.6vh;
+      --safe-bottom: 3.2vh; /* ⬅️ bigger bottom inset to avoid cropping */
+      --safe-horiz: 3vw;
 
       /* Footer band height (QR + Sponsors centred) */
-      --footer-h: 8.5vh;
+      --footer-h: 8vh;     /* ⬅️ slightly smaller; increase if you want bigger */
 
       /* Shared row height (set by JS) so rows align perfectly across columns */
       --rowH: 40px;
@@ -46,9 +47,9 @@
     .frame {
       width: 100vw;
       height: 100vh;
-      padding: var(--frame-pad-vh) var(--frame-pad-vw);
-      /* Reserve the footer height so items-grid can size correctly */
-      padding-bottom: calc(var(--frame-pad-vh) + var(--footer-h));
+      padding: var(--safe-top) var(--safe-horiz) var(--safe-bottom) var(--safe-horiz);
+      /* Reserve footer height so items-grid can size correctly and never sit under it */
+      padding-bottom: calc(var(--safe-bottom) + var(--footer-h));
       display: flex;
       flex-direction: column;
       background: transparent;
@@ -155,9 +156,9 @@
     /* FOOTER – fixed inside the frame safe area, 3-column grid: QR | Sponsors | QR */
     .footer {
       position: fixed;
-      left: var(--frame-pad-vw);
-      right: var(--frame-pad-vw);
-      bottom: var(--frame-pad-vh);    /* sit within the visible safe area */
+      left: var(--safe-horiz);
+      right: var(--safe-horiz);
+      bottom: var(--safe-bottom);   /* ⬅️ sit fully inside the visible safe area */
       height: var(--footer-h);
       display: grid;
       grid-template-columns: auto 1fr auto;
@@ -219,7 +220,7 @@
     <!-- HEADER -->
     <div class="header">
       <div class="header-title">The Starry Night Ball</div>
-      <img class="marymount-logo-top" src="Marymount%20Logo.png" alt="Marymount Logo" />
+      Marymount%20Logo.png
     </div>
 
     <!-- 2-COLUMN GRID -->
@@ -233,16 +234,16 @@
   <!-- FOOTER – QR | SPONSORS | QR -->
   <div class="footer">
     <div class="footer-block">
-      <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid (Left)" />
+      2025%20Marymount%20QR%20Code.jpeg
       <span>Scan QR code to bid</span>
     </div>
 
     <div class="footer-sponsors">
-      <img src="Marymount%20Footer%20Sponsors.png" alt="Sponsors" />
+      Marymount%20Footer%20Sponsors.png
     </div>
 
     <div class="footer-block">
-      <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid (Right)" />
+      2025%20Marymount%20QR%20Code.jpeg
       <span>Scan QR code to bid</span>
     </div>
   </div>
@@ -270,7 +271,7 @@
     /**
      * Compute a SINGLE shared row height so both columns align perfectly.
      * We use the available items-grid height minus total vertical gaps.
-     * Footer height is already reserved via .frame padding-bottom.
+     * Footer height is reserved via .frame padding-bottom.
      */
     function applyAlignedRowHeights(totalRows, leftCount, rightCount) {
       const itemsGrid = document.querySelector('.items-grid');
@@ -371,3 +372,4 @@
   </script>
 
 </body>
+</html>
