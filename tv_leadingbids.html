@@ -19,11 +19,17 @@
       --offwhite: #ffffff;
 
       /* Safe-area padding to counter TV overscan */
-      --frame-pad-vh: 1.2vh;
+      --frame-pad-vh: 1.4vh;    /* bump if your TV trims edges */
       --frame-pad-vw: 3vw;
 
       /* Footer band height (QR + Sponsors centred) */
-      --footer-h: 9vh;
+      --footer-h: 8.5vh;
+
+      /* Shared row height (set by JS) so rows align perfectly across columns */
+      --rowH: 40px;
+
+      /* Unified vertical gap between rows in both columns */
+      --row-gap: 0.22vh;
     }
 
     * { box-sizing: border-box; }
@@ -36,11 +42,12 @@
       overflow: hidden; /* TVs must not show scrollbars */
     }
 
-    /* FULL-SCREEN CONTAINER – reserve space for footer */
+    /* FULL-SCREEN CONTAINER – reserve space for footer inside safe area */
     .frame {
       width: 100vw;
       height: 100vh;
       padding: var(--frame-pad-vh) var(--frame-pad-vw);
+      /* Reserve the footer height so items-grid can size correctly */
       padding-bottom: calc(var(--frame-pad-vh) + var(--footer-h));
       display: flex;
       flex-direction: column;
@@ -94,15 +101,14 @@
       flex: 1 1 0;
       display: flex;
       flex-direction: column;
-      gap: 0.22vh;        /* small vertical gap between rows */
-      --rowH: 40px;       /* overridden by JS per column */
+      gap: var(--row-gap);  /* unified gap used in calculations */
     }
 
     .item-row {
       display: grid;
       grid-template-columns: 1fr max-content;
       align-items: center;
-      height: var(--rowH);
+      height: var(--rowH);              /* exact, shared height per row */
       background: rgba(0,0,0,0.9);
       border: 1px solid #3a3a3a;
       box-shadow: 0 0 4px rgba(0,0,0,0.5);
@@ -112,8 +118,9 @@
     .item-amount {
       display: flex;
       align-items: center;
-      font-size: clamp(14px, calc(var(--rowH) * 0.52), 32px); /* larger text */
-      line-height: 1.14;
+      /* font scales with shared row height, clamped for crispness */
+      font-size: clamp(14px, calc(var(--rowH) * 0.52), 32px);
+      line-height: 1.12;
     }
 
     .item-label {
@@ -133,24 +140,31 @@
     .item-amount {
       padding: 0.16em 1.0em;
       font-weight: 800;
-      min-width: clamp(9ch, 11vw, 20vw); /* reserve width for big € amounts */
-      justify-content: flex-end;
+
+      /* reserve width for big € amounts; keeps layout stable */
+      min-width: clamp(9ch, 11vw, 20vw);
+
+      /* Center the latest bid column text */
+      justify-content: center;
+      text-align: center;
+
       color: var(--gold-soft);
       border-left: 1px solid #555;
-      text-align: right;
     }
 
-    /* FOOTER – fixed at bottom, 3-column grid: QR | Sponsors | QR */
+    /* FOOTER – fixed inside the frame safe area, 3-column grid: QR | Sponsors | QR */
     .footer {
       position: fixed;
       left: var(--frame-pad-vw);
       right: var(--frame-pad-vw);
-      bottom: var(--frame-pad-vh);
+      bottom: var(--frame-pad-vh);    /* sit within the visible safe area */
       height: var(--footer-h);
       display: grid;
       grid-template-columns: auto 1fr auto;
       align-items: center;
       gap: 2vw; /* space between QR and sponsors */
+      /* Optional subtle backdrop for readability:
+         background: rgba(0,0,0,0.10); border-radius: 0.4rem; */
     }
 
     .footer-block {
@@ -163,12 +177,12 @@
     }
 
     .qr-img {
-      max-height: calc(var(--footer-h) * 0.72);  /* QR fits within footer */
+      max-height: calc(var(--footer-h) * 0.70);  /* QR fits within footer */
       background: rgba(255,255,255,0.98);
       padding: 0.4vh;
       border-radius: 0.3rem;
       box-shadow: 0 0 8px rgba(0,0,0,0.9);
-      margin-bottom: 0.4vh;
+      margin-bottom: 0.35vh;
     }
 
     .footer-block span {
@@ -254,33 +268,36 @@
     }
 
     /**
-     * Compute exact row heights so all items fit without scroll/overlap.
-     * Each column gets its own height based on item count and vertical gaps.
-     * The footer is fixed and its height reserved via frame padding.
+     * Compute a SINGLE shared row height so both columns align perfectly.
+     * We use the available items-grid height minus total vertical gaps.
+     * Footer height is already reserved via .frame padding-bottom.
      */
-    function applyDeterministicHeights(leftCount, rightCount) {
+    function applyAlignedRowHeights(totalRows, leftCount, rightCount) {
       const itemsGrid = document.querySelector('.items-grid');
       const leftCol   = document.getElementById('column-left');
-      const rightCol  = document.getElementById('column-right');
 
       // Available height inside items-grid
       const gridRect   = itemsGrid.getBoundingClientRect();
       const availableH = gridRect.height;
 
-      // Column vertical gap (px)
-      const gapPx = parseFloat(getComputedStyle(leftCol).gap) || 0;
+      // Unified column vertical gap (px) from computed style
+      const gapStr = getComputedStyle(leftCol).gap || '0px';
+      const gapPx  = parseFloat(gapStr.split(' ')[0]) || 0;
 
-      // Total gap height
-      const leftTotalGaps  = Math.max(0, (leftCount - 1)) * gapPx;
-      const rightTotalGaps = Math.max(0, (rightCount - 1)) * gapPx;
+      // Total gaps per column
+      const leftGaps  = Math.max(0, (leftCount  - 1)) * gapPx;
+      const rightGaps = Math.max(0, (rightCount - 1)) * gapPx;
 
-      // Exact per-row heights
-      const leftRowH  = Math.floor((availableH - leftTotalGaps) / leftCount);
-      const rightRowH = Math.floor((availableH - rightTotalGaps) / rightCount);
+      // Row height required per column; choose the MIN to guarantee fit
+      const leftRowHRequired  = (availableH - leftGaps)  / leftCount;
+      const rightRowHRequired = (availableH - rightGaps) / rightCount;
+      const sharedRowH = Math.floor(Math.min(leftRowHRequired, rightRowHRequired));
 
-      // Apply to columns via CSS vars
-      leftCol.style.setProperty('--rowH', leftRowH + 'px');
-      rightCol.style.setProperty('--rowH', rightRowH + 'px');
+      // Apply shared row height via CSS var (both columns read --rowH)
+      document.documentElement.style.setProperty('--rowH', sharedRowH + 'px');
+
+      // Reveal after setting aligned heights
+      document.querySelector('.items-grid').style.opacity = 1;
     }
 
     function renderRows(rows) {
@@ -314,10 +331,9 @@
       leftCol.innerHTML  = leftHTML;
       rightCol.innerHTML = rightHTML;
 
-      // After DOM update, compute exact heights and reveal
+      // After DOM update, compute shared height and reveal
       requestAnimationFrame(() => {
-        applyDeterministicHeights(half, rows.length - half);
-        document.querySelector('.items-grid').style.opacity = 1;
+        applyAlignedRowHeights(rows.length, half, rows.length - half);
       });
     }
 
@@ -327,13 +343,14 @@
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
         const rows = json.table.rows.map(r => r.c.map(c => (c ? c.v : '')));
+
         renderRows(rows);
       } catch (e) {
         console.error("Sheet load error", e);
       }
     }
 
-    // Initial load and refresh
+    // Initial load and periodic refresh
     loadData();
     const REFRESH_MS = 5000;
     setInterval(loadData, REFRESH_MS);
@@ -345,12 +362,12 @@
       const leftCount  = leftCol.children.length;
       const rightCount = rightCol.children.length;
       if (leftCount && rightCount) {
-        applyDeterministicHeights(leftCount, rightCount);
+        applyAlignedRowHeights(leftCount + rightCount, leftCount, rightCount);
       }
     };
     window.addEventListener('resize', reflow);
     window.addEventListener('orientationchange', reflow);
     document.addEventListener('fullscreenchange', reflow);
   </script>
+
 </body>
-</html>
