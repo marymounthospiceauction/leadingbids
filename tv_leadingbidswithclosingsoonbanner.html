@@ -215,14 +215,14 @@
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
     }
 
-    /* ===== Closing Banner (flash, 30s cycles) ===== */
+    /* ===== Closing Banner (centered) ===== */
     #closing-banner {
       position: fixed;
-      top: calc(var(--safe-top) + 1vh);
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translate(-50%, -50%); /* center vertically & horizontally */
       z-index: 10000;
-      display: none;            /* hidden by default; JS will show/hide cyclically */
+      display: none;                    /* hidden by default; JS shows/hides */
       width: min(92vw, 1200px);
       padding: 0.6rem 1rem;
       text-align: center;
@@ -239,11 +239,7 @@
       text-transform: uppercase;
 
       pointer-events: none; /* TV-safe: no accidental focus/click */
-      animation: cb-pulse 1.2s infinite alternate;
-    }
-    @keyframes cb-pulse {
-      0%   { transform: translateX(-50%) scale(1.00); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-      100% { transform: translateX(-50%) scale(1.05); box-shadow: 0 14px 36px rgba(0,0,0,0.6); }
+      white-space: nowrap;  /* force single line */
     }
     @media (prefers-reduced-motion: reduce) {
       #closing-banner { animation: none; }
@@ -253,7 +249,7 @@
 
 <body>
 
-  <!-- Closing Banner (hidden until scheduled, then flashes on/off) -->
+  <!-- Closing Banner (centered, one line) -->
   <div id="closing-banner" aria-live="polite" aria-atomic="true" role="status">
     🚨 Auction Closing Soon! Get Your Final Bids In! 🚨
   </div>
@@ -262,8 +258,8 @@
     <!-- HEADER -->
     <div class="header">
       <div class="header-title">The Starry Night Ball</div>
-      <!-- Optional logo -->
-      <!-- <img class="marymount-logo-top" src="Marymount Logo.png" alt="Marymount Hospice Logo" /> -->
+      <!-- Optional: Marymount Logo -->
+      <!-- <img class="marymount-logo-top" src="Marymount Logo.png" alt="Marymount Logo" /> -->
     </div>
 
     <!-- 2-COLUMN GRID -->
@@ -297,7 +293,7 @@
     const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
     // X=item, Y=new bid, Z=latest bid
-    const range     = 'X5:Z43';
+    const range     = 'X5:Z43';   // increased to include up to 38+ rows
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
@@ -306,14 +302,12 @@
     const euroFmt = new Intl.NumberFormat('en-IE', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     function formatEuro(v) {
       const n = Number(v);
-      return Number.isFinite(n) ? `€${euroFmt.format(n)}`
-                                : '€0';
+      return Number.isFinite(n) ? `€${euroFmt.format(n)}` : '€0';
     }
     function formatNewBidCell(v) {
       if (v === null || v === undefined || v === '') return '';
       const n = Number(v);
-      return Number.isFinite(n) ? `€${euroFmt.format(n)}`
-                                : String(v);
+      return Number.isFinite(n) ? `€${euroFmt.format(n)}` : String(v);
     }
 
     const escapeHtml = (s) => String(s)
@@ -435,7 +429,7 @@
        CLOSING BANNER LOGIC
        ======================= */
 
-    // Helper: parse 'HH:mm' to a Date for *today* (no automatic “tomorrow” roll)
+    // Parse 'HH:mm' to a Date for *today*
     function getTodayDateFromHHMM(hhmm) {
       const [hh, mm] = (hhmm || '').split(':').map(Number);
       if (isNaN(hh) || isNaN(mm)) return null;
@@ -443,11 +437,11 @@
       return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
     }
 
-    // Show/hide banner
+    // Show/hide banner (centered element)
     function showClosingBanner() { document.getElementById('closing-banner').style.display = 'block'; }
     function hideClosingBanner() { document.getElementById('closing-banner').style.display = 'none'; }
 
-    // Alternating 30s ON / 30s OFF using chained timeouts
+    // Alternating ON/OFF cycle using chained timeouts (10s ON, 30s OFF)
     function startBannerFlashCycle(onMs, offMs) {
       let showing = true;
       const tick = () => {
@@ -465,16 +459,14 @@
     // === Closing banner config ===
     const BANNER_ENABLED = true;
 
-    // Change this to your preferred time today (HH:mm), e.g. '15:45'
-    // Default below is 16:00 today.
-    const DEFAULT_BANNER_TIME = '15:55';
+    // Change this to your preferred time today (HH:mm), or override via URL ?banner=HH:mm
+    const DEFAULT_BANNER_TIME = '16:00';
 
-    // Allow overriding via URL query: ?banner=HH:mm (today)
     const queryParams = new URLSearchParams(location.search);
     const paramTime = queryParams.get('banner');
     const BANNER_TIME = (paramTime && /^\d{2}:\d{2}$/.test(paramTime)) ? paramTime : DEFAULT_BANNER_TIME;
 
-    const BANNER_ON_MS   = 30 * 1000; // 30 seconds visible
+    const BANNER_ON_MS   = 10 * 1000; // 10 seconds visible
     const BANNER_OFF_MS  = 30 * 1000; // 30 seconds hidden
 
     (function scheduleClosingBanner() {
@@ -489,11 +481,10 @@
       if (delay <= 0) {
         // If time has already passed today, start immediately (today)
         startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
-           } else {
+      } else {
         setTimeout(() => startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS), delay);
       }
     })();
-  </script>
+   </script>
 </body>
-
 
