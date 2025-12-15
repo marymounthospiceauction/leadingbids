@@ -48,9 +48,7 @@
     .frame {
       width: 100vw;
       height: 100vh;
-      padding: var(--safe-top) var(--safe-horiz) var(--safe-bottom) var(--safe-horiz);
-      /* Reserve footer height so items-grid can size correctly and never sit under it */
-      padding-bottom: calc(var(--safe-bottom) + var(--footer-h));
+      padding: var(--safe-top) var(--safe-horiz) calc(var(--safe-bottom) + var(--footer-h)) var(--safe-horiz);
       display: flex;
       flex-direction: column;
       background: transparent;
@@ -243,10 +241,12 @@
       pointer-events: none; /* TV-safe: no accidental focus/click */
       animation: cb-pulse 1.2s infinite alternate;
     }
-
     @keyframes cb-pulse {
       0%   { transform: translateX(-50%) scale(1.00); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
       100% { transform: translateX(-50%) scale(1.05); box-shadow: 0 14px 36px rgba(0,0,0,0.6); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #closing-banner { animation: none; }
     }
   </style>
 </head>
@@ -254,17 +254,16 @@
 <body>
 
   <!-- Closing Banner (hidden until scheduled, then flashes on/off) -->
-  <div id="closing-banner" aria-live="polite" aria-atomic="true">
+  <div id="closing-banner" aria-live="polite" aria-atomic="true" role="status">
     🚨 Auction Closing Soon! Get Your Final Bids In! 🚨
   </div>
 
   <div class="frame">
-
     <!-- HEADER -->
     <div class="header">
       <div class="header-title">The Starry Night Ball</div>
-      <!-- If you display the Marymount logo here, ensure the <img> tag is used -->
-      <!-- <img class="marymount-logo-top" src="Marymount Logo.png" alt="Marymount Logo" /> -->
+      <!-- Optional logo -->
+      <!-- <img class="marymount-logo-top" src="Marymount Logo.png" alt="Marymount Hospice Logo" /> -->
     </div>
 
     <!-- 2-COLUMN GRID -->
@@ -272,10 +271,9 @@
       <div class="column" id="column-left"></div>
       <div class="column" id="column-right"></div>
     </div>
-
   </div>
 
-  <!-- FOOTER – QR | SPONSORS | QR (inside safe area) -->
+  <!-- FOOTER – QR | SPONSORS | QR -->
   <div class="footer">
     <div class="footer-block">
       <img class="qr-img" src="2025 Marymount QR Code.jpeg" alt="QR Code to Bid (Left)" />
@@ -298,106 +296,103 @@
        ======================= */
     const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
-    // X=item, Y=new bid, Z=latest bid (37 items expected)
+    // X=item, Y=new bid, Z=latest bid
     const range     = 'X5:Z42';
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
       `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
 
+    const euroFmt = new Intl.NumberFormat('en-IE', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     function formatEuro(v) {
-      if (v === null || v === undefined || v === '' || isNaN(v)) return '€0';
-      return '€' + Number(v).toLocaleString('en-IE', { maximumFractionDigits: 0 });
+      const n = Number(v);
+      return Number.isFinite(n) ? `€${euroFmt.format(n)}`
+                                : '€0';
     }
-
-    // NEW BID column: if numeric, show € formatted; else show text as-is (e.g., "NEW BID")
     function formatNewBidCell(v) {
-      if (v === null || v === undefined) return '';
-      if (v === '') return '';
-      if (!isNaN(v)) {
-        return '€' + Number(v).toLocaleString('en-IE', { maximumFractionDigits: 0 });
-      }
-      return String(v);
+      if (v === null || v === undefined || v === '') return '';
+      const n = Number(v);
+      return Number.isFinite(n) ? `€${euroFmt.format(n)}`
+                                : String(v);
     }
 
-    function boldFirstSeven(t) {
-      if (!t) return '';
-      const s = t.toString();
-      return '<strong>' + s.substring(0,7) + '</strong>' + s.substring(7);
+    const escapeHtml = (s) => String(s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+    function boldFirstSevenSafe(t) {
+      const safe = escapeHtml(t ?? '');
+      return `<strong>${safe.substring(0,7)}</strong>${safe.substring(7)}`;
     }
 
-    /**
-     * Compute a SINGLE shared row height so both columns align perfectly.
-     * We use the available items-grid height minus total vertical gaps.
-     * Footer height is reserved via .frame padding-bottom.
-     */
     function applyAlignedRowHeights(totalRows, leftCount, rightCount) {
       const itemsGrid = document.querySelector('.items-grid');
       const leftCol   = document.getElementById('column-left');
 
-      // Available height inside items-grid
       const gridRect   = itemsGrid.getBoundingClientRect();
       const availableH = gridRect.height;
 
-      // Unified column vertical gap (px) from computed style
       const gapStr = getComputedStyle(leftCol).gap || '0px';
       const gapPx  = parseFloat(gapStr.split(' ')[0]) || 0;
 
-      // Total gaps per column
       const leftGaps  = Math.max(0, (leftCount  - 1)) * gapPx;
       const rightGaps = Math.max(0, (rightCount - 1)) * gapPx;
 
-      // Row height required per column; choose the MIN to guarantee fit
-      const leftRowHRequired  = (availableH - leftGaps)  / leftCount;
-      const rightRowHRequired = (availableH - rightGaps) / rightCount;
+      const leftRowHRequired  = (availableH - leftGaps)  / Math.max(leftCount, 1);
+      const rightRowHRequired = (availableH - rightGaps) / Math.max(rightCount, 1);
       const sharedRowH = Math.floor(Math.min(leftRowHRequired, rightRowHRequired));
 
-      // Apply shared row height via CSS var (both columns read --rowH)
       document.documentElement.style.setProperty('--rowH', sharedRowH + 'px');
-
-      // Reveal after setting aligned heights
       document.querySelector('.items-grid').style.opacity = 1;
+    }
+
+    function makeRow(r) {
+      const item    = boldFirstSevenSafe((r[0] ?? '').toString());
+      const newBidV = r[1];
+      const newBid  = formatNewBidCell(newBidV);
+      const latest  = formatEuro(r[2] ?? r[1]);
+
+      const newBidSafe = escapeHtml(newBid);
+
+      return `
+        <div class="item-row">
+          <div class="item-label">${item}</div>
+          <div class="item-newbid">${newBidSafe}</div>
+          <div class="item-amount">${latest}</div>
+        </div>
+      `;
     }
 
     function renderRows(rows) {
       const leftCol  = document.getElementById('column-left');
       const rightCol = document.getElementById('column-right');
 
-      const half = Math.ceil(rows.length / 2); // 19 left, 18 right for 37
-
-      const makeRow = (r) => {
-        const item    = boldFirstSeven((r[0] ?? '').toString());    // X
-        const newBid  = formatNewBidCell(r[1]);                     // Y
-        const latest  = formatEuro(r[2] ?? r[1]);                   // Z (fallback to Y)
-
-        return `
-          <div class="item-row">
-            <div class="item-label">${item}</div>
-            <div class="item-newbid">${newBid}</div>
-            <div class="item-amount">${latest}</div>
-          </div>
-        `;
-      };
+      const half = Math.ceil(rows.length / 2);
 
       leftCol.innerHTML  = rows.slice(0, half).map(makeRow).join('');
       rightCol.innerHTML = rows.slice(half).map(makeRow).join('');
 
-      // After DOM update, compute shared height and reveal
-      requestAnimationFrame(() => {
-        applyAlignedRowHeights(rows.length, half, rows.length - half);
-      });
+      const remeasure = () => applyAlignedRowHeights(rows.length, half, rows.length - half);
+      (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve())
+        .then(() => requestAnimationFrame(remeasure));
     }
 
     async function loadData() {
       try {
-        const res  = await fetch(url);
-        const text = await res.text();
-        const json = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = json.table.rows.map(r => r.c.map(c => (c ? c.v : '')));
+        const res  = await fetch(`${url}&cacheBust=${Date.now()}`, { cache: 'no-store' });
+        const raw  = await res.text();
 
+        // Robustly find the JSON block Google returns
+        const start = raw.indexOf('{');
+        const end   = raw.lastIndexOf('}');
+        if (start === -1 || end === -1) throw new Error('Unexpected sheet response');
+
+        const json = JSON.parse(raw.slice(start, end + 1));
+        const rows = json.table.rows.map(r => r.c.map(c => (c ? c.v : '')));
         renderRows(rows);
       } catch (e) {
         console.error("Sheet load error", e);
+        showDataError();
       }
     }
 
@@ -412,71 +407,92 @@
       const rightCol   = document.getElementById('column-right');
       const leftCount  = leftCol.children.length;
       const rightCount = rightCol.children.length;
-      if (leftCount && rightCount) {
-        applyAlignedRowHeights(leftCount + rightCount, leftCount, rightCount);
+      if (leftCount || rightCount) {
+        requestAnimationFrame(() =>
+          applyAlignedRowHeights(leftCount + rightCount, leftCount, rightCount)
+        );
       }
     };
     window.addEventListener('resize', reflow);
     window.addEventListener('orientationchange', reflow);
     document.addEventListener('fullscreenchange', reflow);
 
+    function showDataError() {
+      const leftCol  = document.getElementById('column-left');
+      const rightCol = document.getElementById('column-right');
+      leftCol.innerHTML  =
+        `<div class="item-row">
+           <div class="item-label"><strong>WAITING</strong> FOR BIDS…</div>
+           <div class="item-newbid"></div>
+           <div class="item-amount">€0</div>
+         </div>`;
+      rightCol.innerHTML = '';
+      requestAnimationFrame(() => applyAlignedRowHeights(1, 1, 0));
+      document.querySelector('.items-grid').style.opacity = 1;
+    }
+
     /* =======================
        CLOSING BANNER LOGIC
        ======================= */
 
-    // Helper: parse 'HH:mm' to Date today (or tomorrow if already passed)
-    function getTargetDateFromHHMM(hhmm) {
+    // Helper: parse 'HH:mm' to a Date for *today* (no automatic “tomorrow” roll)
+    function getTodayDateFromHHMM(hhmm) {
       const [hh, mm] = (hhmm || '').split(':').map(Number);
       if (isNaN(hh) || isNaN(mm)) return null;
       const now = new Date();
-      const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
-      if (target.getTime() <= now.getTime()) {
-        target.setDate(target.getDate() + 1); // schedule for tomorrow if time already passed
-      }
-      return target;
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
     }
 
     // Show/hide banner
     function showClosingBanner() { document.getElementById('closing-banner').style.display = 'block'; }
     function hideClosingBanner() { document.getElementById('closing-banner').style.display = 'none'; }
 
-    // Start flashing cycle: 30s ON, 30s OFF, repeat
+    // Alternating 30s ON / 30s OFF using chained timeouts
     function startBannerFlashCycle(onMs, offMs) {
-      // Immediately show, then alternate
-      showClosingBanner();
       let showing = true;
-      setInterval(() => {
-        showing = !showing;
-        if (showing) showClosingBanner();
-        else hideClosingBanner();
-      }, showing ? onMs : offMs); // first interval uses onMs; subsequent toggles use the same duration
-      // To ensure precise 30/30 alternation, we can also implement two alternating setTimeouts:
-      // (This simple setInterval approach is adequate for a kiosk/TV display.)
+      const tick = () => {
+        if (showing) {
+          showClosingBanner();
+          setTimeout(() => { showing = false; tick(); }, onMs);
+        } else {
+          hideClosingBanner();
+          setTimeout(() => { showing = true; tick(); }, offMs);
+        }
+      };
+      tick();
     }
 
     // === Closing banner config ===
-    const BANNER_ENABLED      = true;
-    const BANNER_TIME         = '15:41';   // HH:mm (24-hour) — set your specific show time
-    const BANNER_ON_MS        = 30 * 1000; // 30 seconds visible
-    const BANNER_OFF_MS       = 30 * 1000; // 30 seconds hidden
+    const BANNER_ENABLED = true;
+
+    // Change this to your preferred time today (HH:mm), e.g. '15:45'
+    // Default below is 16:00 today.
+    const DEFAULT_BANNER_TIME = '15:55';
+
+    // Allow overriding via URL query: ?banner=HH:mm (today)
+    const queryParams = new URLSearchParams(location.search);
+    const paramTime = queryParams.get('banner');
+    const BANNER_TIME = (paramTime && /^\d{2}:\d{2}$/.test(paramTime)) ? paramTime : DEFAULT_BANNER_TIME;
+
+    const BANNER_ON_MS   = 30 * 1000; // 30 seconds visible
+    const BANNER_OFF_MS  = 30 * 1000; // 30 seconds hidden
 
     (function scheduleClosingBanner() {
       if (!BANNER_ENABLED) return;
-      const targetDate = getTargetDateFromHHMM(BANNER_TIME);
+      const targetDate = getTodayDateFromHHMM(BANNER_TIME);
       if (!targetDate) {
         console.warn('Invalid BANNER_TIME; banner not scheduled.');
         return;
       }
-      const delay = Math.max(0, targetDate.getTime() - Date.now());
-      setTimeout(() => {
+      const delay = targetDate.getTime() - Date.now();
+
+      if (delay <= 0) {
+        // If time has already passed today, start immediately (today)
         startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
-      }, delay);
+           } else {
+        setTimeout(() => startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS), delay);
+      }
     })();
   </script>
-
 </body>
-</html>
-
-
-
 
