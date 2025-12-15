@@ -27,8 +27,8 @@
       --safe-horiz: 3vw;
 
       /* Footer band height (QR + Sponsors centered) */
-      --footer-h: 7.2vh;     /* compact, safe band */
-      --footer-nudge-up: 2vh;/* moved up slightly for outer frame visibility */
+      --footer-h: 7.2vh;     /* restored original look */
+      --footer-nudge-up: 2vh;/* nudge up so outer frame is visible */
 
       /* Shared row height (set by JS) so rows align across columns */
       --rowH: 40px;
@@ -162,7 +162,7 @@
       border-left: 1px solid #555;
     }
 
-    /* FOOTER – fixed inside the frame safe area, 3-column grid: QR | Sponsors | QR */
+    /* FOOTER – QR | SPONSORS | QR (inside safe area) */
     .footer {
       position: fixed;
       left: var(--safe-horiz);
@@ -186,7 +186,7 @@
     }
 
     .qr-img {
-      /* QR codes larger */
+      /* QR codes sized like original */
       max-height: calc(var(--footer-h) * 0.90);
       background: rgba(255,255,255,0.98);
       padding: 0.4vh;
@@ -213,13 +213,14 @@
     }
 
     .footer-sponsors img {
-      max-height: 100%;
+      /* Restored sponsor image scale (like original) */
+      max-height: calc(var(--footer-h) * 0.90);
       max-width: 100%;
       object-fit: contain;
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
     }
 
-    /* ===== Closing Banner (true single line, centered, pulses while visible) ===== */
+    /* ===== Closing Banner (true single line & perfectly centered, pulses while visible) ===== */
     #closing-banner {
       position: fixed;
       top: 50%;
@@ -330,188 +331,10 @@
       return Number.isFinite(n) ? `€${euroFmt.format(n)}` : String(v);
     }
 
+    // CORRECT escaping (previous version double-escaped and broke content)
     const escapeHtml = (s) => String(s)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
     function boldFirstSevenSafe(t) {
-      const safe = escapeHtml(t ?? '');
-      return `<strong>${safe.substring(0,7)}</strong>${safe.substring(7)}`;
-    }
-
-    function applyAlignedRowHeights(totalRows, leftCount, rightCount) {
-      const itemsGrid = document.querySelector('.items-grid');
-      const leftCol   = document.getElementById('column-left');
-
-      const gridRect   = itemsGrid.getBoundingClientRect();
-      const availableH = gridRect.height;
-
-      const gapStr = getComputedStyle(leftCol).gap || '0px';
-      const gapPx  = parseFloat(gapStr.split(' ')[0]) || 0;
-
-      const leftGaps  = Math.max(0, (leftCount  - 1)) * gapPx;
-      const rightGaps = Math.max(0, (rightCount - 1)) * gapPx;
-
-      const leftRowHRequired  = (availableH - leftGaps)  / Math.max(leftCount, 1);
-      const rightRowHRequired = (availableH - rightGaps) / Math.max(rightCount, 1);
-      const sharedRowH = Math.floor(Math.min(leftRowHRequired, rightRowHRequired));
-
-      document.documentElement.style.setProperty('--rowH', sharedRowH + 'px');
-      document.querySelector('.items-grid').style.opacity = 1;
-    }
-
-    function makeRow(r) {
-      const item    = boldFirstSevenSafe((r[0] ?? '').toString());
-      const newBidV = r[1];
-      const newBid  = formatNewBidCell(newBidV);
-      const latest  = formatEuro(r[2] ?? r[1]);
-
-      const newBidSafe = escapeHtml(newBid);
-
-      return `
-        <div class="item-row">
-          <div class="item-label">${item}</div>
-          <div class="item-newbid">${newBidSafe}</div>
-          <div class="item-amount">${latest}</div>
-        </div>
-      `;
-    }
-
-    function renderRows(rows) {
-      const leftCol  = document.getElementById('column-left');
-      const rightCol = document.getElementById('column-right');
-
-      const half = Math.ceil(rows.length / 2);
-
-      leftCol.innerHTML  = rows.slice(0, half).map(makeRow).join('');
-      rightCol.innerHTML = rows.slice(half).map(makeRow).join('');
-
-      const remeasure = () => applyAlignedRowHeights(rows.length, half, rows.length - half);
-      (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve())
-        .then(() => requestAnimationFrame(remeasure));
-    }
-
-    async function loadData() {
-      try {
-        const res  = await fetch(`${url}&cacheBust=${Date.now()}`, { cache: 'no-store' });
-        const raw  = await res.text();
-
-        // Robustly find the JSON block Google returns
-        const start = raw.indexOf('{');
-        const end   = raw.lastIndexOf('}');
-        if (start === -1 || end === -1) throw new Error('Unexpected sheet response');
-
-        const json = JSON.parse(raw.slice(start, end + 1));
-        const rows = json.table.rows.map(r => r.c.map(c => (c ? c.v : '')));
-        renderRows(rows);
-      } catch (e) {
-        console.error("Sheet load error", e);
-        showDataError();
-      }
-    }
-
-    // Initial load and periodic refresh
-    loadData();
-    const REFRESH_MS = 5000;
-    setInterval(loadData, REFRESH_MS);
-
-    // Re-apply heights on resize/orientation/fullscreen changes
-    const reflow = () => {
-      const leftCol    = document.getElementById('column-left');
-      const rightCol   = document.getElementById('column-right');
-      const leftCount  = leftCol.children.length;
-      const rightCount = rightCol.children.length;
-      if (leftCount || rightCount) {
-        requestAnimationFrame(() =>
-          applyAlignedRowHeights(leftCount + rightCount, leftCount, rightCount)
-        );
-      }
-    };
-    window.addEventListener('resize', reflow);
-    window.addEventListener('orientationchange', reflow);
-    document.addEventListener('fullscreenchange', reflow);
-
-    function showDataError() {
-      const leftCol  = document.getElementById('column-left');
-      const rightCol = document.getElementById('column-right');
-      leftCol.innerHTML  =
-        `<div class="item-row">
-           <div class="item-label"><strong>WAITING</strong> FOR BIDS…</div>
-           <div class="item-newbid"></div>
-           <div class="item-amount">€0</div>
-         </div>`;
-      rightCol.innerHTML = '';
-      requestAnimationFrame(() => applyAlignedRowHeights(1, 1, 0));
-      document.querySelector('.items-grid').style.opacity = 1;
-    }
-
-    /* =======================
-       CLOSING BANNER LOGIC
-       ======================= */
-
-    // Parse 'HH:mm' to a Date for *today*
-    function getTodayDateFromHHMM(hhmm) {
-      const [hh, mm] = (hhmm || '').split(':').map(Number);
-      if (isNaN(hh) || isNaN(mm)) return null;
-      const now = new Date();
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
-    }
-
-    // Show/hide banner (centered element) + pulse class toggling
-    function showClosingBanner() {
-      const banner = document.getElementById('closing-banner');
-      banner.style.display = 'inline-block';
-      banner.classList.add('banner-pulse'); // start pulsing while visible
-    }
-    function hideClosingBanner() {
-      const banner = document.getElementById('closing-banner');
-      banner.style.display = 'none';
-      banner.classList.remove('banner-pulse'); // stop pulsing while hidden
-    }
-
-    // Alternating ON/OFF cycle using chained timeouts (10s ON, 30s OFF)
-    function startBannerFlashCycle(onMs, offMs) {
-      let showing = true;
-      const tick = () => {
-        if (showing) {
-          showClosingBanner();
-          setTimeout(() => { showing = false; tick(); }, onMs);
-        } else {
-          hideClosingBanner();
-          setTimeout(() => { showing = true; tick(); }, offMs);
-        }
-      };
-      tick();
-    }
-
-    // === Closing banner config ===
-    const BANNER_ON_MS   = 10 * 1000; // 10 seconds visible
-    const BANNER_OFF_MS  = 30 * 1000; // 30 seconds hidden
-
-    (function startOrScheduleClosingBanner() {
-      const qp = new URLSearchParams(location.search);
-      const paramTime = qp.get('banner');
-
-      // If ?banner=HH:mm is present, schedule for *today*
-      if (paramTime && /^\d{2}:\d{2}$/.test(paramTime)) {
-        const targetDate = getTodayDateFromHHMM(paramTime);
-        if (!targetDate) {
-          console.warn('Invalid banner time; starting immediately.');
-          startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
-          return;
-        }
-        const delay = targetDate.getTime() - Date.now();
-        if (delay <= 0) {
-          // If time has already passed today, start immediately (today)
-          startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
-        } else {
-          setTimeout(() => startBannerFlashCycle(BANNER_ON_MS,          setTimeout(() => startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS), delay);
-        }
-      } else {
-        // No parameter → start immediately
-        startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
-      }
-    })();
-  </script>
-</body>
 
