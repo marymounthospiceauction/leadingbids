@@ -9,6 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
 
   <!-- Script-style font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
 
   <style>
@@ -26,6 +28,7 @@
 
       /* Footer band height (QR + Sponsors centered) */
       --footer-h: 7.2vh;     /* compact, safe band */
+      --footer-nudge-up: 2vh;/* moved up slightly for outer frame visibility */
 
       /* Shared row height (set by JS) so rows align across columns */
       --rowH: 40px;
@@ -164,7 +167,8 @@
       position: fixed;
       left: var(--safe-horiz);
       right: var(--safe-horiz);
-      bottom: var(--safe-bottom);   /* sit fully inside the visible safe area */
+      /* Nudge the entire footer up a bit so the outside frame remains visible */
+      bottom: calc(var(--safe-bottom) + var(--footer-nudge-up));
       height: var(--footer-h);
       display: grid;
       grid-template-columns: auto 1fr auto;
@@ -215,16 +219,22 @@
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
     }
 
-    /* ===== Closing Banner (centered) ===== */
+    /* ===== Closing Banner (true single line, centered, pulses while visible) ===== */
     #closing-banner {
       position: fixed;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%); /* center vertically & horizontally */
+      transform: translate(-50%, -50%);    /* center vertically & horizontally */
       z-index: 10000;
-      display: none;                    /* hidden by default; JS shows/hides */
-      width: min(92vw, 1200px);
+      display: none;                       /* JS will show/hide cyclically */
       padding: 0.6rem 1rem;
+      box-sizing: border-box;
+
+      /* One-line mechanics */
+      display: inline-block;
+      white-space: nowrap;                 /* no wrapping */
+      width: auto;                         /* size to content */
+      max-width: 96vw;                     /* stay within viewport */
       text-align: center;
 
       background: linear-gradient(180deg, rgba(255,0,0,0.92), rgba(200,0,0,0.92));
@@ -235,23 +245,33 @@
       color: #fff;
       font-weight: 800;
       letter-spacing: 0.02em;
-      font-size: clamp(20px, 3.0vw, 56px);
+      /* If text approaches 96vw, font size steps down slightly instead of wrapping */
+      font-size: clamp(18px, 3.2vw, 56px);
       text-transform: uppercase;
 
       pointer-events: none; /* TV-safe: no accidental focus/click */
-      white-space: nowrap;  /* force single line */
     }
+
+    /* Pulse animation (applied only while visible) */
+    .banner-pulse {
+      animation: cb-pulse 1.2s infinite alternate;
+    }
+    @keyframes cb-pulse {
+      0%   { transform: translate(-50%, -50%) scale(1.00); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+      100% { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 14px 36px rgba(0,0,0,0.6); }
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      #closing-banner { animation: none; }
+      .banner-pulse { animation: none; }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Closing Banner (centered, one line) -->
+  <!-- Closing Banner (centered, one line, pulses while visible) -->
   <div id="closing-banner" aria-live="polite" aria-atomic="true" role="status">
-    🚨 Auction Closing Soon! Get Your Final Bids In! 🚨
+    🚨 AUCTION CLOSING SOON — GET YOUR FINAL BIDS IN! 🚨
   </div>
 
   <div class="frame">
@@ -293,7 +313,7 @@
     const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
     // X=item, Y=new bid, Z=latest bid
-    const range     = 'X5:Z43';   // increased to include up to 38+ rows
+    const range     = 'X5:Z43';   // show up to 38 rows (inclusive 5..43)
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
@@ -437,9 +457,17 @@
       return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
     }
 
-    // Show/hide banner (centered element)
-    function showClosingBanner() { document.getElementById('closing-banner').style.display = 'block'; }
-    function hideClosingBanner() { document.getElementById('closing-banner').style.display = 'none'; }
+    // Show/hide banner (centered element) + pulse class toggling
+    function showClosingBanner() {
+      const banner = document.getElementById('closing-banner');
+      banner.style.display = 'inline-block';
+      banner.classList.add('banner-pulse'); // start pulsing while visible
+    }
+    function hideClosingBanner() {
+      const banner = document.getElementById('closing-banner');
+      banner.style.display = 'none';
+      banner.classList.remove('banner-pulse'); // stop pulsing while hidden
+    }
 
     // Alternating ON/OFF cycle using chained timeouts (10s ON, 30s OFF)
     function startBannerFlashCycle(onMs, offMs) {
@@ -457,34 +485,33 @@
     }
 
     // === Closing banner config ===
-    const BANNER_ENABLED = true;
-
-    // Change this to your preferred time today (HH:mm), or override via URL ?banner=HH:mm
-    const DEFAULT_BANNER_TIME = '16:00';
-
-    const queryParams = new URLSearchParams(location.search);
-    const paramTime = queryParams.get('banner');
-    const BANNER_TIME = (paramTime && /^\d{2}:\d{2}$/.test(paramTime)) ? paramTime : DEFAULT_BANNER_TIME;
-
     const BANNER_ON_MS   = 10 * 1000; // 10 seconds visible
     const BANNER_OFF_MS  = 30 * 1000; // 30 seconds hidden
 
-    (function scheduleClosingBanner() {
-      if (!BANNER_ENABLED) return;
-      const targetDate = getTodayDateFromHHMM(BANNER_TIME);
-      if (!targetDate) {
-        console.warn('Invalid BANNER_TIME; banner not scheduled.');
-        return;
-      }
-      const delay = targetDate.getTime() - Date.now();
+    (function startOrScheduleClosingBanner() {
+      const qp = new URLSearchParams(location.search);
+      const paramTime = qp.get('banner');
 
-      if (delay <= 0) {
-        // If time has already passed today, start immediately (today)
-        startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
+      // If ?banner=HH:mm is present, schedule for *today*
+      if (paramTime && /^\d{2}:\d{2}$/.test(paramTime)) {
+        const targetDate = getTodayDateFromHHMM(paramTime);
+        if (!targetDate) {
+          console.warn('Invalid banner time; starting immediately.');
+          startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
+          return;
+        }
+        const delay = targetDate.getTime() - Date.now();
+        if (delay <= 0) {
+          // If time has already passed today, start immediately (today)
+          startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
+        } else {
+          setTimeout(() => startBannerFlashCycle(BANNER_ON_MS,          setTimeout(() => startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS), delay);
+        }
       } else {
-        setTimeout(() => startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS), delay);
+        // No parameter → start immediately
+        startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
       }
     })();
-   </script>
+  </script>
 </body>
 
