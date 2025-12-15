@@ -9,8 +9,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
 
   <!-- Script-style font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
 
   <style>
@@ -27,7 +25,7 @@
       --safe-horiz: 3vw;
 
       /* Footer band height (QR + Sponsors centered) */
-      --footer-h: 7.2vh;     /* compact, safe band */
+      --footer-h: 6.0vh;     /* REDUCED so it doesn’t intrude on items grid */
       --footer-nudge-up: 2vh;/* moved up slightly for outer frame visibility */
 
       /* Shared row height (set by JS) so rows align across columns */
@@ -186,8 +184,8 @@
     }
 
     .qr-img {
-      /* QR codes larger */
-      max-height: calc(var(--footer-h) * 0.90);
+      /* QR codes slightly smaller to align baseline cleanly */
+      max-height: calc(var(--footer-h) * 0.80); /* was 0.90 */
       background: rgba(255,255,255,0.98);
       padding: 0.4vh;
       border-radius: 0.3rem;
@@ -213,7 +211,8 @@
     }
 
     .footer-sponsors img {
-      max-height: 100%;
+      /* Cap sponsor image height so it never overlaps table rows */
+      max-height: calc(var(--footer-h) * 0.70);
       max-width: 100%;
       object-fit: contain;
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
@@ -446,7 +445,7 @@
     }
 
     /* =======================
-       CLOSING BANNER LOGIC
+       CLOSING BANNER LOGIC (hard-coded to today at 20:15)
        ======================= */
 
     // Parse 'HH:mm' to a Date for *today*
@@ -488,7 +487,7 @@
     const BANNER_ON_MS   = 10 * 1000; // 10 seconds visible
     const BANNER_OFF_MS  = 30 * 1000; // 30 seconds hidden
     (function scheduleClosingBannerHardcoded() {
-      const targetDate = getTodayDateFromHHMM('16:25'); // <-- hard-coded start time (today)
+      const targetDate = getTodayDateFromHHMM('16:50'); // <-- hard-coded start time (today)
       if (!targetDate) {
         console.warn('Invalid hard-coded banner time; starting immediately.');
         startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
@@ -502,6 +501,7 @@
         setTimeout(() => startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS), delay);
       }
     })();
-   </script>
+  </script>
 </body>
+</html>
 
