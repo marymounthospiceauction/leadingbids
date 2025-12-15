@@ -484,34 +484,24 @@
       tick();
     }
 
-    // === Closing banner config ===
+    // === Closing banner config (hard-coded to today at 20:15) ===
     const BANNER_ON_MS   = 10 * 1000; // 10 seconds visible
     const BANNER_OFF_MS  = 30 * 1000; // 30 seconds hidden
-
-    (function startOrScheduleClosingBanner() {
-      const qp = new URLSearchParams(location.search);
-      const paramTime = qp.get('banner');
-
-      // If ?banner=HH:mm is present, schedule for *today*
-      if (paramTime && /^\d{2}:\d{2}$/.test(paramTime)) {
-        const targetDate = getTodayDateFromHHMM(paramTime);
-        if (!targetDate) {
-          console.warn('Invalid banner time; starting immediately.');
-          startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
-          return;
-        }
-        const delay = targetDate.getTime() - Date.now();
-        if (delay <= 0) {
-          // If time has already passed today, start immediately (today)
-          startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
-        } else {
-          setTimeout(() => startBannerFlashCycle(BANNER_ON_MS,          setTimeout(() => startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS), delay);
-        }
-      } else {
-        // No parameter → start immediately
+    (function scheduleClosingBannerHardcoded() {
+      const targetDate = getTodayDateFromHHMM('16:25'); // <-- hard-coded start time (today)
+      if (!targetDate) {
+        console.warn('Invalid hard-coded banner time; starting immediately.');
         startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
+        return;
+      }
+      const delay = targetDate.getTime() - Date.now();
+      if (delay <= 0) {
+        // If time has already passed today, start immediately (today)
+        startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
+      } else {
+        setTimeout(() => startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS), delay);
       }
     })();
-  </script>
+   </script>
 </body>
 
