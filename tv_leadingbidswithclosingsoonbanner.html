@@ -337,4 +337,182 @@
       .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
     function boldFirstSevenSafe(t) {
+      const safe = escapeHtml(t ?? '');
+      return '<strong>' + safe.substring(0,7) + '</strong>' + safe.substring(7);
+    }
+
+    function applyAlignedRowHeights(totalRows, leftCount, rightCount) {
+      const itemsGrid = document.querySelector('.items-grid');
+      const leftCol   = document.getElementById('column-left');
+
+      const gridRect   = itemsGrid.getBoundingClientRect();
+      const availableH = gridRect.height;
+
+      const gapStr = getComputedStyle(leftCol).gap || '0px';
+      const gapPx  = parseFloat(gapStr.split(' ')[0]) || 0;
+
+      const leftGaps  = Math.max(0, (leftCount  - 1)) * gapPx;
+      const rightGaps = Math.max(0, (rightCount - 1)) * gapPx;
+
+      const leftRowHRequired  = (availableH - leftGaps)  / Math.max(leftCount, 1);
+      const rightRowHRequired = (availableH - rightGaps) / Math.max(rightCount, 1);
+      const sharedRowH = Math.floor(Math.min(leftRowHRequired, rightRowHRequired));
+
+      document.documentElement.style.setProperty('--rowH', sharedRowH + 'px');
+      document.querySelector('.items-grid').style.opacity = 1;
+    }
+
+    function makeRow(r) {
+      const item    = boldFirstSevenSafe((r[0] ?? '').toString());
+      const newBidV = r[1];
+      const newBid  = formatNewBidCell(newBidV);
+      const latest  = formatEuro(r[2] ?? r[1]);
+
+      const newBidSafe = escapeHtml(newBid);
+
+      return `
+        <div class="item-row">
+          <div class="item-label">${item}</div>
+          <div class="item-newbid">${newBidSafe}</div>
+          <div class="item-amount">${latest}</div>
+        </div>
+      `;
+    }
+
+    function renderRows(rows) {
+      const leftCol  = document.getElementById('column-left');
+      const rightCol = document.getElementById('column-right');
+
+      const half = Math.ceil(rows.length / 2);
+
+      leftCol.innerHTML  = rows.slice(0, half).map(makeRow).join('');
+      rightCol.innerHTML = rows.slice(half).map(makeRow).join('');
+
+      const remeasure = () => applyAlignedRowHeights(rows.length, half, rows.length - half);
+      (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve())
+        .then(() => requestAnimationFrame(remeasure));
+    }
+
+    async function loadData() {
+      try {
+        const res  = await fetch(`${url}&cacheBust=${Date.now()}`, { cache: 'no-store' });
+        const raw  = await res.text();
+
+        // Robustly find the JSON block Google returns
+        const start = raw.indexOf('{');
+        const end   = raw.lastIndexOf('}');
+        if (start === -1 || end === -1) throw new Error('Unexpected sheet response');
+
+        const json = JSON.parse(raw.slice(start, end + 1));
+        const rows = json.table.rows.map(r => r.c.map(c => (c ? c.v : '')));
+        renderRows(rows);
+      } catch (e) {
+        console.error("Sheet load error", e);
+        showDataError();
+      }
+    }
+
+    // Initial load and periodic refresh
+    loadData();
+    const REFRESH_MS = 5000;
+    setInterval(loadData, REFRESH_MS);
+
+    // Re-apply heights on resize/orientation/fullscreen changes
+    const reflow = () => {
+      const leftCol    = document.getElementById('column-left');
+      const rightCol   = document.getElementById('column-right');
+      const leftCount  = leftCol.children.length;
+      const rightCount = rightCol.children.length;
+      if (leftCount || rightCount) {
+        requestAnimationFrame(() =>
+          applyAlignedRowHeights(leftCount + rightCount, leftCount, rightCount)
+        );
+      }
+    };
+    window.addEventListener('resize', reflow);
+    window.addEventListener('orientationchange', reflow);
+    document.addEventListener('fullscreenchange', reflow);
+
+    function showDataError() {
+      const leftCol  = document.getElementById('column-left');
+      const rightCol = document.getElementById('column-right');
+      leftCol.innerHTML  =
+        `<div class="item-row">
+           <div class="item-label"><strong>WAITING</strong> FOR BIDS…</div>
+           <div class="item-newbid"></div>
+           <div class="item-amount">€0</div>
+         </div>`;
+      rightCol.innerHTML = '';
+      requestAnimationFrame(() => applyAlignedRowHeights(1, 1, 0));
+      document.querySelector('.items-grid').style.opacity = 1;
+    }
+
+    /* =======================
+       CLOSING BANNER LOGIC
+       ======================= */
+
+    // Helper: parse 'HH:mm' to Date today
+    function getTodayDateFromHHMM(hhmm) {
+      const [hh, mm] = (hhmm || '').split(':').map(Number);
+      if (isNaN(hh) || isNaN(mm)) return null;
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
+    }
+
+    // Show/hide banner (centered element) + pulse class toggling
+    function showClosingBanner() {
+      const banner = document.getElementById('closing-banner');
+      banner.style.display = 'inline-block';
+      banner.classList.add('banner-pulse'); // start pulsing while visible
+    }
+    function hideClosingBanner() {
+      const banner = document.getElementById('closing-banner');
+      banner.style.display = 'none';
+      banner.classList.remove('banner-pulse'); // stop pulsing while hidden
+    }
+
+    // Alternating ON/OFF cycle using chained timeouts (10s ON, 30s OFF)
+    function startBannerFlashCycle(onMs, offMs) {
+      let showing = true;
+      const tick = () => {
+        if (showing) {
+          showClosingBanner();
+          setTimeout(() => { showing = false; tick(); }, onMs);
+        } else {
+          hideClosingBanner();
+          setTimeout(() => { showing = true; tick(); }, offMs);
+        }
+      };
+      tick();
+    }
+
+    // === Closing banner config: default 20:15 today, optional URL override ===
+    const BANNER_ON_MS   = 10 * 1000; // 10 seconds visible
+    const BANNER_OFF_MS  = 30 * 1000; // 30 seconds hidden
+
+    (function startOrScheduleClosingBanner() {
+      const qp = new URLSearchParams(location.search);
+      const paramTime = qp.get('banner');   // optional ?banner=HH:mm
+      const fallback  = '20:15';            // hard-coded default for today
+
+      const chosen = (paramTime && /^\d{2}:\d{2}$/.test(paramTime)) ? paramTime : fallback;
+      const targetDate = getTodayDateFromHHMM(chosen);
+
+      if (!targetDate) {
+        console.warn('Invalid banner time; starting immediately.');
+        startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
+        return;
+      }
+
+      const delay = targetDate.getTime() - Date.now();
+      if (delay <= 0) {
+        // If time has already passed today, start immediately (today)
+        startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
+      } else {
+        setTimeout(() => startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS), delay);
+      }
+    })();
+  </script>
+
+</</body>
 
