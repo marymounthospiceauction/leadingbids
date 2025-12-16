@@ -193,7 +193,7 @@
       padding: 0.4vh;
       border-radius: 0.3rem;
       box-shadow: 0 0 8px rgba(0,0,0,0.9);
-      margin-bottom: 0; /* remove extra margin that could push into the table */
+      margin-bottom: 0; /* avoid pushing into the table */
     }
 
     .footer-block span {
@@ -215,7 +215,7 @@
 
     .footer-sponsors img {
       /* Maximize sponsor image height without interfering with the table */
-      max-height: calc(var(--footer-h) * 1.58);
+      max-height: calc(var(--footer-h) * 0.95);
       max-width: 100%;
       object-fit: contain;
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
@@ -450,30 +450,27 @@
     }
 
     /* =======================
-       CLOSING BANNER LOGIC
+       CLOSING BANNER LOGIC (ON/OFF toggle)
        ======================= */
 
-    // Helper: parse 'HH:mm' to Date today
-    function getTodayDateFromHHMM(hhmm) {
-      const [hh, mm] = (hhmm || '').split(':').map(Number);
-      if (isNaN(hh) || isNaN(mm)) return null;
-      const now = new Date();
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
-    }
+    // Toggle: 'ON' or 'OFF' — when 'ON', banner flashes immediately (no schedule)
+    const BANNER_TOGGLE = 'ON';  // <-- change to 'OFF' to disable the banner
 
-    // Show/hide banner (centered element) + pulse class toggling
+    // Alternating ON/OFF cycle using chained timeouts (10s ON, 30s OFF)
+    const BANNER_ON_MS  = 10 * 1000;
+    const BANNER_OFF_MS = 30 * 1000;
+
     function showClosingBanner() {
       const banner = document.getElementById('closing-banner');
       banner.style.display = 'inline-block';
-      banner.classList.add('banner-pulse'); // start pulsing while visible
+      banner.classList.add('banner-pulse'); // pulse while visible
     }
     function hideClosingBanner() {
       const banner = document.getElementById('closing-banner');
       banner.style.display = 'none';
-      banner.classList.remove('banner-pulse'); // stop pulsing while hidden
+      banner.classList.remove('banner-pulse');
     }
 
-    // Alternating ON/OFF cycle using chained timeouts (10s ON, 30s OFF)
     function startBannerFlashCycle(onMs, offMs) {
       let showing = true;
       const tick = () => {
@@ -488,37 +485,15 @@
       tick();
     }
 
-    // === Closing banner config: default 20:15 today, optional URL override ===
-    const BANNER_ON_MS   = 10 * 1000; // 10 seconds visible
-    const BANNER_OFF_MS  = 30 * 1000; // 30 seconds hidden
-
-    (function startOrScheduleClosingBanner() {
-      const qp = new URLSearchParams(location.search);
-      const paramTime = qp.get('banner');   // optional ?banner=HH:mm
-      const fallback  = '20:15';            // hard-coded default for today
-
-      const chosen = (paramTime && /^\d{2}:\d{2}$/.test(paramTime)) ? paramTime : fallback;
-      const targetDate = getTodayDateFromHHMM(chosen);
-
-      if (!targetDate) {
-        console.warn('Invalid banner time; starting immediately.');
-        startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
-        return;
-      }
-
-      const delay = targetDate.getTime() - Date.now();
-      if (delay <= 0) {
-        // If time has already passed today, start immediately (today)
+       // Start immediately if toggle is ON; otherwise keep hidden
+    (function initBannerViaToggle() {
+      if (String(BANNER_TOGGLE).toUpperCase() === 'ON') {
         startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
       } else {
-        setTimeout(() => startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS), delay);
+        hideClosingBanner();
       }
     })();
-   </script>
+  </script>
 
 </body>
-
-
-
-
 
