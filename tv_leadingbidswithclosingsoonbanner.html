@@ -27,8 +27,8 @@
       --safe-horiz: 3vw;
 
       /* Footer band height (QR + Sponsors centered) */
-      --footer-h: 7.2vh;     /* restored original look */
-      --footer-nudge-up: 2vh;/* nudge up so outer frame is visible */
+      --footer-h: 8vh;       /* bigger band so sponsor can maximize height */
+      --footer-nudge-up: 2vh;/* moved up slightly for outer frame visibility */
 
       /* Shared row height (set by JS) so rows align across columns */
       --rowH: 40px;
@@ -51,6 +51,7 @@
     .frame {
       width: 100vw;
       height: 100vh;
+      /* IMPORTANT: bottom padding reserves exactly the footer height */
       padding: var(--safe-top) var(--safe-horiz) calc(var(--safe-bottom) + var(--footer-h)) var(--safe-horiz);
       display: flex;
       flex-direction: column;
@@ -162,12 +163,12 @@
       border-left: 1px solid #555;
     }
 
-    /* FOOTER – QR | SPONSORS | QR (inside safe area) */
+    /* FOOTER – fixed inside the frame safe area, 3-column grid: QR | Sponsors | QR */
     .footer {
       position: fixed;
       left: var(--safe-horiz);
       right: var(--safe-horiz);
-      /* Nudge the entire footer up a bit so the outside frame remains visible */
+      /* Nudge up so outer frame remains visible */
       bottom: calc(var(--safe-bottom) + var(--footer-nudge-up));
       height: var(--footer-h);
       display: grid;
@@ -186,13 +187,13 @@
     }
 
     .qr-img {
-      /* QR codes sized like original */
+      /* QR codes: large but contained entirely within the footer band */
       max-height: calc(var(--footer-h) * 0.90);
       background: rgba(255,255,255,0.98);
       padding: 0.4vh;
       border-radius: 0.3rem;
       box-shadow: 0 0 8px rgba(0,0,0,0.9);
-      margin-bottom: 0.35vh;
+      margin-bottom: 0; /* remove extra margin that could push into the table */
     }
 
     .footer-block span {
@@ -213,14 +214,14 @@
     }
 
     .footer-sponsors img {
-      /* Restored sponsor image scale (like original) */
-      max-height: calc(var(--footer-h) * 0.99);
+      /* Maximize sponsor image height without interfering with the table */
+      max-height: calc(var(--footer-h) * 0.95);
       max-width: 100%;
       object-fit: contain;
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
     }
 
-    /* ===== Closing Banner (true single line & perfectly centered, pulses while visible) ===== */
+    /* ===== Closing Banner (true single line, centered, pulses while visible) ===== */
     #closing-banner {
       position: fixed;
       top: 50%;
@@ -279,8 +280,9 @@
     <!-- HEADER -->
     <div class="header">
       <div class="header-title">The Starry Night Ball</div>
-      <!-- Optional: Marymount Logo -->
-      <!-- <img class="marymount-logo-top" src="Marymount Logo.png" alt="Marymount Logo" /> -->
+      <!-- Optional: Marymount Logo
+      <img class="marymount-logo-top" src="Marymount Logo.png" alt="Marymount Logo" />
+      -->
     </div>
 
     <!-- 2-COLUMN GRID -->
@@ -331,7 +333,7 @@
       return Number.isFinite(n) ? `€${euroFmt.format(n)}` : String(v);
     }
 
-    // CORRECT escaping (previous version double-escaped and broke content)
+    // Safe escaping (allowing <strong> wrapping from boldFirstSevenSafe)
     const escapeHtml = (s) => String(s)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -493,7 +495,7 @@
     (function startOrScheduleClosingBanner() {
       const qp = new URLSearchParams(location.search);
       const paramTime = qp.get('banner');   // optional ?banner=HH:mm
-      const fallback  = '13:00';            // hard-coded default for today
+      const fallback  = '20:15';            // hard-coded default for today
 
       const chosen = (paramTime && /^\d{2}:\d{2}$/.test(paramTime)) ? paramTime : fallback;
       const targetDate = getTodayDateFromHHMM(chosen);
@@ -512,9 +514,7 @@
         setTimeout(() => startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS), delay);
       }
     })();
-  </script>
+   </script>
 
-</</body>
-
-
+</body>
 
