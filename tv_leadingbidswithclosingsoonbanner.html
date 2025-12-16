@@ -406,7 +406,8 @@
         if (start === -1 || end === -1) throw new Error('Unexpected sheet response');
 
         const json = JSON.parse(raw.slice(start, end + 1));
-        const rows = json.table.rows.map(r => r.c.map(c => (c ? c.v : '')));
+        // GUARANTEE we keep rows even if cells are null (so ITEM 1/2 show when NEW BID is blank)
+        const rows = json.table.rows.map(r => r.c.map(c => (c && c.v !== null ? c.v : '')));
         renderRows(rows);
       } catch (e) {
         console.error("Sheet load error", e);
@@ -485,17 +486,15 @@
       tick();
     }
 
-       // Start immediately if toggle is ON; otherwise keep hidden
+    // Start immediately if toggle is ON; otherwise keep hidden
     (function initBannerViaToggle() {
-      if (String(BANNER_TOGGLE).toUpperCase() === 'OFF') {
+      if (String(BANNER_TOGGLE).toUpperCase() === 'ON') {
         startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
       } else {
         hideClosingBanner();
       }
-    })();
+    })    })();
   </script>
 
 </body>
-
-
 
