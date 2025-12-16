@@ -28,7 +28,7 @@
 
       /* Footer band height (QR + Sponsors centered) */
       --footer-h: 8vh;       /* bigger band so sponsor can maximize height */
-      --footer-nudge-up: 2vh;/* moved up slightly for outer frame visibility */
+      --footer-nudge-up: 1vh;/* moved up slightly for outer frame visibility */
 
       /* Shared row height (set by JS) so rows align across columns */
       --rowH: 40px;
@@ -487,7 +487,7 @@
 
        // Start immediately if toggle is ON; otherwise keep hidden
     (function initBannerViaToggle() {
-      if (String(BANNER_TOGGLE).toUpperCase() === 'ON') {
+      if (String(BANNER_TOGGLE).toUpperCase() === 'OFF') {
         startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
       } else {
         hideClosingBanner();
@@ -496,4 +496,5 @@
   </script>
 
 </body>
+
 
