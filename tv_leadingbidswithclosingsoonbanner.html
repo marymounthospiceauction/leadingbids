@@ -488,7 +488,7 @@
 
     // Start immediately if toggle is ON; otherwise keep hidden
     (function initBannerViaToggle() {
-      if (String(BANNER_TOGGLE).toUpperCase() === 'ON') {
+      if (String(BANNER_TOGGLE).toUpperCase() === 'OFF') {
         startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
       } else {
         hideClosingBanner();
@@ -497,4 +497,5 @@
   </script>
 
 </body>
+
 
