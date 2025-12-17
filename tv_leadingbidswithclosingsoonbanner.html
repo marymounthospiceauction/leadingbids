@@ -85,7 +85,8 @@
       min-height: 0;
       display: flex;
       gap: 1.1vw;       /* horizontal gap between columns */
-      opacity: 0;
+      /* Visible by default; JS will recompute heights later */
+      opacity: 1;
       transition: opacity 0.3s ease-in-out;
       margin-top: 0.2vh;
       margin-bottom: 0.2vh;
@@ -318,6 +319,7 @@
     // X=item, Y=new bid, Z=latest bid
     const range     = 'X5:Z43';   // show up to 38 rows (inclusive 5..43)
 
+    // IMPORTANT: use plain '&' in query string
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
       `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
@@ -347,6 +349,9 @@
       const itemsGrid = document.querySelector('.items-grid');
       const leftCol   = document.getElementById('column-left');
 
+      // Guard: if columns have no rows yet, skip height calc
+      if (!leftCount && !rightCount) return;
+
       const gridRect   = itemsGrid.getBoundingClientRect();
       const availableH = gridRect.height;
 
@@ -358,10 +363,10 @@
 
       const leftRowHRequired  = (availableH - leftGaps)  / Math.max(leftCount, 1);
       const rightRowHRequired = (availableH - rightGaps) / Math.max(rightCount, 1);
-      const sharedRowH = Math.floor(Math.min(leftRowHRequired, rightRowHRequired));
+      const sharedRowH = Math.floor(Math.max(24, Math.min(leftRowHRequired, rightRowHRequired))); // minimum row height 24px
 
       document.documentElement.style.setProperty('--rowH', sharedRowH + 'px');
-      document.querySelector('.items-grid').style.opacity = 1;
+      itemsGrid.style.opacity = 1;  // ensure visible
     }
 
     function makeRow(r) {
@@ -382,6 +387,12 @@
     }
 
     function renderRows(rows) {
+      // If we somehow got no rows, keep whatever is on screen
+      if (!rows || !rows.length) {
+        console.warn('No rows returned; keeping previous table.');
+        return;
+      }
+
       const leftCol  = document.getElementById('column-left');
       const rightCol = document.getElementById('column-right');
 
@@ -406,12 +417,23 @@
         if (start === -1 || end === -1) throw new Error('Unexpected sheet response');
 
         const json = JSON.parse(raw.slice(start, end + 1));
-        // GUARANTEE we keep rows even if cells are null (so ITEM 1/2 show when NEW BID is blank)
-        const rows = json.table.rows.map(r => r.c.map(c => (c && c.v !== null ? c.v : '')));
+
+        // KEEP ROWS, even if cells are null → prevents losing ITEM 01/02 when NEW BID is blank
+        const rows = (json.table && Array.isArray(json.table.rows))
+          ? json.table.rows.map(r => {
+              const cells = (r && Array.isArray(r.c)) ? r.c : [];
+              // Always produce 3 cells [X, Y, Z] with '' fallback
+              return [0,1,2].map(i => {
+                const c = cells[i];
+                return (c && c.v !== null && c.v !== undefined) ? c.v : '';
+              });
+            })
+          : [];
+
         renderRows(rows);
       } catch (e) {
-        console.error("Sheet load error", e);
-        showDataError();
+        console.error('Sheet load error:', e);
+        // Keep table visible; optionally show a subtle console-only warning
       }
     }
 
@@ -426,29 +448,11 @@
       const rightCol   = document.getElementById('column-right');
       const leftCount  = leftCol.children.length;
       const rightCount = rightCol.children.length;
-      if (leftCount || rightCount) {
-        requestAnimationFrame(() =>
-          applyAlignedRowHeights(leftCount + rightCount, leftCount, rightCount)
-        );
-      }
+      requestAnimationFrame(() => applyAlignedRowHeights(leftCount + rightCount, leftCount, rightCount));
     };
     window.addEventListener('resize', reflow);
     window.addEventListener('orientationchange', reflow);
     document.addEventListener('fullscreenchange', reflow);
-
-    function showDataError() {
-      const leftCol  = document.getElementById('column-left');
-      const rightCol = document.getElementById('column-right');
-      leftCol.innerHTML  =
-        `<div class="item-row">
-           <div class="item-label"><strong>WAITING</strong> FOR BIDS…</div>
-           <div class="item-newbid"></div>
-           <div class="item-amount">€0</div>
-         </div>`;
-      rightCol.innerHTML = '';
-      requestAnimationFrame(() => applyAlignedRowHeights(1, 1, 0));
-      document.querySelector('.items-grid').style.opacity = 1;
-    }
 
     /* =======================
        CLOSING BANNER LOGIC (ON/OFF toggle)
@@ -488,14 +492,14 @@
 
     // Start immediately if toggle is ON; otherwise keep hidden
     (function initBannerViaToggle() {
-      if (String(BANNER_TOGGLE).toUpperCase() === 'OFF') {
+      if (String(BANNER_TOGGLE).toUpperCase() === 'ON') {
         startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
       } else {
         hideClosingBanner();
       }
-    })    })();
+    })();
   </script>
 
 </body>
-
+</html>
 
