@@ -85,7 +85,7 @@
       min-height: 0;
       display: flex;
       gap: 1.1vw;       /* horizontal gap between columns */
-      opacity: 1;       /* visible by default */
+      opacity: 1;       /* visible by default; JS will recompute heights later */
       transition: opacity 0.3s ease-in-out;
       margin-top: 0.2vh;
       margin-bottom: 0.2vh;
@@ -139,6 +139,7 @@
     }
 
     .item-newbid {
+      /* slightly smaller than other columns, centered, red */
       justify-content: center;
       text-align: center;
       color: var(--red);
@@ -246,6 +247,7 @@
       color: #fff;
       font-weight: 800;
       letter-spacing: 0.02em;
+      /* If text approaches 96vw, font size steps down slightly instead of wrapping */
       font-size: clamp(18px, 3.2vw, 56px);
       text-transform: uppercase;
 
@@ -278,8 +280,9 @@
     <!-- HEADER -->
     <div class="header">
       <div class="header-title">The Starry Night Ball</div>
-      <!-- Optional: Marymount Logo -->
-      <!-- <img class="marymount-logo-top" src="Marymount Logo.png" alt="Marymount Logo" /> -->
+      <!-- Optional: Marymount Logo
+      <img class="marymount-logo-top" src="Marymount Logo.png" alt="Marymount Logo" />
+      -->
     </div>
 
     <!-- 2-COLUMN GRID -->
@@ -292,16 +295,16 @@
   <!-- FOOTER – QR | SPONSORS | QR -->
   <div class="footer">
     <div class="footer-block">
-      2025 Marymount QR Code.jpeg
+      <img class="qr-img" src="2025 Marymount QR Code.jpeg" alt="QR Code to Bid (Left)" />
       <span>Scan QR code to bid</span>
     </div>
 
     <div class="footer-sponsors">
-      Marymount Footer Sponsors.png
+      <img src="Marymount Footer Sponsors.png" alt="Sponsors" />
     </div>
 
     <div class="footer-block">
-      2025 Marymount QR Code.jpeg
+      <img class="qr-img" src="2025 Marymount QR Code.jpeg" alt="QR Code to Bid (Right)" />
       <span>Scan QR code to bid</span>
     </div>
   </div>
@@ -362,7 +365,7 @@
       const sharedRowH = Math.floor(Math.max(24, Math.min(leftRowHRequired, rightRowHRequired))); // min 24px
 
       document.documentElement.style.setProperty('--rowH', sharedRowH + 'px');
-      itemsGrid.style.opacity = 1;
+      itemsGrid.style.opacity = 1;  // ensure visible
     }
 
     function makeRow(r) {
@@ -413,6 +416,7 @@
         if (start === -1 || end === -1) throw new Error('Unexpected sheet response');
 
         const json = JSON.parse(raw.slice(start, end + 1));
+
         // Null-safe, position-safe mapping: ALWAYS emit [X,Y,Z] for each row
         const rows = (json.table && Array.isArray(json.table.rows))
           ? json.table.rows.map(r => {
@@ -430,7 +434,7 @@
         renderRows(rows);
       } catch (e) {
         console.error('Sheet load error:', e);
-        // Keep table visible; do not clear columns on error
+        // Keep whatever is visible; do not clear the grid
       }
     }
 
@@ -490,7 +494,7 @@
     }
 
     // Start immediately if toggle is ON; otherwise keep hidden
-    (function initBanner    (function initBannerViaToggle() {
+    (function initBannerViaToggle() {
       if (String(BANNER_TOGGLE).toUpperCase() === 'ON') {
         startBannerFlashCycle(BANNER_ON_MS, BANNER_OFF_MS);
       } else {
@@ -499,5 +503,5 @@
     })();
   </script>
 
-</body>
+</</body>
 
