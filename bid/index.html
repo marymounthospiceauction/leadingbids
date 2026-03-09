@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Opening bidding form…</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    window.addEventListener('load', function () {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get('token');
+
+      if (!token) {
+        document.body.innerHTML = "<h2>Missing bid link</h2><p>This bidding link is incomplete.</p>";
+        return;
+      }
+
+      const appsScriptUrl = "https://script.google.com/macros/s/AKfycbzRkUTOimwK93NZ-yXRZsCOGyrwlXn80Wln2-lL5kgUzpYxofJUeDYpjdEZoZTM_Xnx/exec";
+      window.location.href = appsScriptUrl + "?token=" + encodeURIComponent(token);
+    });
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 60px;
+      color: #222;
+    }
+  </style>
+</head>
+<body>
+  <h2>Opening bidding form…</h2>
+  <p>Please wait.</p>
+</body>
+</html>
