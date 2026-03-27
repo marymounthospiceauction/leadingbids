@@ -144,9 +144,7 @@
     <div class="wrap">
       <div class="card">
         <div class="title">Place Your Bid</div>
-        <p class="subtitle">
-          Enter your bid details below.
-        </p>
+        <p class="subtitle">Enter your bid details below.</p>
 
         <input type="hidden" id="token" value="<?= data.prefill.token ?>">
         <input type="hidden" id="mode" value="<?= data.prefill.mode ?>">
@@ -162,14 +160,7 @@
 
         <div class="section">
           <label class="label" for="bidAmount">Bid Amount (€)</label>
-          <input
-            type="number"
-            id="bidAmount"
-            inputmode="numeric"
-            min="1"
-            step="1"
-            placeholder="Enter your bid amount"
-          />
+          <input type="number" id="bidAmount" inputmode="numeric" min="1" step="1" placeholder="Enter your bid amount" />
         </div>
 
         <div class="section">
@@ -204,9 +195,7 @@
           </div>
         </div>
 
-        <button class="btn" id="submitBtn" onclick="submitBid()">
-          Submit Bid
-        </button>
+        <button class="btn" id="submitBtn" onclick="submitBid()">Submit Bid</button>
 
         <div id="status" class="status"></div>
 
