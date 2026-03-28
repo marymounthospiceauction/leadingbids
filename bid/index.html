@@ -20,28 +20,25 @@
       --radius: 18px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
-      /* Prevent horizontal scroll on mobile */
       overflow-x: hidden;
     }
 
     .page {
       max-width: 760px;
       margin: 0 auto;
-      padding: 10px 14px 28px;
+      padding: 6px 10px 16px;
     }
 
+    /* Hero — full width, preserved aspect ratio, no height cap */
     .hero {
-      text-align: center;
-      margin-bottom: 18px;
+      margin-bottom: 8px;
     }
 
     .hero img {
@@ -54,42 +51,36 @@
 
     .card {
       background: var(--card);
-      border-radius: 22px;
-      padding: 22px 20px 24px;
+      border-radius: 18px;
+      padding: 14px 12px 16px;
       box-shadow: var(--shadow);
     }
 
     .title {
       text-align: center;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 800;
-      margin: 0 0 6px;
+      margin: 0 0 12px;
     }
 
-    .subtitle {
-      text-align: center;
-      color: var(--muted);
-      font-size: 15px;
-      margin: 0 0 24px;
-    }
-
+    /* Tighter sections */
     .section {
-      margin-bottom: 18px;
+      margin-bottom: 10px;
     }
 
     .label {
       display: block;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 5px;
       color: #1b1b1b;
       letter-spacing: 0.2px;
     }
 
     .required-star {
       color: var(--error);
-      margin-left: 4px;
+      margin-left: 3px;
     }
 
     input[type="text"],
@@ -98,20 +89,17 @@
     select {
       width: 100%;
       border: 2px solid var(--border);
-      border-radius: 18px;
-      padding: 16px 18px;
-      /* Set to 16px to prevent iOS "Zoom-on-focus" */
-      font-size: 16px;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 16px; /* keep 16px — prevents iOS zoom */
       background: #fffdf8;
       color: var(--text);
       outline: none;
-      /* Remove default OS styling */
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;
     }
 
-    /* Standard Select Styling */
     select {
       background-image:
         linear-gradient(45deg, transparent 50%, #444 50%),
@@ -122,17 +110,14 @@
       background-size: 6px 6px, 6px 6px;
       background-repeat: no-repeat;
       padding-right: 44px;
-      /* Ensure text doesn't wrap inside the collapsed box */
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    /* Specific Item Dropdown Overrides */
     #item {
       font-family: Calibri, Arial, sans-serif;
-      /* Keep at 16px for mobile usability */
-      font-size: 16px; 
+      font-size: 16px;
     }
 
     #item option {
@@ -140,65 +125,69 @@
       font-size: 16px;
     }
 
-    input:focus,
-    select:focus {
+    input:focus, select:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(195, 146, 67, 0.18);
     }
 
     .field-error {
-      margin-top: 8px;
+      margin-top: 5px;
       color: var(--error);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       display: none;
       line-height: 1.4;
     }
 
-    .hint {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 8px;
-      line-height: 1.4;
+    /* Two-column row for optional fields */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .two-col .section {
+      margin-bottom: 0;
     }
 
     .checkbox-wrap {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: 10px;
       background: rgba(255,255,255,0.45);
       border: 2px solid var(--border);
-      border-radius: 16px;
-      padding: 14px 14px;
+      border-radius: 12px;
+      padding: 10px 12px;
     }
 
     .checkbox-wrap input[type="checkbox"] {
       margin: 2px 0 0;
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       accent-color: var(--accent-dark);
       flex: 0 0 auto;
     }
 
     .checkbox-text {
-      font-size: 15px;
-      line-height: 1.45;
+      font-size: 14px;
+      line-height: 1.4;
       color: #1f1f1f;
     }
 
     .btn {
       width: 100%;
       border: none;
-      border-radius: 16px;
-      padding: 18px 18px;
-      font-size: 22px;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 18px;
       font-weight: 800;
       cursor: pointer;
       background: #000;
       color: #fff;
       box-shadow: 0 4px 14px rgba(0,0,0,0.14);
-      /* Prevent tap highlighting on mobile */
       -webkit-tap-highlight-color: transparent;
+      margin-top: 4px;
     }
 
     .btn:disabled {
@@ -212,24 +201,24 @@
     }
 
     .success-title {
-      font-size: 34px;
+      font-size: 30px;
       font-weight: 800;
       margin: 0 0 10px;
     }
 
     .success-message {
-      font-size: 17px;
+      font-size: 16px;
       color: var(--success);
       line-height: 1.5;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     .secondary-btn {
       width: 100%;
       border: none;
-      border-radius: 16px;
-      padding: 18px 18px;
-      font-size: 20px;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 18px;
       font-weight: 800;
       cursor: pointer;
       background: var(--accent);
@@ -243,7 +232,7 @@
     }
 
     .loading-note {
-      margin-top: 14px;
+      margin-top: 12px;
       color: var(--muted);
       font-size: 14px;
       display: none;
@@ -251,34 +240,27 @@
 
     .footer-note {
       text-align: center;
-      font-size: 12px;
+      font-size: 11px;
       color: #5c5547;
-      margin-top: 18px;
+      margin-top: 14px;
     }
 
     @media (max-width: 480px) {
-      .title,
-      .success-title {
-        font-size: 28px;
-      }
-
-      .btn,
-      .secondary-btn {
-        font-size: 20px;
-      }
+      .title, .success-title { font-size: 18px; }
+      .btn, .secondary-btn { font-size: 17px; }
     }
   </style>
 </head>
 <body>
   <div class="page">
+
     <div class="hero">
-      <img src="/Marymount%20Header.png" alt="Marymount Header">
+      <img src="/Marymount%20Header.png" alt="Marymount Ball Auction">
     </div>
 
     <div class="card">
       <div id="formScreen">
         <h1 class="title">Place Your Bid</h1>
-        <p class="subtitle">Enter your bid details below.</p>
 
         <input type="hidden" id="itemNumber">
         <input type="hidden" id="token">
@@ -288,7 +270,6 @@
           <select id="item">
             <option value="">Loading items...</option>
           </select>
-          <div class="hint">Choose the item you would like to bid on.</div>
           <div id="itemError" class="field-error"></div>
         </div>
 
@@ -310,14 +291,16 @@
           <div id="mobileError" class="field-error"></div>
         </div>
 
-        <div class="section">
-          <label class="label" for="emailAddress">Email Address (Optional)</label>
-          <input id="emailAddress" type="email" placeholder="Enter your email">
-        </div>
-
-        <div class="section">
-          <label class="label" for="tableValue">Table (Optional)</label>
-          <input id="tableValue" type="text" placeholder="Enter table number/name">
+        <!-- Email + Table side by side -->
+        <div class="two-col">
+          <div class="section">
+            <label class="label" for="emailAddress">Email <span style="font-weight:400;text-transform:none;font-size:11px;color:var(--muted);">(optional)</span></label>
+            <input id="emailAddress" type="email" placeholder="your@email.com">
+          </div>
+          <div class="section">
+            <label class="label" for="tableValue">Table <span style="font-weight:400;text-transform:none;font-size:11px;color:var(--muted);">(optional)</span></label>
+            <input id="tableValue" type="text" placeholder="e.g. 12">
+          </div>
         </div>
 
         <div class="section">
@@ -376,15 +359,8 @@
       return params.get("token") || "";
     }
 
-    function hideError(el) {
-      el.textContent = "";
-      el.style.display = "none";
-    }
-
-    function showError(el, message) {
-      el.textContent = message;
-      el.style.display = "block";
-    }
+    function hideError(el) { el.textContent = ""; el.style.display = "none"; }
+    function showError(el, message) { el.textContent = message; el.style.display = "block"; }
 
     function clearAllErrors() {
       hideError(itemErrorEl);
@@ -436,31 +412,20 @@
         hideError(itemErrorEl);
       };
 
-      if (selectedItem && selectedItemNumber) {
-        itemNumberEl.value = selectedItemNumber;
-      } else {
-        itemNumberEl.value = "";
-      }
+      itemNumberEl.value = (selectedItem && selectedItemNumber) ? selectedItemNumber : "";
     }
 
     async function apiRequest(payload) {
       const res = await fetch(SCRIPT_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8"
-        },
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
       });
 
       const text = await res.text();
-
       let json;
-      try {
-        json = JSON.parse(text);
-      } catch (e) {
-        throw new Error("Invalid response from server.");
-      }
-
+      try { json = JSON.parse(text); }
+      catch (e) { throw new Error("Invalid response from server."); }
       return json;
     }
 
@@ -468,14 +433,9 @@
       const token = getTokenFromUrl();
       tokenEl.value = token;
 
-      const result = await apiRequest({
-        action: "getFormData",
-        token: token
-      });
+      const result = await apiRequest({ action: "getFormData", token });
 
-      if (!result.ok) {
-        throw new Error(result.message || "Could not load form data.");
-      }
+      if (!result.ok) throw new Error(result.message || "Could not load form data.");
 
       const data = result.data || {};
       const items = data.items || [];
@@ -543,9 +503,7 @@
     }
 
     async function submitBid() {
-      if (!validateForm()) {
-        return;
-      }
+      if (!validateForm()) return;
 
       submitBtnEl.disabled = true;
       submitBtnEl.textContent = "Submitting...";
@@ -564,9 +522,7 @@
           consent: consentCheckboxEl.checked ? "Yes" : "No"
         });
 
-        if (!result.ok) {
-          throw new Error(result.message || "Your bid could not be submitted.");
-        }
+        if (!result.ok) throw new Error(result.message || "Your bid could not be submitted.");
 
         showSuccessScreen(result.message || "Thank you. Your bid has been received.");
       } catch (error) {
