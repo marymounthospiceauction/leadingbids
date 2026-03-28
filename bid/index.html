@@ -1,101 +1,180 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Marymount Ball Auction</title>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marymount Ball Auction – Place Your Bid</title>
   <style>
+    :root {
+      --bg: #decca1;
+      --card: #f8f2e4;
+      --accent: #c39243;
+      --accent-dark: #a87933;
+      --text: #111111;
+      --muted: #5f5a4f;
+      --border: #d8c6a0;
+      --error: #b42318;
+      --success: #166534;
+      --white: #ffffff;
+      --shadow: 0 8px 24px rgba(0,0,0,0.12);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f7f3ea;
-      color: #222;
+      background: var(--bg);
+      color: var(--text);
     }
 
-    .header {
-      width: 100%;
-      background: #fff;
-      text-align: center;
-    }
-
-    .header img {
-      width: 100%;
-      max-height: 120px;
-      object-fit: contain;
-    }
-
-    .wrap {
-      max-width: 480px;
+    .page {
+      max-width: 760px;
       margin: 0 auto;
-      padding: 16px;
+      padding: 10px 14px 28px;
+    }
+
+    .hero {
+      background: transparent;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .hero img {
+      width: 100%;
+      max-width: 640px;
+      border-radius: 6px;
+      display: block;
+      margin: 0 auto;
     }
 
     .card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      background: var(--card);
+      border-radius: 22px;
+      padding: 22px 20px 24px;
+      box-shadow: var(--shadow);
     }
 
     .title {
-      font-size: 24px;
-      font-weight: 700;
       text-align: center;
-      margin-bottom: 8px;
+      font-size: 34px;
+      font-weight: 800;
+      margin: 0 0 8px;
     }
 
     .subtitle {
       text-align: center;
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 15px;
+      margin: 0 0 24px;
+    }
+
+    .section {
+      margin-bottom: 18px;
     }
 
     .label {
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 6px;
       display: block;
+      font-size: 13px;
+      font-weight: 800;
       text-transform: uppercase;
+      margin-bottom: 8px;
+      color: #1b1b1b;
+      letter-spacing: 0.2px;
     }
 
-    input, select {
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    select {
       width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid #ddd;
-      margin-bottom: 10px;
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 18px;
       font-size: 16px;
-      box-sizing: border-box;
+      background: #fffdf8;
+      color: var(--text);
+      outline: none;
+      appearance: none;
+    }
+
+    select {
+      background-image:
+        linear-gradient(45deg, transparent 50%, #444 50%),
+        linear-gradient(135deg, #444 50%, transparent 50%);
+      background-position:
+        calc(100% - 22px) calc(50% - 3px),
+        calc(100% - 16px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 44px;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(195, 146, 67, 0.18);
     }
 
     .hint {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.4;
     }
 
-    .error {
-      color: #b91c1c;
+    .bid-error {
+      margin-top: 8px;
+      color: var(--error);
       font-size: 14px;
-      margin-bottom: 10px;
+      font-weight: 700;
       display: none;
+      line-height: 1.4;
+    }
+
+    .checkbox-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(255,255,255,0.45);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 14px;
+    }
+
+    .checkbox-wrap input[type="checkbox"] {
+      margin: 2px 0 0;
+      width: 22px;
+      height: 22px;
+      accent-color: var(--accent-dark);
+      flex: 0 0 auto;
+    }
+
+    .checkbox-text {
+      font-size: 15px;
+      line-height: 1.45;
+      color: #1f1f1f;
     }
 
     .btn {
       width: 100%;
-      padding: 16px;
-      border-radius: 12px;
+      border: none;
+      border-radius: 16px;
+      padding: 18px 18px;
+      font-size: 22px;
+      font-weight: 800;
+      cursor: pointer;
       background: #000;
       color: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.14);
     }
 
     .btn:disabled {
-      opacity: 0.6;
+      opacity: 0.65;
+      cursor: not-allowed;
     }
 
     .success-screen {
@@ -104,160 +183,344 @@
     }
 
     .success-title {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 10px;
+      font-size: 34px;
+      font-weight: 800;
+      margin: 0 0 10px;
     }
 
     .success-message {
-      color: #166534;
-      margin-bottom: 20px;
+      font-size: 17px;
+      color: var(--success);
+      line-height: 1.5;
+      margin-bottom: 24px;
     }
 
     .secondary-btn {
-      background: #fff;
-      color: #000;
-      border: 2px solid #000;
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 18px 18px;
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+      background: var(--accent);
+      color: #111;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.14);
     }
 
+    .secondary-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .loading-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+      display: none;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 12px;
+      color: #5c5547;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 480px) {
+      .title,
+      .success-title {
+        font-size: 28px;
+      }
+
+      .btn,
+      .secondary-btn {
+        font-size: 20px;
+      }
+    }
   </style>
 </head>
-
 <body>
-
-<div class="header">
-  <img src="../Marymount Header.png" alt="Marymount Header">
-</div>
-
-<div class="wrap">
-  <div class="card">
-
-    <!-- FORM -->
-    <div id="formScreen">
-      <div class="title">Place Your Bid</div>
-      <div class="subtitle">Enter your bid details below</div>
-
-      <label class="label">Item</label>
-      <select id="item"></select>
-      <div class="hint">Choose the item you would like to bid on.</div>
-
-      <label class="label">Bid Amount (€)</label>
-      <input id="bidAmount" type="number">
-      <div id="bidError" class="error"></div>
-
-      <label class="label">Your Name</label>
-      <input id="name">
-
-      <label class="label">Mobile Number</label>
-      <input id="mobile">
-
-      <label class="label">Email (Optional)</label>
-      <input id="email">
-
-      <label class="label">Table (Optional)</label>
-      <input id="table">
-
-      <label>
-        <input type="checkbox" id="consent">
-        I agree to WhatsApp notifications
-      </label>
-
-      <br><br>
-
-      <button class="btn" id="submitBtn" onclick="submitBid()">Submit Bid</button>
+  <div class="page">
+    <div class="hero">
+      <img src="/leadingbids/Marymount%20Header.png" alt="Marymount Header">
     </div>
 
-    <!-- SUCCESS -->
-    <div id="successScreen" class="success-screen">
-      <div class="success-title">Bid Received</div>
-      <div class="success-message">Thank you. Your bid has been received.</div>
+    <div class="card">
+      <div id="formScreen">
+        <h1 class="title">Place Your Bid</h1>
+        <p class="subtitle">Enter your bid details below.</p>
 
-      <button class="btn secondary-btn" onclick="resetForm()">
-        Place another bid
-      </button>
+        <input type="hidden" id="itemNumber">
+        <input type="hidden" id="token">
+
+        <div class="section">
+          <label class="label" for="item">Item</label>
+          <select id="item">
+            <option value="">Loading items...</option>
+          </select>
+          <div class="hint">Choose the item you would like to bid on.</div>
+        </div>
+
+        <div class="section">
+          <label class="label" for="bidAmount">Bid Amount (€)</label>
+          <input id="bidAmount" type="number" inputmode="numeric" min="1" step="1" placeholder="Enter your bid amount">
+          <div id="bidError" class="bid-error"></div>
+        </div>
+
+        <div class="section">
+          <label class="label" for="yourName">Your Name</label>
+          <input id="yourName" type="text" placeholder="Enter your name">
+        </div>
+
+        <div class="section">
+          <label class="label" for="mobileNumber">Mobile Number</label>
+          <input id="mobileNumber" type="text" placeholder="Enter your mobile number">
+        </div>
+
+        <div class="section">
+          <label class="label" for="emailAddress">Email Address (Optional)</label>
+          <input id="emailAddress" type="email" placeholder="Enter your email">
+        </div>
+
+        <div class="section">
+          <label class="label" for="tableValue">Table (Optional)</label>
+          <input id="tableValue" type="text" placeholder="Enter table number/name">
+        </div>
+
+        <div class="section">
+          <div class="checkbox-wrap">
+            <input type="checkbox" id="consentCheckbox">
+            <div class="checkbox-text">
+              I agree to receive WhatsApp notifications regarding my bid.
+            </div>
+          </div>
+        </div>
+
+        <button id="submitBtn" class="btn" type="button">Submit Bid</button>
+        <div class="footer-note">Marymount Ball Auction</div>
+      </div>
+
+      <div id="successScreen" class="success-screen">
+        <h1 class="success-title">Bid Received</h1>
+        <div id="successMessage" class="success-message">
+          Thank you. Your bid has been received.
+        </div>
+        <button id="anotherBidBtn" class="secondary-btn" type="button">Place another bid</button>
+        <div id="loadingNote" class="loading-note">Refreshing items…</div>
+        <div class="footer-note">Marymount Ball Auction</div>
+      </div>
     </div>
-
   </div>
-</div>
 
-<script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
+  <script>
+    // REPLACE THIS WITH YOUR LIVE APPS SCRIPT WEB APP URL
+    const SCRIPT_URL = "PASTE_YOUR_EXEC_URL_HERE";
 
-// 🔥 Load items
-async function loadItems() {
-  const res = await fetch(SCRIPT_URL + "?action=getItems");
-  const items = await res.json();
+    const itemEl = document.getElementById("item");
+    const itemNumberEl = document.getElementById("itemNumber");
+    const bidAmountEl = document.getElementById("bidAmount");
+    const yourNameEl = document.getElementById("yourName");
+    const mobileNumberEl = document.getElementById("mobileNumber");
+    const emailAddressEl = document.getElementById("emailAddress");
+    const tableValueEl = document.getElementById("tableValue");
+    const consentCheckboxEl = document.getElementById("consentCheckbox");
+    const bidErrorEl = document.getElementById("bidError");
+    const submitBtnEl = document.getElementById("submitBtn");
+    const anotherBidBtnEl = document.getElementById("anotherBidBtn");
+    const loadingNoteEl = document.getElementById("loadingNote");
+    const formScreenEl = document.getElementById("formScreen");
+    const successScreenEl = document.getElementById("successScreen");
+    const successMessageEl = document.getElementById("successMessage");
+    const tokenEl = document.getElementById("token");
 
-  const select = document.getElementById("item");
-  select.innerHTML = '<option value="">Select an item</option>';
+    function getTokenFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("token") || "";
+    }
 
-  items.forEach(i => {
-    const opt = document.createElement("option");
-    opt.value = i.item;
-    opt.textContent = i.item;
-    opt.dataset.num = i.itemNumber;
-    select.appendChild(opt);
-  });
-}
+    function clearBidError() {
+      bidErrorEl.textContent = "";
+      bidErrorEl.style.display = "none";
+    }
 
-// 🔥 Submit
-async function submitBid() {
-  document.getElementById("bidError").style.display = "none";
+    function showBidError(message) {
+      bidErrorEl.textContent = message || "Something went wrong.";
+      bidErrorEl.style.display = "block";
+      bidAmountEl.focus();
+      bidAmountEl.select();
+    }
 
-  const btn = document.getElementById("submitBtn");
-  btn.disabled = true;
-  btn.innerText = "Submitting...";
+    function showSuccessScreen(message) {
+      successMessageEl.textContent = message || "Thank you. Your bid has been received.";
+      formScreenEl.style.display = "none";
+      successScreenEl.style.display = "block";
+    }
 
-  const data = {
-    item: item.value,
-    itemNumber: item.options[item.selectedIndex].dataset.num,
-    bidAmount: bidAmount.value,
-    yourName: name.value,
-    mobileNumber: mobile.value,
-    emailAddress: email.value,
-    tableValue: table.value,
-    consent: consent.checked ? "Yes" : "No"
-  };
+    function showFormScreen() {
+      successScreenEl.style.display = "none";
+      formScreenEl.style.display = "block";
+    }
 
-  try {
-    const res = await fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(data)
+    function buildItemDropdown(items, selectedItem = "", selectedItemNumber = "") {
+      itemEl.innerHTML = "";
+
+      const emptyOption = document.createElement("option");
+      emptyOption.value = "";
+      emptyOption.textContent = "Select an item";
+      itemEl.appendChild(emptyOption);
+
+      items.forEach(row => {
+        const option = document.createElement("option");
+        option.value = row.item;
+        option.textContent = row.item;
+        option.dataset.itemNumber = row.itemNumber;
+        if (row.item === selectedItem && row.itemNumber === selectedItemNumber) {
+          option.selected = true;
+        }
+        itemEl.appendChild(option);
+      });
+
+      itemEl.addEventListener("change", function () {
+        const selected = itemEl.options[itemEl.selectedIndex];
+        itemNumberEl.value = selected ? (selected.dataset.itemNumber || "") : "";
+      });
+
+      if (selectedItem && selectedItemNumber) {
+        itemNumberEl.value = selectedItemNumber;
+      } else {
+        itemNumberEl.value = "";
+      }
+    }
+
+    async function apiRequest(payload) {
+      const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const text = await res.text();
+
+      let json;
+      try {
+        json = JSON.parse(text);
+      } catch (e) {
+        throw new Error("Invalid response from server.");
+      }
+
+      return json;
+    }
+
+    async function loadItemsAndPrefill() {
+      const token = getTokenFromUrl();
+      tokenEl.value = token;
+
+      const result = await apiRequest({
+        action: "getFormData",
+        token: token
+      });
+
+      if (!result.ok) {
+        throw new Error(result.message || "Could not load form data.");
+      }
+
+      const data = result.data || {};
+      const items = data.items || [];
+      const prefill = data.prefill || {};
+
+      buildItemDropdown(items, prefill.item || "", prefill.itemNumber || "");
+
+      yourNameEl.value = prefill.yourName || "";
+      mobileNumberEl.value = prefill.mobileNumber || "";
+      emailAddressEl.value = prefill.emailAddress || "";
+      tableValueEl.value = prefill.tableValue || "";
+      consentCheckboxEl.checked = (prefill.consent || "No") === "Yes";
+
+      if (prefill.mode === "token") {
+        itemEl.disabled = true;
+        yourNameEl.readOnly = true;
+        mobileNumberEl.readOnly = true;
+        emailAddressEl.readOnly = true;
+        tableValueEl.readOnly = true;
+        bidAmountEl.focus();
+      } else {
+        itemEl.disabled = false;
+        yourNameEl.readOnly = false;
+        mobileNumberEl.readOnly = false;
+        emailAddressEl.readOnly = false;
+        tableValueEl.readOnly = false;
+      }
+    }
+
+    async function submitBid() {
+      clearBidError();
+      submitBtnEl.disabled = true;
+      submitBtnEl.textContent = "Submitting...";
+
+      try {
+        const result = await apiRequest({
+          action: "submitBid",
+          token: tokenEl.value,
+          item: itemEl.value,
+          itemNumber: itemNumberEl.value,
+          bidAmount: bidAmountEl.value,
+          yourName: yourNameEl.value,
+          mobileNumber: mobileNumberEl.value,
+          emailAddress: emailAddressEl.value,
+          tableValue: tableValueEl.value,
+          consent: consentCheckboxEl.checked ? "Yes" : "No"
+        });
+
+        if (!result.ok) {
+          throw new Error(result.message || "Your bid could not be submitted.");
+        }
+
+        showSuccessScreen(result.message || "Thank you. Your bid has been received.");
+      } catch (error) {
+        showBidError(error.message || "Your bid could not be submitted.");
+      } finally {
+        submitBtnEl.disabled = false;
+        submitBtnEl.textContent = "Submit Bid";
+      }
+    }
+
+    async function placeAnotherBid() {
+      anotherBidBtnEl.disabled = true;
+      loadingNoteEl.style.display = "block";
+
+      try {
+        tokenEl.value = "";
+        window.history.replaceState({}, "", window.location.pathname);
+
+        await loadItemsAndPrefill();
+
+        bidAmountEl.value = "";
+        yourNameEl.value = "";
+        mobileNumberEl.value = "";
+        emailAddressEl.value = "";
+        tableValueEl.value = "";
+        consentCheckboxEl.checked = false;
+        clearBidError();
+        showFormScreen();
+        itemEl.focus();
+      } catch (error) {
+        alert(error.message || "Could not refresh the form.");
+      } finally {
+        anotherBidBtnEl.disabled = false;
+        loadingNoteEl.style.display = "none";
+      }
+    }
+
+    submitBtnEl.addEventListener("click", submitBid);
+    anotherBidBtnEl.addEventListener("click", placeAnotherBid);
+
+    loadItemsAndPrefill().catch(err => {
+      itemEl.innerHTML = '<option value="">Could not load items</option>';
+      showBidError(err.message || "Could not load the form.");
     });
-
-    const result = await res.json();
-
-    if (!result.ok) throw new Error(result.message);
-
-    document.getElementById("formScreen").style.display = "none";
-    document.getElementById("successScreen").style.display = "block";
-
-  } catch (e) {
-    document.getElementById("bidError").innerText = e.message;
-    document.getElementById("bidError").style.display = "block";
-
-    bidAmount.focus();
-    bidAmount.select();
-  }
-
-  btn.disabled = false;
-  btn.innerText = "Submit Bid";
-}
-
-// 🔥 Reset
-function resetForm() {
-  document.getElementById("successScreen").style.display = "none";
-  document.getElementById("formScreen").style.display = "block";
-
-  document.querySelectorAll("input").forEach(i => i.value = "");
-  consent.checked = false;
-
-  loadItems();
-}
-
-// Init
-loadItems();
-</script>
-
+  </script>
 </body>
 </html>
