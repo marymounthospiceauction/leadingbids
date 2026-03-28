@@ -29,6 +29,8 @@
       font-family: Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
+      /* Prevent horizontal scroll on mobile */
+      overflow-x: hidden;
     }
 
     .page {
@@ -98,13 +100,18 @@
       border: 2px solid var(--border);
       border-radius: 18px;
       padding: 16px 18px;
+      /* Set to 16px to prevent iOS "Zoom-on-focus" */
       font-size: 16px;
       background: #fffdf8;
       color: var(--text);
       outline: none;
+      /* Remove default OS styling */
+      -webkit-appearance: none;
+      -moz-appearance: none;
       appearance: none;
     }
 
+    /* Standard Select Styling */
     select {
       background-image:
         linear-gradient(45deg, transparent 50%, #444 50%),
@@ -115,21 +122,22 @@
       background-size: 6px 6px, 6px 6px;
       background-repeat: no-repeat;
       padding-right: 44px;
-    }
-
-    /* ITEM dropdown styling */
-    #item {
-      font-family: Calibri, Arial, sans-serif;
-      font-size: 10pt;
+      /* Ensure text doesn't wrap inside the collapsed box */
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
+    /* Specific Item Dropdown Overrides */
+    #item {
+      font-family: Calibri, Arial, sans-serif;
+      /* Keep at 16px for mobile usability */
+      font-size: 16px; 
+    }
+
     #item option {
       font-family: Calibri, Arial, sans-serif;
-      font-size: 10pt;
-      white-space: nowrap;
+      font-size: 16px;
     }
 
     input:focus,
@@ -189,6 +197,8 @@
       background: #000;
       color: #fff;
       box-shadow: 0 4px 14px rgba(0,0,0,0.14);
+      /* Prevent tap highlighting on mobile */
+      -webkit-tap-highlight-color: transparent;
     }
 
     .btn:disabled {
