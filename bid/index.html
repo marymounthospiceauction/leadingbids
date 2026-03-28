@@ -1,34 +1,263 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Opening bidding form…</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script>
-    window.addEventListener('load', function () {
-      const params = new URLSearchParams(window.location.search);
-      const token = params.get('token');
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marymount Ball Auction</title>
 
-      if (!token) {
-        document.body.innerHTML = "<h2>Missing bid link</h2><p>This bidding link is incomplete.</p>";
-        return;
-      }
-
-      const appsScriptUrl = "https://script.google.com/macros/s/AKfycbwDtfRigoOYymPaNc5rCMP4gdd5_uZOXNEik88Kw2QRLLdoOfQy316lmNvzB_EsB7CrYA/exec";
-      window.location.replace(appsScriptUrl + "?token=" + encodeURIComponent(token));
-    });
-  </script>
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      text-align: center;
-      padding-top: 60px;
+      background: #f7f3ea;
       color: #222;
     }
+
+    .header {
+      width: 100%;
+      background: #fff;
+      text-align: center;
+    }
+
+    .header img {
+      width: 100%;
+      max-height: 120px;
+      object-fit: contain;
+    }
+
+    .wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .label {
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: block;
+      text-transform: uppercase;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .error {
+      color: #b91c1c;
+      font-size: 14px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      background: #000;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+    }
+
+    .success-screen {
+      display: none;
+      text-align: center;
+    }
+
+    .success-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .success-message {
+      color: #166534;
+      margin-bottom: 20px;
+    }
+
+    .secondary-btn {
+      background: #fff;
+      color: #000;
+      border: 2px solid #000;
+    }
+
   </style>
 </head>
+
 <body>
-  <h2>Opening bidding form…</h2>
-  <p>Please wait.</p>
+
+<div class="header">
+  <img src="../Marymount Header.png" alt="Marymount Header">
+</div>
+
+<div class="wrap">
+  <div class="card">
+
+    <!-- FORM -->
+    <div id="formScreen">
+      <div class="title">Place Your Bid</div>
+      <div class="subtitle">Enter your bid details below</div>
+
+      <label class="label">Item</label>
+      <select id="item"></select>
+      <div class="hint">Choose the item you would like to bid on.</div>
+
+      <label class="label">Bid Amount (€)</label>
+      <input id="bidAmount" type="number">
+      <div id="bidError" class="error"></div>
+
+      <label class="label">Your Name</label>
+      <input id="name">
+
+      <label class="label">Mobile Number</label>
+      <input id="mobile">
+
+      <label class="label">Email (Optional)</label>
+      <input id="email">
+
+      <label class="label">Table (Optional)</label>
+      <input id="table">
+
+      <label>
+        <input type="checkbox" id="consent">
+        I agree to WhatsApp notifications
+      </label>
+
+      <br><br>
+
+      <button class="btn" id="submitBtn" onclick="submitBid()">Submit Bid</button>
+    </div>
+
+    <!-- SUCCESS -->
+    <div id="successScreen" class="success-screen">
+      <div class="success-title">Bid Received</div>
+      <div class="success-message">Thank you. Your bid has been received.</div>
+
+      <button class="btn secondary-btn" onclick="resetForm()">
+        Place another bid
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
+
+// 🔥 Load items
+async function loadItems() {
+  const res = await fetch(SCRIPT_URL + "?action=getItems");
+  const items = await res.json();
+
+  const select = document.getElementById("item");
+  select.innerHTML = '<option value="">Select an item</option>';
+
+  items.forEach(i => {
+    const opt = document.createElement("option");
+    opt.value = i.item;
+    opt.textContent = i.item;
+    opt.dataset.num = i.itemNumber;
+    select.appendChild(opt);
+  });
+}
+
+// 🔥 Submit
+async function submitBid() {
+  document.getElementById("bidError").style.display = "none";
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  btn.innerText = "Submitting...";
+
+  const data = {
+    item: item.value,
+    itemNumber: item.options[item.selectedIndex].dataset.num,
+    bidAmount: bidAmount.value,
+    yourName: name.value,
+    mobileNumber: mobile.value,
+    emailAddress: email.value,
+    tableValue: table.value,
+    consent: consent.checked ? "Yes" : "No"
+  };
+
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if (!result.ok) throw new Error(result.message);
+
+    document.getElementById("formScreen").style.display = "none";
+    document.getElementById("successScreen").style.display = "block";
+
+  } catch (e) {
+    document.getElementById("bidError").innerText = e.message;
+    document.getElementById("bidError").style.display = "block";
+
+    bidAmount.focus();
+    bidAmount.select();
+  }
+
+  btn.disabled = false;
+  btn.innerText = "Submit Bid";
+}
+
+// 🔥 Reset
+function resetForm() {
+  document.getElementById("successScreen").style.display = "none";
+  document.getElementById("formScreen").style.display = "block";
+
+  document.querySelectorAll("input").forEach(i => i.value = "");
+  consent.checked = false;
+
+  loadItems();
+}
+
+// Init
+loadItems();
+</script>
+
 </body>
 </html>
