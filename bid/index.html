@@ -36,7 +36,6 @@
       padding: 6px 10px 16px;
     }
 
-    /* Hero — full width, preserved aspect ratio, no height cap */
     .hero {
       margin-bottom: 8px;
     }
@@ -63,7 +62,6 @@
       margin: 0 0 12px;
     }
 
-    /* Tighter sections */
     .section {
       margin-bottom: 10px;
     }
@@ -91,7 +89,7 @@
       border: 2px solid var(--border);
       border-radius: 12px;
       padding: 11px 14px;
-      font-size: 16px; /* keep 16px — prevents iOS zoom */
+      font-size: 16px;
       background: #fffdf8;
       color: var(--text);
       outline: none;
@@ -139,7 +137,6 @@
       line-height: 1.4;
     }
 
-    /* Two-column row for optional fields */
     .two-col {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -188,6 +185,9 @@
       box-shadow: 0 4px 14px rgba(0,0,0,0.14);
       -webkit-tap-highlight-color: transparent;
       margin-top: 4px;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
     }
 
     .btn:disabled {
@@ -195,12 +195,14 @@
       cursor: not-allowed;
     }
 
-    .success-screen {
+    .success-screen,
+    .closed-screen {
       display: none;
       text-align: center;
     }
 
-    .success-title {
+    .success-title,
+    .closed-title {
       font-size: 30px;
       font-weight: 800;
       margin: 0 0 10px;
@@ -211,6 +213,20 @@
       color: var(--success);
       line-height: 1.5;
       margin-bottom: 20px;
+    }
+
+    .closed-message {
+      font-size: 16px;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .closed-note {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.4;
+      margin-bottom: 18px;
     }
 
     .secondary-btn {
@@ -224,6 +240,9 @@
       background: var(--accent);
       color: #111;
       box-shadow: 0 4px 14px rgba(0,0,0,0.14);
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
     }
 
     .secondary-btn:disabled {
@@ -245,8 +264,14 @@
       margin-top: 14px;
     }
 
+    .closed-actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
     @media (max-width: 480px) {
-      .title, .success-title { font-size: 18px; }
+      .title, .success-title, .closed-title { font-size: 18px; }
       .btn, .secondary-btn { font-size: 17px; }
     }
   </style>
@@ -291,7 +316,6 @@
           <div id="mobileError" class="field-error"></div>
         </div>
 
-        <!-- Email + Table side by side -->
         <div class="two-col">
           <div class="section">
             <label class="label" for="emailAddress">Email <span style="font-weight:400;text-transform:none;font-size:11px;color:var(--muted);">(optional)</span></label>
@@ -326,11 +350,26 @@
         <div id="loadingNote" class="loading-note">Refreshing items…</div>
         <div class="footer-note">Marymount Ball Auction</div>
       </div>
+
+      <div id="closedScreen" class="closed-screen">
+        <h1 class="closed-title">Bidding Closed</h1>
+        <div id="closedMessage" class="closed-message">
+          The web bidding form is currently closed.
+        </div>
+        <div class="closed-note">
+          Please speak to the Marymount Ball Committee if you need assistance.
+        </div>
+        <div class="closed-actions">
+          <a id="viewLeadingBidsBtn" class="secondary-btn" href="https://marymountauction2026.ie/" target="_self">View Leading Bids</a>
+        </div>
+        <div class="footer-note">Marymount Ball Auction</div>
+      </div>
     </div>
   </div>
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
+    const LEADING_BIDS_URL = "https://marymountauction2026.ie/";
 
     const itemEl = document.getElementById("item");
     const itemNumberEl = document.getElementById("itemNumber");
@@ -345,8 +384,11 @@
     const loadingNoteEl = document.getElementById("loadingNote");
     const formScreenEl = document.getElementById("formScreen");
     const successScreenEl = document.getElementById("successScreen");
+    const closedScreenEl = document.getElementById("closedScreen");
     const successMessageEl = document.getElementById("successMessage");
+    const closedMessageEl = document.getElementById("closedMessage");
     const tokenEl = document.getElementById("token");
+    const viewLeadingBidsBtnEl = document.getElementById("viewLeadingBidsBtn");
 
     const itemErrorEl = document.getElementById("itemError");
     const bidErrorEl = document.getElementById("bidError");
@@ -354,9 +396,15 @@
     const mobileErrorEl = document.getElementById("mobileError");
     const consentErrorEl = document.getElementById("consentError");
 
+    viewLeadingBidsBtnEl.href = LEADING_BIDS_URL;
+
     function getTokenFromUrl() {
       const params = new URLSearchParams(window.location.search);
       return params.get("token") || "";
+    }
+
+    function isClosedMessage(message) {
+      return String(message || "").toLowerCase().includes("closed");
     }
 
     function hideError(el) { el.textContent = ""; el.style.display = "none"; }
@@ -379,10 +427,19 @@
     function showSuccessScreen(message) {
       successMessageEl.textContent = message || "Thank you. Your bid has been received.";
       formScreenEl.style.display = "none";
+      closedScreenEl.style.display = "none";
       successScreenEl.style.display = "block";
     }
 
+    function showClosedScreen(message) {
+      closedMessageEl.textContent = message || "The web bidding form is currently closed.";
+      formScreenEl.style.display = "none";
+      successScreenEl.style.display = "none";
+      closedScreenEl.style.display = "block";
+    }
+
     function showFormScreen() {
+      closedScreenEl.style.display = "none";
       successScreenEl.style.display = "none";
       formScreenEl.style.display = "block";
     }
@@ -435,7 +492,13 @@
 
       const result = await apiRequest({ action: "getFormData", token });
 
-      if (!result.ok) throw new Error(result.message || "Could not load form data.");
+      if (!result.ok) {
+        if (isClosedMessage(result.message)) {
+          showClosedScreen(result.message);
+          return;
+        }
+        throw new Error(result.message || "Could not load form data.");
+      }
 
       const data = result.data || {};
       const items = data.items || [];
@@ -522,10 +585,20 @@
           consent: consentCheckboxEl.checked ? "Yes" : "No"
         });
 
-        if (!result.ok) throw new Error(result.message || "Your bid could not be submitted.");
+        if (!result.ok) {
+          if (isClosedMessage(result.message)) {
+            showClosedScreen(result.message);
+            return;
+          }
+          throw new Error(result.message || "Your bid could not be submitted.");
+        }
 
         showSuccessScreen(result.message || "Thank you. Your bid has been received.");
       } catch (error) {
+        if (isClosedMessage(error.message)) {
+          showClosedScreen(error.message);
+          return;
+        }
         showBidError(error.message || "Your bid could not be submitted.");
       } finally {
         submitBtnEl.disabled = false;
@@ -543,6 +616,10 @@
 
         await loadItemsAndPrefill();
 
+        if (closedScreenEl.style.display === "block") {
+          return;
+        }
+
         bidAmountEl.value = "";
         yourNameEl.value = "";
         mobileNumberEl.value = "";
@@ -553,7 +630,11 @@
         showFormScreen();
         itemEl.focus();
       } catch (error) {
-        alert(error.message || "Could not refresh the form.");
+        if (isClosedMessage(error.message)) {
+          showClosedScreen(error.message);
+          return;
+        }
+        showBidError(error.message || "Could not refresh the form.");
       } finally {
         anotherBidBtnEl.disabled = false;
         loadingNoteEl.style.display = "none";
@@ -569,6 +650,10 @@
     consentCheckboxEl.addEventListener("change", () => hideError(consentErrorEl));
 
     loadItemsAndPrefill().catch(err => {
+      if (isClosedMessage(err.message)) {
+        showClosedScreen(err.message);
+        return;
+      }
       itemEl.innerHTML = '<option value="">Could not load items</option>';
       showBidError(err.message || "Could not load the form.");
     });
