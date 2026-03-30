@@ -83,7 +83,7 @@
 
     input[type="text"],
     input[type="email"],
-    input[type="number"],
+    input[type="tel"],
     select {
       width: 100%;
       border: 2px solid var(--border);
@@ -302,7 +302,7 @@
           <label class="label" for="bidAmount">Bid Amount (€)<span class="required-star">*</span></label>
           <input
             id="bidAmount"
-            type="text"
+            type="tel"
             inputmode="numeric"
             autocomplete="off"
             placeholder="Enter your bid amount"
@@ -413,8 +413,15 @@
       return String(message || "").toLowerCase().includes("closed");
     }
 
-    function hideError(el) { el.textContent = ""; el.style.display = "none"; }
-    function showError(el, message) { el.textContent = message; el.style.display = "block"; }
+    function hideError(el) {
+      el.textContent = "";
+      el.style.display = "none";
+    }
+
+    function showError(el, message) {
+      el.textContent = message;
+      el.style.display = "block";
+    }
 
     function clearAllErrors() {
       hideError(itemErrorEl);
@@ -478,24 +485,40 @@
       itemNumberEl.value = (selectedItem && selectedItemNumber) ? selectedItemNumber : "";
     }
 
-    function formatNumberWithCommas(value) {
+    function digitsOnly(value) {
+      return String(value || "").replace(/[^\d]/g, "");
+    }
+
+    function formatWithCommas(value) {
       if (!value) return "";
       return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    function getDigitsOnly(value) {
-      return String(value || "").replace(/\D/g, "");
+    function getCleanBidAmount() {
+      return digitsOnly(bidAmountEl.value);
     }
 
-    function handleBidAmountInput() {
-      const raw = bidAmountEl.value;
-      const digitsOnly = getDigitsOnly(raw);
-      bidAmountEl.value = formatNumberWithCommas(digitsOnly);
+    function formatBidInput() {
+      const cleaned = digitsOnly(bidAmountEl.value);
+      bidAmountEl.value = formatWithCommas(cleaned);
       hideError(bidErrorEl);
     }
 
-    function sanitizeBidAmountForSubmit() {
-      return getDigitsOnly(bidAmountEl.value);
+    function handleBidPaste(e) {
+      e.preventDefault();
+      const pasted = (e.clipboardData || window.clipboardData).getData("text");
+      const cleaned = digitsOnly(pasted);
+      bidAmountEl.value = formatWithCommas(cleaned);
+      hideError(bidErrorEl);
+    }
+
+    function handleBidKeydown(e) {
+      const blockedKeys = [".", ",", "e", "E", "-", "+"];
+
+      if (blockedKeys.includes(e.key)) {
+        e.preventDefault();
+        return;
+      }
     }
 
     async function apiRequest(payload) {
@@ -507,8 +530,11 @@
 
       const text = await res.text();
       let json;
-      try { json = JSON.parse(text); }
-      catch (e) { throw new Error("Invalid response from server."); }
+      try {
+        json = JSON.parse(text);
+      } catch (e) {
+        throw new Error("Invalid response from server.");
+      }
       return json;
     }
 
@@ -564,27 +590,26 @@
         isValid = false;
       }
 
-      const bidRaw = bidAmountEl.value.trim();
-      const bidDigits = sanitizeBidAmountForSubmit();
+      const bidDisplay = bidAmountEl.value.trim();
+      const bidClean = getCleanBidAmount();
 
-      if (!bidRaw) {
+      if (!bidDisplay) {
         showError(bidErrorEl, "Please enter your bid amount.");
         if (isValid) bidAmountEl.focus();
         isValid = false;
-      } else if (!/^\d[\d,]*$/.test(bidRaw)) {
+      } else if (!bidClean) {
         showError(bidErrorEl, "Please enter a whole number only.");
         if (isValid) {
           bidAmountEl.focus();
           bidAmountEl.select();
         }
         isValid = false;
-      } else if (!bidDigits) {
+      } else if (Number(bidClean) <= 0) {
         showError(bidErrorEl, "Please enter a valid bid amount.");
-        if (isValid) bidAmountEl.focus();
-        isValid = false;
-      } else if (Number(bidDigits) <= 0) {
-        showError(bidErrorEl, "Please enter a valid bid amount.");
-        if (isValid) bidAmountEl.focus();
+        if (isValid) {
+          bidAmountEl.focus();
+          bidAmountEl.select();
+        }
         isValid = false;
       }
 
@@ -616,7 +641,7 @@
       submitBtnEl.textContent = "Submitting...";
 
       try {
-        const cleanBidAmount = sanitizeBidAmountForSubmit();
+        const cleanBidAmount = getCleanBidAmount();
 
         const result = await apiRequest({
           action: "submitBid",
@@ -692,12 +717,11 @@
 
     yourNameEl.addEventListener("input", () => hideError(nameErrorEl));
     mobileNumberEl.addEventListener("input", () => hideError(mobileErrorEl));
-    bidAmountEl.addEventListener("input", handleBidAmountInput);
     consentCheckboxEl.addEventListener("change", () => hideError(consentErrorEl));
 
-    bidAmountEl.addEventListener("paste", () => {
-      setTimeout(handleBidAmountInput, 0);
-    });
+    bidAmountEl.addEventListener("keydown", handleBidKeydown);
+    bidAmountEl.addEventListener("input", formatBidInput);
+    bidAmountEl.addEventListener("paste", handleBidPaste);
 
     loadItemsAndPrefill().catch(err => {
       if (isClosedMessage(err.message)) {
