@@ -300,7 +300,13 @@
 
         <div class="section">
           <label class="label" for="bidAmount">Bid Amount (€)<span class="required-star">*</span></label>
-          <input id="bidAmount" type="number" inputmode="numeric" min="1" step="1" placeholder="Enter your bid amount">
+          <input
+            id="bidAmount"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            placeholder="Enter your bid amount"
+          >
           <div id="bidError" class="field-error"></div>
         </div>
 
@@ -472,6 +478,26 @@
       itemNumberEl.value = (selectedItem && selectedItemNumber) ? selectedItemNumber : "";
     }
 
+    function formatNumberWithCommas(value) {
+      if (!value) return "";
+      return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function getDigitsOnly(value) {
+      return String(value || "").replace(/\D/g, "");
+    }
+
+    function handleBidAmountInput() {
+      const raw = bidAmountEl.value;
+      const digitsOnly = getDigitsOnly(raw);
+      bidAmountEl.value = formatNumberWithCommas(digitsOnly);
+      hideError(bidErrorEl);
+    }
+
+    function sanitizeBidAmountForSubmit() {
+      return getDigitsOnly(bidAmountEl.value);
+    }
+
     async function apiRequest(payload) {
       const res = await fetch(SCRIPT_URL, {
         method: "POST",
@@ -538,8 +564,26 @@
         isValid = false;
       }
 
-      if (!bidAmountEl.value.trim()) {
+      const bidRaw = bidAmountEl.value.trim();
+      const bidDigits = sanitizeBidAmountForSubmit();
+
+      if (!bidRaw) {
         showError(bidErrorEl, "Please enter your bid amount.");
+        if (isValid) bidAmountEl.focus();
+        isValid = false;
+      } else if (!/^\d[\d,]*$/.test(bidRaw)) {
+        showError(bidErrorEl, "Please enter a whole number only.");
+        if (isValid) {
+          bidAmountEl.focus();
+          bidAmountEl.select();
+        }
+        isValid = false;
+      } else if (!bidDigits) {
+        showError(bidErrorEl, "Please enter a valid bid amount.");
+        if (isValid) bidAmountEl.focus();
+        isValid = false;
+      } else if (Number(bidDigits) <= 0) {
+        showError(bidErrorEl, "Please enter a valid bid amount.");
         if (isValid) bidAmountEl.focus();
         isValid = false;
       }
@@ -572,12 +616,14 @@
       submitBtnEl.textContent = "Submitting...";
 
       try {
+        const cleanBidAmount = sanitizeBidAmountForSubmit();
+
         const result = await apiRequest({
           action: "submitBid",
           token: tokenEl.value,
           item: itemEl.value,
           itemNumber: itemNumberEl.value,
-          bidAmount: bidAmountEl.value,
+          bidAmount: cleanBidAmount,
           yourName: yourNameEl.value,
           mobileNumber: mobileNumberEl.value,
           emailAddress: emailAddressEl.value,
@@ -646,8 +692,12 @@
 
     yourNameEl.addEventListener("input", () => hideError(nameErrorEl));
     mobileNumberEl.addEventListener("input", () => hideError(mobileErrorEl));
-    bidAmountEl.addEventListener("input", () => hideError(bidErrorEl));
+    bidAmountEl.addEventListener("input", handleBidAmountInput);
     consentCheckboxEl.addEventListener("change", () => hideError(consentErrorEl));
+
+    bidAmountEl.addEventListener("paste", () => {
+      setTimeout(handleBidAmountInput, 0);
+    });
 
     loadItemsAndPrefill().catch(err => {
       if (isClosedMessage(err.message)) {
