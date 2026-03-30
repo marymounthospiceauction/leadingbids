@@ -499,21 +499,40 @@
     }
 
     function formatBidInput() {
-      const cleaned = digitsOnly(bidAmountEl.value);
+      const currentValue = bidAmountEl.value;
+
+      if (currentValue.includes(".")) {
+        showError(bidErrorEl, "Decimal points not allowed.");
+      } else if (bidErrorEl.textContent === "Decimal points not allowed.") {
+        hideError(bidErrorEl);
+      }
+
+      const cleaned = digitsOnly(currentValue);
       bidAmountEl.value = formatWithCommas(cleaned);
-      hideError(bidErrorEl);
     }
 
     function handleBidPaste(e) {
-      e.preventDefault();
       const pasted = (e.clipboardData || window.clipboardData).getData("text");
+
+      if (pasted.includes(".")) {
+        showError(bidErrorEl, "Decimal points not allowed.");
+      } else {
+        hideError(bidErrorEl);
+      }
+
+      e.preventDefault();
       const cleaned = digitsOnly(pasted);
       bidAmountEl.value = formatWithCommas(cleaned);
-      hideError(bidErrorEl);
     }
 
     function handleBidKeydown(e) {
       const blockedKeys = [".", ",", "e", "E", "-", "+"];
+
+      if (e.key === ".") {
+        e.preventDefault();
+        showError(bidErrorEl, "Decimal points not allowed.");
+        return;
+      }
 
       if (blockedKeys.includes(e.key)) {
         e.preventDefault();
