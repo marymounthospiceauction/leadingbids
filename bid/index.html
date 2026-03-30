@@ -494,6 +494,12 @@
       return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
+    function formatBidDisplay(value) {
+      const cleaned = digitsOnly(value);
+      if (!cleaned) return "";
+      return "€" + formatWithCommas(cleaned);
+    }
+
     function getCleanBidAmount() {
       return digitsOnly(bidAmountEl.value);
     }
@@ -507,8 +513,7 @@
         hideError(bidErrorEl);
       }
 
-      const cleaned = digitsOnly(currentValue);
-      bidAmountEl.value = formatWithCommas(cleaned);
+      bidAmountEl.value = formatBidDisplay(currentValue);
     }
 
     function handleBidPaste(e) {
@@ -516,13 +521,12 @@
 
       if (pasted.includes(".")) {
         showError(bidErrorEl, "Decimal points not allowed.");
-      } else {
+      } else if (bidErrorEl.textContent === "Decimal points not allowed.") {
         hideError(bidErrorEl);
       }
 
       e.preventDefault();
-      const cleaned = digitsOnly(pasted);
-      bidAmountEl.value = formatWithCommas(cleaned);
+      bidAmountEl.value = formatBidDisplay(pasted);
     }
 
     function handleBidKeydown(e) {
