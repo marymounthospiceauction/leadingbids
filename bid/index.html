@@ -471,9 +471,14 @@
         option.value = row.item;
         option.textContent = row.item;
         option.dataset.itemNumber = row.itemNumber;
-        if (row.item === selectedItem && row.itemNumber === selectedItemNumber) {
+
+        if (
+          (selectedItemNumber && row.itemNumber === selectedItemNumber) ||
+          (!selectedItemNumber && selectedItem && row.item === selectedItem)
+        ) {
           option.selected = true;
         }
+
         itemEl.appendChild(option);
       });
 
@@ -483,7 +488,8 @@
         hideError(itemErrorEl);
       };
 
-      itemNumberEl.value = (selectedItem && selectedItemNumber) ? selectedItemNumber : "";
+      const selected = itemEl.options[itemEl.selectedIndex];
+      itemNumberEl.value = selected ? (selected.dataset.itemNumber || "") : "";
     }
 
     function digitsOnly(value) {
@@ -632,21 +638,18 @@
       mobileNumberEl.value = prefill.mobileNumber || "";
       emailAddressEl.value = prefill.emailAddress || "";
       tableValueEl.value = prefill.tableValue || "";
-      consentCheckboxEl.checked = (prefill.consent || "No") === "Yes";
+
+      bidAmountEl.value = "";
+      consentCheckboxEl.checked = true;
+
+      itemEl.disabled = false;
+      yourNameEl.readOnly = false;
+      mobileNumberEl.readOnly = false;
+      emailAddressEl.readOnly = false;
+      tableValueEl.readOnly = false;
 
       if (prefill.mode === "token") {
-        itemEl.disabled = true;
-        yourNameEl.readOnly = true;
-        mobileNumberEl.readOnly = true;
-        emailAddressEl.readOnly = true;
-        tableValueEl.readOnly = true;
         bidAmountEl.focus();
-      } else {
-        itemEl.disabled = false;
-        yourNameEl.readOnly = false;
-        mobileNumberEl.readOnly = false;
-        emailAddressEl.readOnly = false;
-        tableValueEl.readOnly = false;
       }
     }
 
@@ -778,7 +781,7 @@
         mobileNumberEl.value = "";
         emailAddressEl.value = "";
         tableValueEl.value = "";
-        consentCheckboxEl.checked = false;
+        consentCheckboxEl.checked = true;
         clearAllErrors();
         showFormScreen();
         itemEl.focus();
