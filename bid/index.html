@@ -588,7 +588,7 @@
       consentCheckboxEl.checked = (prefill.consent || "No") === "Yes";
 
       if (prefill.mode === "token") {
-        itemEl.disabled = true;
+        itemEl.disabled = false;
         yourNameEl.readOnly = true;
         mobileNumberEl.readOnly = true;
         emailAddressEl.readOnly = true;
