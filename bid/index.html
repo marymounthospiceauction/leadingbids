@@ -458,6 +458,12 @@
       formScreenEl.style.display = "block";
     }
 
+    function normalizeItemNumberValue(value) {
+      const digits = String(value || "").replace(/[^\d]/g, "");
+      if (!digits) return "";
+      return String(Number(digits));
+    }
+
     function buildItemDropdown(items, selectedItem = "", selectedItemNumber = "") {
       itemEl.innerHTML = "";
 
@@ -466,15 +472,17 @@
       emptyOption.textContent = "Select an item";
       itemEl.appendChild(emptyOption);
 
+      const normalizedSelectedNumber = normalizeItemNumberValue(selectedItemNumber);
+
       items.forEach(row => {
         const option = document.createElement("option");
         option.value = row.item;
         option.textContent = row.item;
-        option.dataset.itemNumber = row.itemNumber;
+        option.dataset.itemNumber = row.itemNumber || "";
 
         if (
-          (selectedItemNumber && row.itemNumber === selectedItemNumber) ||
-          (!selectedItemNumber && selectedItem && row.item === selectedItem)
+          (normalizedSelectedNumber && normalizeItemNumberValue(row.itemNumber) === normalizedSelectedNumber) ||
+          (!normalizedSelectedNumber && selectedItem && row.item === selectedItem)
         ) {
           option.selected = true;
         }
@@ -606,11 +614,13 @@
 
       const text = await res.text();
       let json;
+
       try {
         json = JSON.parse(text);
       } catch (e) {
         throw new Error("Invalid response from server.");
       }
+
       return json;
     }
 
