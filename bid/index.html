@@ -318,7 +318,7 @@
 
         <div class="section">
           <label class="label" for="mobileNumber">Mobile Number<span class="required-star">*</span></label>
-          <input id="mobileNumber" type="text" placeholder="Enter your mobile number">
+          <input id="mobileNumber" type="text" inputmode="numeric" placeholder="Enter your mobile number">
           <div id="mobileError" class="field-error"></div>
         </div>
 
@@ -376,6 +376,7 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
     const LEADING_BIDS_URL = "https://marymountauction2026.ie/";
+    const MOBILE_ERROR_MESSAGE = "Mobile number must start with 08 and be 10 digits long, or start with 0044 and be 13 digits long.";
 
     const itemEl = document.getElementById("item");
     const itemNumberEl = document.getElementById("itemNumber");
@@ -504,6 +505,31 @@
       return digitsOnly(bidAmountEl.value);
     }
 
+    function normalizeMobileNumber(value) {
+      return String(value || "")
+        .trim()
+        .replace(/\s+/g, "")
+        .replace(/-/g, "");
+    }
+
+    function isValidMobileNumber(value) {
+      const mobile = normalizeMobileNumber(value);
+
+      if (!/^\d+$/.test(mobile)) {
+        return false;
+      }
+
+      if (mobile.startsWith("08")) {
+        return mobile.length === 10;
+      }
+
+      if (mobile.startsWith("0044")) {
+        return mobile.length === 13;
+      }
+
+      return false;
+    }
+
     function formatBidInput() {
       const currentValue = bidAmountEl.value;
 
@@ -542,6 +568,27 @@
         e.preventDefault();
         return;
       }
+    }
+
+    function handleMobileInput() {
+      hideError(mobileErrorEl);
+    }
+
+    function validateMobileField() {
+      const mobileValue = mobileNumberEl.value.trim();
+
+      if (!mobileValue) {
+        showError(mobileErrorEl, "Please enter your mobile number.");
+        return false;
+      }
+
+      if (!isValidMobileNumber(mobileValue)) {
+        showError(mobileErrorEl, MOBILE_ERROR_MESSAGE);
+        return false;
+      }
+
+      hideError(mobileErrorEl);
+      return true;
     }
 
     async function apiRequest(payload) {
@@ -588,7 +635,7 @@
       consentCheckboxEl.checked = (prefill.consent || "No") === "Yes";
 
       if (prefill.mode === "token") {
-        itemEl.disabled = false;
+        itemEl.disabled = true;
         yourNameEl.readOnly = true;
         mobileNumberEl.readOnly = true;
         emailAddressEl.readOnly = true;
@@ -646,6 +693,10 @@
         showError(mobileErrorEl, "Please enter your mobile number.");
         if (isValid) mobileNumberEl.focus();
         isValid = false;
+      } else if (!isValidMobileNumber(mobileNumberEl.value)) {
+        showError(mobileErrorEl, MOBILE_ERROR_MESSAGE);
+        if (isValid) mobileNumberEl.focus();
+        isValid = false;
       }
 
       if (!consentCheckboxEl.checked) {
@@ -665,6 +716,7 @@
 
       try {
         const cleanBidAmount = getCleanBidAmount();
+        const cleanMobileNumber = normalizeMobileNumber(mobileNumberEl.value);
 
         const result = await apiRequest({
           action: "submitBid",
@@ -673,7 +725,7 @@
           itemNumber: itemNumberEl.value,
           bidAmount: cleanBidAmount,
           yourName: yourNameEl.value,
-          mobileNumber: mobileNumberEl.value,
+          mobileNumber: cleanMobileNumber,
           emailAddress: emailAddressEl.value,
           tableValue: tableValueEl.value,
           consent: consentCheckboxEl.checked ? "Yes" : "No"
@@ -693,6 +745,13 @@
           showClosedScreen(error.message);
           return;
         }
+
+        if (String(error.message || "") === MOBILE_ERROR_MESSAGE) {
+          showError(mobileErrorEl, MOBILE_ERROR_MESSAGE);
+          mobileNumberEl.focus();
+          return;
+        }
+
         showBidError(error.message || "Your bid could not be submitted.");
       } finally {
         submitBtnEl.disabled = false;
@@ -739,7 +798,8 @@
     anotherBidBtnEl.addEventListener("click", placeAnotherBid);
 
     yourNameEl.addEventListener("input", () => hideError(nameErrorEl));
-    mobileNumberEl.addEventListener("input", () => hideError(mobileErrorEl));
+    mobileNumberEl.addEventListener("input", handleMobileInput);
+    mobileNumberEl.addEventListener("blur", validateMobileField);
     consentCheckboxEl.addEventListener("change", () => hideError(consentErrorEl));
 
     bidAmountEl.addEventListener("keydown", handleBidKeydown);
