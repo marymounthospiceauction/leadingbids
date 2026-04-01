@@ -213,20 +213,15 @@
       color: var(--success);
       line-height: 1.5;
       margin-bottom: 20px;
+      white-space: pre-line;
     }
 
     .closed-message {
       font-size: 16px;
       color: var(--text);
       line-height: 1.5;
-      margin-bottom: 8px;
-    }
-
-    .closed-note {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.4;
       margin-bottom: 18px;
+      white-space: pre-line;
     }
 
     .secondary-btn {
@@ -349,9 +344,14 @@
 
       <div id="successScreen" class="success-screen">
         <h1 class="success-title">Bid Received</h1>
-        <div id="successMessage" class="success-message">
-          Thank you. Your bid has been received.
-        </div>
+        <div id="successMessage" class="success-message">Thank you for your bid.
+
+If you entered your correct phone number, you will shortly receive a WhatsApp message with confirmation of your bid.
+
+We shall also inform you if you get outbid.
+
+Regards,
+Marymount Ball Committee</div>
         <button id="anotherBidBtn" class="secondary-btn" type="button">Place another bid</button>
         <div id="loadingNote" class="loading-note">Updating bids…</div>
         <div class="footer-note">Marymount Ball Auction</div>
@@ -359,12 +359,12 @@
 
       <div id="closedScreen" class="closed-screen">
         <h1 class="closed-title">Bidding Closed</h1>
-        <div id="closedMessage" class="closed-message">
-          The web bidding form is currently closed.
-        </div>
-        <div class="closed-note">
-          Please speak to the Marymount Ball Committee if you need assistance.
-        </div>
+        <div id="closedMessage" class="closed-message">The 2026 Marymount Ball auction is now closed.
+
+Thank you for all your support.
+
+Regards,
+Marymount Ball Committee</div>
         <div class="closed-actions">
           <a id="viewLeadingBidsBtn" class="secondary-btn" href="https://marymountauction2026.ie/" target="_self">View Leading Bids</a>
         </div>
@@ -377,6 +377,20 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
     const LEADING_BIDS_URL = "https://marymountauction2026.ie/";
     const MOBILE_ERROR_MESSAGE = "Mobile number must start with 08 and be 10 digits long, or start with 0044 and be 13 digits long.";
+    const DEFAULT_SUCCESS_MESSAGE = `Thank you for your bid.
+
+If you entered your correct phone number, you will shortly receive a WhatsApp message with confirmation of your bid.
+
+We shall also inform you if you get outbid.
+
+Regards,
+Marymount Ball Committee`;
+    const DEFAULT_CLOSED_MESSAGE = `The 2026 Marymount Ball auction is now closed.
+
+Thank you for all your support.
+
+Regards,
+Marymount Ball Committee`;
 
     const itemEl = document.getElementById("item");
     const itemNumberEl = document.getElementById("itemNumber");
@@ -439,14 +453,14 @@
     }
 
     function showSuccessScreen(message) {
-      successMessageEl.textContent = message || "Thank you. Your bid has been received.";
+      successMessageEl.textContent = message || DEFAULT_SUCCESS_MESSAGE;
       formScreenEl.style.display = "none";
       closedScreenEl.style.display = "none";
       successScreenEl.style.display = "block";
     }
 
     function showClosedScreen(message) {
-      closedMessageEl.textContent = message || "The web bidding form is currently closed.";
+      closedMessageEl.textContent = message || DEFAULT_CLOSED_MESSAGE;
       formScreenEl.style.display = "none";
       successScreenEl.style.display = "none";
       closedScreenEl.style.display = "block";
@@ -632,7 +646,7 @@
 
       if (!result.ok) {
         if (isClosedMessage(result.message)) {
-          showClosedScreen(result.message);
+          showClosedScreen(DEFAULT_CLOSED_MESSAGE);
           return;
         }
         throw new Error(result.message || "Could not load form data.");
@@ -746,16 +760,16 @@
 
         if (!result.ok) {
           if (isClosedMessage(result.message)) {
-            showClosedScreen(result.message);
+            showClosedScreen(DEFAULT_CLOSED_MESSAGE);
             return;
           }
           throw new Error(result.message || "Your bid could not be submitted.");
         }
 
-        showSuccessScreen(result.message || "Thank you. Your bid has been received.");
+        showSuccessScreen(DEFAULT_SUCCESS_MESSAGE);
       } catch (error) {
         if (isClosedMessage(error.message)) {
-          showClosedScreen(error.message);
+          showClosedScreen(DEFAULT_CLOSED_MESSAGE);
           return;
         }
 
@@ -797,7 +811,7 @@
         itemEl.focus();
       } catch (error) {
         if (isClosedMessage(error.message)) {
-          showClosedScreen(error.message);
+          showClosedScreen(DEFAULT_CLOSED_MESSAGE);
           return;
         }
         showBidError(error.message || "Could not refresh the form.");
@@ -821,7 +835,7 @@
 
     loadItemsAndPrefill().catch(err => {
       if (isClosedMessage(err.message)) {
-        showClosedScreen(err.message);
+        showClosedScreen(DEFAULT_CLOSED_MESSAGE);
         return;
       }
       itemEl.innerHTML = '<option value="">Could not load items</option>';
