@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Starry Night Ball – Live Bids</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --gold: #f6d58b;
+      --gold-soft: #f4d28a;
+      --black: #000000;
+      --offwhite: #ffffff;
+      --red: #ff3b30;
+      --safe-top: 1.6vh;
+      --safe-bottom: 6vh;
+      --safe-horiz: 3vw;
+      --footer-h: 7.2vh;
+      --rowH: 40px;
+      --row-gap: 0.22vh;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Calibri, Arial, sans-serif;
+      background: #000 url("tvbackground.png") center/cover no-repeat fixed;
+      color: var(--offwhite);
+      overflow: hidden;
+    }
+
+    .frame {
+      width: 100vw;
+      height: 100vh;
+      padding: var(--safe-top) var(--safe-horiz) var(--safe-bottom) var(--safe-horiz);
+      padding-bottom: calc(var(--safe-bottom) + var(--footer-h));
+      display: flex;
+      flex-direction: column;
+      background: transparent;
+    }
+
+    .header {
+      position: relative;
+      flex: 0 0 auto;
+      margin-bottom: 0.4vh;
+      text-align: center;
+    }
+
+    .header-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(2.6rem, 4.2vw, 5rem);
+      font-weight: 400;
+      color: #000;
+      text-shadow:
+        0 0 6px rgba(246,213,139,0.9),
+        0 0 12px rgba(246,213,139,0.7),
+        0 0 18px rgba(0,0,0,0.9);
+      letter-spacing: 0.04em;
+      line-height: 1.06;
+    }
+
+    .marymount-logo-top {
+      position: absolute;
+      right: 0;
+      top: 0;
+      max-height: 8.5vh;
+      object-fit: contain;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.9));
+    }
+
+    .items-grid {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      gap: 1.1vw;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      margin-top: 0.2vh;
+      margin-bottom: 0.2vh;
+      overflow: hidden;
+    }
+
+    .column {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--row-gap);
+    }
+
+    .item-row {
+      display: grid;
+      grid-template-columns: 1fr minmax(8ch, 12ch) max-content;
+      align-items: center;
+      height: var(--rowH);
+      background: rgba(0,0,0,0.9);
+      border: 1px solid #3a3a3a;
+      box-shadow: 0 0 4px rgba(0,0,0,0.5);
+    }
+
+    .item-label,
+    .item-newbid,
+    .item-amount {
+      display: flex;
+      align-items: center;
+      line-height: 1.12;
+    }
+
+    .item-label,
+    .item-amount {
+      font-size: clamp(14px, calc(var(--rowH) * 0.52), 32px);
+    }
+
+    .item-label {
+      padding: 0.16em 0.6em;
+      text-transform: uppercase;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .item-label strong {
+      font-weight: 800;
+      color: var(--gold-soft);
+      letter-spacing: 0.02em;
+    }
+
+    .item-newbid {
+      justify-content: center;
+      text-align: center;
+      color: var(--red);
+      font-weight: 800;
+      font-size: clamp(12px, calc(var(--rowH) * 0.46), 28px);
+      letter-spacing: 0.02em;
+    }
+
+    .item-amount {
+      padding: 0.16em 1.0em;
+      font-weight: 800;
+      min-width: clamp(9ch, 11vw, 20vw);
+      justify-content: center;
+      text-align: center;
+      color: var(--gold-soft);
+      border-left: 1px solid #555;
+    }
+
+    .footer {
+      position: fixed;
+      left: var(--safe-horiz);
+      right: var(--safe-horiz);
+      bottom: var(--safe-bottom);
+      height: var(--footer-h);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 2vw;
+    }
+
+    .footer-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+    }
+
+    .qr-img {
+      max-height: calc(var(--footer-h) * 0.90);
+      background: rgba(255,255,255,0.98);
+      padding: 0.4vh;
+      border-radius: 0.3rem;
+      box-shadow: 0 0 8px rgba(0,0,0,0.9);
+      margin-bottom: 0.35vh;
+    }
+
+    .footer-block span {
+      font-size: clamp(0.8rem, 1vw, 1.2rem);
+      font-weight: 700;
+      color: #000000;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 3px rgba(255,255,255,0.7);
+      text-transform: uppercase;
+    }
+
+    .footer-sponsors {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .footer-sponsors img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
+    }
+
+    /* ── CLOSING SOON BANNER ── */
+    #closing-banner {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9000;
+      pointer-events: none;
+    }
+    #closing-banner.active { display: flex; }
+
+    .closing-inner {
+      background: linear-gradient(135deg, rgba(220,10,10,0.96), rgba(160,0,0,0.96));
+      border: 2px solid var(--gold);
+      border-radius: 0.8rem;
+      padding: 1.2rem 2.4rem;
+      font-family: Calibri, Arial, sans-serif;
+      font-size: clamp(1.4rem, 3.5vw, 4rem);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #fff;
+      white-space: nowrap;
+      box-shadow: 0 0 60px rgba(220,10,10,0.6), 0 0 20px rgba(0,0,0,0.9);
+      animation: banner-pulse 1.2s infinite alternate;
+    }
+
+    @keyframes banner-pulse {
+      0%   { transform: scale(1.00); }
+      100% { transform: scale(1.04); }
+    }
+
+    @media (prefers-reduced-motion: reduce) { .closing-inner { animation: none; } }
+
+    /* ── AUCTION CLOSED BANNER ── */
+    #closed-banner {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.2vh 2vw;
+      background: linear-gradient(90deg, rgba(10,60,20,0.97), rgba(20,90,35,0.97), rgba(10,60,20,0.97));
+      border-bottom: 2px solid #2ecc71;
+      z-index: 8000;
+    }
+    #closed-banner.active { display: flex; }
+
+    .closed-text {
+      font-family: Calibri, Arial, sans-serif;
+      font-size: clamp(1rem, 2.5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #2ecc71;
+      text-shadow: 0 0 20px rgba(46,204,113,0.6);
+    }
+
+    /* ── SOLD OVERLAY ── */
+    #sold-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9500;
+      background: radial-gradient(ellipse at center, rgba(10,6,1,0.6), rgba(0,0,0,0.85));
+      pointer-events: none;
+    }
+    #sold-overlay.active { display: flex; }
+
+    .sold-card {
+      text-align: center;
+      animation: sold-drop 0.5s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+
+    @keyframes sold-drop {
+      0%   { transform: translateY(-60px) scale(0.85); opacity: 0; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .sold-word {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(5rem, 14vw, 16rem);
+      color: var(--gold);
+      text-shadow:
+        0 0 30px rgba(245,200,66,1),
+        0 0 60px rgba(245,170,30,0.7),
+        0 0 100px rgba(245,140,10,0.4);
+      line-height: 0.9;
+    }
+
+    .sold-item-name {
+      font-family: Calibri, Arial, sans-serif;
+      font-size: clamp(1rem, 2.5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff;
+      margin-top: 0.5rem;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+    }
+
+    .sold-price {
+      font-family: Calibri, Arial, sans-serif;
+      font-size: clamp(2rem, 6vw, 8rem);
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow:
+        0 0 20px rgba(245,200,66,0.9),
+        0 0 40px rgba(245,170,30,0.5);
+      margin-top: 0.3rem;
+    }
+
+    /* ── CONFETTI ── */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9400;
+      display: none;
+    }
+    #confetti-canvas.active { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- CLOSING SOON -->
+  <div id="closing-banner" role="status" aria-live="polite">
+    <div class="closing-inner">&#x1F6A8; AUCTION CLOSING SOON &#x2014; GET YOUR FINAL BIDS IN! &#x1F6A8;</div>
+  </div>
+
+  <!-- AUCTION CLOSED -->
+  <div id="closed-banner">
+    <div class="closed-text">&#x2705; AUCTION CLOSED &#x2014; THANK YOU FOR YOUR SUPPORT</div>
+  </div>
+
+  <!-- SOLD -->
+  <canvas id="confetti-canvas"></canvas>
+  <div id="sold-overlay" role="status" aria-live="assertive">
+    <div class="sold-card">
+      <div class="sold-word">Sold!</div>
+      <div class="sold-item-name" id="sold-item-name"></div>
+      <div class="sold-price"     id="sold-price"></div>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="header">
+      <div class="header-title">The Starry Night Ball</div>
+      <img class="marymount-logo-top" src="Marymount%20Logo.png" alt="Marymount Logo" />
+    </div>
+
+    <div class="items-grid">
+      <div class="column" id="column-left"></div>
+      <div class="column" id="column-right"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-block">
+      <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid" />
+      <span>Scan QR code to bid</span>
+    </div>
+    <div class="footer-sponsors">
+      <img src="Marymount%20Footer%20Sponsors.png" alt="Sponsors" />
+    </div>
+    <div class="footer-block">
+      <img class="qr-img" src="2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid" />
+      <span>Scan QR code to bid</span>
+    </div>
+  </div>
+
+  <script>
+    /* ── CONFIG ── */
+    const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
+    const sheetName = 'LEADING BIDS';
+    const range     = 'X5:Z43';
+    const CTRL_SHEET = 'CONTROL';
+    const CTRL_RANGE = 'A1:B5';
+    const REFRESH_MS = 5000;
+
+    const bidsUrl = () =>
+      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
+      `&sheet=${encodeURIComponent(sheetName)}&range=${range}&cacheBust=${Date.now()}`;
+
+    const ctrlUrl = () =>
+      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
+      `&sheet=${encodeURIComponent(CTRL_SHEET)}&range=${CTRL_RANGE}&cacheBust=${Date.now()}`;
+
+    /* ── HELPERS ── */
+    const euroFmt = new Intl.NumberFormat('en-IE', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    function formatEuro(v) {
+      const n = Number(v);
+      return Number.isFinite(n) ? '\u20ac' + euroFmt.format(n) : '\u20ac0';
+    }
+
+    function formatNewBidCell(v) {
+      if (v === null || v === undefined || v === '') return '';
+      const n = Number(v);
+      return Number.isFinite(n) ? '\u20ac' + euroFmt.format(n) : String(v);
+    }
+
+    const escapeHtml = s => String(s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+    function boldFirstSevenSafe(t) {
+      const safe = escapeHtml(t ?? '');
+      return '<strong>' + safe.substring(0,7) + '</strong>' + safe.substring(7);
+    }
+
+    async function fetchJson(url) {
+      const res  = await fetch(url, { cache: 'no-store' });
+      const raw  = await res.text();
+      const s = raw.indexOf('{'), e = raw.lastIndexOf('}');
+      if (s === -1 || e === -1) throw new Error('Bad sheet response');
+      return JSON.parse(raw.slice(s, e + 1));
+    }
+
+    /* ── ROW HEIGHT ── */
+    function applyAlignedRowHeights(totalRows, leftCount, rightCount) {
+      const itemsGrid = document.querySelector('.items-grid');
+      const leftCol   = document.getElementById('column-left');
+      const gridRect  = itemsGrid.getBoundingClientRect();
+      const availableH = gridRect.height;
+      const gapStr = getComputedStyle(leftCol).gap || '0px';
+      const gapPx  = parseFloat(gapStr.split(' ')[0]) || 0;
+      const leftGaps  = Math.max(0, (leftCount  - 1)) * gapPx;
+      const rightGaps = Math.max(0, (rightCount - 1)) * gapPx;
+      const leftRowH  = (availableH - leftGaps)  / Math.max(leftCount, 1);
+      const rightRowH = (availableH - rightGaps) / Math.max(rightCount, 1);
+      const sharedRowH = Math.floor(Math.max(24, Math.min(leftRowH, rightRowH)));
+      document.documentElement.style.setProperty('--rowH', sharedRowH + 'px');
+      document.querySelector('.items-grid').style.opacity = 1;
+    }
+
+    /* ── RENDER BIDS ── */
+    function makeRow(r) {
+      const item   = boldFirstSevenSafe((r[0] ?? '').toString());
+      const newBid = formatNewBidCell(r[1]);
+      const latest = formatEuro(r[2] ?? r[1]);
+      const newBidSafe = escapeHtml(newBid);
+      return `
+        <div class="item-row">
+          <div class="item-label">${item}</div>
+          <div class="item-newbid">${newBidSafe}</div>
+          <div class="item-amount">${latest}</div>
+        </div>`;
+    }
+
+    function renderRows(rows) {
+      if (!rows || !rows.length) return;
+      const leftCol  = document.getElementById('column-left');
+      const rightCol = document.getElementById('column-right');
+      const half = Math.ceil(rows.length / 2);
+      leftCol.innerHTML  = rows.slice(0, half).map(makeRow).join('');
+      rightCol.innerHTML = rows.slice(half).map(makeRow).join('');
+      requestAnimationFrame(() =>
+        applyAlignedRowHeights(rows.length, half, rows.length - half)
+      );
+    }
+
+    /* ── CONTROL TAB ── */
+    let closingFlashTimer   = null;
+    let closingFlashVisible = false;
+    let soldOverlayTimer    = null;
+    let lastSoldKey         = '';
+    const BANNER_ON_MS  = 10_000;
+    const BANNER_OFF_MS = 30_000;
+    const SOLD_DURATION = 7_000;
+
+    function setClosingBanner(on) {
+      document.getElementById('closing-banner').classList.toggle('active', on);
+    }
+
+    function runClosingFlash(enable) {
+      if (!enable) {
+        clearTimeout(closingFlashTimer); closingFlashTimer = null;
+        setClosingBanner(false); closingFlashVisible = false; return;
+      }
+      if (closingFlashTimer) return;
+      const tick = () => {
+        closingFlashVisible = !closingFlashVisible;
+        setClosingBanner(closingFlashVisible);
+        closingFlashTimer = setTimeout(tick, closingFlashVisible ? BANNER_ON_MS : BANNER_OFF_MS);
+      };
+      closingFlashVisible = true; setClosingBanner(true);
+      closingFlashTimer = setTimeout(tick, BANNER_ON_MS);
+    }
+
+    function showSoldOverlay(item, price) {
+      const key = `${item}::${price}`;
+      if (key === lastSoldKey) return;
+      lastSoldKey = key;
+      document.getElementById('sold-item-name').textContent = item;
+      document.getElementById('sold-price').textContent     = formatEuro(price);
+      document.getElementById('sold-overlay').classList.add('active');
+      startConfetti();
+      clearTimeout(soldOverlayTimer);
+      soldOverlayTimer = setTimeout(() => {
+        document.getElementById('sold-overlay').classList.remove('active');
+        stopConfetti();
+      }, SOLD_DURATION);
+    }
+
+    function applyControl(rows) {
+      const ctrl = {};
+      rows.forEach(r => { if (r[0]) ctrl[String(r[0]).toUpperCase().trim()] = String(r[1] ?? '').trim(); });
+
+      const closingSoon   = (ctrl['CLOSING_SOON']   || '').toUpperCase() === 'ON';
+      const auctionClosed = (ctrl['AUCTION_CLOSED'] || '').toUpperCase() === 'ON';
+
+      if (auctionClosed) {
+        clearTimeout(closingFlashTimer); closingFlashTimer = null;
+        setClosingBanner(false);
+        document.getElementById('closed-banner').classList.add('active');
+      } else {
+        document.getElementById('closed-banner').classList.remove('active');
+        runClosingFlash(closingSoon);
+      }
+
+      const soldItem  = ctrl['SOLD_ITEM']  || '';
+      const soldPrice = ctrl['SOLD_PRICE'] || '';
+      if (soldItem && soldPrice) showSoldOverlay(soldItem, soldPrice);
+    }
+
+    /* ── CONFETTI ── */
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx    = canvas.getContext('2d');
+    let cP = [], cRaf = null;
+    const CC = ['#f6d58b','#f5c842','#e8a820','#fff3b0','#c8832a','#ffffff','#ffe57a','#ffd700'];
+
+    function startConfetti() {
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+      cP = Array.from({ length: 200 }, () => ({
+        x: Math.random() * canvas.width, y: -10 - Math.random() * 180,
+        r: 3 + Math.random() * 5, color: CC[Math.floor(Math.random() * CC.length)],
+        vx: (Math.random() - 0.5) * 3, vy: 2 + Math.random() * 3.5,
+        rot: Math.random() * 360, rotV: (Math.random() - 0.5) * 6,
+        shape: Math.random() > 0.5 ? 'rect' : 'circle',
+        w: 6 + Math.random() * 8, h: 3 + Math.random() * 5,
+        alpha: 0.85 + Math.random() * 0.15
+      }));
+      canvas.classList.add('active');
+      cancelAnimationFrame(cRaf);
+      const frame = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        cP.forEach(p => {
+          ctx.save(); ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
+          ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+          p.shape === 'rect'
+            ? ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h)
+            : (ctx.beginPath(), ctx.arc(0,0,p.r,0,Math.PI*2), ctx.fill());
+          ctx.restore();
+          p.x += p.vx; p.y += p.vy; p.rot += p.rotV; p.vy += 0.04; p.alpha -= 0.003;
+        });
+        cP = cP.filter(p => p.alpha > 0 && p.y < canvas.height + 20);
+        cRaf = cP.length ? requestAnimationFrame(frame) : (stopConfetti(), null);
+      };
+      cRaf = requestAnimationFrame(frame);
+    }
+
+    function stopConfetti() {
+      cancelAnimationFrame(cRaf); ctx.clearRect(0,0,canvas.width,canvas.height);
+      canvas.classList.remove('active'); cP = [];
+    }
+
+    /* ── MAIN LOOP ── */
+    async function loadData() {
+      try {
+        const [bidsJson, ctrlJson] = await Promise.all([
+          fetchJson(bidsUrl()),
+          fetchJson(ctrlUrl()).catch(() => null)
+        ]);
+
+        /* Bids */
+        const rows = (bidsJson.table && Array.isArray(bidsJson.table.rows))
+          ? bidsJson.table.rows.map(r => {
+              const c = Array.isArray(r.c) ? r.c : [];
+              return [
+                c[0] && c[0].v != null ? c[0].v : '',
+                c[1] && c[1].v != null ? c[1].v : '',
+                c[2] && c[2].v != null ? c[2].v : ''
+              ];
+            })
+          : [];
+        renderRows(rows);
+
+        /* Control */
+        if (ctrlJson && ctrlJson.table && Array.isArray(ctrlJson.table.rows)) {
+          const ctrlRows = ctrlJson.table.rows.map(r =>
+            (Array.isArray(r.c) ? r.c : []).map(c => c && c.v != null ? c.v : '')
+          );
+          applyControl(ctrlRows);
+        }
+
+      } catch(e) {
+        console.error('Load error:', e);
+      }
+    }
+
+    const reflow = () => {
+      const lc = document.getElementById('column-left').children.length;
+      const rc = document.getElementById('column-right').children.length;
+      if (lc && rc) requestAnimationFrame(() => applyAlignedRowHeights(lc+rc, lc, rc));
+    };
+    window.addEventListener('resize', reflow);
+    window.addEventListener('orientationchange', reflow);
+    document.addEventListener('fullscreenchange', reflow);
+
+    loadData();
+    setInterval(loadData, REFRESH_MS);
+  </script>
+</body>
+</html>
