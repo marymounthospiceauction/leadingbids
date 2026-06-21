@@ -184,18 +184,10 @@
          target="_blank"
          rel="noopener"
          onclick="
-           // Try to open the Google Drive PDF in a new tab
            const primaryUrl = 'https://drive.google.com/file/d/1ooKDPMn_7ALMIvux-RXPBAs4rq3es3eh/view?usp=sharing';
            const fallbackUrl = 'https://raw.githubusercontent.com/marymounthospiceauction/leadingbids/main/2025%20MARYMOUNT%20Starry%20Night%20Booklet.pdf';
-
            const win = window.open(primaryUrl, '_blank');
-
-           // If the browser blocks the popup, try the GitHub PDF instead
-           if (!win) {
-             window.open(fallbackUrl, '_blank');
-           }
-
-           // Prevent the default link behaviour (we already handled opening)
+           if (!win) { window.open(fallbackUrl, '_blank'); }
            return false;
          ">
         <span class="emoji">📜</span> View Auction Listings
@@ -227,14 +219,18 @@
   </div>
 
   <script>
-    /* GOOGLE SHEET LOADING */
-    const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
-    const sheetName = 'LEADING BIDS';
-    const range = 'U5:V43';
+    /* ============================================================
+       DATA SOURCE — edit these if the sheet or range ever changes
+       ============================================================ */
+    const SHEET_ID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
+    const SHEET_NAME = 'LEADING BIDS';
+    const SHEET_RANGE = 'U5:V43';   // U = item description, V = leading bid
+    const REFRESH_MS  = 5000;       // how often to poll the sheet (milliseconds)
+    /* ============================================================ */
 
     const url =
-      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
-      `&sheet=${encodeURIComponent(sheetName)}&range=${range}`;
+      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json` +
+      `&sheet=${encodeURIComponent(SHEET_NAME)}&range=${SHEET_RANGE}`;
 
     function formatEuro(value) {
       if (!value || isNaN(value)) return '€0';
@@ -257,14 +253,9 @@
         let html = '';
 
         rows.forEach(r => {
-          const item = boldFirstSeven(r[0]);    // Col U
-          const leadingBid = formatEuro(r[1]);  // Col V
-
-          html += `
-            <tr>
-              <td>${item}</td>
-              <td>${leadingBid}</td>
-            </tr>`;
+          const item       = boldFirstSeven(r[0]);
+          const leadingBid = formatEuro(r[1]);
+          html += `<tr><td>${item}</td><td>${leadingBid}</td></tr>`;
         });
 
         tbody.innerHTML = html;
@@ -275,10 +266,8 @@
     }
 
     loadData();
-    setInterval(loadData, 5000);
+    setInterval(loadData, REFRESH_MS);
   </script>
 
 </body>
 </html>
-
-
