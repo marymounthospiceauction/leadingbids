@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
+  <title>Marymount Auction – Admin Panel</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Calibri, Arial, sans-serif;
+      background-color: #e6d4ad;
+      min-height: 100%;
+    }
+
+    * { box-sizing: border-box; }
+
+    .page {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 16px 14px 40px;
+    }
+
+    .header-image img {
+      width: 100%;
+      max-width: 600px;
+      display: block;
+      margin: 0 auto 20px auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 24px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 18px 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e6d4ad;
+    }
+
+    .card-title.live { border-color: #f0a500; }
+    .card-title.sold { border-color: #27ae60; }
+
+    /* Checklist */
+    .item-checklist {
+      list-style: none;
+      margin: 0 0 14px;
+      padding: 0;
+    }
+
+    .item-checklist li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      background: #fffdf8;
+      border: 2px solid #e8d9b8;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .item-checklist li:hover { border-color: #f0a500; }
+    .item-checklist li.checked { border-color: #f0a500; background: #fff8e6; }
+
+    .item-checklist li input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      accent-color: #f0a500;
+      flex: 0 0 auto;
+      cursor: pointer;
+    }
+
+    .item-checklist li span {
+      font-size: 0.95rem;
+      color: #111;
+      cursor: pointer;
+    }
+
+    .no-items {
+      font-size: 0.9rem;
+      color: #888;
+      font-style: italic;
+      padding: 8px 0;
+      display: block;
+    }
+
+    /* Sale entry rows */
+    .sale-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .sale-item {
+      background: #fffdf8;
+      border: 2px solid #b7e4c7;
+      border-radius: 10px;
+      padding: 14px 12px;
+      margin-bottom: 12px;
+    }
+
+    .sale-item.recorded {
+      border-color: #27ae60;
+      background: #f0fff4;
+      opacity: 0.6;
+    }
+
+    .sale-item-name {
+      font-size: 1rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #111;
+    }
+
+    .sale-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .sale-fields .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sale-fields label {
+      font-size: 0.7rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #555;
+      margin: 0;
+    }
+
+    .sale-fields input {
+      padding: 9px 10px;
+      border: 2px solid #d8c6a0;
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: Calibri, Arial, sans-serif;
+      background: #fff;
+      color: #111;
+      outline: none;
+      width: 100%;
+      margin: 0;
+    }
+
+    .sale-fields input:focus {
+      border-color: #27ae60;
+      box-shadow: 0 0 0 3px rgba(39,174,96,0.15);
+    }
+
+    .sale-recorded-msg {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #27ae60;
+      display: none;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 18px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-live { background: #f0a500; color: #000; }
+    .btn-sold { background: #27ae60; color: #fff; width: auto; padding: 9px 16px; font-size: 0.9rem; }
+
+    .feedback {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      display: none;
+    }
+
+    .feedback.success { background: #d4edda; color: #155724; }
+    .feedback.error   { background: #f8d7da; color: #721c24; }
+
+    /* Log */
+    .log-section { margin-top: 28px; }
+
+    .log-title {
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+      color: #555;
+    }
+
+    .log-list { list-style: none; margin: 0; padding: 0; }
+
+    .log-list li {
+      background: rgba(255,255,255,0.7);
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 0.8rem;
+      margin-bottom: 5px;
+      border-left: 3px solid #bc8b41;
+    }
+
+    .log-list li.log-live { border-left-color: #f0a500; }
+    .log-list li.log-sold { border-left-color: #27ae60; }
+    .log-empty { font-size: 0.8rem; color: #888; font-style: italic; }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="header-image">
+    <img src="LiveHeader.png" alt="Marymount Header">
+  </div>
+
+  <h1>Committee Admin Panel</h1>
+
+  <!-- MARK ITEMS LIVE -->
+  <div class="card">
+    <div class="card-title live">Mark Items as Live Auction</div>
+    <ul class="item-checklist" id="liveChecklist">
+      <li><span class="no-items">Loading items...</span></li>
+    </ul>
+    <button class="btn btn-live" id="markLiveBtn" onclick="markLive()">Mark Selected as Live</button>
+    <div class="feedback" id="liveFeedback"></div>
+  </div>
+
+  <!-- RECORD LIVE AUCTION SALES -->
+  <div class="card" id="salesCard" style="display:none;">
+    <div class="card-title sold">Record Winning Bids</div>
+    <ul class="sale-list" id="saleList"></ul>
+  </div>
+
+  <!-- ACTION LOG -->
+  <div class="log-section">
+    <div class="log-title">Action log — this session</div>
+    <ul class="log-list" id="actionLog">
+      <li class="log-empty">No actions yet.</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+  /* ============================================================
+     CONFIG
+     ============================================================ */
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
+  const SHEET_ID   = "1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc";
+  const SHEET_TAB  = "SETTINGS";
+  /* ============================================================ */
+
+  const markedLiveThisSession = new Set();
+
+  async function apiRequest(payload) {
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+    const text = await res.text();
+    try { return JSON.parse(text); }
+    catch (e) { throw new Error("Invalid response from server."); }
+  }
+
+  function showFeedback(id, message, type) {
+    const el = document.getElementById(id);
+    el.textContent = message;
+    el.className = `feedback ${type}`;
+    el.style.display = "block";
+    setTimeout(() => { el.style.display = "none"; }, 6000);
+  }
+
+  function addLog(message, type) {
+    const log = document.getElementById("actionLog");
+    const empty = log.querySelector(".log-empty");
+    if (empty) empty.remove();
+    const li = document.createElement("li");
+    li.className = `log-${type}`;
+    const time = new Date().toLocaleTimeString("en-IE", { hour: "2-digit", minute: "2-digit" });
+    li.textContent = `${time} — ${message}`;
+    log.prepend(li);
+  }
+
+  async function loadItems() {
+    const url =
+      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json` +
+      `&sheet=${encodeURIComponent(SHEET_TAB)}&range=A2:F100`;
+
+    try {
+      const res  = await fetch(url);
+      const text = await res.text();
+      const json = JSON.parse(text.substr(47).slice(0, -2));
+      const rows = json.table.rows.map(r => r.c.map(c => c ? c.v : null));
+
+      const notLiveItems = [];
+
+      rows.forEach(row => {
+        const itemText   = row[0] ? String(row[0]).trim() : "";
+        const itemNumber = row[1] ? String(row[1]).trim() : "";
+        const isLive     = row[5] === true;
+
+        if (!itemText || !itemNumber) return;
+        if (isLive) return;
+        if (markedLiveThisSession.has(itemNumber)) return;
+
+        notLiveItems.push({ item: itemText, itemNumber: itemNumber });
+      });
+
+      buildChecklist(notLiveItems);
+
+    } catch (err) {
+      document.getElementById("liveChecklist").innerHTML =
+        '<li><span class="no-items">Could not load items.</span></li>';
+    }
+  }
+
+  function buildChecklist(items) {
+    const list = document.getElementById("liveChecklist");
+
+    if (!items.length) {
+      list.innerHTML = '<li><span class="no-items">No items available to mark live.</span></li>';
+      return;
+    }
+
+    list.innerHTML = "";
+    items.forEach(row => {
+      const li   = document.createElement("li");
+      const cb   = document.createElement("input");
+      const span = document.createElement("span");
+
+      cb.type  = "checkbox";
+      cb.value = row.itemNumber;
+      cb.id    = `cb_${row.itemNumber}`;
+      cb.dataset.itemName = row.item;
+      span.textContent = row.item;
+
+      cb.addEventListener("change", () => {
+        li.classList.toggle("checked", cb.checked);
+      });
+
+      li.addEventListener("click", e => {
+        if (e.target !== cb) {
+          cb.checked = !cb.checked;
+          li.classList.toggle("checked", cb.checked);
+        }
+      });
+
+      li.appendChild(cb);
+      li.appendChild(span);
+      list.appendChild(li);
+    });
+  }
+
+  function addSaleRow(itemNumber, itemName) {
+    const salesCard = document.getElementById("salesCard");
+    const saleList  = document.getElementById("saleList");
+
+    salesCard.style.display = "block";
+
+    // Don't add if already in the list
+    if (document.getElementById(`sale_${itemNumber}`)) return;
+
+    const li = document.createElement("li");
+    li.className = "sale-item";
+    li.id = `sale_${itemNumber}`;
+
+    li.innerHTML = `
+      <div class="sale-item-name">${itemName}</div>
+      <div class="sale-fields">
+        <div class="field">
+          <label>Winner name</label>
+          <input type="text" id="winner_${itemNumber}" placeholder="Winner's name" />
+        </div>
+        <div class="field">
+          <label>Sold price (€)</label>
+          <input type="number" id="price_${itemNumber}" placeholder="Price" min="1" />
+        </div>
+      </div>
+      <button class="btn btn-sold" onclick="recordSale('${itemNumber}', '${itemName.replace(/'/g, "\\'")}')">Record Sale</button>
+      <div class="sale-recorded-msg" id="recorded_${itemNumber}">✓ Recorded</div>
+    `;
+
+    saleList.appendChild(li);
+  }
+
+  async function markLive() {
+    const checkboxes = document.querySelectorAll("#liveChecklist input[type='checkbox']:checked");
+
+    if (!checkboxes.length) {
+      showFeedback("liveFeedback", "Tick at least one item to mark as live.", "error");
+      return;
+    }
+
+    const selected = Array.from(checkboxes).map(cb => ({
+      itemNumber: cb.value,
+      itemName: cb.dataset.itemName
+    }));
+
+    const names = selected.map(s => s.itemName).join("\n");
+    if (!confirm(`Mark the following as Live Auction?\n\n${names}\n\nThey will be removed from the bid form.`)) return;
+
+    const btn = document.getElementById("markLiveBtn");
+    btn.disabled = true;
+    btn.textContent = "Updating...";
+
+    const failed = [];
+
+    for (const s of selected) {
+      try {
+        const result = await apiRequest({
+          action: "markItemLive",
+          itemNumber: s.itemNumber,
+          itemName: s.itemName
+        });
+        if (!result.ok) throw new Error(result.message || "Failed.");
+        markedLiveThisSession.add(s.itemNumber);
+        addSaleRow(s.itemNumber, s.itemName);
+        addLog(`${s.itemName} — marked LIVE`, "live");
+      } catch (err) {
+        failed.push(s.itemName);
+      }
+    }
+
+    if (failed.length) {
+      showFeedback("liveFeedback", `Failed to update: ${failed.join(", ")}`, "error");
+    } else {
+      showFeedback("liveFeedback", `${selected.length} item${selected.length > 1 ? "s" : ""} marked as Live.`, "success");
+    }
+
+    btn.disabled = false;
+    btn.textContent = "Mark Selected as Live";
+    await loadItems();
+  }
+
+  async function recordSale(itemNumber, itemName) {
+    const winnerName = document.getElementById(`winner_${itemNumber}`).value.trim();
+    const soldPrice  = document.getElementById(`price_${itemNumber}`).value.trim();
+
+    if (!winnerName) {
+      alert("Please enter the winner's name.");
+      return;
+    }
+    if (!soldPrice || Number(soldPrice) <= 0) {
+      alert("Please enter a valid sold price.");
+      return;
+    }
+
+    if (!confirm(`Record sale of "${itemName}"?\n\nWinner: ${winnerName}\nPrice: €${Number(soldPrice).toLocaleString("en-IE")}`)) return;
+
+    const btn = document.querySelector(`#sale_${itemNumber} .btn-sold`);
+    btn.disabled = true;
+    btn.textContent = "Recording...";
+
+    try {
+      const result = await apiRequest({
+        action: "markItemSold",
+        itemNumber: itemNumber,
+        itemName: itemName,
+        winnerName: winnerName,
+        soldPrice: soldPrice
+      });
+
+      if (!result.ok) throw new Error(result.message || "Could not record sale.");
+
+      // Mark row as done
+      const row = document.getElementById(`sale_${itemNumber}`);
+      row.classList.add("recorded");
+      btn.style.display = "none";
+      document.getElementById(`recorded_${itemNumber}`).style.display = "block";
+
+      addLog(`${itemName} — SOLD to ${winnerName} @ €${Number(soldPrice).toLocaleString("en-IE")}`, "sold");
+
+    } catch (err) {
+      alert(err.message || "Something went wrong.");
+      btn.disabled = false;
+      btn.textContent = "Record Sale";
+    }
+  }
+
+  loadItems();
+</script>
+
+</body>
+</html>
