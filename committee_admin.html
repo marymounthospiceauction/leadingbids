@@ -248,7 +248,7 @@
   <h1>Committee Admin Panel</h1>
 
   <!-- MARK ITEMS LIVE -->
-  <div class="card">
+  <div class="card" id="liveCard">
     <div class="card-title live">Mark Items as Live Auction</div>
     <ul class="item-checklist" id="liveChecklist">
       <li><span class="no-items">Loading items...</span></li>
@@ -462,6 +462,13 @@
 
     btn.disabled = false;
     btn.textContent = "Mark Selected as Live";
+
+    // Collapse the checklist card once items have been marked live
+    if (!failed.length) {
+      const liveCard = document.getElementById("liveCard");
+      if (liveCard) liveCard.style.display = "none";
+    }
+
     await loadItems();
   }
 
