@@ -390,29 +390,48 @@
 
     salesCard.style.display = "block";
 
-    // Don't add if already in the list
-    if (document.getElementById(`sale_${itemNumber}`)) return;
+    const sid = String(itemNumber).replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_-]/g, "");
+    if (document.getElementById("sale_" + sid)) return;
 
     const li = document.createElement("li");
     li.className = "sale-item";
-    li.id = `sale_${itemNumber}`;
+    li.id = "sale_" + sid;
 
-    li.innerHTML = `
-      <div class="sale-item-name">${itemName}</div>
-      <div class="sale-fields">
-        <div class="field">
-          <label>Winner name</label>
-          <input type="text" id="winner_${itemNumber}" placeholder="Winner's name" />
-        </div>
-        <div class="field">
-          <label>Sold price (€)</label>
-          <input type="number" id="price_${itemNumber}" placeholder="Price" min="1" />
-        </div>
-      </div>
-      <button class="btn btn-sold" onclick="recordSale('${itemNumber}', '${itemName.replace(/'/g, "\\'")}')">Record Sale</button>
-      <div class="sale-recorded-msg" id="recorded_${itemNumber}">✓ Recorded</div>
-    `;
+    const nameDiv = document.createElement("div");
+    nameDiv.className = "sale-item-name";
+    nameDiv.textContent = itemName;
 
+    const fieldsDiv = document.createElement("div");
+    fieldsDiv.className = "sale-fields";
+    fieldsDiv.innerHTML =
+      "<div class=\"field\">" +
+        "<label>Winner name</label>" +
+        "<input type=\"text\" id=\"winner_" + sid + "\" placeholder=\"Winner's name\" />" +
+      "</div>" +
+      "<div class=\"field\">" +
+        "<label>Sold price (€)</label>" +
+        "<input type=\"number\" id=\"price_" + sid + "\" placeholder=\"Price\" min=\"1\" />" +
+      "</div>";
+
+    const btn = document.createElement("button");
+    btn.className = "btn btn-sold";
+    btn.textContent = "Record Sale";
+    btn.dataset.sid        = sid;
+    btn.dataset.itemNumber = itemNumber;
+    btn.dataset.itemName   = itemName;
+    btn.addEventListener("click", function() {
+      recordSale(this.dataset.sid, this.dataset.itemNumber, this.dataset.itemName);
+    });
+
+    const recordedMsg = document.createElement("div");
+    recordedMsg.className = "sale-recorded-msg";
+    recordedMsg.id = "recorded_" + sid;
+    recordedMsg.textContent = "✓ Recorded";
+
+    li.appendChild(nameDiv);
+    li.appendChild(fieldsDiv);
+    li.appendChild(btn);
+    li.appendChild(recordedMsg);
     saleList.appendChild(li);
   }
 
@@ -472,9 +491,9 @@
     await loadItems();
   }
 
-  async function recordSale(itemNumber, itemName) {
-    const winnerName = document.getElementById(`winner_${itemNumber}`).value.trim();
-    const soldPrice  = document.getElementById(`price_${itemNumber}`).value.trim();
+  async function recordSale(sid, itemNumber, itemName) {
+    const winnerName = document.getElementById("winner_" + sid).value.trim();
+    const soldPrice  = document.getElementById("price_" + sid).value.trim();
 
     if (!winnerName) {
       alert("Please enter the winner's name.");
@@ -485,9 +504,9 @@
       return;
     }
 
-    if (!confirm(`Record sale of "${itemName}"?\n\nWinner: ${winnerName}\nPrice: €${Number(soldPrice).toLocaleString("en-IE")}`)) return;
+    if (!confirm("Record sale of \"" + itemName + "\"?\n\nWinner: " + winnerName + "\nPrice: €" + Number(soldPrice).toLocaleString("en-IE"))) return;
 
-    const btn = document.querySelector(`#sale_${itemNumber} .btn-sold`);
+    const btn = document.querySelector("#sale_" + sid + " .btn-sold");
     btn.disabled = true;
     btn.textContent = "Recording...";
 
@@ -502,13 +521,12 @@
 
       if (!result.ok) throw new Error(result.message || "Could not record sale.");
 
-      // Mark row as done
-      const row = document.getElementById(`sale_${itemNumber}`);
+      const row = document.getElementById("sale_" + sid);
       row.classList.add("recorded");
       btn.style.display = "none";
-      document.getElementById(`recorded_${itemNumber}`).style.display = "block";
+      document.getElementById("recorded_" + sid).style.display = "block";
 
-      addLog(`${itemName} — SOLD to ${winnerName} @ €${Number(soldPrice).toLocaleString("en-IE")}`, "sold");
+      addLog(itemName + " — SOLD to " + winnerName + " @ €" + Number(soldPrice).toLocaleString("en-IE"), "sold");
 
     } catch (err) {
       alert(err.message || "Something went wrong.");
