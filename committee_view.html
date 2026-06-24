@@ -339,7 +339,7 @@
     const PASSWORD   = "starrynight";
     const SHEET_ID   = "1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc";
     const SHEET_TAB  = "LEADING BIDS";
-    const RANGE      = "A5:O50";
+    const RANGE      = "A6:O50";
     const REFRESH_MS = 5000;
     /* ============================================================ */
 
@@ -385,25 +385,23 @@
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
 
-        // Row 0 is headers, rows 1+ are data
-        const allRows = json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
-        if (allRows.length < 2) return;
-
-        // Header row — find column indices by name
-        const headers = allRows[0].map(h => String(h || "").toUpperCase().trim());
+        // Range starts at row 6 (data rows only, no header row in response)
+        // Column positions in LEADING BIDS (0-indexed from column A):
+        // A=0, B=1, C=2, D=3, E=4 (CURRENT BID), F=5 (STATUS),
+        // G=6 (LOW), H=7 (HIGH), O=14 (NUMBER OF BIDS)
         const idx = {
-          item:        headers.indexOf("ITEM"),
-          currentBid:  headers.indexOf("CURRENT BID"),
-          status:      headers.indexOf("STATUS"),
-          low:         headers.indexOf("LOW"),
-          high:        headers.indexOf("HIGH"),
-          numBids:     headers.indexOf("NUMBER OF BIDS"),
+          item:       3,  // Column D — full item description
+          currentBid: 4,  // Column E — current bid
+          status:     5,  // Column F — status
+          low:        6,  // Column G — low target
+          high:       7,  // Column H — high target
+          numBids:    14, // Column O — number of bids
         };
 
-        const dataRows = allRows.slice(1).filter(r => {
-          // Skip rows where item column is empty
-          return idx.item > -1 && String(r[idx.item] || "").trim() !== "";
-        });
+        const allRows = json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
+        if (!allRows.length) return;
+
+        const dataRows = allRows.filter(r => String(r[idx.item] || "").trim() !== "");
 
         // Totals and counts
         let auctionTotal = 0;
