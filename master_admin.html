@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
+  <title>Marymount Auction — Master Admin</title>
+  <style>
+    :root {
+      --bg: #0e0e0e;
+      --surface: #181818;
+      --surface2: #222;
+      --surface3: #2a2a2a;
+      --border: #2e2e2e;
+      --gold: #c9973f;
+      --gold-light: #e6ce91;
+      --white: #f0ebe0;
+      --dim: #aaa;
+      --muted: #666;
+      --red: #e53935;
+      --red-dim: rgba(229,57,53,0.12);
+      --amber: #f9a825;
+      --amber-dim: rgba(249,168,37,0.10);
+      --green: #43a047;
+      --green-dim: rgba(67,160,71,0.10);
+      --blue: #1e88e5;
+      --purple: #8e24aa;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Calibri, Arial, sans-serif; background: var(--bg); color: var(--white); min-height: 100vh; }
+
+    /* LOGIN */
+    #loginScreen {
+      position: fixed; inset: 0; z-index: 999;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg);
+    }
+    .login-card {
+      background: var(--surface); border: 1px solid var(--gold);
+      border-radius: 16px; padding: 30px 24px; width: 90%; max-width: 340px;
+      box-shadow: 0 0 40px rgba(201,151,63,0.12), 0 20px 50px rgba(0,0,0,0.7);
+      text-align: center;
+    }
+    .login-logo { font-size: 2rem; margin-bottom: 6px; }
+    .login-title { font-size: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-light); margin-bottom: 2px; }
+    .login-sub { font-size: 0.74rem; color: var(--muted); margin-bottom: 22px; }
+    .login-label { display: block; text-align: left; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; color: var(--muted); }
+    .login-input { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 1rem; background: var(--surface2); color: var(--white); outline: none; }
+    .login-input:focus { border-color: var(--gold); }
+    .login-btn { width: 100%; margin-top: 16px; padding: 13px; border: none; border-radius: 999px; cursor: pointer; font-weight: 800; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.07em; background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #111; }
+    .login-error { margin-top: 8px; font-size: 0.78rem; color: var(--red); min-height: 14px; text-align: left; }
+
+    /* APP */
+    #app { display: none; }
+
+    /* TOP BAR */
+    .top-bar {
+      background: #0a0a0a; padding: 10px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .top-bar-title { font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold-light); }
+    .live-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 6px; animation: blink 1.4s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    #syncLabel { font-size: 0.65rem; color: var(--muted); }
+
+    /* MAIN GRID */
+    .main { padding: 12px; display: flex; flex-direction: column; gap: 10px; padding-bottom: 60px; }
+
+    /* SECTION LABEL */
+    .section-label {
+      font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--muted); padding: 0 2px; margin-bottom: -4px;
+    }
+
+    /* CONTROL ROW — three cards side by side */
+    .control-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    @media (max-width: 700px) { .control-row { grid-template-columns: 1fr; } }
+
+    /* CARD */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+    }
+    .card.danger { border-color: rgba(229,57,53,0.25); }
+    .card.whatsapp { border-color: rgba(37,211,102,0.2); }
+
+    .card-header {
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-header.danger-hdr { background: rgba(229,57,53,0.07); }
+    .card-header.wa-hdr     { background: rgba(37,211,102,0.05); }
+
+    .card-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .card-title { font-size: 0.85rem; font-weight: 800; color: var(--white); }
+    .card-desc  { font-size: 0.68rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+    .card-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+    /* STATE PILL */
+    .state-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 999px;
+      font-size: 0.7rem; font-weight: 800; width: fit-content;
+    }
+    .state-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .pill-open   { background: var(--green-dim); color: var(--green); }
+    .pill-closed { background: var(--red-dim);   color: var(--red); }
+    .pill-on     { background: var(--amber-dim); color: var(--amber); }
+    .pill-off    { background: rgba(255,255,255,0.05); color: var(--muted); }
+
+    /* BUTTONS */
+    .btn-row { display: flex; gap: 7px; flex-wrap: wrap; }
+    .btn {
+      padding: 9px 14px; border-radius: 8px; border: none; cursor: pointer;
+      font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em;
+      transition: opacity 0.15s, transform 0.1s; flex: 1 1 auto; text-align: center;
+    }
+    .btn:disabled { opacity: 0.2; cursor: not-allowed; transform: none !important; }
+    .btn:not(:disabled):active { transform: scale(0.97); }
+
+    .btn-green  { background: var(--green); color: #fff; }
+    .btn-red-outline { background: rgba(229,57,53,0.15); color: var(--red); border: 1px solid rgba(229,57,53,0.35); }
+    .btn-amber  { background: var(--amber); color: #111; }
+    .btn-ghost  { background: rgba(255,255,255,0.06); color: var(--dim); border: 1px solid var(--border); }
+    .btn-red    { background: var(--red); color: #fff; width: 100%; padding: 11px; }
+
+    .danger-warning {
+      background: rgba(229,57,53,0.07); border: 1px solid rgba(229,57,53,0.18);
+      border-radius: 7px; padding: 9px 11px;
+      font-size: 0.7rem; color: #d97070; line-height: 1.5;
+    }
+
+    /* WHATSAPP STATS ROW */
+    .wa-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 8px; overflow: hidden; }
+    .wa-stat { background: var(--surface2); padding: 20px 16px; text-align: center; }
+    .wa-stat-num {
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 800; color: var(--white); line-height: 1;
+      font-variant-numeric: tabular-nums;
+      transition: color 0.4s;
+    }
+    .wa-stat-num.bumped { color: #25d366; }
+    .wa-stat-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-top: 8px; }
+
+    .wa-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .wa-toggle-label { font-size: 0.75rem; font-weight: 700; color: var(--dim); }
+    .wa-last { font-size: 0.7rem; color: var(--muted); }
+    .wa-last span { color: var(--dim); }
+
+    /* QUICK LINKS */
+    .links-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 8px; overflow: hidden; }
+    @media (max-width: 500px) { .links-grid { grid-template-columns: 1fr 1fr; } }
+    .nav-link {
+      display: flex; align-items: center; gap: 9px;
+      padding: 11px 12px; background: var(--surface2);
+      text-decoration: none; color: var(--white);
+      transition: background 0.15s;
+    }
+    .nav-link:active { background: var(--surface3); }
+    .nav-icon  { font-size: 1.1rem; flex-shrink: 0; }
+    .nav-label { font-size: 0.77rem; font-weight: 700; }
+    .nav-sub   { font-size: 0.62rem; color: var(--muted); margin-top: 1px; }
+    .nav-link.ext .nav-label::after { content: " ↗"; font-size: 0.65rem; color: var(--muted); }
+
+    /* BOTTOM ROW — log + links side by side on desktop */
+    .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 700px) { .bottom-row { grid-template-columns: 1fr; } }
+
+    /* LOG */
+    .log-header { padding: 11px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .log-title  { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim); }
+    .log-clear  { font-size: 0.65rem; font-weight: 700; color: var(--muted); cursor: pointer; background: none; border: none; text-transform: uppercase; }
+    .log-body   { max-height: 220px; overflow-y: auto; }
+    .log-entry  { display: flex; gap: 10px; padding: 8px 14px; border-bottom: 1px solid var(--border); font-size: 0.72rem; }
+    .log-entry:last-child { border-bottom: none; }
+    .log-time   { color: var(--muted); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+    .log-msg    { color: var(--dim); }
+    .log-success { color: var(--green); }
+    .log-warn    { color: var(--amber); }
+    .log-danger  { color: var(--red); }
+    .log-empty  { padding: 20px 14px; font-size: 0.75rem; color: var(--muted); }
+
+    /* TOAST */
+    .toast-wrap { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 800; display: flex; flex-direction: column; gap: 6px; align-items: center; pointer-events: none; }
+    .toast { padding: 9px 18px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; box-shadow: 0 6px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.25s; white-space: nowrap; max-width: 92vw; text-align: center; }
+    .toast.success { background: var(--green); color: #fff; }
+    .toast.error   { background: var(--red);   color: #fff; }
+    .toast.info    { background: var(--blue);  color: #fff; }
+    .toast.warn    { background: var(--amber); color: #111; }
+    .toast.show    { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">🔐</div>
+    <div class="login-title">Master Admin</div>
+    <div class="login-sub">Marymount Ball Auction 2026</div>
+    <form id="loginForm">
+      <label class="login-label">Password</label>
+      <input type="password" id="pwInput" class="login-input" autocomplete="current-password" required />
+      <button type="submit" class="login-btn">Unlock</button>
+      <div id="loginError" class="login-error"></div>
+    </form>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- APP -->
+<div id="app">
+
+  <div class="top-bar">
+    <div class="top-bar-title"><span class="live-dot"></span>Master Admin</div>
+    <div id="syncLabel">Loading...</div>
+  </div>
+
+  <div class="main">
+
+    <!-- WHATSAPP STATUS -->
+    <div class="section-label">WhatsApp</div>
+    <div class="card whatsapp">
+      <div class="card-header wa-hdr">
+        <div class="card-icon">💬</div>
+        <div>
+          <div class="card-title">WhatsApp sending</div>
+          <div class="card-desc">Live counts from ALL_BIDS — refreshes every 15s</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="wa-stats">
+          <div class="wa-stat">
+            <div class="wa-stat-num" id="waBidsSent">—</div>
+            <div class="wa-stat-label">Confirmations sent</div>
+          </div>
+          <div class="wa-stat">
+            <div class="wa-stat-num" id="waOutbidsSent">—</div>
+            <div class="wa-stat-label">Outbid alerts sent</div>
+          </div>
+          <div class="wa-stat">
+            <div class="wa-stat-num" id="waWinnersSent">—</div>
+            <div class="wa-stat-label">Winner notices sent</div>
+          </div>
+        </div>
+        <div class="wa-toggle-row">
+          <div class="wa-toggle-label">Sending: <span id="waToggleVal" style="font-weight:800;color:var(--muted)">Loading...</span></div>
+          <div class="wa-last">Last confirmation: <span id="waLastBid">—</span></div>
+          <div class="wa-last">Last outbid: <span id="waLastOutbid">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUCTION CONTROLS -->
+    <div class="section-label">Auction controls</div>
+    <div class="control-row">
+
+      <!-- BIDDING FORM -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">📝</div>
+          <div>
+            <div class="card-title">Bidding form</div>
+            <div class="card-desc">Opens or closes the public bid page</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="state-pill pill-off" id="formPill"><span class="state-dot"></span><span id="formPillLabel">Loading...</span></div>
+          <div class="btn-row">
+            <button class="btn btn-green"       id="btnOpenForm"  onclick="doFormAction('open')"  disabled>Open</button>
+            <button class="btn btn-red-outline"  id="btnCloseForm" onclick="doFormAction('close')" disabled>Close</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLOSING SOON BANNER -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">🚨</div>
+          <div>
+            <div class="card-title">Closing soon</div>
+            <div class="card-desc">Flashing red banner on all screens</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="state-pill pill-off" id="bannerPill"><span class="state-dot"></span><span id="bannerPillLabel">Loading...</span></div>
+          <div class="btn-row">
+            <button class="btn btn-amber"  id="btnBannerOn"  onclick="doBannerAction('on')"  disabled>Activate</button>
+            <button class="btn btn-ghost"  id="btnBannerOff" onclick="doBannerAction('off')" disabled>Deactivate</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLOSE AUCTION -->
+      <div class="card danger">
+        <div class="card-header danger-hdr">
+          <div class="card-icon">🔒</div>
+          <div>
+            <div class="card-title">Close auction</div>
+            <div class="card-desc">Permanent — closes form and all screens</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="state-pill pill-off" id="auctionPill"><span class="state-dot"></span><span id="auctionPillLabel">Loading...</span></div>
+          <div class="danger-warning">⚠️ Cannot be undone. Only when the chairman calls it.</div>
+          <button class="btn btn-red" id="btnCloseAuction" onclick="doCloseAuction()" disabled>Close the auction</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM ROW: quick links + action log -->
+    <div class="bottom-row">
+
+      <!-- QUICK LINKS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">🔗</div>
+          <div>
+            <div class="card-title">Quick links</div>
+            <div class="card-desc">Open any page in a new tab</div>
+          </div>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div class="links-grid">
+            <a class="nav-link" href="/committee_view.html" target="_blank">
+              <div class="nav-icon">👥</div>
+              <div><div class="nav-label">Committee view</div><div class="nav-sub">Read-only</div></div>
+            </a>
+            <a class="nav-link" href="/committee_admin.html" target="_blank">
+              <div class="nav-icon">⚙️</div>
+              <div><div class="nav-label">Committee admin</div><div class="nav-sub">Live &amp; sold</div></div>
+            </a>
+            <a class="nav-link ext" href="https://marymountauction2026.ie/bid" target="_blank">
+              <div class="nav-icon">📝</div>
+              <div><div class="nav-label">Bidding form</div><div class="nav-sub">Public</div></div>
+            </a>
+            <a class="nav-link ext" href="https://marymountauction2026.ie/" target="_blank">
+              <div class="nav-icon">🏆</div>
+              <div><div class="nav-label">Leading bids</div><div class="nav-sub">Homepage</div></div>
+            </a>
+            <a class="nav-link" href="/tv_leadingbids.html" target="_blank">
+              <div class="nav-icon">📺</div>
+              <div><div class="nav-label">TV display</div><div class="nav-sub">Ballroom</div></div>
+            </a>
+            <a class="nav-link" href="/foyer_leaderboard.html" target="_blank">
+              <div class="nav-icon">🚪</div>
+              <div><div class="nav-label">Foyer board</div><div class="nav-sub">Foyer screens</div></div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTION LOG -->
+      <div class="card">
+        <div class="log-header">
+          <div class="log-title">Action log</div>
+          <button class="log-clear" onclick="clearLog()">Clear</button>
+        </div>
+        <div class="log-body" id="logBody">
+          <div class="log-empty">No actions yet tonight.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== CONFIG =====
+  const PASSWORD   = "masteradmin2026"; // CHANGE BEFORE EVENT NIGHT
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec"; // UPDATE AFTER SECTION 3 REDEPLOY
+
+  // Sheet config for WhatsApp stats (direct gviz read from ALL_BIDS)
+  const ALL_BIDS_SHEET_ID = "1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc";
+  const SETTINGS_SHEET_ID = "1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc";
+
+  const CTRL_REFRESH_MS = 8000;
+  const WA_REFRESH_MS   = 15000;
+
+  // ===== STATE =====
+  let state = { formOpen: null, bannerActive: null, auctionClosed: null };
+  let busy  = { form: false, banner: false, auction: false };
+  let log   = [];
+
+  // ===== LOGIN =====
+  document.getElementById("loginForm").addEventListener("submit", e => {
+    e.preventDefault();
+    if (document.getElementById("pwInput").value === PASSWORD) {
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("app").style.display = "block";
+      init();
+    } else {
+      document.getElementById("loginError").textContent = "Incorrect password.";
+    }
+  });
+
+  // ===== TOAST =====
+  function toast(msg, type = "success") {
+    const el = document.createElement("div");
+    el.className = `toast ${type}`;
+    el.textContent = msg;
+    document.getElementById("toastWrap").appendChild(el);
+    requestAnimationFrame(() => el.classList.add("show"));
+    setTimeout(() => { el.classList.remove("show"); setTimeout(() => el.remove(), 300); }, 3500);
+  }
+
+  // ===== LOG =====
+  function addLog(msg, cls = "") {
+    const now = new Date().toLocaleTimeString("en-IE", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    log.unshift({ time: now, msg, cls });
+    if (log.length > 60) log.pop();
+    renderLog();
+  }
+  function renderLog() {
+    const body = document.getElementById("logBody");
+    body.innerHTML = log.length
+      ? log.map(e => `<div class="log-entry"><span class="log-time">${e.time}</span><span class="log-msg ${e.cls}">${e.msg}</span></div>`).join("")
+      : `<div class="log-empty">No actions yet tonight.</div>`;
+  }
+  function clearLog() {
+    if (!confirm("Clear the action log?")) return;
+    log = []; renderLog();
+  }
+
+  // ===== API =====
+  async function apiCall(payload) {
+    const res  = await fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
+    const text = await res.text();
+    let json;
+    try { json = JSON.parse(text); } catch { throw new Error("Server error."); }
+    if (!json.ok) throw new Error(json.message || "Unknown error.");
+    return json;
+  }
+
+  // ===== CONTROL STATUS =====
+  async function loadControlStatus() {
+    try {
+      const result = await apiCall({ action: "getControlStatus" });
+      const d = result.data || {};
+      state.formOpen      = !!d.formOpen;
+      state.bannerActive  = !!d.bannerActive;
+      state.auctionClosed = !!d.auctionClosed;
+      renderStatus();
+      document.getElementById("syncLabel").textContent = "Synced " + new Date().toLocaleTimeString("en-IE");
+    } catch {
+      document.getElementById("syncLabel").textContent = "Sync failed";
+    }
+  }
+
+  function renderStatus() {
+    const { formOpen, bannerActive, auctionClosed } = state;
+    const closed = auctionClosed === true;
+
+    setPill("formPill",    "formPillLabel",    formOpen,      "Form is open",        "Form is closed",     "pill-open",   "pill-closed");
+    setPill("bannerPill",  "bannerPillLabel",  bannerActive,  "Banner is active",    "Banner is off",      "pill-on",     "pill-off");
+    setPill("auctionPill", "auctionPillLabel", auctionClosed, "Auction is closed",   "Auction is running", "pill-closed", "pill-open");
+
+    setBtn("btnOpenForm",     formOpen === false && !closed && !busy.form);
+    setBtn("btnCloseForm",    formOpen === true  && !closed && !busy.form);
+    setBtn("btnBannerOn",     bannerActive === false && !closed && !busy.banner);
+    setBtn("btnBannerOff",    bannerActive === true  && !closed && !busy.banner);
+    setBtn("btnCloseAuction", !closed && !busy.auction);
+  }
+
+  function setPill(pillId, labelId, value, trueText, falseText, trueClass, falseClass) {
+    if (value === null) return;
+    const pill  = document.getElementById(pillId);
+    const label = document.getElementById(labelId);
+    label.textContent = value ? trueText : falseText;
+    pill.className = "state-pill " + (value ? trueClass : falseClass);
+  }
+
+  function setBtn(id, enabled) {
+    const el = document.getElementById(id);
+    if (el) el.disabled = !enabled;
+  }
+
+  // ===== WHATSAPP STATS =====
+  async function loadWaStats() {
+    // Read toggle from SETTINGS!N5
+    try {
+      const settingsUrl = `https://docs.google.com/spreadsheets/d/${SETTINGS_SHEET_ID}/gviz/tq?tqx=out:json&sheet=SETTINGS&range=N5&cb=${Date.now()}`;
+      const sRes  = await fetch(settingsUrl, { cache: "no-store" });
+      const sRaw  = await sRes.text();
+      const sStart = sRaw.indexOf("{"), sEnd = sRaw.lastIndexOf("}");
+      if (sStart !== -1) {
+        const sJson = JSON.parse(sRaw.slice(sStart, sEnd + 1));
+        const toggleVal = sJson?.table?.rows?.[0]?.c?.[0]?.v ?? "";
+        const toggleEl = document.getElementById("waToggleVal");
+        toggleEl.textContent = String(toggleVal).toUpperCase() === "ON" ? "ON" : "OFF";
+        toggleEl.style.color = String(toggleVal).toUpperCase() === "ON" ? "var(--green)" : "var(--red)";
+      }
+    } catch { /* leave as-is */ }
+
+    // Read ALL_BIDS for sent counts and last timestamps
+    try {
+      const allBidsUrl = `https://docs.google.com/spreadsheets/d/${ALL_BIDS_SHEET_ID}/gviz/tq?tqx=out:json&sheet=ALL_BIDS&cb=${Date.now()}`;
+      const res  = await fetch(allBidsUrl, { cache: "no-store" });
+      const raw  = await res.text();
+      const start = raw.indexOf("{"), end = raw.lastIndexOf("}");
+      if (start === -1) return;
+      const json = JSON.parse(raw.slice(start, end + 1));
+
+      const cols = json.table?.cols?.map(c => (c.label || "").toUpperCase().trim()) || [];
+      const rows = json.table?.rows || [];
+
+      const idx = name => cols.findIndex(c => c === name);
+      const iBidSent     = idx("BID_RECEIVED_SENT");
+      const iBidAt       = idx("BID_RECEIVED_SENT_AT");
+      const iOutbidSent  = idx("OUTBID_MESSAGE_SENT");
+      const iOutbidAt    = idx("OUTBID_SENT_AT");
+      const iWinnerSent  = idx("WINNING_BID_MESSAGE_SENT");
+
+      let bidsSent = 0, outbidsSent = 0, winnersSent = 0;
+      let lastBidTime = null, lastOutbidTime = null;
+
+      rows.forEach(r => {
+        const c = r.c || [];
+        const val = i => (i !== -1 && c[i]) ? c[i].v : null;
+
+        const bidSent    = val(iBidSent);
+        const outbidSent = val(iOutbidSent);
+        const winnerSent = val(iWinnerSent);
+
+        if (bidSent === true || String(bidSent).toUpperCase() === "YES") {
+          bidsSent++;
+          const t = val(iBidAt);
+          if (t && (!lastBidTime || new Date(t) > new Date(lastBidTime))) lastBidTime = t;
+        }
+        if (outbidSent === true || String(outbidSent).toUpperCase() === "YES") {
+          outbidsSent++;
+          const t = val(iOutbidAt);
+          if (t && (!lastOutbidTime || new Date(t) > new Date(lastOutbidTime))) lastOutbidTime = t;
+        }
+        if (winnerSent === true || String(winnerSent).toUpperCase() === "YES") winnersSent++;
+      });
+
+      bumpStat("waBidsSent",    bidsSent);
+      bumpStat("waOutbidsSent", outbidsSent);
+      bumpStat("waWinnersSent", winnersSent);
+
+      document.getElementById("waLastBid").textContent    = lastBidTime    ? fmtTime(lastBidTime)    : "None yet";
+      document.getElementById("waLastOutbid").textContent = lastOutbidTime ? fmtTime(lastOutbidTime) : "None yet";
+
+    } catch { /* leave as-is */ }
+  }
+
+  const prevWa = {};
+  function bumpStat(id, newVal) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const prev = prevWa[id];
+    el.textContent = newVal;
+    if (prev !== undefined && newVal > prev) {
+      el.classList.remove("bumped");
+      void el.offsetWidth; // reflow to restart animation
+      el.classList.add("bumped");
+      setTimeout(() => el.classList.remove("bumped"), 1500);
+    }
+    prevWa[id] = newVal;
+  }
+
+  function fmtTime(raw) {
+    try {
+      // Google Sheets dates come back as "Date(year,month,day,h,m,s)"
+      if (typeof raw === "string" && raw.startsWith("Date(")) {
+        const parts = raw.slice(5, -1).split(",").map(Number);
+        const d = new Date(parts[0], parts[1], parts[2], parts[3] || 0, parts[4] || 0, parts[5] || 0);
+        return d.toLocaleTimeString("en-IE", { hour: "2-digit", minute: "2-digit" });
+      }
+      return new Date(raw).toLocaleTimeString("en-IE", { hour: "2-digit", minute: "2-digit" });
+    } catch { return String(raw); }
+  }
+
+  // ===== ACTIONS =====
+  async function doFormAction(direction) {
+    const opening = direction === "open";
+    if (!confirm(opening
+      ? "Open the bidding form?\n\nGuests will be able to place bids immediately."
+      : "Close the bidding form?\n\nGuests cannot bid until you reopen it.")) return;
+
+    busy.form = true; renderStatus();
+    try {
+      await apiCall({ action: "setFormStatus", open: opening });
+      state.formOpen = opening;
+      addLog(opening ? "Form opened." : "Form closed.", opening ? "log-success" : "log-warn");
+      toast(opening ? "Bidding form is now open." : "Bidding form closed.", opening ? "success" : "warn");
+    } catch (err) {
+      addLog("Form action failed: " + err.message, "log-danger");
+      toast("Failed: " + err.message, "error");
+    } finally {
+      busy.form = false; renderStatus();
+    }
+  }
+
+  async function doBannerAction(direction) {
+    const activating = direction === "on";
+    if (!confirm(activating
+      ? "Activate the closing soon banner?\n\nFlashing red alert on all screens."
+      : "Deactivate the closing soon banner?")) return;
+
+    busy.banner = true; renderStatus();
+    try {
+      await apiCall({ action: "setClosingSoonBanner", active: activating });
+      state.bannerActive = activating;
+      addLog(activating ? "Closing soon banner activated." : "Banner deactivated.", activating ? "log-warn" : "");
+      toast(activating ? "Closing soon banner is live." : "Banner deactivated.", activating ? "warn" : "info");
+    } catch (err) {
+      addLog("Banner action failed: " + err.message, "log-danger");
+      toast("Failed: " + err.message, "error");
+    } finally {
+      busy.banner = false; renderStatus();
+    }
+  }
+
+  async function doCloseAuction() {
+    if (!confirm("CLOSE THE AUCTION?\n\n- Bidding form closes\n- Closing soon banner stops\n- All screens show auction closed\n\nOnly proceed when the chairman has called it.")) return;
+    if (!confirm("Are you absolutely sure? This cannot be undone from this panel.")) return;
+
+    busy.auction = true; renderStatus();
+    try {
+      await apiCall({ action: "closeAuction" });
+      state.auctionClosed = true;
+      state.formOpen      = false;
+      state.bannerActive  = false;
+      addLog("AUCTION CLOSED.", "log-danger");
+      toast("Auction closed. All screens updated.", "error");
+    } catch (err) {
+      addLog("Auction close failed: " + err.message, "log-danger");
+      toast("Failed: " + err.message, "error");
+    } finally {
+      busy.auction = false; renderStatus();
+    }
+  }
+
+  // ===== INIT =====
+  function init() {
+    addLog("Session started.");
+    loadControlStatus();
+    loadWaStats();
+    setInterval(loadControlStatus, CTRL_REFRESH_MS);
+    setInterval(loadWaStats, WA_REFRESH_MS);
+  }
+</script>
+</body>
+</html>
