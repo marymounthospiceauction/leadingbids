@@ -7,32 +7,27 @@
   <link rel="icon" type="image/png" href="/Marymount Logo.png" />
   <style>
     :root {
-      --bg: #1a2235;
-      --surface: #243047;
-      --surface2: #2d3a55;
-      --border: #3a4a6a;
-      --gold: #c9973f;
-      --gold-light: #e6ce91;
-      --white: #f0f4ff;
-      --dim: #b0bdd8;
-      --muted: #7a8aaa;
-      --red: #ef4444;
-      --red-dim: rgba(239,68,68,0.13);
-      --amber: #f59e0b;
-      --amber-dim: rgba(245,158,11,0.13);
-      --green: #22c55e;
-      --green-dim: rgba(34,197,94,0.13);
-      --blue: #60a5fa;
-      --purple: #a78bfa;
+      --bg:       #1e2d4a;
+      --surface:  #253860;
+      --surface2: #2d4270;
+      --surface3: #1a2540;
+      --border:   #3a5080;
+      --border2:  #2d4270;
+      --gold:     #c9973f;
+      --gold-lt:  #e6ce91;
+      --white:    #f0f4ff;
+      --dim:      #a0b8d8;
+      --muted:    #7a9abf;
+      --red:      #ef4444;
+      --red-bg:   #3a1a1a;
+      --red-bdr:  #7f3333;
+      --amber:    #f59e0b;
+      --green:    #4ade80;
+      --green-bg: #0f2a1a;
+      --green-bdr:#006633;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body {
-      height: 100%; overflow: hidden;
-      font-family: Calibri, Arial, sans-serif;
-      background: var(--bg); color: var(--white);
-      font-size: 14px;
-    }
+    html, body { height: 100%; font-family: Calibri, Arial, sans-serif; background: var(--bg); color: var(--white); overflow: hidden; }
 
     /* LOGIN */
     #loginScreen {
@@ -40,143 +35,146 @@
       display: flex; align-items: center; justify-content: center;
       background: var(--bg);
     }
-    .login-card {
-      background: var(--surface); border: 1px solid var(--border);
+    .lc {
+      background: var(--surface); border: 1px solid var(--gold);
       border-radius: 16px; padding: 28px 24px; width: 90%; max-width: 320px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center;
+      box-shadow: 0 0 40px rgba(201,151,63,0.15), 0 20px 50px rgba(0,0,0,0.5);
+      text-align: center;
     }
-    .login-logo { font-size: 1.8rem; margin-bottom: 4px; }
-    .login-title { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-light); margin-bottom: 2px; }
-    .login-sub { font-size: 0.72rem; color: var(--muted); margin-bottom: 18px; }
-    .login-label { display: block; text-align: left; font-size: 0.67rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; color: var(--muted); }
-    .login-input { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 1rem; background: var(--surface2); color: var(--white); outline: none; }
-    .login-input:focus { border-color: var(--gold); }
-    .login-btn { width: 100%; margin-top: 14px; padding: 11px; border: none; border-radius: 999px; cursor: pointer; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.07em; background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #111; }
-    .login-error { margin-top: 6px; font-size: 0.76rem; color: var(--red); min-height: 14px; text-align: left; }
+    .lc-logo  { font-size: 1.8rem; margin-bottom: 5px; }
+    .lc-title { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-lt); margin-bottom: 2px; }
+    .lc-sub   { font-size: 0.72rem; color: var(--muted); margin-bottom: 18px; }
+    .lc-lbl   { display: block; text-align: left; font-size: 0.67rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; color: var(--muted); }
+    .lc-inp   { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 1rem; background: var(--surface2); color: var(--white); outline: none; }
+    .lc-inp:focus { border-color: var(--gold); }
+    .lc-btn   { width: 100%; margin-top: 14px; padding: 11px; border: none; border-radius: 999px; cursor: pointer; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.07em; background: linear-gradient(135deg, var(--gold), var(--gold-lt)); color: #111; }
+    .lc-err   { margin-top: 6px; font-size: 0.75rem; color: var(--red); min-height: 14px; text-align: left; }
 
-    /* APP — full height, no scroll */
-    #app { display: none; height: 100vh; display: none; flex-direction: column; overflow: hidden; }
+    /* APP SHELL */
+    #app { display: none; height: 100vh; flex-direction: column; overflow: hidden; }
 
     /* TOP BAR */
-    .top-bar {
-      background: var(--surface); padding: 5px 14px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--border); flex-shrink: 0;
+    .topbar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 6px 16px; display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
     }
-    .top-bar-title { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--white); }
+    .topbar-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-lt); }
     .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-right: 5px; animation: blink 1.4s infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
     #syncLabel { font-size: 0.62rem; color: var(--muted); }
 
-    /* CLOCK */
-    .clock-bar {
-      background: var(--bg); border-bottom: 1px solid var(--border);
-      text-align: center; padding: 6px 0 4px; flex-shrink: 0;
+    /* CLOCK BAR */
+    .clockbar {
+      background: var(--bg); border-bottom: 1px solid var(--border2);
+      text-align: center; padding: 8px 0 6px; flex-shrink: 0;
     }
-    .clock-time { font-size: 2.8rem; font-weight: 800; color: var(--white); letter-spacing: 0.06em; font-variant-numeric: tabular-nums; line-height: 1; }
-    .clock-date { font-size: 0.72rem; color: var(--muted); margin-top: 1px; letter-spacing: 0.04em; }
+    .clock-time { font-size: 2.6rem; font-weight: 800; color: var(--white); letter-spacing: 0.05em; font-variant-numeric: tabular-nums; line-height: 1; }
+    .clock-date { font-size: 0.7rem; color: var(--muted); margin-top: 1px; }
 
-    /* MAIN GRID — fills remaining height */
+    /* MAIN — CSS grid, fills remaining height */
     .main {
-      flex: 1; overflow: hidden;
+      flex: 1; min-height: 0;
       display: grid;
-      grid-template-rows: auto auto auto;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 7px; padding: 7px;
+      grid-template-rows: auto auto;
+      gap: 8px; padding: 8px;
     }
 
-    /* WA spans full width */
-    .wa-section { grid-column: 1 / -1; }
-
-    /* Bottom row */
+    /* WA section spans all 3 cols */
+    .wa-section   { grid-column: 1 / -1; }
     .links-section { grid-column: 1 / 3; }
     .log-section   { grid-column: 3 / 4; }
 
     /* SECTION LABEL */
-    .section-label { font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 3px; padding: 0 2px; }
+    .slabel {
+      font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--gold); margin-bottom: 3px;
+    }
 
     /* CARD */
-    .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
-    .card.accent-green  { border-left: 3px solid var(--green); }
-    .card.accent-blue   { border-left: 3px solid var(--blue); }
-    .card.accent-purple { border-left: 3px solid var(--purple); }
-    .card.accent-red    { border-left: 3px solid var(--red); background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.35); }
-
-    .card-header { padding: 7px 12px 6px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-    .card-icon { font-size: 1rem; flex-shrink: 0; }
-    .card-title { font-size: 0.8rem; font-weight: 800; color: var(--white); }
-    .card-desc  { font-size: 0.63rem; color: var(--muted); line-height: 1.3; }
-    .card-body  { padding: 8px 12px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
+    .card {
+      background: var(--surface); border: 0.5px solid var(--border);
+      border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;
+    }
+    .card-hdr {
+      padding: 7px 12px 6px; border-bottom: 0.5px solid var(--border2);
+      display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+    }
+    .card-icon  { font-size: 1rem; flex-shrink: 0; }
+    .card-title { font-size: 0.78rem; font-weight: 800; color: var(--gold-lt); }
+    .card-desc  { font-size: 0.62rem; color: var(--muted); line-height: 1.3; }
+    .card-body  { padding: 9px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 
     /* WA STATS */
-    .wa-stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 7px; overflow: hidden; }
-    .wa-stat { background: var(--surface2); padding: 8px 10px; text-align: center; }
-    .wa-stat.err-stat { background: rgba(239,68,68,0.1); }
-    .wa-stat-num { font-size: 2.4rem; font-weight: 800; color: var(--white); line-height: 1; font-variant-numeric: tabular-nums; transition: color 0.4s; }
-    .wa-stat-num.bumped { color: var(--green); }
-    .wa-stat-label { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 3px; }
+    .wa-stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1px; background: var(--border2); border-radius: 8px; overflow: hidden; }
+    .wa-stat   { background: var(--surface3); padding: 10px 10px 9px; text-align: center; }
+    .wa-stat.err { background: var(--red-bg); }
+    .wa-num    { font-size: 2.4rem; font-weight: 800; color: var(--white); line-height: 1; font-variant-numeric: tabular-nums; transition: color 0.4s; }
+    .wa-num.bumped { color: var(--green); }
+    .wa-lbl    { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 3px; }
+    .wa-meta   { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 0.68rem; color: var(--muted); }
+    .wa-meta strong { font-weight: 800; }
 
-    .wa-meta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; }
-    .wa-toggle-label { font-size: 0.72rem; font-weight: 700; color: var(--dim); }
-    .wa-last { font-size: 0.66rem; color: var(--muted); }
-    .wa-last span { color: var(--dim); }
-
-    .wa-error-banner { display: none; background: var(--red-dim); border: 1px solid rgba(239,68,68,0.3); border-radius: 6px; padding: 7px 10px; }
-    .wa-error-title { font-size: 0.67rem; font-weight: 800; text-transform: uppercase; color: var(--red); margin-bottom: 3px; }
-    .wa-error-list  { font-size: 0.7rem; color: #fca5a5; line-height: 1.5; }
-    .wa-error-hint  { font-size: 0.62rem; color: var(--muted); margin-top: 4px; }
+    /* ERROR BANNER */
+    .wa-err-banner { display: none; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 7px; padding: 8px 11px; }
+    .wa-err-title  { font-size: 0.67rem; font-weight: 800; text-transform: uppercase; color: var(--red); margin-bottom: 3px; }
+    .wa-err-list   { font-size: 0.7rem; color: #fca5a5; line-height: 1.5; }
+    .wa-err-hint   { font-size: 0.62rem; color: var(--muted); margin-top: 4px; }
 
     /* STATE PILL */
-    .state-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: 0.67rem; font-weight: 800; width: fit-content; }
-    .state-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-    .pill-open   { background: var(--green-dim); color: var(--green); }
-    .pill-closed { background: var(--red-dim);   color: var(--red); }
-    .pill-on     { background: var(--amber-dim); color: var(--amber); }
-    .pill-off    { background: rgba(255,255,255,0.06); color: var(--muted); border: 0.5px solid var(--border); }
+    .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: 0.67rem; font-weight: 800; }
+    .pill-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .pill-open   { background: var(--green-bg); color: var(--green); border: 0.5px solid var(--green-bdr); }
+    .pill-closed { background: var(--red-bg);   color: var(--red);   border: 0.5px solid var(--red-bdr); }
+    .pill-on     { background: rgba(245,158,11,0.15); color: var(--amber); border: 0.5px solid rgba(245,158,11,0.4); }
+    .pill-off    { background: rgba(255,255,255,0.05); color: var(--muted); border: 0.5px solid var(--border); }
 
     /* BUTTONS */
     .btn-row { display: flex; gap: 6px; }
     .btn { padding: 8px 10px; border-radius: 7px; border: none; cursor: pointer; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; transition: opacity 0.15s, transform 0.1s; flex: 1; text-align: center; }
     .btn:disabled { opacity: 0.2; cursor: not-allowed; }
     .btn:not(:disabled):active { transform: scale(0.97); }
-    .btn-green    { background: var(--green);              color: #052e16; }
-    .btn-red-soft { background: var(--red-dim);            color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
-    .btn-amber    { background: var(--amber);              color: #111; }
-    .btn-ghost    { background: rgba(255,255,255,0.07);    color: var(--muted); border: 0.5px solid var(--border); }
-    .btn-red      { background: var(--red);                color: #fff; width: 100%; padding: 9px; }
+    .btn-green    { background: #14532d; color: #86efac; border: 0.5px solid #166534; }
+    .btn-red-soft { background: #7f1d1d; color: #fca5a5; border: 0.5px solid #991b1b; }
+    .btn-gold     { background: var(--gold); color: #111; font-weight: 800; }
+    .btn-ghost    { background: rgba(255,255,255,0.06); color: var(--muted); border: 0.5px solid var(--border); }
+    .btn-red      { background: #dc2626; color: #fff; width: 100%; padding: 9px; }
 
-    .danger-warning { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.2); border-radius: 6px; padding: 7px 10px; font-size: 0.67rem; color: #fca5a5; line-height: 1.4; }
+    /* Danger card */
+    .card-danger { border-color: var(--red-bdr); background: var(--red-bg); }
+    .danger-warn { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 6px; padding: 7px 10px; font-size: 0.67rem; color: #fca5a5; line-height: 1.4; }
 
-    /* LINKS */
-    .links-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 7px; overflow: hidden; }
-    .nav-link { display: flex; align-items: center; gap: 7px; padding: 9px 10px; background: var(--surface2); text-decoration: none; color: var(--white); transition: background 0.15s; }
-    .nav-link:hover { background: var(--surface); }
+    /* QUICK LINKS */
+    .links-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border2); border-radius: 8px; overflow: hidden; }
+    .nav-link { display: flex; align-items: center; gap: 8px; padding: 9px 11px; background: var(--surface2); text-decoration: none; color: var(--white); transition: background 0.15s; }
+    .nav-link:hover { background: var(--surface3); }
     .nav-icon  { font-size: 1rem; flex-shrink: 0; }
-    .nav-label { font-size: 0.72rem; font-weight: 700; }
+    .nav-label { font-size: 0.72rem; font-weight: 700; color: var(--gold-lt); }
     .nav-sub   { font-size: 0.6rem; color: var(--muted); margin-top: 1px; }
     .nav-link.ext .nav-label::after { content: " ↗"; font-size: 0.6rem; color: var(--muted); }
 
     /* LOG */
-    .log-header { padding: 7px 12px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-    .log-title  { font-size: 0.67rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim); }
-    .log-clear  { font-size: 0.62rem; font-weight: 700; color: var(--muted); cursor: pointer; background: none; border: none; text-transform: uppercase; }
-    .log-body   { flex: 1; overflow-y: auto; }
-    .log-entry  { display: flex; gap: 8px; padding: 6px 12px; border-bottom: 0.5px solid var(--border); font-size: 0.68rem; }
-    .log-entry:last-child { border-bottom: none; }
-    .log-time   { color: var(--muted); flex-shrink: 0; font-variant-numeric: tabular-nums; }
-    .log-msg    { color: var(--dim); }
-    .log-success { color: var(--green); }
-    .log-warn    { color: var(--amber); }
-    .log-danger  { color: var(--red); }
-    .log-empty  { padding: 16px 12px; font-size: 0.72rem; color: var(--muted); }
+    .log-hdr  { padding: 7px 12px; border-bottom: 0.5px solid var(--border2); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .log-title { font-size: 0.67rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gold); }
+    .log-clear { font-size: 0.62rem; font-weight: 700; color: var(--muted); cursor: pointer; background: none; border: none; text-transform: uppercase; }
+    .log-body  { flex: 1; overflow-y: auto; min-height: 0; }
+    .log-row   { display: flex; gap: 8px; padding: 6px 12px; border-bottom: 0.5px solid var(--border2); font-size: 0.68rem; }
+    .log-row:last-child { border-bottom: none; }
+    .log-t   { color: var(--muted); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+    .log-m   { color: var(--dim); }
+    .log-ok  { color: var(--green); }
+    .log-wrn { color: var(--amber); }
+    .log-err { color: var(--red); }
+    .log-empty { padding: 16px 12px; font-size: 0.7rem; color: var(--muted); }
 
     /* TOAST */
-    .toast-wrap { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 800; display: flex; flex-direction: column; gap: 5px; align-items: center; pointer-events: none; }
+    .toast-wrap { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 800; display: flex; flex-direction: column; gap: 5px; align-items: center; pointer-events: none; }
     .toast { padding: 8px 16px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; box-shadow: 0 6px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.25s; white-space: nowrap; max-width: 92vw; text-align: center; }
-    .toast.success { background: var(--green); color: #052e16; }
-    .toast.error   { background: var(--red);   color: #fff; }
-    .toast.info    { background: var(--blue);  color: #fff; }
-    .toast.warn    { background: var(--amber); color: #111; }
+    .toast.success { background: #22c55e; color: #052e16; }
+    .toast.error   { background: #ef4444; color: #fff; }
+    .toast.info    { background: #3b82f6; color: #fff; }
+    .toast.warn    { background: #f59e0b; color: #111; }
     .toast.show    { opacity: 1; }
 
     /* MOBILE */
@@ -186,7 +184,7 @@
       .main { display: flex; flex-direction: column; }
       .wa-stats { grid-template-columns: 1fr 1fr; }
       .links-grid { grid-template-columns: 1fr 1fr; }
-      .clock-time { font-size: 3.5rem; }
+      .clock-time { font-size: 3rem; }
     }
   </style>
 </head>
@@ -194,15 +192,15 @@
 
 <!-- LOGIN -->
 <div id="loginScreen">
-  <div class="login-card">
-    <div class="login-logo">🔐</div>
-    <div class="login-title">Master Admin</div>
-    <div class="login-sub">Marymount Ball Auction 2026</div>
+  <div class="lc">
+    <div class="lc-logo">🔐</div>
+    <div class="lc-title">Master Admin</div>
+    <div class="lc-sub">Marymount Ball Auction 2026</div>
     <form id="loginForm">
-      <label class="login-label">Password</label>
-      <input type="password" id="pwInput" class="login-input" autocomplete="current-password" required />
-      <button type="submit" class="login-btn">Unlock</button>
-      <div id="loginError" class="login-error"></div>
+      <label class="lc-lbl">Password</label>
+      <input type="password" id="pwInput" class="lc-inp" autocomplete="current-password" required />
+      <button type="submit" class="lc-btn">Unlock</button>
+      <div id="loginError" class="lc-err"></div>
     </form>
   </div>
 </div>
@@ -212,23 +210,23 @@
 <!-- APP -->
 <div id="app">
 
-  <div class="top-bar">
-    <div class="top-bar-title"><span class="live-dot"></span>Master Admin</div>
+  <div class="topbar">
+    <div class="topbar-title"><span class="live-dot"></span>Master Admin</div>
     <div id="syncLabel">Loading...</div>
   </div>
 
-  <div class="clock-bar">
+  <div class="clockbar">
     <div class="clock-time" id="clockTime">00:00:00</div>
     <div class="clock-date" id="clockDate"></div>
   </div>
 
   <div class="main">
 
-    <!-- WA — full width -->
+    <!-- WHATSAPP — full width -->
     <div class="wa-section" style="display:flex;flex-direction:column;gap:3px;">
-      <div class="section-label">WhatsApp</div>
-      <div class="card accent-green" style="flex:1;">
-        <div class="card-header">
+      <div class="slabel">WhatsApp</div>
+      <div class="card" style="flex:1;">
+        <div class="card-hdr">
           <div class="card-icon">💬</div>
           <div>
             <div class="card-title">WhatsApp sending</div>
@@ -238,31 +236,31 @@
         <div class="card-body">
           <div class="wa-stats">
             <div class="wa-stat">
-              <div class="wa-stat-num" id="waBidsSent">—</div>
-              <div class="wa-stat-label">Confirmations</div>
+              <div class="wa-num" id="waBidsSent">—</div>
+              <div class="wa-lbl">Confirmations</div>
             </div>
             <div class="wa-stat">
-              <div class="wa-stat-num" id="waOutbidsSent">—</div>
-              <div class="wa-stat-label">Outbid alerts</div>
+              <div class="wa-num" id="waOutbidsSent">—</div>
+              <div class="wa-lbl">Outbid alerts</div>
             </div>
             <div class="wa-stat">
-              <div class="wa-stat-num" id="waWinnersSent">—</div>
-              <div class="wa-stat-label">Winners</div>
+              <div class="wa-num" id="waWinnersSent">—</div>
+              <div class="wa-lbl">Winners</div>
             </div>
-            <div class="wa-stat err-stat">
-              <div class="wa-stat-num" id="waErrorCount" style="color:var(--red)">—</div>
-              <div class="wa-stat-label" style="color:var(--red)">Errors</div>
+            <div class="wa-stat err">
+              <div class="wa-num" id="waErrorCount" style="color:var(--red)">—</div>
+              <div class="wa-lbl" style="color:var(--red)">Errors</div>
             </div>
           </div>
           <div class="wa-meta">
-            <div class="wa-toggle-label">Sending: <span id="waToggleVal" style="color:var(--muted)">Loading...</span></div>
-            <div class="wa-last">Last confirmation: <span id="waLastBid">—</span></div>
-            <div class="wa-last">Last outbid: <span id="waLastOutbid">—</span></div>
+            <span>Sending: <strong id="waToggleVal" style="color:var(--muted)">Loading...</strong></span>
+            <span>Last confirmation: <strong id="waLastBid">—</strong></span>
+            <span>Last outbid: <strong id="waLastOutbid">—</strong></span>
           </div>
-          <div class="wa-error-banner" id="waErrorBanner">
-            <div class="wa-error-title">⚠️ WhatsApp error detected</div>
-            <div class="wa-error-list" id="waErrorList"></div>
-            <div class="wa-error-hint">Check WHATSAPP_LAST_ERROR in ALL_BIDS for affected rows.</div>
+          <div class="wa-err-banner" id="waErrorBanner">
+            <div class="wa-err-title">⚠️ WhatsApp error detected</div>
+            <div class="wa-err-list" id="waErrorList"></div>
+            <div class="wa-err-hint">Check WHATSAPP_LAST_ERROR in ALL_BIDS for affected rows.</div>
           </div>
         </div>
       </div>
@@ -270,9 +268,9 @@
 
     <!-- BIDDING FORM -->
     <div style="display:flex;flex-direction:column;gap:3px;">
-      <div class="section-label">Auction controls</div>
-      <div class="card accent-green" style="flex:1;">
-        <div class="card-header">
+      <div class="slabel">Auction controls</div>
+      <div class="card" style="flex:1;">
+        <div class="card-hdr">
           <div class="card-icon">📝</div>
           <div>
             <div class="card-title">Bidding form</div>
@@ -280,7 +278,7 @@
           </div>
         </div>
         <div class="card-body">
-          <div class="state-pill pill-off" id="formPill"><span class="state-dot"></span><span id="formPillLabel">Loading...</span></div>
+          <div class="pill pill-off" id="formPill"><span class="pill-dot"></span><span id="formPillLabel">Loading...</span></div>
           <div class="btn-row">
             <button class="btn btn-green"    id="btnOpenForm"  onclick="doFormAction('open')"  disabled>Open</button>
             <button class="btn btn-red-soft" id="btnCloseForm" onclick="doFormAction('close')" disabled>Close</button>
@@ -291,9 +289,9 @@
 
     <!-- CLOSING SOON -->
     <div style="display:flex;flex-direction:column;gap:3px;">
-      <div class="section-label">&nbsp;</div>
-      <div class="card accent-blue" style="flex:1;">
-        <div class="card-header">
+      <div class="slabel">&nbsp;</div>
+      <div class="card" style="flex:1;">
+        <div class="card-hdr">
           <div class="card-icon">🚨</div>
           <div>
             <div class="card-title">Closing soon</div>
@@ -301,9 +299,9 @@
           </div>
         </div>
         <div class="card-body">
-          <div class="state-pill pill-off" id="bannerPill"><span class="state-dot"></span><span id="bannerPillLabel">Loading...</span></div>
+          <div class="pill pill-off" id="bannerPill"><span class="pill-dot"></span><span id="bannerPillLabel">Loading...</span></div>
           <div class="btn-row">
-            <button class="btn btn-amber" id="btnBannerOn"  onclick="doBannerAction('on')"  disabled>Activate</button>
+            <button class="btn btn-gold"  id="btnBannerOn"  onclick="doBannerAction('on')"  disabled>Activate</button>
             <button class="btn btn-ghost" id="btnBannerOff" onclick="doBannerAction('off')" disabled>Deactivate</button>
           </div>
         </div>
@@ -312,18 +310,18 @@
 
     <!-- CLOSE AUCTION -->
     <div style="display:flex;flex-direction:column;gap:3px;">
-      <div class="section-label">&nbsp;</div>
-      <div class="card accent-red" style="flex:1;">
-        <div class="card-header">
+      <div class="slabel">&nbsp;</div>
+      <div class="card card-danger" style="flex:1;">
+        <div class="card-hdr" style="border-bottom-color:var(--red-bdr);">
           <div class="card-icon">🔒</div>
           <div>
-            <div class="card-title">Close auction</div>
+            <div class="card-title" style="color:#fca5a5;">Close auction</div>
             <div class="card-desc">Permanent — closes form and all screens</div>
           </div>
         </div>
         <div class="card-body">
-          <div class="state-pill pill-off" id="auctionPill"><span class="state-dot"></span><span id="auctionPillLabel">Loading...</span></div>
-          <div class="danger-warning">⚠️ Cannot be undone. Only when the chairman calls it.</div>
+          <div class="pill pill-off" id="auctionPill"><span class="pill-dot"></span><span id="auctionPillLabel">Loading...</span></div>
+          <div class="danger-warn">⚠️ Cannot be undone. Only when the chairman calls it.</div>
           <button class="btn btn-red" id="btnCloseAuction" onclick="doCloseAuction()" disabled>Close the auction</button>
         </div>
       </div>
@@ -331,8 +329,8 @@
 
     <!-- QUICK LINKS -->
     <div class="links-section" style="display:flex;flex-direction:column;gap:3px;">
-      <div class="section-label">Quick links</div>
-      <div class="card accent-purple" style="flex:1;">
+      <div class="slabel">Quick links</div>
+      <div class="card" style="flex:1;">
         <div class="card-body" style="padding:0;">
           <div class="links-grid">
             <a class="nav-link" href="/committee_view.html" target="_blank">
@@ -366,9 +364,9 @@
 
     <!-- ACTION LOG -->
     <div class="log-section" style="display:flex;flex-direction:column;gap:3px;">
-      <div class="section-label">Action log</div>
+      <div class="slabel">Action log</div>
       <div class="card" style="flex:1;">
-        <div class="log-header">
+        <div class="log-hdr">
           <div class="log-title">Tonight</div>
           <button class="log-clear" onclick="clearLog()">Clear</button>
         </div>
@@ -385,13 +383,13 @@
   const PASSWORD   = "master2026"; // CHANGE BEFORE EVENT NIGHT
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec"; // UPDATE AFTER REDEPLOY
 
-  const CTRL_REFRESH_MS = 8000;
-  const WA_REFRESH_MS   = 15000;
+  const CTRL_MS = 8000;
+  const WA_MS   = 15000;
 
   let state = { formOpen: null, bannerActive: null, auctionClosed: null };
   let busy  = { form: false, banner: false, auction: false };
   let log   = [];
-  const prevWa = {};
+  const prev = {};
 
   document.getElementById("loginForm").addEventListener("submit", e => {
     e.preventDefault();
@@ -423,7 +421,7 @@
   function renderLog() {
     const body = document.getElementById("logBody");
     body.innerHTML = log.length
-      ? log.map(e => `<div class="log-entry"><span class="log-time">${e.time}</span><span class="log-msg ${e.cls}">${e.msg}</span></div>`).join("")
+      ? log.map(e => `<div class="log-row"><span class="log-t">${e.time}</span><span class="log-m ${e.cls}">${e.msg}</span></div>`).join("")
       : `<div class="log-empty">No actions yet.</div>`;
   }
   function clearLog() {
@@ -431,7 +429,7 @@
     log = []; renderLog();
   }
 
-  async function apiCall(payload) {
+  async function api(payload) {
     const res  = await fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
     const text = await res.text();
     let json;
@@ -440,10 +438,10 @@
     return json;
   }
 
-  async function loadControlStatus() {
+  async function loadCtrl() {
     try {
-      const result = await apiCall({ action: "getControlStatus" });
-      const d = result.data || {};
+      const r = await api({ action: "getControlStatus" });
+      const d = r.data || {};
       state.formOpen      = !!d.formOpen;
       state.bannerActive  = !!d.bannerActive;
       state.auctionClosed = !!d.auctionClosed;
@@ -467,134 +465,133 @@
     setBtn("btnCloseAuction", !closed && !busy.auction);
   }
 
-  function setPill(pillId, labelId, value, trueText, falseText, trueClass, falseClass) {
-    if (value === null) return;
-    document.getElementById(labelId).textContent = value ? trueText : falseText;
-    document.getElementById(pillId).className = "state-pill " + (value ? trueClass : falseClass);
+  function setPill(pid, lid, val, tT, fT, tC, fC) {
+    if (val === null) return;
+    document.getElementById(lid).textContent = val ? tT : fT;
+    document.getElementById(pid).className = "pill " + (val ? tC : fC);
   }
   function setBtn(id, enabled) {
     const el = document.getElementById(id);
     if (el) el.disabled = !enabled;
   }
 
-  async function loadWaStats() {
+  async function loadWa() {
     try {
-      const result = await apiCall({ action: "getWhatsAppStats" });
-      if (!result.ok) return;
-      const d = result.data;
+      const r = await api({ action: "getWhatsAppStats" });
+      if (!r.ok) return;
+      const d = r.data;
 
-      bumpStat("waBidsSent",    d.bidsSent    || 0);
-      bumpStat("waOutbidsSent", d.outbidsSent || 0);
-      bumpStat("waWinnersSent", d.winnersSent || 0);
+      bump("waBidsSent",    d.bidsSent    || 0);
+      bump("waOutbidsSent", d.outbidsSent || 0);
+      bump("waWinnersSent", d.winnersSent || 0);
 
-      const errorCountEl = document.getElementById("waErrorCount");
-      if (errorCountEl) errorCountEl.textContent = d.errorRowCount || 0;
+      const ecEl = document.getElementById("waErrorCount");
+      if (ecEl) ecEl.textContent = d.errorRowCount || 0;
 
-      const toggleEl = document.getElementById("waToggleVal");
-      toggleEl.textContent = d.waToggle || "OFF";
-      toggleEl.style.color = d.waToggle === "ON" ? "var(--green)" : "var(--red)";
+      const tEl = document.getElementById("waToggleVal");
+      tEl.textContent = d.waToggle || "OFF";
+      tEl.style.color = d.waToggle === "ON" ? "#4ade80" : "#ef4444";
 
-      document.getElementById("waLastBid").textContent    = d.lastBidTime    ? fmtTime(d.lastBidTime)    : "None yet";
-      document.getElementById("waLastOutbid").textContent = d.lastOutbidTime ? fmtTime(d.lastOutbidTime) : "None yet";
+      document.getElementById("waLastBid").textContent    = d.lastBidTime    ? fmt(d.lastBidTime)    : "None yet";
+      document.getElementById("waLastOutbid").textContent = d.lastOutbidTime ? fmt(d.lastOutbidTime) : "None yet";
 
-      const errors      = d.errors || [];
-      const errorBanner = document.getElementById("waErrorBanner");
-      const errorList   = document.getElementById("waErrorList");
+      const errors = d.errors || [];
+      const eb = document.getElementById("waErrorBanner");
+      const el = document.getElementById("waErrorList");
 
       if (errors.length > 0) {
-        errorList.innerHTML = errors.map(e => `• ${e}`).join("<br>");
-        errorBanner.style.display = "block";
+        el.innerHTML = errors.map(e => `• ${e}`).join("<br>");
+        eb.style.display = "block";
         errors.forEach(e => {
-          if (!prevWa["err_" + e]) { addLog("WhatsApp error: " + e, "log-danger"); prevWa["err_" + e] = true; }
+          if (!prev["err_" + e]) { addLog("WhatsApp error: " + e, "log-err"); prev["err_" + e] = true; }
         });
       } else {
-        errorBanner.style.display = "none";
-        errorList.innerHTML = "";
-        Object.keys(prevWa).filter(k => k.startsWith("err_")).forEach(k => delete prevWa[k]);
+        eb.style.display = "none";
+        el.innerHTML = "";
+        Object.keys(prev).filter(k => k.startsWith("err_")).forEach(k => delete prev[k]);
       }
-    } catch { /* fail silently */ }
+    } catch { /* silent */ }
   }
 
-  function bumpStat(id, newVal) {
+  function bump(id, newVal) {
     const el = document.getElementById(id);
     if (!el) return;
-    const prev = prevWa[id];
+    const p = prev[id];
     el.textContent = newVal;
-    if (prev !== undefined && newVal > prev) {
+    if (p !== undefined && newVal > p) {
       el.classList.remove("bumped"); void el.offsetWidth; el.classList.add("bumped");
       setTimeout(() => el.classList.remove("bumped"), 1500);
     }
-    prevWa[id] = newVal;
+    prev[id] = newVal;
   }
 
-  function fmtTime(raw) {
+  function fmt(raw) {
     try {
       if (typeof raw === "string" && raw.startsWith("Date(")) {
-        const parts = raw.slice(5, -1).split(",").map(Number);
-        return new Date(parts[0], parts[1], parts[2], parts[3]||0, parts[4]||0, parts[5]||0)
-          .toLocaleTimeString("en-IE", { hour: "2-digit", minute: "2-digit" });
+        const p = raw.slice(5,-1).split(",").map(Number);
+        return new Date(p[0],p[1],p[2],p[3]||0,p[4]||0,p[5]||0).toLocaleTimeString("en-IE",{hour:"2-digit",minute:"2-digit"});
       }
-      return new Date(raw).toLocaleTimeString("en-IE", { hour: "2-digit", minute: "2-digit" });
+      return new Date(raw).toLocaleTimeString("en-IE",{hour:"2-digit",minute:"2-digit"});
     } catch { return String(raw); }
   }
 
-  async function doFormAction(direction) {
-    const opening = direction === "open";
-    if (!confirm(opening ? "Open the bidding form?\n\nGuests will be able to place bids immediately." : "Close the bidding form?\n\nGuests cannot bid until you reopen it.")) return;
+  async function doFormAction(dir) {
+    const open = dir === "open";
+    if (!confirm(open ? "Open the bidding form?\n\nGuests will be able to place bids immediately." : "Close the bidding form?\n\nGuests cannot bid until you reopen it.")) return;
     busy.form = true; renderStatus();
     try {
-      await apiCall({ action: "setFormStatus", open: opening });
-      state.formOpen = opening;
-      addLog(opening ? "Form opened." : "Form closed.", opening ? "log-success" : "log-warn");
-      toast(opening ? "Bidding form is now open." : "Bidding form closed.", opening ? "success" : "warn");
+      await api({ action: "setFormStatus", open });
+      state.formOpen = open;
+      addLog(open ? "Form opened." : "Form closed.", open ? "log-ok" : "log-wrn");
+      toast(open ? "Bidding form is now open." : "Bidding form closed.", open ? "success" : "warn");
     } catch (err) {
-      addLog("Form action failed: " + err.message, "log-danger");
+      addLog("Form action failed: " + err.message, "log-err");
       toast("Failed: " + err.message, "error");
     } finally { busy.form = false; renderStatus(); }
   }
 
-  async function doBannerAction(direction) {
-    const activating = direction === "on";
-    if (!confirm(activating ? "Activate the closing soon banner?\n\nFlashing red alert on all screens." : "Deactivate the closing soon banner?")) return;
+  async function doBannerAction(dir) {
+    const on = dir === "on";
+    if (!confirm(on ? "Activate the closing soon banner?\n\nFlashing red alert on all screens." : "Deactivate the closing soon banner?")) return;
     busy.banner = true; renderStatus();
     try {
-      await apiCall({ action: "setClosingSoonBanner", active: activating });
-      state.bannerActive = activating;
-      addLog(activating ? "Closing soon banner activated." : "Banner deactivated.", activating ? "log-warn" : "");
-      toast(activating ? "Closing soon banner is live." : "Banner deactivated.", activating ? "warn" : "info");
+      await api({ action: "setClosingSoonBanner", active: on });
+      state.bannerActive = on;
+      addLog(on ? "Closing soon banner activated." : "Banner deactivated.", on ? "log-wrn" : "");
+      toast(on ? "Closing soon banner is live." : "Banner deactivated.", on ? "warn" : "info");
     } catch (err) {
-      addLog("Banner action failed: " + err.message, "log-danger");
+      addLog("Banner failed: " + err.message, "log-err");
       toast("Failed: " + err.message, "error");
     } finally { busy.banner = false; renderStatus(); }
   }
 
   async function doCloseAuction() {
-    if (!confirm("CLOSE THE AUCTION?\n\n- Bidding form closes\n- Closing soon banner stops\n- All screens show auction closed\n\nOnly proceed when the chairman has called it.")) return;
+    if (!confirm("CLOSE THE AUCTION?\n\n- Bidding form closes\n- Banner stops\n- All screens show auction closed\n\nOnly proceed when the chairman has called it.")) return;
     if (!confirm("Are you absolutely sure? This cannot be undone from this panel.")) return;
     busy.auction = true; renderStatus();
     try {
-      await apiCall({ action: "closeAuction" });
+      await api({ action: "closeAuction" });
       state.auctionClosed = true; state.formOpen = false; state.bannerActive = false;
-      addLog("AUCTION CLOSED.", "log-danger");
+      addLog("AUCTION CLOSED.", "log-err");
       toast("Auction closed. All screens updated.", "error");
     } catch (err) {
-      addLog("Auction close failed: " + err.message, "log-danger");
+      addLog("Auction close failed: " + err.message, "log-err");
       toast("Failed: " + err.message, "error");
     } finally { busy.auction = false; renderStatus(); }
   }
 
-  function tickClock() {
-    const now = new Date();
-    document.getElementById("clockTime").textContent = now.toLocaleTimeString("en-IE", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
-    document.getElementById("clockDate").textContent = now.toLocaleDateString("en-IE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  function tick() {
+    const n = new Date();
+    document.getElementById("clockTime").textContent = n.toLocaleTimeString("en-IE",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
+    document.getElementById("clockDate").textContent = n.toLocaleDateString("en-IE",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
   }
 
   function init() {
-    tickClock(); setInterval(tickClock, 1000);
+    tick(); setInterval(tick, 1000);
     addLog("Session started.");
-    loadControlStatus(); loadWaStats();
-    setInterval(loadControlStatus, CTRL_REFRESH_MS);
-    setInterval(loadWaStats, WA_REFRESH_MS);
+    loadCtrl(); loadWa();
+    setInterval(loadCtrl, CTRL_MS);
+    setInterval(loadWa,   WA_MS);
   }
 </script>
 </body>
