@@ -253,6 +253,11 @@
           <div class="wa-last">Last confirmation: <span id="waLastBid">—</span></div>
           <div class="wa-last">Last outbid: <span id="waLastOutbid">—</span></div>
         </div>
+        <div id="waErrorBanner" style="display:none;background:rgba(229,57,53,0.12);border:1px solid rgba(229,57,53,0.4);border-radius:8px;padding:10px 14px;">
+          <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--red);margin-bottom:4px;">⚠️ WhatsApp error detected</div>
+          <div id="waErrorList" style="font-size:0.75rem;color:#e07070;line-height:1.6;"></div>
+          <div style="font-size:0.65rem;color:var(--muted);margin-top:6px;">Check WHATSAPP_LAST_ERROR column in ALL_BIDS for affected rows.</div>
+        </div>
       </div>
     </div>
 
@@ -516,9 +521,11 @@
       const iOutbidSent  = idx("OUTBID_MESSAGE_SENT");
       const iOutbidAt    = idx("OUTBID_SENT_AT");
       const iWinnerSent  = idx("WINNING_BID_MESSAGE_SENT");
+      const iLastError   = idx("WHATSAPP_LAST_ERROR");
 
       let bidsSent = 0, outbidsSent = 0, winnersSent = 0;
       let lastBidTime = null, lastOutbidTime = null;
+      const errors = new Set();
 
       rows.forEach(r => {
         const c = r.c || [];
@@ -539,6 +546,12 @@
           if (t && (!lastOutbidTime || new Date(t) > new Date(lastOutbidTime))) lastOutbidTime = t;
         }
         if (winnerSent === true || String(winnerSent).toUpperCase() === "YES") winnersSent++;
+
+        // Collect unique errors from WHATSAPP_LAST_ERROR
+        if (iLastError !== -1) {
+          const err = String(val(iLastError) || "").trim();
+          if (err) errors.add(err);
+        }
       });
 
       bumpStat("waBidsSent",    bidsSent);
@@ -547,6 +560,26 @@
 
       document.getElementById("waLastBid").textContent    = lastBidTime    ? fmtTime(lastBidTime)    : "None yet";
       document.getElementById("waLastOutbid").textContent = lastOutbidTime ? fmtTime(lastOutbidTime) : "None yet";
+
+      // Show/hide error banner
+      const errorBanner = document.getElementById("waErrorBanner");
+      const errorList   = document.getElementById("waErrorList");
+      if (errors.size > 0) {
+        errorList.innerHTML = [...errors].map(e => `• ${e}`).join("<br>");
+        errorBanner.style.display = "block";
+        // Log new errors to action log (deduplicated by message)
+        errors.forEach(e => {
+          if (!prevWa["err_" + e]) {
+            addLog("WhatsApp error: " + e, "log-danger");
+            prevWa["err_" + e] = true;
+          }
+        });
+      } else {
+        errorBanner.style.display = "none";
+        errorList.innerHTML = "";
+        // Clear error dedup flags when errors are gone
+        Object.keys(prevWa).filter(k => k.startsWith("err_")).forEach(k => delete prevWa[k]);
+      }
 
     } catch { /* leave as-is */ }
   }
