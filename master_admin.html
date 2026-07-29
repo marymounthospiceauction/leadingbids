@@ -50,7 +50,7 @@
     .tbl-sep { width: 1px; height: 12px; background: var(--border); margin: 0 1px; flex-shrink: 0; }
 
     /* WA STRIP */
-    .wa-strip { background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .wa-strip { background: var(--surface); border-bottom: 2px solid var(--border); flex-shrink: 0; }
     .wa-hdr { padding: 6px 14px; border-bottom: 0.5px solid var(--b2); display: flex; align-items: center; justify-content: space-between; }
     .wa-hdr-left  { display: flex; align-items: center; gap: 10px; }
     .wa-hdr-title { font-size: 0.67rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); }
@@ -71,29 +71,35 @@
     .body { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr 320px; gap: 0; }
 
     /* PANEL */
-    .panel { display: flex; flex-direction: column; border-right: 1px solid var(--border); min-height: 0; }
+    .panel { display: flex; flex-direction: column; border-right: 2px solid var(--border); min-height: 0; }
     .panel:last-child { border-right: none; }
-    .panel-hdr { padding: 8px 14px; border-bottom: 0.5px solid var(--b2); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-    .panel-title { font-size: 0.67rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); }
+    .panel-hdr { padding: 9px 14px; border-bottom: 2px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: var(--s2); }
+    .panel-title { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold-lt); }
     .panel-sub   { font-size: 0.59rem; color: var(--muted); }
     .panel-body  { flex: 1; overflow-y: auto; min-height: 0; }
 
     /* RECENT BIDS */
-    .ticker-row { display: grid; grid-template-columns: 44px 60px 1fr auto; gap: 8px; align-items: baseline; padding: 7px 14px; border-bottom: 0.5px solid var(--b2); font-size: 0.71rem; }
+    .ticker-row { display: grid; grid-template-columns: 56px 1fr auto; border-bottom: 0.5px solid var(--b2); }
     .ticker-row:last-child { border-bottom: none; }
     .ticker-row.flash { animation: flash 1.4s ease; }
     @keyframes flash { 0%,100%{background:transparent} 20%{background:rgba(74,222,128,0.1)} }
-    .t-time   { color: var(--muted); font-size: 0.6rem; font-variant-numeric: tabular-nums; }
-    .t-item   { color: var(--gold-lt); font-weight: 700; }
-    .t-name   { color: var(--dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .t-amount { color: var(--green); font-weight: 800; text-align: right; }
+    .t-time-col { background: var(--s3); border-right: 1px solid var(--border); padding: 10px 6px; display: flex; align-items: center; justify-content: center; }
+    .t-time     { color: var(--gold-lt); font-size: 0.75rem; font-weight: 800; font-variant-numeric: tabular-nums; text-align: center; }
+    .t-mid      { padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .t-item     { color: var(--gold-lt); font-weight: 800; font-size: 0.73rem; }
+    .t-desc     { color: var(--dim); font-size: 0.65rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .t-name     { color: var(--muted); font-size: 0.62rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .t-amount-col { padding: 9px 12px; display: flex; align-items: center; border-left: 0.5px solid var(--b2); }
+    .t-amount   { color: var(--green); font-weight: 800; font-size: 0.85rem; white-space: nowrap; }
 
     /* LEADING BIDS */
-    .lb-row { display: grid; grid-template-columns: 60px 1fr auto; gap: 8px; align-items: center; padding: 7px 14px; border-bottom: 0.5px solid var(--b2); }
+    .lb-row { display: grid; grid-template-columns: 56px 1fr auto; border-bottom: 0.5px solid var(--b2); }
     .lb-row:last-child { border-bottom: none; }
-    .lb-item   { color: var(--gold-lt); font-weight: 700; font-size: 0.68rem; }
-    .lb-name   { color: var(--dim); font-size: 0.68rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .lb-amount { color: var(--green); font-weight: 800; font-size: 0.75rem; text-align: right; white-space: nowrap; }
+    .lb-num  { background: var(--s3); border-right: 1px solid var(--border); padding: 10px 6px; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 800; color: var(--gold-lt); text-align: center; }
+    .lb-mid  { padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .lb-desc { font-size: 0.73rem; color: var(--white); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lb-name { font-size: 0.63rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lb-amt  { padding: 9px 12px; display: flex; align-items: center; border-left: 0.5px solid var(--b2); font-size: 0.85rem; font-weight: 800; color: var(--green); white-space: nowrap; }
 
     /* CONTROLS COLUMN */
     .ctrl-col { display: flex; flex-direction: column; background: var(--s3); }
@@ -174,6 +180,12 @@
       <div class="tbl-sep"></div>
       <a class="tbl" href="/foyer_leaderboard.html" target="_blank">Foyer board</a>
     </div>
+  </div>
+
+  <!-- HEADER -->
+  <div style="background:var(--s3);border-bottom:2px solid var(--border);padding:10px 16px;text-align:center;flex-shrink:0;">
+    <div style="font-size:1.4rem;font-weight:800;color:var(--gold-lt);letter-spacing:0.08em;text-transform:uppercase;font-family:'Georgia',serif;">The Marymount Ball Auction</div>
+    <div style="font-size:0.65rem;color:var(--muted);margin-top:2px;letter-spacing:0.12em;text-transform:uppercase;">2026 &nbsp;·&nbsp; Master Control Panel</div>
   </div>
 
   <!-- WA STRIP -->
@@ -353,10 +365,13 @@
       if (!bids.length) { ticker.innerHTML = `<div class="empty">No bids yet.</div>`; return; }
       ticker.innerHTML = bids.slice(0, 25).map((b, i) => `
         <div class="ticker-row ${i === 0 && isNew ? 'flash' : ''}">
-          <span class="t-time">${b.time || "—"}</span>
-          <span class="t-item">${b.item || "—"}</span>
-          <span class="t-name">${b.name || "—"}</span>
-          <span class="t-amount">€${Number(b.amount || 0).toLocaleString("en-IE")}</span>
+          <div class="t-time-col"><span class="t-time">${b.time || "—"}</span></div>
+          <div class="t-mid">
+            <span class="t-item">${b.item || "—"}</span>
+            <span class="t-desc">${b.desc || ""}</span>
+            <span class="t-name">${b.name || "—"}</span>
+          </div>
+          <div class="t-amount-col"><span class="t-amount">€${Number(b.amount || 0).toLocaleString("en-IE")}</span></div>
         </div>`).join("");
       document.getElementById("recentUpdated").textContent = new Date().toLocaleTimeString("en-IE");
     } catch { /* silent */ }
@@ -371,9 +386,12 @@
       if (!items.length) { el.innerHTML = `<div class="empty">No leading bids yet.</div>`; return; }
       el.innerHTML = items.map(b => `
         <div class="lb-row">
-          <span class="lb-item">${b.item || "—"}</span>
-          <span class="lb-name">${b.description || "—"}</span>
-          <span class="lb-amount">€${Number(b.amount || 0).toLocaleString("en-IE")}</span>
+          <div class="lb-num">${b.item || "—"}</div>
+          <div class="lb-mid">
+            <span class="lb-desc">${b.description || "—"}</span>
+            <span class="lb-name">${b.name || ""}</span>
+          </div>
+          <div class="lb-amt">€${Number(b.amount || 0).toLocaleString("en-IE")}</div>
         </div>`).join("");
       document.getElementById("leadingUpdated").textContent = new Date().toLocaleTimeString("en-IE");
     } catch { /* silent */ }
@@ -418,7 +436,7 @@
   }
 
   async function doCloseAuction() {
-    if (!confirm("CLOSE THE AUCTION?\n\n- Bidding form closes\n- Banner stops\n- All screens show auction closed\n\nOnly proceed when Martin has called it.")) return;
+    if (!confirm("CLOSE THE AUCTION?\n\n- Bidding form closes\n- Banner stops\n- All screens show auction closed\n\nOnly proceed when the chairman has called it.")) return;
     if (!confirm("Are you absolutely sure? This cannot be undone from this panel.")) return;
     busy.auction = true; renderStatus();
     try { await api({ action: "closeAuction" }); state.auctionClosed = true; state.formOpen = false; state.bannerActive = false; toast("Auction closed. All screens updated.", "error"); }
