@@ -96,12 +96,14 @@
 
     /* WA STATS */
     .wa-stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 8px; overflow: hidden; }
+    @media (max-width: 600px) { .wa-stats { grid-template-columns: 1fr 1fr; } }
     .wa-stat { background: var(--surface2); padding: 16px 12px; text-align: center; }
     .wa-stat.err-stat { background: rgba(239,68,68,0.08); }
     .wa-stat-num {
       font-size: clamp(2.8rem, 5vw, 4.5rem); font-weight: 800; color: var(--white); line-height: 1;
       font-variant-numeric: tabular-nums; transition: color 0.4s;
     }
+    @media (max-width: 600px) { .wa-stat-num { font-size: 2.8rem; } }
     .wa-stat-num.bumped { color: var(--green); }
     .wa-stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-top: 6px; }
 
@@ -117,7 +119,7 @@
 
     /* CONTROL ROW */
     .control-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-    @media (max-width: 680px) { .control-row { grid-template-columns: 1fr; } }
+    @media (max-width: 800px) { .control-row { grid-template-columns: 1fr; } }
 
     /* STATE PILL */
     .state-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: 800; width: fit-content; }
@@ -146,11 +148,11 @@
 
     /* BOTTOM ROW */
     .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    @media (max-width: 680px) { .bottom-row { grid-template-columns: 1fr; } }
+    @media (max-width: 800px) { .bottom-row { grid-template-columns: 1fr; } }
 
     /* QUICK LINKS */
     .links-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 8px; overflow: hidden; }
-    @media (max-width: 480px) { .links-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 800px) { .links-grid { grid-template-columns: 1fr 1fr; } }
     .nav-link { display: flex; align-items: center; gap: 9px; padding: 11px 12px; background: var(--surface2); text-decoration: none; color: var(--white); transition: background 0.15s; }
     .nav-link:active { background: var(--surface); }
     .nav-icon  { font-size: 1.1rem; flex-shrink: 0; }
