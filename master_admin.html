@@ -385,10 +385,6 @@
   const PASSWORD   = "masteradmin2026"; // CHANGE BEFORE EVENT NIGHT
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec"; // UPDATE AFTER SECTION 3 REDEPLOY
 
-  // Sheet config for WhatsApp stats (direct gviz read from ALL_BIDS)
-  const ALL_BIDS_SHEET_ID = "1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc";
-  const SETTINGS_SHEET_ID = "1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc";
-
   const CTRL_REFRESH_MS = 8000;
   const WA_REFRESH_MS   = 15000;
 
@@ -492,90 +488,32 @@
 
   // ===== WHATSAPP STATS =====
   async function loadWaStats() {
-    // Read toggle from SETTINGS!N5
     try {
-      const settingsUrl = `https://docs.google.com/spreadsheets/d/${SETTINGS_SHEET_ID}/gviz/tq?tqx=out:json&sheet=SETTINGS&range=N5&cb=${Date.now()}`;
-      const sRes  = await fetch(settingsUrl, { cache: "no-store" });
-      const sRaw  = await sRes.text();
-      const sStart = sRaw.indexOf("{"), sEnd = sRaw.lastIndexOf("}");
-      if (sStart !== -1) {
-        const sJson = JSON.parse(sRaw.slice(sStart, sEnd + 1));
-        const toggleVal = sJson?.table?.rows?.[0]?.c?.[0]?.v ?? "";
-        const toggleEl = document.getElementById("waToggleVal");
-        toggleEl.textContent = String(toggleVal).toUpperCase() === "ON" ? "ON" : "OFF";
-        toggleEl.style.color = String(toggleVal).toUpperCase() === "ON" ? "var(--green)" : "var(--red)";
-      }
-    } catch { /* leave as-is */ }
+      const result = await apiCall({ action: "getWhatsAppStats" });
+      if (!result.ok) return;
+      const d = result.data;
 
-    // Read ALL_BIDS for sent counts and last timestamps
-    try {
-      const allBidsUrl = `https://docs.google.com/spreadsheets/d/${ALL_BIDS_SHEET_ID}/gviz/tq?tqx=out:json&sheet=ALL_BIDS&cb=${Date.now()}`;
-      const res  = await fetch(allBidsUrl, { cache: "no-store" });
-      const raw  = await res.text();
-      const start = raw.indexOf("{"), end = raw.lastIndexOf("}");
-      if (start === -1) return;
-      const json = JSON.parse(raw.slice(start, end + 1));
+      bumpStat("waBidsSent",    d.bidsSent    || 0);
+      bumpStat("waOutbidsSent", d.outbidsSent || 0);
+      bumpStat("waWinnersSent", d.winnersSent || 0);
 
-      const cols = json.table?.cols?.map(c => (c.label || "").toUpperCase().trim()) || [];
-      const rows = json.table?.rows || [];
+      const toggleEl = document.getElementById("waToggleVal");
+      toggleEl.textContent = d.waToggle || "OFF";
+      toggleEl.style.color = d.waToggle === "ON" ? "var(--green)" : "var(--red)";
 
-      const idx = name => cols.findIndex(c => c === name);
-      const iBidSent     = idx("BID_RECEIVED_SENT");
-      const iBidAt       = idx("BID_RECEIVED_SENT_AT");
-      const iOutbidSent  = idx("OUTBID_MESSAGE_SENT");
-      const iOutbidAt    = idx("OUTBID_SENT_AT");
-      const iWinnerSent  = idx("WINNING_BID_MESSAGE_SENT");
-      const iLastError   = idx("WHATSAPP_LAST_ERROR");
+      document.getElementById("waLastBid").textContent    = d.lastBidTime    ? fmtTime(d.lastBidTime)    : "None yet";
+      document.getElementById("waLastOutbid").textContent = d.lastOutbidTime ? fmtTime(d.lastOutbidTime) : "None yet";
 
-      let bidsSent = 0, outbidsSent = 0, winnersSent = 0;
-      let lastBidTime = null, lastOutbidTime = null;
-      const errors = new Set();
-
-      rows.forEach(r => {
-        const c = r.c || [];
-        const val = i => (i !== -1 && c[i]) ? c[i].v : null;
-
-        const bidSent    = val(iBidSent);
-        const outbidSent = val(iOutbidSent);
-        const winnerSent = val(iWinnerSent);
-
-        if (bidSent === true || String(bidSent).toUpperCase() === "YES") {
-          bidsSent++;
-          const t = val(iBidAt);
-          if (t && (!lastBidTime || new Date(t) > new Date(lastBidTime))) lastBidTime = t;
-        }
-        if (outbidSent === true || String(outbidSent).toUpperCase() === "YES") {
-          outbidsSent++;
-          const t = val(iOutbidAt);
-          if (t && (!lastOutbidTime || new Date(t) > new Date(lastOutbidTime))) lastOutbidTime = t;
-        }
-        if (winnerSent === true || String(winnerSent).toUpperCase() === "YES") winnersSent++;
-
-        // Collect unique errors from WHATSAPP_LAST_ERROR
-        if (iLastError !== -1) {
-          const err = String(val(iLastError) || "").trim();
-          if (err) errors.add(err);
-        }
-      });
-
-      bumpStat("waBidsSent",    bidsSent);
-      bumpStat("waOutbidsSent", outbidsSent);
-      bumpStat("waWinnersSent", winnersSent);
-
-      document.getElementById("waLastBid").textContent    = lastBidTime    ? fmtTime(lastBidTime)    : "None yet";
-      document.getElementById("waLastOutbid").textContent = lastOutbidTime ? fmtTime(lastOutbidTime) : "None yet";
-
-      // Error count stat box
-      const errorCountEl = document.getElementById("waErrorCount");
-      if (errorCountEl) errorCountEl.textContent = errors.size;
-
-      // Show/hide error banner
+      const errors      = d.errors || [];
       const errorBanner = document.getElementById("waErrorBanner");
       const errorList   = document.getElementById("waErrorList");
-      if (errors.size > 0) {
-        errorList.innerHTML = [...errors].map(e => `• ${e}`).join("<br>");
+      const errorCountEl = document.getElementById("waErrorCount");
+
+      if (errorCountEl) errorCountEl.textContent = errors.length;
+
+      if (errors.length > 0) {
+        errorList.innerHTML = errors.map(e => `• ${e}`).join("<br>");
         errorBanner.style.display = "block";
-        // Log new errors to action log (deduplicated by message)
         errors.forEach(e => {
           if (!prevWa["err_" + e]) {
             addLog("WhatsApp error: " + e, "log-danger");
@@ -588,7 +526,7 @@
         Object.keys(prevWa).filter(k => k.startsWith("err_")).forEach(k => delete prevWa[k]);
       }
 
-    } catch { /* leave as-is */ }
+    } catch { /* fail silently — don't block the rest of the panel */ }
   }
 
   const prevWa = {};
