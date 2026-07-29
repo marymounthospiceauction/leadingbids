@@ -6,24 +6,25 @@
   <title>Marymount Auction — Master Admin</title>
   <style>
     :root {
-      --bg: #0e0e0e;
-      --surface: #181818;
-      --surface2: #222;
-      --surface3: #2a2a2a;
-      --border: #2e2e2e;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface2: #263348;
+      --border: #334155;
       --gold: #c9973f;
       --gold-light: #e6ce91;
-      --white: #f0ebe0;
-      --dim: #aaa;
-      --muted: #666;
-      --red: #e53935;
-      --red-dim: rgba(229,57,53,0.12);
-      --amber: #f9a825;
-      --amber-dim: rgba(249,168,37,0.10);
-      --green: #43a047;
-      --green-dim: rgba(67,160,71,0.10);
-      --blue: #1e88e5;
-      --purple: #8e24aa;
+      --white: #f1f5f9;
+      --dim: #94a3b8;
+      --muted: #64748b;
+      --red: #ef4444;
+      --red-dim: rgba(239,68,68,0.12);
+      --red-dark: #7f1d1d;
+      --amber: #f59e0b;
+      --amber-dim: rgba(245,158,11,0.12);
+      --green: #22c55e;
+      --green-dim: rgba(34,197,94,0.12);
+      --green-dark: #14532d;
+      --blue: #3b82f6;
+      --purple: #8b5cf6;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: Calibri, Arial, sans-serif; background: var(--bg); color: var(--white); min-height: 100vh; }
@@ -35,10 +36,9 @@
       background: var(--bg);
     }
     .login-card {
-      background: var(--surface); border: 1px solid var(--gold);
+      background: var(--surface); border: 1px solid var(--border);
       border-radius: 16px; padding: 30px 24px; width: 90%; max-width: 340px;
-      box-shadow: 0 0 40px rgba(201,151,63,0.12), 0 20px 50px rgba(0,0,0,0.7);
-      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center;
     }
     .login-logo { font-size: 2rem; margin-bottom: 6px; }
     .login-title { font-size: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-light); margin-bottom: 2px; }
@@ -54,62 +54,66 @@
 
     /* TOP BAR */
     .top-bar {
-      background: #0a0a0a; padding: 10px 16px;
+      background: var(--surface); padding: 10px 16px;
       display: flex; align-items: center; justify-content: space-between;
       border-bottom: 1px solid var(--border);
       position: sticky; top: 0; z-index: 10;
     }
-    .top-bar-title { font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold-light); }
+    .top-bar-title { font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--white); }
     .live-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 6px; animation: blink 1.4s infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
     #syncLabel { font-size: 0.65rem; color: var(--muted); }
 
-    /* MAIN GRID */
+    /* MAIN */
     .main { padding: 12px; display: flex; flex-direction: column; gap: 10px; padding-bottom: 60px; }
-
-    /* SECTION LABEL */
-    .section-label {
-      font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 0.1em; color: var(--muted); padding: 0 2px; margin-bottom: -4px;
-    }
-
-    /* CONTROL ROW — three cards side by side */
-    .control-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-    @media (max-width: 700px) { .control-row { grid-template-columns: 1fr; } }
+    .section-label { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding: 0 2px; margin-bottom: -4px; }
 
     /* CARD */
-    .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; overflow: hidden;
-    }
-    .card.danger { border-color: rgba(229,57,53,0.25); }
-    .card.whatsapp { border-color: rgba(37,211,102,0.2); }
+    .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .card.accent-green  { border-left: 3px solid var(--green); }
+    .card.accent-blue   { border-left: 3px solid var(--blue); }
+    .card.accent-purple { border-left: 3px solid var(--purple); }
+    .card.accent-red    { border-left: 3px solid var(--red); background: rgba(239,68,68,0.05); }
+    .card.danger        { border-left: 3px solid var(--red); background: rgba(239,68,68,0.05); border-color: rgba(239,68,68,0.3); }
 
-    .card-header {
-      padding: 12px 14px 10px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 10px;
-    }
-    .card-header.danger-hdr { background: rgba(229,57,53,0.07); }
-    .card-header.wa-hdr     { background: rgba(37,211,102,0.05); }
-
-    .card-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .card-header { padding: 12px 14px 10px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .card-icon { font-size: 1.2rem; flex-shrink: 0; }
     .card-title { font-size: 0.85rem; font-weight: 800; color: var(--white); }
     .card-desc  { font-size: 0.68rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+    .card-body  { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
 
-    .card-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+    /* WA STATS */
+    .wa-stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 8px; overflow: hidden; }
+    .wa-stat { background: var(--surface2); padding: 16px 12px; text-align: center; }
+    .wa-stat.err-stat { background: rgba(239,68,68,0.08); }
+    .wa-stat-num {
+      font-size: clamp(2.8rem, 5vw, 4.5rem); font-weight: 800; color: var(--white); line-height: 1;
+      font-variant-numeric: tabular-nums; transition: color 0.4s;
+    }
+    .wa-stat-num.bumped { color: var(--green); }
+    .wa-stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-top: 6px; }
+
+    .wa-meta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+    .wa-toggle-label { font-size: 0.75rem; font-weight: 700; color: var(--dim); }
+    .wa-last { font-size: 0.7rem; color: var(--muted); }
+    .wa-last span { color: var(--dim); }
+
+    .wa-error-banner { display: none; background: var(--red-dim); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 10px 14px; }
+    .wa-error-title { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--red); margin-bottom: 4px; }
+    .wa-error-list { font-size: 0.75rem; color: #fca5a5; line-height: 1.6; }
+    .wa-error-hint { font-size: 0.65rem; color: var(--muted); margin-top: 6px; }
+
+    /* CONTROL ROW */
+    .control-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    @media (max-width: 680px) { .control-row { grid-template-columns: 1fr; } }
 
     /* STATE PILL */
-    .state-pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 10px; border-radius: 999px;
-      font-size: 0.7rem; font-weight: 800; width: fit-content;
-    }
+    .state-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: 800; width: fit-content; }
     .state-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
     .pill-open   { background: var(--green-dim); color: var(--green); }
     .pill-closed { background: var(--red-dim);   color: var(--red); }
     .pill-on     { background: var(--amber-dim); color: var(--amber); }
-    .pill-off    { background: rgba(255,255,255,0.05); color: var(--muted); }
+    .pill-off    { background: rgba(255,255,255,0.05); color: var(--muted); border: 0.5px solid var(--border); }
 
     /* BUTTONS */
     .btn-row { display: flex; gap: 7px; flex-wrap: wrap; }
@@ -120,61 +124,34 @@
     }
     .btn:disabled { opacity: 0.2; cursor: not-allowed; transform: none !important; }
     .btn:not(:disabled):active { transform: scale(0.97); }
+    .btn-green        { background: var(--green);         color: #052e16; }
+    .btn-red-soft     { background: var(--red-dim);       color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+    .btn-amber        { background: var(--amber);         color: #111; }
+    .btn-ghost        { background: rgba(255,255,255,0.05); color: var(--muted); border: 0.5px solid var(--border); }
+    .btn-red          { background: var(--red);           color: #fff; width: 100%; padding: 11px; }
 
-    .btn-green  { background: var(--green); color: #fff; }
-    .btn-red-outline { background: rgba(229,57,53,0.15); color: var(--red); border: 1px solid rgba(229,57,53,0.35); }
-    .btn-amber  { background: var(--amber); color: #111; }
-    .btn-ghost  { background: rgba(255,255,255,0.06); color: var(--dim); border: 1px solid var(--border); }
-    .btn-red    { background: var(--red); color: #fff; width: 100%; padding: 11px; }
+    .danger-warning { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.2); border-radius: 7px; padding: 9px 11px; font-size: 0.7rem; color: #fca5a5; line-height: 1.5; }
 
-    .danger-warning {
-      background: rgba(229,57,53,0.07); border: 1px solid rgba(229,57,53,0.18);
-      border-radius: 7px; padding: 9px 11px;
-      font-size: 0.7rem; color: #d97070; line-height: 1.5;
-    }
-
-    /* WHATSAPP STATS ROW */
-    .wa-stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 8px; overflow: hidden; }
-    .wa-stat { background: var(--surface2); padding: 20px 16px; text-align: center; }
-    .wa-stat-num {
-      font-size: clamp(3rem, 6vw, 5rem);
-      font-weight: 800; color: var(--white); line-height: 1;
-      font-variant-numeric: tabular-nums;
-      transition: color 0.4s;
-    }
-    .wa-stat-num.bumped { color: #25d366; }
-    .wa-stat-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-top: 8px; }
-
-    .wa-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-    .wa-toggle-label { font-size: 0.75rem; font-weight: 700; color: var(--dim); }
-    .wa-last { font-size: 0.7rem; color: var(--muted); }
-    .wa-last span { color: var(--dim); }
+    /* BOTTOM ROW */
+    .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 680px) { .bottom-row { grid-template-columns: 1fr; } }
 
     /* QUICK LINKS */
     .links-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 8px; overflow: hidden; }
-    @media (max-width: 500px) { .links-grid { grid-template-columns: 1fr 1fr; } }
-    .nav-link {
-      display: flex; align-items: center; gap: 9px;
-      padding: 11px 12px; background: var(--surface2);
-      text-decoration: none; color: var(--white);
-      transition: background 0.15s;
-    }
-    .nav-link:active { background: var(--surface3); }
+    @media (max-width: 480px) { .links-grid { grid-template-columns: 1fr 1fr; } }
+    .nav-link { display: flex; align-items: center; gap: 9px; padding: 11px 12px; background: var(--surface2); text-decoration: none; color: var(--white); transition: background 0.15s; }
+    .nav-link:active { background: var(--surface); }
     .nav-icon  { font-size: 1.1rem; flex-shrink: 0; }
     .nav-label { font-size: 0.77rem; font-weight: 700; }
     .nav-sub   { font-size: 0.62rem; color: var(--muted); margin-top: 1px; }
     .nav-link.ext .nav-label::after { content: " ↗"; font-size: 0.65rem; color: var(--muted); }
 
-    /* BOTTOM ROW — log + links side by side on desktop */
-    .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    @media (max-width: 700px) { .bottom-row { grid-template-columns: 1fr; } }
-
     /* LOG */
-    .log-header { padding: 11px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .log-header { padding: 11px 14px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
     .log-title  { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim); }
     .log-clear  { font-size: 0.65rem; font-weight: 700; color: var(--muted); cursor: pointer; background: none; border: none; text-transform: uppercase; }
     .log-body   { max-height: 220px; overflow-y: auto; }
-    .log-entry  { display: flex; gap: 10px; padding: 8px 14px; border-bottom: 1px solid var(--border); font-size: 0.72rem; }
+    .log-entry  { display: flex; gap: 10px; padding: 8px 14px; border-bottom: 0.5px solid var(--border); font-size: 0.72rem; }
     .log-entry:last-child { border-bottom: none; }
     .log-time   { color: var(--muted); flex-shrink: 0; font-variant-numeric: tabular-nums; }
     .log-msg    { color: var(--dim); }
@@ -186,7 +163,7 @@
     /* TOAST */
     .toast-wrap { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 800; display: flex; flex-direction: column; gap: 6px; align-items: center; pointer-events: none; }
     .toast { padding: 9px 18px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; box-shadow: 0 6px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.25s; white-space: nowrap; max-width: 92vw; text-align: center; }
-    .toast.success { background: var(--green); color: #fff; }
+    .toast.success { background: var(--green); color: #052e16; }
     .toast.error   { background: var(--red);   color: #fff; }
     .toast.info    { background: var(--blue);  color: #fff; }
     .toast.warn    { background: var(--amber); color: #111; }
@@ -210,7 +187,6 @@
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast-wrap" id="toastWrap"></div>
 
 <!-- APP -->
@@ -223,10 +199,10 @@
 
   <div class="main">
 
-    <!-- WHATSAPP STATUS -->
+    <!-- WHATSAPP -->
     <div class="section-label">WhatsApp</div>
-    <div class="card whatsapp">
-      <div class="card-header wa-hdr">
+    <div class="card accent-green">
+      <div class="card-header">
         <div class="card-icon">💬</div>
         <div>
           <div class="card-title">WhatsApp sending</div>
@@ -237,30 +213,30 @@
         <div class="wa-stats">
           <div class="wa-stat">
             <div class="wa-stat-num" id="waBidsSent">—</div>
-            <div class="wa-stat-label">Confirmations sent</div>
+            <div class="wa-stat-label">Confirmations</div>
           </div>
           <div class="wa-stat">
             <div class="wa-stat-num" id="waOutbidsSent">—</div>
-            <div class="wa-stat-label">Outbid alerts sent</div>
+            <div class="wa-stat-label">Outbid alerts</div>
           </div>
           <div class="wa-stat">
             <div class="wa-stat-num" id="waWinnersSent">—</div>
-            <div class="wa-stat-label">Winner notices sent</div>
+            <div class="wa-stat-label">Winners</div>
           </div>
-          <div class="wa-stat" style="background:rgba(229,57,53,0.10);">
+          <div class="wa-stat err-stat">
             <div class="wa-stat-num" id="waErrorCount" style="color:var(--red)">—</div>
-            <div class="wa-stat-label" style="color:var(--red);opacity:0.8">Send errors</div>
+            <div class="wa-stat-label" style="color:var(--red)">Errors</div>
           </div>
         </div>
-        <div class="wa-toggle-row">
-          <div class="wa-toggle-label">Sending: <span id="waToggleVal" style="font-weight:800;color:var(--muted)">Loading...</span></div>
+        <div class="wa-meta">
+          <div class="wa-toggle-label">Sending: <span id="waToggleVal" style="color:var(--muted)">Loading...</span></div>
           <div class="wa-last">Last confirmation: <span id="waLastBid">—</span></div>
           <div class="wa-last">Last outbid: <span id="waLastOutbid">—</span></div>
         </div>
-        <div id="waErrorBanner" style="display:none;background:rgba(229,57,53,0.12);border:1px solid rgba(229,57,53,0.4);border-radius:8px;padding:10px 14px;">
-          <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--red);margin-bottom:4px;">⚠️ WhatsApp error detected</div>
-          <div id="waErrorList" style="font-size:0.75rem;color:#e07070;line-height:1.6;"></div>
-          <div style="font-size:0.65rem;color:var(--muted);margin-top:6px;">Check WHATSAPP_LAST_ERROR column in ALL_BIDS for affected rows.</div>
+        <div class="wa-error-banner" id="waErrorBanner">
+          <div class="wa-error-title">⚠️ WhatsApp error detected</div>
+          <div class="wa-error-list" id="waErrorList"></div>
+          <div class="wa-error-hint">Check WHATSAPP_LAST_ERROR in ALL_BIDS for affected rows.</div>
         </div>
       </div>
     </div>
@@ -269,8 +245,7 @@
     <div class="section-label">Auction controls</div>
     <div class="control-row">
 
-      <!-- BIDDING FORM -->
-      <div class="card">
+      <div class="card accent-green">
         <div class="card-header">
           <div class="card-icon">📝</div>
           <div>
@@ -281,14 +256,13 @@
         <div class="card-body">
           <div class="state-pill pill-off" id="formPill"><span class="state-dot"></span><span id="formPillLabel">Loading...</span></div>
           <div class="btn-row">
-            <button class="btn btn-green"       id="btnOpenForm"  onclick="doFormAction('open')"  disabled>Open</button>
-            <button class="btn btn-red-outline"  id="btnCloseForm" onclick="doFormAction('close')" disabled>Close</button>
+            <button class="btn btn-green"    id="btnOpenForm"  onclick="doFormAction('open')"  disabled>Open</button>
+            <button class="btn btn-red-soft" id="btnCloseForm" onclick="doFormAction('close')" disabled>Close</button>
           </div>
         </div>
       </div>
 
-      <!-- CLOSING SOON BANNER -->
-      <div class="card">
+      <div class="card accent-blue">
         <div class="card-header">
           <div class="card-icon">🚨</div>
           <div>
@@ -299,15 +273,14 @@
         <div class="card-body">
           <div class="state-pill pill-off" id="bannerPill"><span class="state-dot"></span><span id="bannerPillLabel">Loading...</span></div>
           <div class="btn-row">
-            <button class="btn btn-amber"  id="btnBannerOn"  onclick="doBannerAction('on')"  disabled>Activate</button>
-            <button class="btn btn-ghost"  id="btnBannerOff" onclick="doBannerAction('off')" disabled>Deactivate</button>
+            <button class="btn btn-amber" id="btnBannerOn"  onclick="doBannerAction('on')"  disabled>Activate</button>
+            <button class="btn btn-ghost" id="btnBannerOff" onclick="doBannerAction('off')" disabled>Deactivate</button>
           </div>
         </div>
       </div>
 
-      <!-- CLOSE AUCTION -->
       <div class="card danger">
-        <div class="card-header danger-hdr">
+        <div class="card-header">
           <div class="card-icon">🔒</div>
           <div>
             <div class="card-title">Close auction</div>
@@ -323,11 +296,10 @@
 
     </div>
 
-    <!-- BOTTOM ROW: quick links + action log -->
+    <!-- BOTTOM ROW -->
     <div class="bottom-row">
 
-      <!-- QUICK LINKS -->
-      <div class="card">
+      <div class="card accent-purple">
         <div class="card-header">
           <div class="card-icon">🔗</div>
           <div>
@@ -365,7 +337,6 @@
         </div>
       </div>
 
-      <!-- ACTION LOG -->
       <div class="card">
         <div class="log-header">
           <div class="log-title">Action log</div>
@@ -381,19 +352,17 @@
 </div>
 
 <script>
-  // ===== CONFIG =====
   const PASSWORD   = "masteradmin2026"; // CHANGE BEFORE EVENT NIGHT
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec"; // UPDATE AFTER SECTION 3 REDEPLOY
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec"; // UPDATE AFTER REDEPLOY
 
   const CTRL_REFRESH_MS = 8000;
   const WA_REFRESH_MS   = 15000;
 
-  // ===== STATE =====
   let state = { formOpen: null, bannerActive: null, auctionClosed: null };
   let busy  = { form: false, banner: false, auction: false };
   let log   = [];
+  const prevWa = {};
 
-  // ===== LOGIN =====
   document.getElementById("loginForm").addEventListener("submit", e => {
     e.preventDefault();
     if (document.getElementById("pwInput").value === PASSWORD) {
@@ -405,7 +374,6 @@
     }
   });
 
-  // ===== TOAST =====
   function toast(msg, type = "success") {
     const el = document.createElement("div");
     el.className = `toast ${type}`;
@@ -415,7 +383,6 @@
     setTimeout(() => { el.classList.remove("show"); setTimeout(() => el.remove(), 300); }, 3500);
   }
 
-  // ===== LOG =====
   function addLog(msg, cls = "") {
     const now = new Date().toLocaleTimeString("en-IE", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     log.unshift({ time: now, msg, cls });
@@ -433,7 +400,6 @@
     log = []; renderLog();
   }
 
-  // ===== API =====
   async function apiCall(payload) {
     const res  = await fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
     const text = await res.text();
@@ -443,7 +409,6 @@
     return json;
   }
 
-  // ===== CONTROL STATUS =====
   async function loadControlStatus() {
     try {
       const result = await apiCall({ action: "getControlStatus" });
@@ -461,11 +426,9 @@
   function renderStatus() {
     const { formOpen, bannerActive, auctionClosed } = state;
     const closed = auctionClosed === true;
-
-    setPill("formPill",    "formPillLabel",    formOpen,      "Form is open",        "Form is closed",     "pill-open",   "pill-closed");
-    setPill("bannerPill",  "bannerPillLabel",  bannerActive,  "Banner is active",    "Banner is off",      "pill-on",     "pill-off");
-    setPill("auctionPill", "auctionPillLabel", auctionClosed, "Auction is closed",   "Auction is running", "pill-closed", "pill-open");
-
+    setPill("formPill",    "formPillLabel",    formOpen,      "Form is open",      "Form is closed",     "pill-open",   "pill-closed");
+    setPill("bannerPill",  "bannerPillLabel",  bannerActive,  "Banner is active",  "Banner is off",      "pill-on",     "pill-off");
+    setPill("auctionPill", "auctionPillLabel", auctionClosed, "Auction is closed", "Auction is running", "pill-closed", "pill-open");
     setBtn("btnOpenForm",     formOpen === false && !closed && !busy.form);
     setBtn("btnCloseForm",    formOpen === true  && !closed && !busy.form);
     setBtn("btnBannerOn",     bannerActive === false && !closed && !busy.banner);
@@ -475,18 +438,16 @@
 
   function setPill(pillId, labelId, value, trueText, falseText, trueClass, falseClass) {
     if (value === null) return;
-    const pill  = document.getElementById(pillId);
+    const pill = document.getElementById(pillId);
     const label = document.getElementById(labelId);
     label.textContent = value ? trueText : falseText;
     pill.className = "state-pill " + (value ? trueClass : falseClass);
   }
-
   function setBtn(id, enabled) {
     const el = document.getElementById(id);
     if (el) el.disabled = !enabled;
   }
 
-  // ===== WHATSAPP STATS =====
   async function loadWaStats() {
     try {
       const result = await apiCall({ action: "getWhatsAppStats" });
@@ -496,6 +457,10 @@
       bumpStat("waBidsSent",    d.bidsSent    || 0);
       bumpStat("waOutbidsSent", d.outbidsSent || 0);
       bumpStat("waWinnersSent", d.winnersSent || 0);
+
+      const errorCount = d.errorRowCount || 0;
+      const errorCountEl = document.getElementById("waErrorCount");
+      if (errorCountEl) errorCountEl.textContent = errorCount;
 
       const toggleEl = document.getElementById("waToggleVal");
       toggleEl.textContent = d.waToggle || "OFF";
@@ -507,9 +472,6 @@
       const errors      = d.errors || [];
       const errorBanner = document.getElementById("waErrorBanner");
       const errorList   = document.getElementById("waErrorList");
-      const errorCountEl = document.getElementById("waErrorCount");
-
-      if (errorCountEl) errorCountEl.textContent = d.errorRowCount || 0;
 
       if (errors.length > 0) {
         errorList.innerHTML = errors.map(e => `• ${e}`).join("<br>");
@@ -525,11 +487,9 @@
         errorList.innerHTML = "";
         Object.keys(prevWa).filter(k => k.startsWith("err_")).forEach(k => delete prevWa[k]);
       }
-
-    } catch { /* fail silently — don't block the rest of the panel */ }
+    } catch { /* fail silently */ }
   }
 
-  const prevWa = {};
   function bumpStat(id, newVal) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -537,7 +497,7 @@
     el.textContent = newVal;
     if (prev !== undefined && newVal > prev) {
       el.classList.remove("bumped");
-      void el.offsetWidth; // reflow to restart animation
+      void el.offsetWidth;
       el.classList.add("bumped");
       setTimeout(() => el.classList.remove("bumped"), 1500);
     }
@@ -546,7 +506,6 @@
 
   function fmtTime(raw) {
     try {
-      // Google Sheets dates come back as "Date(year,month,day,h,m,s)"
       if (typeof raw === "string" && raw.startsWith("Date(")) {
         const parts = raw.slice(5, -1).split(",").map(Number);
         const d = new Date(parts[0], parts[1], parts[2], parts[3] || 0, parts[4] || 0, parts[5] || 0);
@@ -556,13 +515,9 @@
     } catch { return String(raw); }
   }
 
-  // ===== ACTIONS =====
   async function doFormAction(direction) {
     const opening = direction === "open";
-    if (!confirm(opening
-      ? "Open the bidding form?\n\nGuests will be able to place bids immediately."
-      : "Close the bidding form?\n\nGuests cannot bid until you reopen it.")) return;
-
+    if (!confirm(opening ? "Open the bidding form?\n\nGuests will be able to place bids immediately." : "Close the bidding form?\n\nGuests cannot bid until you reopen it.")) return;
     busy.form = true; renderStatus();
     try {
       await apiCall({ action: "setFormStatus", open: opening });
@@ -572,17 +527,12 @@
     } catch (err) {
       addLog("Form action failed: " + err.message, "log-danger");
       toast("Failed: " + err.message, "error");
-    } finally {
-      busy.form = false; renderStatus();
-    }
+    } finally { busy.form = false; renderStatus(); }
   }
 
   async function doBannerAction(direction) {
     const activating = direction === "on";
-    if (!confirm(activating
-      ? "Activate the closing soon banner?\n\nFlashing red alert on all screens."
-      : "Deactivate the closing soon banner?")) return;
-
+    if (!confirm(activating ? "Activate the closing soon banner?\n\nFlashing red alert on all screens." : "Deactivate the closing soon banner?")) return;
     busy.banner = true; renderStatus();
     try {
       await apiCall({ action: "setClosingSoonBanner", active: activating });
@@ -592,32 +542,24 @@
     } catch (err) {
       addLog("Banner action failed: " + err.message, "log-danger");
       toast("Failed: " + err.message, "error");
-    } finally {
-      busy.banner = false; renderStatus();
-    }
+    } finally { busy.banner = false; renderStatus(); }
   }
 
   async function doCloseAuction() {
     if (!confirm("CLOSE THE AUCTION?\n\n- Bidding form closes\n- Closing soon banner stops\n- All screens show auction closed\n\nOnly proceed when the chairman has called it.")) return;
     if (!confirm("Are you absolutely sure? This cannot be undone from this panel.")) return;
-
     busy.auction = true; renderStatus();
     try {
       await apiCall({ action: "closeAuction" });
-      state.auctionClosed = true;
-      state.formOpen      = false;
-      state.bannerActive  = false;
+      state.auctionClosed = true; state.formOpen = false; state.bannerActive = false;
       addLog("AUCTION CLOSED.", "log-danger");
       toast("Auction closed. All screens updated.", "error");
     } catch (err) {
       addLog("Auction close failed: " + err.message, "log-danger");
       toast("Failed: " + err.message, "error");
-    } finally {
-      busy.auction = false; renderStatus();
-    }
+    } finally { busy.auction = false; renderStatus(); }
   }
 
-  // ===== INIT =====
   function init() {
     addLog("Session started.");
     loadControlStatus();
