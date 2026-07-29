@@ -382,7 +382,7 @@ Marymount Ball Committee</div>
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
     const LEADING_BIDS_URL = "https://marymountauction2026.ie/";
-    const MOBILE_ERROR_MESSAGE = "Mobile number must start with 08 and be 10 digits long, or start with 0044 and be 13 digits long.";
+    const MOBILE_ERROR_MESSAGE = "Mobile number must start with 08 and be 10 digits long, or start with 0044 and be 14 digits long. You can also use +353 or +44 international format.";
     const DEFAULT_SUCCESS_MESSAGE = `Thank you for your bid.
 
 If you entered your correct phone number, you will shortly receive a WhatsApp message with confirmation of your bid.
@@ -540,10 +540,19 @@ Marymount Ball Committee`;
     }
 
     function normalizeMobileNumber(value) {
-      return String(value || "")
+      let v = String(value || "")
         .trim()
-        .replace(/\s+/g, "")
-        .replace(/-/g, "");
+        .replace(/[\s\-()]/g, "");
+
+      if (v.startsWith("+44")) {
+        v = "0044" + v.slice(3);
+      } else if (v.startsWith("+353")) {
+        v = "0" + v.slice(4);
+      } else if (v.startsWith("00353")) {
+        v = "0" + v.slice(5);
+      }
+
+      return v;
     }
 
     function isValidMobileNumber(value) {
@@ -558,7 +567,7 @@ Marymount Ball Committee`;
       }
 
       if (mobile.startsWith("0044")) {
-        return mobile.length === 13;
+        return mobile.length === 14;
       }
 
       return false;
