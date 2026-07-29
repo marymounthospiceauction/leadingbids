@@ -7,170 +7,123 @@
   <link rel="icon" type="image/png" href="/Marymount Logo.png" />
   <style>
     :root {
-      --bg:       #1e2d4a;
-      --surface:  #253860;
-      --surface2: #2d4270;
-      --surface3: #1a2540;
-      --border:   #3a5080;
-      --border2:  #2d4270;
-      --gold:     #c9973f;
-      --gold-lt:  #e6ce91;
-      --white:    #f0f4ff;
-      --dim:      #a0b8d8;
-      --muted:    #7a9abf;
-      --red:      #ef4444;
-      --red-bg:   #3a1a1a;
-      --red-bdr:  #7f3333;
-      --amber:    #f59e0b;
-      --green:    #4ade80;
-      --green-bg: #0f2a1a;
-      --green-bdr:#006633;
+      --bg:      #1e2d4a;
+      --surface: #253860;
+      --s2:      #2d4270;
+      --s3:      #1a2540;
+      --border:  #3a5080;
+      --b2:      #2d4270;
+      --gold:    #c9973f;
+      --gold-lt: #e6ce91;
+      --white:   #f0f4ff;
+      --dim:     #a0b8d8;
+      --muted:   #7a9abf;
+      --red:     #ef4444;
+      --red-bg:  #3a1a1a;
+      --red-bdr: #7f3333;
+      --amber:   #f59e0b;
+      --green:   #4ade80;
+      --grn-bg:  #0f2a1a;
+      --grn-bdr: #166534;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; font-family: Calibri, Arial, sans-serif; background: var(--bg); color: var(--white); overflow: hidden; }
 
     /* LOGIN */
-    #loginScreen {
-      position: fixed; inset: 0; z-index: 999;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--bg);
-    }
-    .lc {
-      background: var(--surface); border: 1px solid var(--gold);
-      border-radius: 16px; padding: 28px 24px; width: 90%; max-width: 320px;
-      box-shadow: 0 0 40px rgba(201,151,63,0.15), 0 20px 50px rgba(0,0,0,0.5);
-      text-align: center;
-    }
+    #loginScreen { position: fixed; inset: 0; z-index: 999; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+    .lc { background: var(--surface); border: 1px solid var(--gold); border-radius: 16px; padding: 28px 24px; width: 90%; max-width: 320px; box-shadow: 0 0 40px rgba(201,151,63,0.15), 0 20px 50px rgba(0,0,0,0.5); text-align: center; }
     .lc-logo  { font-size: 1.8rem; margin-bottom: 5px; }
     .lc-title { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-lt); margin-bottom: 2px; }
     .lc-sub   { font-size: 0.72rem; color: var(--muted); margin-bottom: 18px; }
     .lc-lbl   { display: block; text-align: left; font-size: 0.67rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; color: var(--muted); }
-    .lc-inp   { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 1rem; background: var(--surface2); color: var(--white); outline: none; }
+    .lc-inp   { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 1rem; background: var(--s2); color: var(--white); outline: none; }
     .lc-inp:focus { border-color: var(--gold); }
     .lc-btn   { width: 100%; margin-top: 14px; padding: 11px; border: none; border-radius: 999px; cursor: pointer; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.07em; background: linear-gradient(135deg, var(--gold), var(--gold-lt)); color: #111; }
     .lc-err   { margin-top: 6px; font-size: 0.75rem; color: var(--red); min-height: 14px; text-align: left; }
 
-    /* APP SHELL */
+    /* APP */
     #app { display: none; height: 100vh; flex-direction: column; overflow: hidden; }
 
     /* TOP BAR */
     .topbar {
       background: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 6px 16px; display: flex; align-items: center; justify-content: space-between;
-      flex-shrink: 0;
+      padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; height: 38px;
     }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
     .topbar-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-lt); }
     .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-right: 5px; animation: blink 1.4s infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    #syncLabel { font-size: 0.62rem; color: var(--muted); }
+    #syncLabel { font-size: 0.6rem; color: var(--muted); }
 
-    /* CLOCK BAR */
-    .clockbar {
-      background: var(--bg); border-bottom: 1px solid var(--border2);
-      text-align: center; padding: 8px 0 6px; flex-shrink: 0;
-    }
-    .clock-time { font-size: 2.6rem; font-weight: 800; color: var(--white); letter-spacing: 0.05em; font-variant-numeric: tabular-nums; line-height: 1; }
-    .clock-date { font-size: 0.7rem; color: var(--muted); margin-top: 1px; }
+    /* TOP BAR LINKS */
+    .topbar-links { display: flex; align-items: center; gap: 2px; }
+    .tbl { padding: 4px 9px; border-radius: 6px; text-decoration: none; font-size: 0.68rem; font-weight: 700; color: var(--muted); white-space: nowrap; transition: background 0.15s, color 0.15s; }
+    .tbl:hover { background: rgba(255,255,255,0.08); color: var(--gold-lt); }
+    .tbl.ext::after { content: "↗"; font-size: 0.55rem; margin-left: 2px; opacity: 0.6; }
+    .tbl-sep { width: 1px; height: 14px; background: var(--border); margin: 0 2px; }
 
-    /* MAIN — CSS grid, fills remaining height */
-    .main {
-      flex: 1; min-height: 0;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: auto auto;
-      gap: 8px; padding: 8px;
-    }
+    /* CLOCK */
+    .clockbar { background: var(--bg); border-bottom: 1px solid var(--b2); text-align: center; padding: 10px 0 8px; flex-shrink: 0; }
+    .clock-time { font-size: 3rem; font-weight: 800; color: var(--white); letter-spacing: 0.05em; font-variant-numeric: tabular-nums; line-height: 1; }
+    .clock-date { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
 
-    /* WA section spans all 3 cols */
-    .wa-section   { grid-column: 1 / -1; }
-    .links-section { grid-column: 1 / 3; }
-    .log-section   { grid-column: 3 / 4; }
+    /* MAIN */
+    .main { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: auto auto; gap: 10px; padding: 10px; }
+    .wa-section { grid-column: 1 / -1; }
 
     /* SECTION LABEL */
-    .slabel {
-      font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 0.1em; color: var(--gold); margin-bottom: 3px;
-    }
+    .slabel { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 4px; }
 
     /* CARD */
-    .card {
-      background: var(--surface); border: 0.5px solid var(--border);
-      border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;
-    }
-    .card-hdr {
-      padding: 7px 12px 6px; border-bottom: 0.5px solid var(--border2);
-      display: flex; align-items: center; gap: 8px; flex-shrink: 0;
-    }
-    .card-icon  { font-size: 1rem; flex-shrink: 0; }
-    .card-title { font-size: 0.78rem; font-weight: 800; color: var(--gold-lt); }
-    .card-desc  { font-size: 0.62rem; color: var(--muted); line-height: 1.3; }
-    .card-body  { padding: 9px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+    .card-hdr { padding: 10px 14px 8px; border-bottom: 0.5px solid var(--b2); display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+    .card-icon  { font-size: 1.1rem; flex-shrink: 0; }
+    .card-title { font-size: 0.82rem; font-weight: 800; color: var(--gold-lt); }
+    .card-desc  { font-size: 0.63rem; color: var(--muted); line-height: 1.3; margin-top: 1px; }
+    .card-body  { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 
     /* WA STATS */
-    .wa-stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1px; background: var(--border2); border-radius: 8px; overflow: hidden; }
-    .wa-stat   { background: var(--surface3); padding: 10px 10px 9px; text-align: center; }
+    .wa-stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1px; background: var(--b2); border-radius: 9px; overflow: hidden; }
+    .wa-stat   { background: var(--s3); padding: 14px 10px 12px; text-align: center; }
     .wa-stat.err { background: var(--red-bg); }
-    .wa-num    { font-size: 2.4rem; font-weight: 800; color: var(--white); line-height: 1; font-variant-numeric: tabular-nums; transition: color 0.4s; }
+    .wa-num    { font-size: 2.8rem; font-weight: 800; color: var(--white); line-height: 1; font-variant-numeric: tabular-nums; transition: color 0.4s; }
     .wa-num.bumped { color: var(--green); }
-    .wa-lbl    { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 3px; }
-    .wa-meta   { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 0.68rem; color: var(--muted); }
-    .wa-meta strong { font-weight: 800; }
+    .wa-lbl    { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 4px; }
+    .wa-meta   { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; font-size: 0.7rem; color: var(--muted); }
+    .wa-meta strong { font-weight: 800; color: var(--dim); }
 
     /* ERROR BANNER */
-    .wa-err-banner { display: none; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 7px; padding: 8px 11px; }
-    .wa-err-title  { font-size: 0.67rem; font-weight: 800; text-transform: uppercase; color: var(--red); margin-bottom: 3px; }
-    .wa-err-list   { font-size: 0.7rem; color: #fca5a5; line-height: 1.5; }
-    .wa-err-hint   { font-size: 0.62rem; color: var(--muted); margin-top: 4px; }
+    .wa-err-banner { display: none; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 8px; padding: 9px 12px; }
+    .wa-err-title  { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: var(--red); margin-bottom: 3px; }
+    .wa-err-list   { font-size: 0.72rem; color: #fca5a5; line-height: 1.5; }
+    .wa-err-hint   { font-size: 0.63rem; color: var(--muted); margin-top: 4px; }
 
-    /* STATE PILL */
-    .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: 0.67rem; font-weight: 800; }
-    .pill-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-    .pill-open   { background: var(--green-bg); color: var(--green); border: 0.5px solid var(--green-bdr); }
-    .pill-closed { background: var(--red-bg);   color: var(--red);   border: 0.5px solid var(--red-bdr); }
+    /* PILL */
+    .pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border-radius: 999px; font-size: 0.7rem; font-weight: 800; width: fit-content; }
+    .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .pill-open   { background: var(--grn-bg); color: var(--green);  border: 0.5px solid var(--grn-bdr); }
+    .pill-closed { background: var(--red-bg); color: var(--red);    border: 0.5px solid var(--red-bdr); }
     .pill-on     { background: rgba(245,158,11,0.15); color: var(--amber); border: 0.5px solid rgba(245,158,11,0.4); }
     .pill-off    { background: rgba(255,255,255,0.05); color: var(--muted); border: 0.5px solid var(--border); }
 
     /* BUTTONS */
-    .btn-row { display: flex; gap: 6px; }
-    .btn { padding: 8px 10px; border-radius: 7px; border: none; cursor: pointer; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; transition: opacity 0.15s, transform 0.1s; flex: 1; text-align: center; }
+    .btn-row { display: flex; gap: 8px; }
+    .btn { padding: 10px 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; transition: opacity 0.15s, transform 0.1s; flex: 1; text-align: center; }
     .btn:disabled { opacity: 0.2; cursor: not-allowed; }
     .btn:not(:disabled):active { transform: scale(0.97); }
     .btn-green    { background: #14532d; color: #86efac; border: 0.5px solid #166534; }
     .btn-red-soft { background: #7f1d1d; color: #fca5a5; border: 0.5px solid #991b1b; }
     .btn-gold     { background: var(--gold); color: #111; font-weight: 800; }
     .btn-ghost    { background: rgba(255,255,255,0.06); color: var(--muted); border: 0.5px solid var(--border); }
-    .btn-red      { background: #dc2626; color: #fff; width: 100%; padding: 9px; }
+    .btn-red      { background: #dc2626; color: #fff; width: 100%; padding: 11px; font-size: 0.8rem; }
 
-    /* Danger card */
-    .card-danger { border-color: var(--red-bdr); background: var(--red-bg); }
-    .danger-warn { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 6px; padding: 7px 10px; font-size: 0.67rem; color: #fca5a5; line-height: 1.4; }
-
-    /* QUICK LINKS */
-    .links-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border2); border-radius: 8px; overflow: hidden; }
-    .nav-link { display: flex; align-items: center; gap: 8px; padding: 9px 11px; background: var(--surface2); text-decoration: none; color: var(--white); transition: background 0.15s; }
-    .nav-link:hover { background: var(--surface3); }
-    .nav-icon  { font-size: 1rem; flex-shrink: 0; }
-    .nav-label { font-size: 0.72rem; font-weight: 700; color: var(--gold-lt); }
-    .nav-sub   { font-size: 0.6rem; color: var(--muted); margin-top: 1px; }
-    .nav-link.ext .nav-label::after { content: " ↗"; font-size: 0.6rem; color: var(--muted); }
-
-    /* LOG */
-    .log-hdr  { padding: 7px 12px; border-bottom: 0.5px solid var(--border2); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-    .log-title { font-size: 0.67rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gold); }
-    .log-clear { font-size: 0.62rem; font-weight: 700; color: var(--muted); cursor: pointer; background: none; border: none; text-transform: uppercase; }
-    .log-body  { flex: 1; overflow-y: auto; min-height: 0; }
-    .log-row   { display: flex; gap: 8px; padding: 6px 12px; border-bottom: 0.5px solid var(--border2); font-size: 0.68rem; }
-    .log-row:last-child { border-bottom: none; }
-    .log-t   { color: var(--muted); flex-shrink: 0; font-variant-numeric: tabular-nums; }
-    .log-m   { color: var(--dim); }
-    .log-ok  { color: var(--green); }
-    .log-wrn { color: var(--amber); }
-    .log-err { color: var(--red); }
-    .log-empty { padding: 16px 12px; font-size: 0.7rem; color: var(--muted); }
+    .card-danger  { border-color: var(--red-bdr); background: var(--red-bg); }
+    .danger-warn  { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 7px; padding: 9px 11px; font-size: 0.7rem; color: #fca5a5; line-height: 1.4; }
 
     /* TOAST */
     .toast-wrap { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 800; display: flex; flex-direction: column; gap: 5px; align-items: center; pointer-events: none; }
-    .toast { padding: 8px 16px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; box-shadow: 0 6px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.25s; white-space: nowrap; max-width: 92vw; text-align: center; }
+    .toast { padding: 8px 18px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; box-shadow: 0 6px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.25s; white-space: nowrap; max-width: 92vw; text-align: center; }
     .toast.success { background: #22c55e; color: #052e16; }
     .toast.error   { background: #ef4444; color: #fff; }
     .toast.info    { background: #3b82f6; color: #fff; }
@@ -183,8 +136,8 @@
       #app { height: auto; overflow: visible; }
       .main { display: flex; flex-direction: column; }
       .wa-stats { grid-template-columns: 1fr 1fr; }
-      .links-grid { grid-template-columns: 1fr 1fr; }
-      .clock-time { font-size: 3rem; }
+      .clock-time { font-size: 2.8rem; }
+      .topbar-links { display: none; }
     }
   </style>
 </head>
@@ -211,8 +164,23 @@
 <div id="app">
 
   <div class="topbar">
-    <div class="topbar-title"><span class="live-dot"></span>Master Admin</div>
-    <div id="syncLabel">Loading...</div>
+    <div class="topbar-left">
+      <div class="topbar-title"><span class="live-dot"></span>Master Admin</div>
+      <div id="syncLabel">Loading...</div>
+    </div>
+    <div class="topbar-links">
+      <a class="tbl" href="/committee_view.html" target="_blank">Committee view</a>
+      <div class="tbl-sep"></div>
+      <a class="tbl" href="/committee_admin.html" target="_blank">Committee admin</a>
+      <div class="tbl-sep"></div>
+      <a class="tbl ext" href="https://marymountauction2026.ie/bid" target="_blank">Bidding form</a>
+      <div class="tbl-sep"></div>
+      <a class="tbl ext" href="https://marymountauction2026.ie/" target="_blank">Leading bids</a>
+      <div class="tbl-sep"></div>
+      <a class="tbl" href="/tv_leadingbids.html" target="_blank">TV display</a>
+      <div class="tbl-sep"></div>
+      <a class="tbl" href="/foyer_leaderboard.html" target="_blank">Foyer board</a>
+    </div>
   </div>
 
   <div class="clockbar">
@@ -223,7 +191,7 @@
   <div class="main">
 
     <!-- WHATSAPP — full width -->
-    <div class="wa-section" style="display:flex;flex-direction:column;gap:3px;">
+    <div class="wa-section" style="display:flex;flex-direction:column;gap:4px;">
       <div class="slabel">WhatsApp</div>
       <div class="card" style="flex:1;">
         <div class="card-hdr">
@@ -267,7 +235,7 @@
     </div>
 
     <!-- BIDDING FORM -->
-    <div style="display:flex;flex-direction:column;gap:3px;">
+    <div style="display:flex;flex-direction:column;gap:4px;">
       <div class="slabel">Auction controls</div>
       <div class="card" style="flex:1;">
         <div class="card-hdr">
@@ -288,7 +256,7 @@
     </div>
 
     <!-- CLOSING SOON -->
-    <div style="display:flex;flex-direction:column;gap:3px;">
+    <div style="display:flex;flex-direction:column;gap:4px;">
       <div class="slabel">&nbsp;</div>
       <div class="card" style="flex:1;">
         <div class="card-hdr">
@@ -309,7 +277,7 @@
     </div>
 
     <!-- CLOSE AUCTION -->
-    <div style="display:flex;flex-direction:column;gap:3px;">
+    <div style="display:flex;flex-direction:column;gap:4px;">
       <div class="slabel">&nbsp;</div>
       <div class="card card-danger" style="flex:1;">
         <div class="card-hdr" style="border-bottom-color:var(--red-bdr);">
@@ -327,76 +295,23 @@
       </div>
     </div>
 
-    <!-- QUICK LINKS -->
-    <div class="links-section" style="display:flex;flex-direction:column;gap:3px;">
-      <div class="slabel">Quick links</div>
-      <div class="card" style="flex:1;">
-        <div class="card-body" style="padding:0;">
-          <div class="links-grid">
-            <a class="nav-link" href="/committee_view.html" target="_blank">
-              <div class="nav-icon">👥</div>
-              <div><div class="nav-label">Committee view</div><div class="nav-sub">Read-only</div></div>
-            </a>
-            <a class="nav-link" href="/committee_admin.html" target="_blank">
-              <div class="nav-icon">⚙️</div>
-              <div><div class="nav-label">Committee admin</div><div class="nav-sub">Live &amp; sold</div></div>
-            </a>
-            <a class="nav-link ext" href="https://marymountauction2026.ie/bid" target="_blank">
-              <div class="nav-icon">📝</div>
-              <div><div class="nav-label">Bidding form</div><div class="nav-sub">Public</div></div>
-            </a>
-            <a class="nav-link ext" href="https://marymountauction2026.ie/" target="_blank">
-              <div class="nav-icon">🏆</div>
-              <div><div class="nav-label">Leading bids</div><div class="nav-sub">Homepage</div></div>
-            </a>
-            <a class="nav-link" href="/tv_leadingbids.html" target="_blank">
-              <div class="nav-icon">📺</div>
-              <div><div class="nav-label">TV display</div><div class="nav-sub">Ballroom</div></div>
-            </a>
-            <a class="nav-link" href="/foyer_leaderboard.html" target="_blank">
-              <div class="nav-icon">🚪</div>
-              <div><div class="nav-label">Foyer board</div><div class="nav-sub">Foyer screens</div></div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ACTION LOG -->
-    <div class="log-section" style="display:flex;flex-direction:column;gap:3px;">
-      <div class="slabel">Action log</div>
-      <div class="card" style="flex:1;">
-        <div class="log-hdr">
-          <div class="log-title">Tonight</div>
-          <button class="log-clear" onclick="clearLog()">Clear</button>
-        </div>
-        <div class="log-body" id="logBody">
-          <div class="log-empty">No actions yet.</div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
 
 <script>
-  const PASSWORD   = "master2026"; // CHANGE BEFORE EVENT NIGHT
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec"; // UPDATE AFTER REDEPLOY
-
-  const CTRL_MS = 8000;
-  const WA_MS   = 15000;
+  const PASSWORD   = "master2026";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
+  const CTRL_MS = 8000, WA_MS = 15000;
 
   let state = { formOpen: null, bannerActive: null, auctionClosed: null };
   let busy  = { form: false, banner: false, auction: false };
-  let log   = [];
   const prev = {};
 
   document.getElementById("loginForm").addEventListener("submit", e => {
     e.preventDefault();
     if (document.getElementById("pwInput").value === PASSWORD) {
       document.getElementById("loginScreen").style.display = "none";
-      const app = document.getElementById("app");
-      app.style.display = "flex";
+      document.getElementById("app").style.display = "flex";
       init();
     } else {
       document.getElementById("loginError").textContent = "Incorrect password.";
@@ -410,23 +325,6 @@
     document.getElementById("toastWrap").appendChild(el);
     requestAnimationFrame(() => el.classList.add("show"));
     setTimeout(() => { el.classList.remove("show"); setTimeout(() => el.remove(), 300); }, 3500);
-  }
-
-  function addLog(msg, cls = "") {
-    const now = new Date().toLocaleTimeString("en-IE", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-    log.unshift({ time: now, msg, cls });
-    if (log.length > 60) log.pop();
-    renderLog();
-  }
-  function renderLog() {
-    const body = document.getElementById("logBody");
-    body.innerHTML = log.length
-      ? log.map(e => `<div class="log-row"><span class="log-t">${e.time}</span><span class="log-m ${e.cls}">${e.msg}</span></div>`).join("")
-      : `<div class="log-empty">No actions yet.</div>`;
-  }
-  function clearLog() {
-    if (!confirm("Clear the action log?")) return;
-    log = []; renderLog();
   }
 
   async function api(payload) {
@@ -470,45 +368,32 @@
     document.getElementById(lid).textContent = val ? tT : fT;
     document.getElementById(pid).className = "pill " + (val ? tC : fC);
   }
-  function setBtn(id, enabled) {
-    const el = document.getElementById(id);
-    if (el) el.disabled = !enabled;
-  }
+  function setBtn(id, en) { const el = document.getElementById(id); if (el) el.disabled = !en; }
 
   async function loadWa() {
     try {
       const r = await api({ action: "getWhatsAppStats" });
       if (!r.ok) return;
       const d = r.data;
-
       bump("waBidsSent",    d.bidsSent    || 0);
       bump("waOutbidsSent", d.outbidsSent || 0);
       bump("waWinnersSent", d.winnersSent || 0);
-
-      const ecEl = document.getElementById("waErrorCount");
-      if (ecEl) ecEl.textContent = d.errorRowCount || 0;
-
-      const tEl = document.getElementById("waToggleVal");
-      tEl.textContent = d.waToggle || "OFF";
-      tEl.style.color = d.waToggle === "ON" ? "#4ade80" : "#ef4444";
-
+      const ec = document.getElementById("waErrorCount");
+      if (ec) ec.textContent = d.errorRowCount || 0;
+      const tv = document.getElementById("waToggleVal");
+      tv.textContent = d.waToggle || "OFF";
+      tv.style.color = d.waToggle === "ON" ? "#4ade80" : "#ef4444";
       document.getElementById("waLastBid").textContent    = d.lastBidTime    ? fmt(d.lastBidTime)    : "None yet";
       document.getElementById("waLastOutbid").textContent = d.lastOutbidTime ? fmt(d.lastOutbidTime) : "None yet";
-
       const errors = d.errors || [];
       const eb = document.getElementById("waErrorBanner");
       const el = document.getElementById("waErrorList");
-
       if (errors.length > 0) {
         el.innerHTML = errors.map(e => `• ${e}`).join("<br>");
         eb.style.display = "block";
-        errors.forEach(e => {
-          if (!prev["err_" + e]) { addLog("WhatsApp error: " + e, "log-err"); prev["err_" + e] = true; }
-        });
       } else {
         eb.style.display = "none";
         el.innerHTML = "";
-        Object.keys(prev).filter(k => k.startsWith("err_")).forEach(k => delete prev[k]);
       }
     } catch { /* silent */ }
   }
@@ -542,12 +427,9 @@
     try {
       await api({ action: "setFormStatus", open });
       state.formOpen = open;
-      addLog(open ? "Form opened." : "Form closed.", open ? "log-ok" : "log-wrn");
       toast(open ? "Bidding form is now open." : "Bidding form closed.", open ? "success" : "warn");
-    } catch (err) {
-      addLog("Form action failed: " + err.message, "log-err");
-      toast("Failed: " + err.message, "error");
-    } finally { busy.form = false; renderStatus(); }
+    } catch (err) { toast("Failed: " + err.message, "error"); }
+    finally { busy.form = false; renderStatus(); }
   }
 
   async function doBannerAction(dir) {
@@ -557,12 +439,9 @@
     try {
       await api({ action: "setClosingSoonBanner", active: on });
       state.bannerActive = on;
-      addLog(on ? "Closing soon banner activated." : "Banner deactivated.", on ? "log-wrn" : "");
       toast(on ? "Closing soon banner is live." : "Banner deactivated.", on ? "warn" : "info");
-    } catch (err) {
-      addLog("Banner failed: " + err.message, "log-err");
-      toast("Failed: " + err.message, "error");
-    } finally { busy.banner = false; renderStatus(); }
+    } catch (err) { toast("Failed: " + err.message, "error"); }
+    finally { busy.banner = false; renderStatus(); }
   }
 
   async function doCloseAuction() {
@@ -572,12 +451,9 @@
     try {
       await api({ action: "closeAuction" });
       state.auctionClosed = true; state.formOpen = false; state.bannerActive = false;
-      addLog("AUCTION CLOSED.", "log-err");
       toast("Auction closed. All screens updated.", "error");
-    } catch (err) {
-      addLog("Auction close failed: " + err.message, "log-err");
-      toast("Failed: " + err.message, "error");
-    } finally { busy.auction = false; renderStatus(); }
+    } catch (err) { toast("Failed: " + err.message, "error"); }
+    finally { busy.auction = false; renderStatus(); }
   }
 
   function tick() {
@@ -588,10 +464,9 @@
 
   function init() {
     tick(); setInterval(tick, 1000);
-    addLog("Session started.");
     loadCtrl(); loadWa();
     setInterval(loadCtrl, CTRL_MS);
-    setInterval(loadWa,   WA_MS);
+    setInterval(loadWa, WA_MS);
   }
 </script>
 </body>
