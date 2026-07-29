@@ -64,6 +64,18 @@
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
     #syncLabel { font-size: 0.65rem; color: var(--muted); }
 
+    /* CLOCK */
+    .clock-bar {
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      text-align: center; padding: 16px 0 12px;
+    }
+    .clock-time {
+      font-size: clamp(3.5rem, 10vw, 7rem); font-weight: 800;
+      color: var(--white); letter-spacing: 0.06em;
+      font-variant-numeric: tabular-nums; line-height: 1;
+    }
+    .clock-date { font-size: 0.8rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.05em; }
+
     /* MAIN */
     .main { padding: 12px; display: flex; flex-direction: column; gap: 10px; padding-bottom: 60px; }
     .section-label { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding: 0 2px; margin-bottom: -4px; }
@@ -195,6 +207,11 @@
   <div class="top-bar">
     <div class="top-bar-title"><span class="live-dot"></span>Master Admin</div>
     <div id="syncLabel">Loading...</div>
+  </div>
+
+  <div class="clock-bar">
+    <div class="clock-time" id="clockTime">00:00:00</div>
+    <div class="clock-date" id="clockDate"></div>
   </div>
 
   <div class="main">
@@ -560,7 +577,15 @@
     } finally { busy.auction = false; renderStatus(); }
   }
 
+  function tickClock() {
+    const now = new Date();
+    document.getElementById("clockTime").textContent = now.toLocaleTimeString("en-IE", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+    document.getElementById("clockDate").textContent = now.toLocaleDateString("en-IE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  }
+
   function init() {
+    tickClock();
+    setInterval(tickClock, 1000);
     addLog("Session started.");
     loadControlStatus();
     loadWaStats();
