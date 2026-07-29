@@ -28,146 +28,117 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; font-family: Calibri, Arial, sans-serif; background: var(--bg); color: var(--white); overflow: hidden; }
-
-    /* LOGIN */
-    #loginScreen { position: fixed; inset: 0; z-index: 999; display: flex; align-items: center; justify-content: center; background: var(--bg); }
-    .lc { background: var(--surface); border: 1px solid var(--gold); border-radius: 16px; padding: 28px 24px; width: 90%; max-width: 320px; box-shadow: 0 0 40px rgba(201,151,63,0.15), 0 20px 50px rgba(0,0,0,0.5); text-align: center; }
-    .lc-logo  { font-size: 1.8rem; margin-bottom: 5px; }
-    .lc-title { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-lt); margin-bottom: 2px; }
-    .lc-sub   { font-size: 0.72rem; color: var(--muted); margin-bottom: 18px; }
-    .lc-lbl   { display: block; text-align: left; font-size: 0.67rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; color: var(--muted); }
-    .lc-inp   { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 1rem; background: var(--s2); color: var(--white); outline: none; }
-    .lc-inp:focus { border-color: var(--gold); }
-    .lc-btn   { width: 100%; margin-top: 14px; padding: 11px; border: none; border-radius: 999px; cursor: pointer; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.07em; background: linear-gradient(135deg, var(--gold), var(--gold-lt)); color: #111; }
-    .lc-err   { margin-top: 6px; font-size: 0.75rem; color: var(--red); min-height: 14px; text-align: left; }
-
-    /* APP */
-    #app { display: none; height: 100vh; flex-direction: column; overflow: hidden; }
+    #app { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
     /* TOP BAR */
     .topbar {
       background: var(--surface); border-bottom: 1px solid var(--border);
       padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
-      flex-shrink: 0; height: 38px;
+      flex-shrink: 0; height: 40px; gap: 16px;
     }
-    .topbar-left { display: flex; align-items: center; gap: 10px; }
-    .topbar-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-lt); }
+    .topbar-left { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .topbar-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-lt); white-space: nowrap; }
     .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-right: 5px; animation: blink 1.4s infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    #syncLabel { font-size: 0.6rem; color: var(--muted); }
-
-    /* TOP BAR LINKS */
-    .topbar-links { display: flex; align-items: center; gap: 2px; }
-    .tbl { padding: 4px 9px; border-radius: 6px; text-decoration: none; font-size: 0.68rem; font-weight: 700; color: var(--muted); white-space: nowrap; transition: background 0.15s, color 0.15s; }
+    .topbar-clock { font-size: 1.3rem; font-weight: 800; color: var(--white); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+    .topbar-date  { font-size: 0.62rem; color: var(--muted); }
+    #syncLabel    { font-size: 0.6rem; color: var(--muted); }
+    .topbar-links { display: flex; align-items: center; gap: 2px; margin-left: auto; flex-shrink: 0; }
+    .tbl { padding: 4px 8px; border-radius: 5px; text-decoration: none; font-size: 0.65rem; font-weight: 700; color: var(--muted); white-space: nowrap; transition: background 0.15s, color 0.15s; }
     .tbl:hover { background: rgba(255,255,255,0.08); color: var(--gold-lt); }
     .tbl.ext::after { content: "↗"; font-size: 0.55rem; margin-left: 2px; opacity: 0.6; }
-    .tbl-sep { width: 1px; height: 14px; background: var(--border); margin: 0 2px; }
-
-    /* CLOCK */
-    .clockbar { background: var(--bg); border-bottom: 1px solid var(--b2); text-align: center; padding: 10px 0 8px; flex-shrink: 0; }
-    .clock-time { font-size: 3rem; font-weight: 800; color: var(--white); letter-spacing: 0.05em; font-variant-numeric: tabular-nums; line-height: 1; }
-    .clock-date { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .tbl-sep { width: 1px; height: 12px; background: var(--border); margin: 0 1px; flex-shrink: 0; }
 
     /* MAIN */
-    .main { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: auto auto; gap: 10px; padding: 10px; }
-    .wa-section { grid-column: 1 / -1; }
+    .main { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; padding: 8px; }
 
-    /* SECTION LABEL */
-    .slabel { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 4px; }
+    /* WA SECTION */
+    .wa-section { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; flex-shrink: 0; }
+    .wa-hdr { padding: 8px 14px 7px; border-bottom: 0.5px solid var(--b2); display: flex; align-items: center; justify-content: space-between; }
+    .wa-hdr-left { display: flex; align-items: center; gap: 8px; }
+    .wa-hdr-title { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); }
+    .wa-toggle-badge { font-size: 0.68rem; font-weight: 800; }
+    .wa-hdr-right { font-size: 0.62rem; color: var(--muted); display: flex; gap: 14px; }
+    .wa-hdr-right span strong { font-weight: 800; color: var(--dim); }
 
-    /* CARD */
-    .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
-    .card-hdr { padding: 10px 14px 8px; border-bottom: 0.5px solid var(--b2); display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
-    .card-icon  { font-size: 1.1rem; flex-shrink: 0; }
-    .card-title { font-size: 0.82rem; font-weight: 800; color: var(--gold-lt); }
-    .card-desc  { font-size: 0.63rem; color: var(--muted); line-height: 1.3; margin-top: 1px; }
-    .card-body  { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-
-    /* WA STATS */
-    .wa-stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1px; background: var(--b2); border-radius: 9px; overflow: hidden; }
-    .wa-stat   { background: var(--s3); padding: 14px 10px 12px; text-align: center; }
-    .wa-stat.err { background: var(--red-bg); }
-    .wa-num    { font-size: 2.8rem; font-weight: 800; color: var(--white); line-height: 1; font-variant-numeric: tabular-nums; transition: color 0.4s; }
+    .wa-stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1px; background: var(--b2); }
+    .wa-stat  { background: #3a5580; padding: 16px 14px 14px; text-align: center; }
+    .wa-stat.err { background: #5a2a2a; }
+    .wa-num   { font-size: clamp(2.4rem, 4vw, 3.8rem); font-weight: 800; color: var(--white); line-height: 1; font-variant-numeric: tabular-nums; transition: color 0.4s; }
     .wa-num.bumped { color: var(--green); }
-    .wa-lbl    { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 4px; }
-    .wa-meta   { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; font-size: 0.7rem; color: var(--muted); }
-    .wa-meta strong { font-weight: 800; color: var(--dim); }
+    .wa-lbl   { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 5px; }
 
     /* ERROR BANNER */
-    .wa-err-banner { display: none; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 8px; padding: 9px 12px; }
-    .wa-err-title  { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: var(--red); margin-bottom: 3px; }
-    .wa-err-list   { font-size: 0.72rem; color: #fca5a5; line-height: 1.5; }
-    .wa-err-hint   { font-size: 0.63rem; color: var(--muted); margin-top: 4px; }
+    .wa-err { display: none; padding: 8px 14px; background: rgba(239,68,68,0.1); border-top: 0.5px solid rgba(239,68,68,0.3); font-size: 0.7rem; color: #fca5a5; }
+    .wa-err-title { font-weight: 800; font-size: 0.68rem; text-transform: uppercase; color: var(--red); margin-bottom: 2px; }
+
+    /* CONTROLS */
+    .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; flex: 1; min-height: 0; }
+
+    .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+    .card-danger { border-color: var(--red-bdr); background: var(--red-bg); }
+
+    .card-hdr { padding: 12px 16px 10px; border-bottom: 0.5px solid var(--b2); display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+    .card-danger .card-hdr { border-bottom-color: var(--red-bdr); }
+    .card-icon  { font-size: 1.2rem; flex-shrink: 0; }
+    .card-title { font-size: 0.88rem; font-weight: 800; color: var(--gold-lt); }
+    .card-danger .card-title { color: #fca5a5; }
+    .card-desc  { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
+    .card-body  { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
 
     /* PILL */
-    .pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border-radius: 999px; font-size: 0.7rem; font-weight: 800; width: fit-content; }
-    .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; width: fit-content; }
+    .pill-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
     .pill-open   { background: var(--grn-bg); color: var(--green);  border: 0.5px solid var(--grn-bdr); }
     .pill-closed { background: var(--red-bg); color: var(--red);    border: 0.5px solid var(--red-bdr); }
     .pill-on     { background: rgba(245,158,11,0.15); color: var(--amber); border: 0.5px solid rgba(245,158,11,0.4); }
     .pill-off    { background: rgba(255,255,255,0.05); color: var(--muted); border: 0.5px solid var(--border); }
 
     /* BUTTONS */
-    .btn-row { display: flex; gap: 8px; }
-    .btn { padding: 10px 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; transition: opacity 0.15s, transform 0.1s; flex: 1; text-align: center; }
+    .btn-row { display: flex; gap: 8px; margin-top: auto; }
+    .btn { padding: 11px 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; transition: opacity 0.15s, transform 0.1s; flex: 1; text-align: center; }
     .btn:disabled { opacity: 0.2; cursor: not-allowed; }
     .btn:not(:disabled):active { transform: scale(0.97); }
     .btn-green    { background: #14532d; color: #86efac; border: 0.5px solid #166534; }
     .btn-red-soft { background: #7f1d1d; color: #fca5a5; border: 0.5px solid #991b1b; }
     .btn-gold     { background: var(--gold); color: #111; font-weight: 800; }
     .btn-ghost    { background: rgba(255,255,255,0.06); color: var(--muted); border: 0.5px solid var(--border); }
-    .btn-red      { background: #dc2626; color: #fff; width: 100%; padding: 11px; font-size: 0.8rem; }
+    .btn-red      { background: #dc2626; color: #fff; width: 100%; padding: 12px; font-size: 0.82rem; }
 
-    .card-danger  { border-color: var(--red-bdr); background: var(--red-bg); }
-    .danger-warn  { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 7px; padding: 9px 11px; font-size: 0.7rem; color: #fca5a5; line-height: 1.4; }
+    .danger-warn { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 7px; padding: 9px 11px; font-size: 0.68rem; color: #fca5a5; line-height: 1.5; }
 
     /* TOAST */
     .toast-wrap { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 800; display: flex; flex-direction: column; gap: 5px; align-items: center; pointer-events: none; }
-    .toast { padding: 8px 18px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; box-shadow: 0 6px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.25s; white-space: nowrap; max-width: 92vw; text-align: center; }
+    .toast { padding: 9px 20px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; box-shadow: 0 6px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.25s; white-space: nowrap; max-width: 92vw; text-align: center; }
     .toast.success { background: #22c55e; color: #052e16; }
     .toast.error   { background: #ef4444; color: #fff; }
     .toast.info    { background: #3b82f6; color: #fff; }
     .toast.warn    { background: #f59e0b; color: #111; }
     .toast.show    { opacity: 1; }
 
-    /* MOBILE */
     @media (max-width: 800px) {
       html, body { overflow: auto; }
-      #app { height: auto; overflow: visible; }
-      .main { display: flex; flex-direction: column; }
+      #app { height: auto; }
+      .controls { grid-template-columns: 1fr; }
       .wa-stats { grid-template-columns: 1fr 1fr; }
-      .clock-time { font-size: 2.8rem; }
       .topbar-links { display: none; }
+      .wa-hdr-right { display: none; }
     }
   </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="loginScreen">
-  <div class="lc">
-    <div class="lc-logo">🔐</div>
-    <div class="lc-title">Master Admin</div>
-    <div class="lc-sub">Marymount Ball Auction 2026</div>
-    <form id="loginForm">
-      <label class="lc-lbl">Password</label>
-      <input type="password" id="pwInput" class="lc-inp" autocomplete="current-password" required />
-      <button type="submit" class="lc-btn">Unlock</button>
-      <div id="loginError" class="lc-err"></div>
-    </form>
-  </div>
-</div>
-
 <div class="toast-wrap" id="toastWrap"></div>
 
-<!-- APP -->
 <div id="app">
 
   <div class="topbar">
     <div class="topbar-left">
       <div class="topbar-title"><span class="live-dot"></span>Master Admin</div>
-      <div id="syncLabel">Loading...</div>
+      <div class="topbar-clock" id="clockTime">00:00:00</div>
+      <div class="topbar-date"  id="clockDate"></div>
     </div>
+    <div id="syncLabel">Loading...</div>
     <div class="topbar-links">
       <a class="tbl" href="/committee_view.html" target="_blank">Committee view</a>
       <div class="tbl-sep"></div>
@@ -183,61 +154,48 @@
     </div>
   </div>
 
-  <div class="clockbar">
-    <div class="clock-time" id="clockTime">00:00:00</div>
-    <div class="clock-date" id="clockDate"></div>
-  </div>
-
   <div class="main">
 
-    <!-- WHATSAPP — full width -->
-    <div class="wa-section" style="display:flex;flex-direction:column;gap:4px;">
-      <div class="slabel">WhatsApp</div>
-      <div class="card" style="flex:1;">
-        <div class="card-hdr">
-          <div class="card-icon">💬</div>
-          <div>
-            <div class="card-title">WhatsApp sending</div>
-            <div class="card-desc">Live counts from ALL_BIDS — refreshes every 15s</div>
-          </div>
+    <!-- WHATSAPP — big numbers -->
+    <div class="wa-section">
+      <div class="wa-hdr">
+        <div class="wa-hdr-left">
+          <div class="wa-hdr-title">💬 WhatsApp</div>
+          <div class="wa-toggle-badge">Sending: <span id="waToggleVal" style="color:var(--muted);font-weight:800;">—</span></div>
         </div>
-        <div class="card-body">
-          <div class="wa-stats">
-            <div class="wa-stat">
-              <div class="wa-num" id="waBidsSent">—</div>
-              <div class="wa-lbl">Confirmations</div>
-            </div>
-            <div class="wa-stat">
-              <div class="wa-num" id="waOutbidsSent">—</div>
-              <div class="wa-lbl">Outbid alerts</div>
-            </div>
-            <div class="wa-stat">
-              <div class="wa-num" id="waWinnersSent">—</div>
-              <div class="wa-lbl">Winners</div>
-            </div>
-            <div class="wa-stat err">
-              <div class="wa-num" id="waErrorCount" style="color:var(--red)">—</div>
-              <div class="wa-lbl" style="color:var(--red)">Errors</div>
-            </div>
-          </div>
-          <div class="wa-meta">
-            <span>Sending: <strong id="waToggleVal" style="color:var(--muted)">Loading...</strong></span>
-            <span>Last confirmation: <strong id="waLastBid">—</strong></span>
-            <span>Last outbid: <strong id="waLastOutbid">—</strong></span>
-          </div>
-          <div class="wa-err-banner" id="waErrorBanner">
-            <div class="wa-err-title">⚠️ WhatsApp error detected</div>
-            <div class="wa-err-list" id="waErrorList"></div>
-            <div class="wa-err-hint">Check WHATSAPP_LAST_ERROR in ALL_BIDS for affected rows.</div>
-          </div>
+        <div class="wa-hdr-right">
+          <span>Last confirmation: <strong id="waLastBid">—</strong></span>
+          <span>Last outbid: <strong id="waLastOutbid">—</strong></span>
         </div>
+      </div>
+      <div class="wa-stats">
+        <div class="wa-stat">
+          <div class="wa-num" id="waBidsSent">—</div>
+          <div class="wa-lbl">Confirmations sent</div>
+        </div>
+        <div class="wa-stat">
+          <div class="wa-num" id="waOutbidsSent">—</div>
+          <div class="wa-lbl">Outbid alerts sent</div>
+        </div>
+        <div class="wa-stat">
+          <div class="wa-num" id="waWinnersSent">—</div>
+          <div class="wa-lbl">Winner notices sent</div>
+        </div>
+        <div class="wa-stat err">
+          <div class="wa-num" id="waErrorCount" style="color:var(--red)">—</div>
+          <div class="wa-lbl" style="color:var(--red)">Send errors</div>
+        </div>
+      </div>
+      <div class="wa-err" id="waErrorBanner">
+        <div class="wa-err-title">⚠️ Error detected</div>
+        <div id="waErrorList"></div>
       </div>
     </div>
 
-    <!-- BIDDING FORM -->
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <div class="slabel">Auction controls</div>
-      <div class="card" style="flex:1;">
+    <!-- THREE CONTROL CARDS -->
+    <div class="controls">
+
+      <div class="card">
         <div class="card-hdr">
           <div class="card-icon">📝</div>
           <div>
@@ -253,12 +211,8 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- CLOSING SOON -->
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <div class="slabel">&nbsp;</div>
-      <div class="card" style="flex:1;">
+      <div class="card">
         <div class="card-hdr">
           <div class="card-icon">🚨</div>
           <div>
@@ -274,16 +228,12 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- CLOSE AUCTION -->
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <div class="slabel">&nbsp;</div>
-      <div class="card card-danger" style="flex:1;">
-        <div class="card-hdr" style="border-bottom-color:var(--red-bdr);">
+      <div class="card card-danger">
+        <div class="card-hdr">
           <div class="card-icon">🔒</div>
           <div>
-            <div class="card-title" style="color:#fca5a5;">Close auction</div>
+            <div class="card-title">Close auction</div>
             <div class="card-desc">Permanent — closes form and all screens</div>
           </div>
         </div>
@@ -293,45 +243,30 @@
           <button class="btn btn-red" id="btnCloseAuction" onclick="doCloseAuction()" disabled>Close the auction</button>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 </div>
 
 <script>
-  const PASSWORD   = "master2026";
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
   const CTRL_MS = 8000, WA_MS = 15000;
-
   let state = { formOpen: null, bannerActive: null, auctionClosed: null };
   let busy  = { form: false, banner: false, auction: false };
   const prev = {};
 
-  document.getElementById("loginForm").addEventListener("submit", e => {
-    e.preventDefault();
-    if (document.getElementById("pwInput").value === PASSWORD) {
-      document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("app").style.display = "flex";
-      init();
-    } else {
-      document.getElementById("loginError").textContent = "Incorrect password.";
-    }
-  });
-
   function toast(msg, type = "success") {
     const el = document.createElement("div");
-    el.className = `toast ${type}`;
-    el.textContent = msg;
+    el.className = `toast ${type}`; el.textContent = msg;
     document.getElementById("toastWrap").appendChild(el);
     requestAnimationFrame(() => el.classList.add("show"));
     setTimeout(() => { el.classList.remove("show"); setTimeout(() => el.remove(), 300); }, 3500);
   }
 
   async function api(payload) {
-    const res  = await fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
+    const res = await fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
     const text = await res.text();
-    let json;
-    try { json = JSON.parse(text); } catch { throw new Error("Server error."); }
+    let json; try { json = JSON.parse(text); } catch { throw new Error("Server error."); }
     if (!json.ok) throw new Error(json.message || "Unknown error.");
     return json;
   }
@@ -340,19 +275,14 @@
     try {
       const r = await api({ action: "getControlStatus" });
       const d = r.data || {};
-      state.formOpen      = !!d.formOpen;
-      state.bannerActive  = !!d.bannerActive;
-      state.auctionClosed = !!d.auctionClosed;
+      state.formOpen = !!d.formOpen; state.bannerActive = !!d.bannerActive; state.auctionClosed = !!d.auctionClosed;
       renderStatus();
       document.getElementById("syncLabel").textContent = "Synced " + new Date().toLocaleTimeString("en-IE");
-    } catch {
-      document.getElementById("syncLabel").textContent = "Sync failed";
-    }
+    } catch { document.getElementById("syncLabel").textContent = "Sync failed"; }
   }
 
   function renderStatus() {
-    const { formOpen, bannerActive, auctionClosed } = state;
-    const closed = auctionClosed === true;
+    const { formOpen, bannerActive, auctionClosed } = state; const closed = auctionClosed === true;
     setPill("formPill",    "formPillLabel",    formOpen,      "Form is open",      "Form is closed",     "pill-open",   "pill-closed");
     setPill("bannerPill",  "bannerPillLabel",  bannerActive,  "Banner is active",  "Banner is off",      "pill-on",     "pill-off");
     setPill("auctionPill", "auctionPillLabel", auctionClosed, "Auction is closed", "Auction is running", "pill-closed", "pill-open");
@@ -372,37 +302,26 @@
 
   async function loadWa() {
     try {
-      const r = await api({ action: "getWhatsAppStats" });
-      if (!r.ok) return;
+      const r = await api({ action: "getWhatsAppStats" }); if (!r.ok) return;
       const d = r.data;
       bump("waBidsSent",    d.bidsSent    || 0);
       bump("waOutbidsSent", d.outbidsSent || 0);
       bump("waWinnersSent", d.winnersSent || 0);
-      const ec = document.getElementById("waErrorCount");
-      if (ec) ec.textContent = d.errorRowCount || 0;
+      const ec = document.getElementById("waErrorCount"); if (ec) ec.textContent = d.errorRowCount || 0;
       const tv = document.getElementById("waToggleVal");
-      tv.textContent = d.waToggle || "OFF";
-      tv.style.color = d.waToggle === "ON" ? "#4ade80" : "#ef4444";
-      document.getElementById("waLastBid").textContent    = d.lastBidTime    ? fmt(d.lastBidTime)    : "None yet";
-      document.getElementById("waLastOutbid").textContent = d.lastOutbidTime ? fmt(d.lastOutbidTime) : "None yet";
+      tv.textContent = d.waToggle || "OFF"; tv.style.color = d.waToggle === "ON" ? "#4ade80" : "#ef4444";
+      document.getElementById("waLastBid").textContent    = d.lastBidTime    ? fmt(d.lastBidTime)    : "—";
+      document.getElementById("waLastOutbid").textContent = d.lastOutbidTime ? fmt(d.lastOutbidTime) : "—";
       const errors = d.errors || [];
-      const eb = document.getElementById("waErrorBanner");
-      const el = document.getElementById("waErrorList");
-      if (errors.length > 0) {
-        el.innerHTML = errors.map(e => `• ${e}`).join("<br>");
-        eb.style.display = "block";
-      } else {
-        eb.style.display = "none";
-        el.innerHTML = "";
-      }
+      const eb = document.getElementById("waErrorBanner"); const el = document.getElementById("waErrorList");
+      if (errors.length > 0) { el.innerHTML = errors.map(e => `• ${e}`).join("<br>"); eb.style.display = "block"; }
+      else { eb.style.display = "none"; el.innerHTML = ""; }
     } catch { /* silent */ }
   }
 
   function bump(id, newVal) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const p = prev[id];
-    el.textContent = newVal;
+    const el = document.getElementById(id); if (!el) return;
+    const p = prev[id]; el.textContent = newVal;
     if (p !== undefined && newVal > p) {
       el.classList.remove("bumped"); void el.offsetWidth; el.classList.add("bumped");
       setTimeout(() => el.classList.remove("bumped"), 1500);
@@ -424,11 +343,8 @@
     const open = dir === "open";
     if (!confirm(open ? "Open the bidding form?\n\nGuests will be able to place bids immediately." : "Close the bidding form?\n\nGuests cannot bid until you reopen it.")) return;
     busy.form = true; renderStatus();
-    try {
-      await api({ action: "setFormStatus", open });
-      state.formOpen = open;
-      toast(open ? "Bidding form is now open." : "Bidding form closed.", open ? "success" : "warn");
-    } catch (err) { toast("Failed: " + err.message, "error"); }
+    try { await api({ action: "setFormStatus", open }); state.formOpen = open; toast(open ? "Bidding form is now open." : "Bidding form closed.", open ? "success" : "warn"); }
+    catch (err) { toast("Failed: " + err.message, "error"); }
     finally { busy.form = false; renderStatus(); }
   }
 
@@ -436,11 +352,8 @@
     const on = dir === "on";
     if (!confirm(on ? "Activate the closing soon banner?\n\nFlashing red alert on all screens." : "Deactivate the closing soon banner?")) return;
     busy.banner = true; renderStatus();
-    try {
-      await api({ action: "setClosingSoonBanner", active: on });
-      state.bannerActive = on;
-      toast(on ? "Closing soon banner is live." : "Banner deactivated.", on ? "warn" : "info");
-    } catch (err) { toast("Failed: " + err.message, "error"); }
+    try { await api({ action: "setClosingSoonBanner", active: on }); state.bannerActive = on; toast(on ? "Closing soon banner is live." : "Banner deactivated.", on ? "warn" : "info"); }
+    catch (err) { toast("Failed: " + err.message, "error"); }
     finally { busy.banner = false; renderStatus(); }
   }
 
@@ -448,26 +361,21 @@
     if (!confirm("CLOSE THE AUCTION?\n\n- Bidding form closes\n- Banner stops\n- All screens show auction closed\n\nOnly proceed when the chairman has called it.")) return;
     if (!confirm("Are you absolutely sure? This cannot be undone from this panel.")) return;
     busy.auction = true; renderStatus();
-    try {
-      await api({ action: "closeAuction" });
-      state.auctionClosed = true; state.formOpen = false; state.bannerActive = false;
-      toast("Auction closed. All screens updated.", "error");
-    } catch (err) { toast("Failed: " + err.message, "error"); }
+    try { await api({ action: "closeAuction" }); state.auctionClosed = true; state.formOpen = false; state.bannerActive = false; toast("Auction closed. All screens updated.", "error"); }
+    catch (err) { toast("Failed: " + err.message, "error"); }
     finally { busy.auction = false; renderStatus(); }
   }
 
   function tick() {
     const n = new Date();
     document.getElementById("clockTime").textContent = n.toLocaleTimeString("en-IE",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
-    document.getElementById("clockDate").textContent = n.toLocaleDateString("en-IE",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+    document.getElementById("clockDate").textContent = n.toLocaleDateString("en-IE",{weekday:"short",day:"numeric",month:"short"});
   }
 
-  function init() {
-    tick(); setInterval(tick, 1000);
-    loadCtrl(); loadWa();
-    setInterval(loadCtrl, CTRL_MS);
-    setInterval(loadWa, WA_MS);
-  }
+  tick(); setInterval(tick, 1000);
+  loadCtrl(); loadWa();
+  setInterval(loadCtrl, CTRL_MS);
+  setInterval(loadWa, WA_MS);
 </script>
 </body>
 </html>
