@@ -509,7 +509,7 @@
       const errorList   = document.getElementById("waErrorList");
       const errorCountEl = document.getElementById("waErrorCount");
 
-      if (errorCountEl) errorCountEl.textContent = errors.length;
+      if (errorCountEl) errorCountEl.textContent = d.errorRowCount || 0;
 
       if (errors.length > 0) {
         errorList.innerHTML = errors.map(e => `• ${e}`).join("<br>");
