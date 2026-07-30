@@ -95,7 +95,7 @@
     .panel-body  { flex: 1; overflow-y: auto; min-height: 0; }
 
     /* RECENT BIDS — vidiprinter style, no internal dividers */
-    .ticker-row { display: grid; grid-template-columns: 44px 52px 1fr 120px 100px; align-items: center; border-bottom: 0.5px solid var(--b2); height: 28px; padding: 0 10px; gap: 0; }
+    .ticker-row { display: grid; grid-template-columns: 44px 52px 1fr 120px 90px 70px; align-items: center; border-bottom: 0.5px solid var(--b2); height: 28px; padding: 0 10px; gap: 0; }
     .ticker-row:last-child { border-bottom: none; }
     .ticker-row.flash { animation: flash 1.4s ease; }
     @keyframes flash { 0%,100%{background:transparent} 20%{background:rgba(74,222,128,0.15)} }
@@ -103,9 +103,8 @@
     .t-item     { color: var(--gold-lt); font-weight: 800; font-size: 0.63rem; text-align: left; }
     .t-desc     { color: var(--dim); font-size: 0.66rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px; }
     .t-name     { color: var(--muted); font-size: 0.63rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
-    .t-amount-wrap { display: flex; align-items: baseline; justify-content: flex-end; gap: 5px; }
-    .t-amount   { color: var(--green); font-weight: 800; font-size: 0.75rem; white-space: nowrap; }
-    .t-increase { color: #6ee7a8; font-size: 0.58rem; font-weight: 700; white-space: nowrap; }
+    .t-amount   { color: var(--green); font-weight: 800; font-size: 0.75rem; white-space: nowrap; text-align: right; }
+    .t-increase { color: #6ee7a8; font-size: 0.63rem; font-weight: 700; white-space: nowrap; text-align: right; }
 
     /* FILTER BAR */
     .filter-bar { display: flex; gap: 6px; padding: 6px 12px; background: var(--s2); border-bottom: 0.5px solid var(--b2); }
@@ -465,10 +464,8 @@
         <div class="t-item">${b.item || "—"}</div>
         <div class="t-desc">${b.desc || ""}</div>
         <div class="t-name">${b.name || "—"}</div>
-        <div class="t-amount-wrap">
-          <span class="t-amount">€${Number(b.amount || 0).toLocaleString("en-IE")}</span>
-          ${b.increase > 0 ? `<span class="t-increase">▲€${Number(b.increase).toLocaleString("en-IE")}</span>` : ""}
-        </div>
+        <div class="t-amount">€${Number(b.amount || 0).toLocaleString("en-IE")}</div>
+        <div class="t-increase">${b.increase > 0 ? "+€" + Number(b.increase).toLocaleString("en-IE") : ""}</div>
       </div>`).join("");
     document.getElementById("recentUpdated").textContent = new Date().toLocaleTimeString("en-IE");
   }
