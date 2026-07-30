@@ -28,111 +28,126 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; font-family: Calibri, Arial, sans-serif; background: var(--bg); color: var(--white); overflow: hidden; }
-    #app { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* LOGIN */
+    #loginScreen { position: fixed; inset: 0; z-index: 999; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+    .lc { background: var(--surface); border: 1px solid var(--gold); border-radius: 16px; padding: 28px 24px; width: 90%; max-width: 320px; box-shadow: 0 0 40px rgba(201,151,63,0.15), 0 20px 50px rgba(0,0,0,0.5); text-align: center; }
+    .lc-logo  { font-size: 1.8rem; margin-bottom: 5px; }
+    .lc-title { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-lt); margin-bottom: 2px; }
+    .lc-sub   { font-size: 0.72rem; color: var(--muted); margin-bottom: 18px; }
+    .lc-lbl   { display: block; text-align: left; font-size: 0.67rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; color: var(--muted); }
+    .lc-inp   { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 1rem; background: var(--s2); color: var(--white); outline: none; }
+    .lc-inp:focus { border-color: var(--gold); }
+    .lc-btn   { width: 100%; margin-top: 14px; padding: 11px; border: none; border-radius: 999px; cursor: pointer; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.07em; background: linear-gradient(135deg, var(--gold), var(--gold-lt)); color: #111; }
+    .lc-err   { margin-top: 6px; font-size: 0.75rem; color: var(--red); min-height: 14px; text-align: left; }
+
+    /* APP */
+    #app { display: none; height: 100vh; flex-direction: column; overflow: hidden; }
 
     /* TOP BAR */
-    .topbar {
-      background: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
-      height: 40px; gap: 16px; flex-shrink: 0;
-    }
+    .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 16px; display: flex; align-items: center; justify-content: space-between; height: 38px; gap: 16px; flex-shrink: 0; }
     .topbar-left { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-    .topbar-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-lt); white-space: nowrap; }
+    .topbar-title { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-lt); white-space: nowrap; }
     .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-right: 5px; animation: blink 1.4s infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    .topbar-clock { font-size: 1.3rem; font-weight: 800; color: var(--white); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
-    .topbar-date  { font-size: 0.62rem; color: var(--muted); }
-    #syncLabel    { font-size: 0.6rem; color: var(--muted); }
+    .topbar-clock { font-size: 1.2rem; font-weight: 800; color: var(--white); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+    .topbar-date  { font-size: 0.6rem; color: var(--muted); }
+    #syncLabel    { font-size: 0.58rem; color: var(--muted); }
     .topbar-links { display: flex; align-items: center; gap: 2px; margin-left: auto; flex-shrink: 0; }
-    .tbl { padding: 4px 8px; border-radius: 5px; text-decoration: none; font-size: 0.65rem; font-weight: 700; color: var(--muted); white-space: nowrap; transition: background 0.15s, color 0.15s; }
+    .tbl { padding: 4px 8px; border-radius: 5px; text-decoration: none; font-size: 0.63rem; font-weight: 700; color: var(--muted); white-space: nowrap; transition: background 0.15s, color 0.15s; }
     .tbl:hover { background: rgba(255,255,255,0.08); color: var(--gold-lt); }
     .tbl.ext::after { content: "↗"; font-size: 0.55rem; margin-left: 2px; opacity: 0.6; }
     .tbl-sep { width: 1px; height: 12px; background: var(--border); margin: 0 1px; flex-shrink: 0; }
+
+    /* HEADER */
+    .pageheader { background: var(--s3); border-bottom: 2px solid var(--border); padding: 8px 16px; text-align: center; flex-shrink: 0; }
+    .pageheader-title { font-size: 1.25rem; font-weight: 800; color: var(--gold-lt); letter-spacing: 0.06em; text-transform: uppercase; font-family: Georgia, serif; }
+    .pageheader-sub   { font-size: 0.6rem; color: var(--muted); margin-top: 1px; letter-spacing: 0.1em; text-transform: uppercase; }
 
     /* WA STRIP */
     .wa-strip { background: var(--surface); border-bottom: 2px solid var(--border); flex-shrink: 0; }
     .wa-hdr { padding: 6px 14px; border-bottom: 0.5px solid var(--b2); display: flex; align-items: center; justify-content: space-between; }
     .wa-hdr-left  { display: flex; align-items: center; gap: 10px; }
-    .wa-hdr-title { font-size: 0.67rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); }
-    .wa-toggle    { font-size: 0.67rem; font-weight: 700; color: var(--muted); }
-    .wa-hdr-right { font-size: 0.61rem; color: var(--muted); display: flex; gap: 14px; }
+    .wa-hdr-title { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); }
+    .wa-toggle    { font-size: 0.65rem; font-weight: 700; color: var(--muted); }
+    .wa-hdr-right { font-size: 0.6rem; color: var(--muted); display: flex; gap: 14px; }
     .wa-hdr-right strong { font-weight: 800; color: var(--dim); }
 
-    .wa-stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1px; background: var(--b2); }
-    .wa-stat  { background: #4a6090; padding: 10px 10px 8px; text-align: center; }
-    .wa-stat.err { background: #5a2525; }
-    .wa-num   { font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 800; color: var(--white); line-height: 1; font-variant-numeric: tabular-nums; transition: color 0.4s; }
+    .wa-stats { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr 1fr; gap: 1px; background: var(--b2); }
+    .wa-stat  { background: #4a6090; padding: 9px 10px 7px; text-align: center; }
+    .wa-stat.total { background: var(--grn-bg); border: 1px solid var(--grn-bdr); }
+    .wa-stat.err   { background: #5a2525; }
+    .wa-num   { font-size: clamp(1.5rem, 2.6vw, 2.4rem); font-weight: 800; color: var(--white); line-height: 1; font-variant-numeric: tabular-nums; transition: color 0.4s; }
+    .wa-stat.total .wa-num { color: var(--green); font-size: clamp(1.7rem, 3vw, 2.7rem); }
     .wa-num.bumped { color: var(--green); }
-    .wa-lbl   { font-size: 0.57rem; text-transform: uppercase; letter-spacing: 0.05em; color: #c0d0e8; margin-top: 3px; }
-    .wa-err   { display: none; padding: 6px 14px; background: rgba(239,68,68,0.1); border-top: 0.5px solid rgba(239,68,68,0.3); font-size: 0.68rem; color: #fca5a5; }
-    .wa-err-title { font-weight: 800; font-size: 0.65rem; text-transform: uppercase; color: var(--red); margin-bottom: 2px; }
+    .wa-lbl   { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.05em; color: #c0d0e8; margin-top: 2px; }
+    .wa-stat.total .wa-lbl { color: #86efac; }
+    .wa-err   { display: none; padding: 6px 14px; background: rgba(239,68,68,0.1); border-top: 0.5px solid rgba(239,68,68,0.3); font-size: 0.66rem; color: #fca5a5; }
+    .wa-err-title { font-weight: 800; font-size: 0.63rem; text-transform: uppercase; color: var(--red); margin-bottom: 2px; }
 
-    /* BODY — 3 columns */
-    .body { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr 320px; gap: 0; }
-
-    /* PANEL */
+    /* BODY */
+    .body { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr 320px; }
     .panel { display: flex; flex-direction: column; border-right: 2px solid var(--border); min-height: 0; }
     .panel:last-child { border-right: none; }
-    .panel-hdr { padding: 9px 14px; border-bottom: 2px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: var(--s2); }
-    .panel-title { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold-lt); }
-    .panel-sub   { font-size: 0.59rem; color: var(--muted); }
+    .panel-hdr { padding: 8px 14px; border-bottom: 2px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: var(--s2); }
+    .panel-title { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold-lt); }
+    .panel-sub   { font-size: 0.57rem; color: var(--muted); }
     .panel-body  { flex: 1; overflow-y: auto; min-height: 0; }
 
-    /* RECENT BIDS */
-    .ticker-row { display: grid; grid-template-columns: 56px 1fr auto; border-bottom: 0.5px solid var(--b2); }
+    /* RECENT BIDS — single row per bid */
+    .ticker-row { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; border-bottom: 0.5px solid var(--b2); min-height: 44px; }
     .ticker-row:last-child { border-bottom: none; }
     .ticker-row.flash { animation: flash 1.4s ease; }
-    @keyframes flash { 0%,100%{background:transparent} 20%{background:rgba(74,222,128,0.1)} }
-    .t-time-col { background: var(--s3); border-right: 1px solid var(--border); padding: 10px 6px; display: flex; align-items: center; justify-content: center; }
-    .t-time     { color: var(--gold-lt); font-size: 0.75rem; font-weight: 800; font-variant-numeric: tabular-nums; text-align: center; }
-    .t-mid      { padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-    .t-item     { color: var(--gold-lt); font-weight: 800; font-size: 0.73rem; }
-    .t-desc     { color: var(--dim); font-size: 0.65rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .t-name     { color: var(--muted); font-size: 0.62rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .t-amount-col { padding: 9px 12px; display: flex; align-items: center; border-left: 0.5px solid var(--b2); }
+    @keyframes flash { 0%,100%{background:transparent} 20%{background:rgba(74,222,128,0.12)} }
+    .t-time-col { background: var(--s3); border-right: 1px solid var(--border); align-self: stretch; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+    .t-time     { color: var(--gold-lt); font-size: 0.72rem; font-weight: 800; font-variant-numeric: tabular-nums; text-align: center; }
+    .t-mid      { padding: 6px 12px; display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+    .t-item     { color: var(--gold-lt); font-weight: 800; font-size: 0.7rem; flex-shrink: 0; }
+    .t-desc     { color: var(--dim); font-size: 0.68rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .t-name     { color: var(--muted); font-size: 0.63rem; flex-shrink: 0; white-space: nowrap; }
+    .t-amount-col { padding: 6px 12px; border-left: 0.5px solid var(--b2); align-self: stretch; display: flex; align-items: center; }
     .t-amount   { color: var(--green); font-weight: 800; font-size: 0.85rem; white-space: nowrap; }
 
     /* LEADING BIDS */
-    .lb-row { display: grid; grid-template-columns: 56px 1fr auto; border-bottom: 0.5px solid var(--b2); }
+    .lb-row { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; border-bottom: 0.5px solid var(--b2); min-height: 44px; }
     .lb-row:last-child { border-bottom: none; }
-    .lb-num  { background: var(--s3); border-right: 1px solid var(--border); padding: 10px 6px; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 800; color: var(--gold-lt); text-align: center; }
-    .lb-mid  { padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-    .lb-desc { font-size: 0.73rem; color: var(--white); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .lb-name { font-size: 0.63rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .lb-amt  { padding: 9px 12px; display: flex; align-items: center; border-left: 0.5px solid var(--b2); font-size: 0.85rem; font-weight: 800; color: var(--green); white-space: nowrap; }
+    .lb-num  { background: var(--s3); border-right: 1px solid var(--border); align-self: stretch; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 800; color: var(--gold-lt); text-align: center; padding: 0 4px; }
+    .lb-mid  { padding: 6px 12px; min-width: 0; }
+    .lb-desc { font-size: 0.72rem; color: var(--white); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lb-amt  { padding: 6px 12px; align-self: stretch; display: flex; align-items: center; border-left: 0.5px solid var(--b2); font-size: 0.85rem; font-weight: 800; color: var(--green); white-space: nowrap; }
 
     /* CONTROLS COLUMN */
     .ctrl-col { display: flex; flex-direction: column; background: var(--s3); }
-    .ctrl-card { border-bottom: 1px solid var(--border); padding: 12px 14px; display: flex; flex-direction: column; gap: 9px; flex: 1; }
+    .ctrl-card { border-bottom: 1px solid var(--border); padding: 11px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
     .ctrl-card.danger { background: var(--red-bg); border-bottom-color: var(--red-bdr); }
     .ctrl-card:last-child { border-bottom: none; }
-    .ctrl-title { font-size: 0.78rem; font-weight: 800; color: var(--gold-lt); display: flex; align-items: center; gap: 7px; }
+    .ctrl-title { font-size: 0.76rem; font-weight: 800; color: var(--gold-lt); display: flex; align-items: center; gap: 7px; }
     .ctrl-card.danger .ctrl-title { color: #fca5a5; }
 
-    /* PILL */
-    .pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 0.68rem; font-weight: 800; width: fit-content; }
+    .pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 0.66rem; font-weight: 800; width: fit-content; }
     .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
     .pill-open   { background: var(--grn-bg); color: var(--green);  border: 0.5px solid var(--grn-bdr); }
     .pill-closed { background: var(--red-bg); color: var(--red);    border: 0.5px solid var(--red-bdr); }
     .pill-on     { background: rgba(245,158,11,0.15); color: var(--amber); border: 0.5px solid rgba(245,158,11,0.4); }
     .pill-off    { background: rgba(255,255,255,0.05); color: var(--muted); border: 0.5px solid var(--border); }
 
-    /* BUTTONS */
     .btn-row { display: flex; gap: 6px; }
-    .btn { padding: 9px 10px; border-radius: 7px; border: none; cursor: pointer; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; transition: opacity 0.15s, transform 0.1s; flex: 1; text-align: center; }
+    .btn { padding: 8px 10px; border-radius: 7px; border: none; cursor: pointer; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; transition: opacity 0.15s, transform 0.1s; flex: 1; text-align: center; }
     .btn:disabled { opacity: 0.2; cursor: not-allowed; }
     .btn:not(:disabled):active { transform: scale(0.97); }
     .btn-green    { background: #14532d; color: #86efac; border: 0.5px solid #166534; }
     .btn-red-soft { background: #7f1d1d; color: #fca5a5; border: 0.5px solid #991b1b; }
     .btn-gold     { background: var(--gold); color: #111; font-weight: 800; }
     .btn-ghost    { background: rgba(255,255,255,0.06); color: var(--muted); border: 0.5px solid var(--border); }
-    .btn-red      { background: #dc2626; color: #fff; width: 100%; padding: 10px; font-size: 0.78rem; }
-    .danger-warn  { font-size: 0.63rem; color: #fca5a5; line-height: 1.5; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 6px; padding: 7px 9px; }
+    .btn-red      { background: #dc2626; color: #fff; width: 100%; padding: 9px; font-size: 0.76rem; }
+    .danger-warn  { font-size: 0.61rem; color: #fca5a5; line-height: 1.4; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 6px; padding: 6px 9px; }
 
-    /* EMPTY */
+    /* CLOSED BANNER */
+    .closed-banner { display: none; background: var(--red); color: #fff; text-align: center; padding: 5px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0; }
+
     .empty { padding: 20px 14px; font-size: 0.7rem; color: var(--muted); text-align: center; }
+    .stale { font-size: 0.58rem; color: var(--amber); }
 
-    /* TOAST */
     .toast-wrap { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 800; display: flex; flex-direction: column; gap: 5px; align-items: center; pointer-events: none; }
     .toast { padding: 9px 20px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; box-shadow: 0 6px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.25s; white-space: nowrap; max-width: 92vw; text-align: center; }
     .toast.success { background: #22c55e; color: #052e16; }
@@ -145,7 +160,7 @@
       html, body { overflow: auto; }
       #app { height: auto; overflow: visible; }
       .body { grid-template-columns: 1fr; }
-      .panel { border-right: none; border-bottom: 1px solid var(--border); max-height: 300px; }
+      .panel { border-right: none; border-bottom: 2px solid var(--border); max-height: 320px; }
       .ctrl-col { flex-direction: row; flex-wrap: wrap; }
       .ctrl-card { flex: 1 1 280px; }
       .topbar-links { display: none; }
@@ -155,11 +170,26 @@
   </style>
 </head>
 <body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="lc">
+    <div class="lc-logo">🔐</div>
+    <div class="lc-title">Master Admin</div>
+    <div class="lc-sub">Marymount Ball Auction 2026</div>
+    <form id="loginForm">
+      <label class="lc-lbl">Password</label>
+      <input type="password" id="pwInput" class="lc-inp" autocomplete="current-password" required />
+      <button type="submit" class="lc-btn">Unlock</button>
+      <div id="loginError" class="lc-err"></div>
+    </form>
+  </div>
+</div>
+
 <div class="toast-wrap" id="toastWrap"></div>
 
 <div id="app">
 
-  <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-left">
       <div class="topbar-title"><span class="live-dot"></span>Master Admin</div>
@@ -182,13 +212,13 @@
     </div>
   </div>
 
-  <!-- HEADER -->
-  <div style="background:var(--s3);border-bottom:2px solid var(--border);padding:10px 16px;text-align:center;flex-shrink:0;">
-    <div style="font-size:1.4rem;font-weight:800;color:var(--gold-lt);letter-spacing:0.08em;text-transform:uppercase;font-family:'Georgia',serif;">The Marymount Ball Auction</div>
-    <div style="font-size:0.65rem;color:var(--muted);margin-top:2px;letter-spacing:0.12em;text-transform:uppercase;">2026 &nbsp;·&nbsp; Master Control Panel</div>
+  <div class="closed-banner" id="closedBanner">🔒 Auction closed — form and screens updated</div>
+
+  <div class="pageheader">
+    <div class="pageheader-title">The Marymount Ball Auction</div>
+    <div class="pageheader-sub">2026 &nbsp;·&nbsp; Master Control Panel</div>
   </div>
 
-  <!-- WA STRIP -->
   <div class="wa-strip">
     <div class="wa-hdr">
       <div class="wa-hdr-left">
@@ -198,9 +228,14 @@
       <div class="wa-hdr-right">
         <span>Last confirmation: <strong id="waLastBid">—</strong></span>
         <span>Last outbid: <strong id="waLastOutbid">—</strong></span>
+        <span class="stale" id="staleWarning" style="display:none;">⚠ Data may be stale</span>
       </div>
     </div>
     <div class="wa-stats">
+      <div class="wa-stat total">
+        <div class="wa-num" id="auctionTotal">—</div>
+        <div class="wa-lbl">Auction total raised</div>
+      </div>
       <div class="wa-stat">
         <div class="wa-num" id="waBidsSent">—</div>
         <div class="wa-lbl">Confirmations sent</div>
@@ -224,10 +259,8 @@
     </div>
   </div>
 
-  <!-- 3-COL BODY -->
   <div class="body">
 
-    <!-- COL 1: Recent bids -->
     <div class="panel">
       <div class="panel-hdr">
         <div class="panel-title">📥 Recent bids</div>
@@ -238,7 +271,6 @@
       </div>
     </div>
 
-    <!-- COL 2: Leading bids -->
     <div class="panel">
       <div class="panel-hdr">
         <div class="panel-title">🏆 Leading bids</div>
@@ -249,9 +281,7 @@
       </div>
     </div>
 
-    <!-- COL 3: Controls stacked -->
     <div class="panel ctrl-col">
-
       <div class="ctrl-card">
         <div class="ctrl-title">📝 Bidding form</div>
         <div class="pill pill-off" id="formPill"><span class="pill-dot"></span><span id="formPillLabel">Loading...</span></div>
@@ -276,18 +306,32 @@
         <div class="danger-warn">⚠️ Cannot be undone. Only when the chairman calls it.</div>
         <button class="btn btn-red" id="btnCloseAuction" onclick="doCloseAuction()" disabled>Close the auction</button>
       </div>
-
     </div>
+
   </div>
 </div>
 
 <script>
+  const PASSWORD   = "master2026"; // CHANGE BEFORE EVENT NIGHT
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
-  const CTRL_MS = 8000, WA_MS = 15000, LIVE_MS = 20000;
+  const DASH_MS = 12000;
+
   let state = { formOpen: null, bannerActive: null, auctionClosed: null };
   let busy  = { form: false, banner: false, auction: false };
   const prev = {};
   let lastBidTs = null;
+  let consecutiveFails = 0;
+
+  document.getElementById("loginForm").addEventListener("submit", e => {
+    e.preventDefault();
+    if (document.getElementById("pwInput").value === PASSWORD) {
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("app").style.display = "flex";
+      init();
+    } else {
+      document.getElementById("loginError").textContent = "Incorrect password.";
+    }
+  });
 
   function toast(msg, type = "success") {
     const el = document.createElement("div");
@@ -305,14 +349,38 @@
     return json;
   }
 
-  async function loadCtrl() {
+  // ── ONE COMBINED CALL PER CYCLE ──────────────────────────
+  async function loadDashboard() {
     try {
-      const r = await api({ action: "getControlStatus" });
+      const r = await api({ action: "getDashboard" });
       const d = r.data || {};
-      state.formOpen = !!d.formOpen; state.bannerActive = !!d.bannerActive; state.auctionClosed = !!d.auctionClosed;
-      renderStatus();
+
+      // Control
+      if (d.control && d.control.ok) {
+        state.formOpen      = !!d.control.formOpen;
+        state.bannerActive  = !!d.control.bannerActive;
+        state.auctionClosed = !!d.control.auctionClosed;
+        renderStatus();
+        document.getElementById("closedBanner").style.display = state.auctionClosed ? "block" : "none";
+      }
+
+      // WhatsApp
+      if (d.whatsapp && d.whatsapp.ok !== false) renderWa(d.whatsapp);
+
+      // Recent bids
+      if (d.recentBids && d.recentBids.ok) renderTicker(d.recentBids.bids || []);
+
+      // Leading bids + total
+      if (d.leadingBids && d.leadingBids.ok) renderLeading(d.leadingBids.items || [], d.leadingBids.total || 0);
+
       document.getElementById("syncLabel").textContent = "Synced " + new Date().toLocaleTimeString("en-IE");
-    } catch { document.getElementById("syncLabel").textContent = "Sync failed"; }
+      document.getElementById("staleWarning").style.display = "none";
+      consecutiveFails = 0;
+    } catch (err) {
+      consecutiveFails++;
+      document.getElementById("syncLabel").textContent = "Sync failed";
+      if (consecutiveFails >= 2) document.getElementById("staleWarning").style.display = "inline";
+    }
   }
 
   function renderStatus() {
@@ -334,67 +402,51 @@
   }
   function setBtn(id, en) { const el = document.getElementById(id); if (el) el.disabled = !en; }
 
-  async function loadWa() {
-    try {
-      const r = await api({ action: "getWhatsAppStats" }); if (!r.ok) return;
-      const d = r.data;
-      bump("waBidsSent",    d.bidsSent    || 0);
-      bump("waOutbidsSent", d.outbidsSent || 0);
-      bump("waWinnersSent", d.winnersSent || 0);
-      const ec = document.getElementById("waErrorCount"); if (ec) ec.textContent = d.errorRowCount || 0;
-      const tv = document.getElementById("waToggleVal");
-      tv.textContent = d.waToggle || "OFF"; tv.style.color = d.waToggle === "ON" ? "#4ade80" : "#ef4444";
-      document.getElementById("waLastBid").textContent    = d.lastBidTime    ? fmt(d.lastBidTime)    : "—";
-      document.getElementById("waLastOutbid").textContent = d.lastOutbidTime ? fmt(d.lastOutbidTime) : "—";
-      const errors = d.errors || [];
-      const eb = document.getElementById("waErrorBanner"); const el = document.getElementById("waErrorList");
-      if (errors.length > 0) { el.innerHTML = errors.map(e => `• ${e}`).join("<br>"); eb.style.display = "block"; }
-      else { eb.style.display = "none"; el.innerHTML = ""; }
-    } catch { /* silent */ }
+  function renderWa(d) {
+    bump("waBidsSent",    d.bidsSent    || 0);
+    bump("waOutbidsSent", d.outbidsSent || 0);
+    bump("waWinnersSent", d.winnersSent || 0);
+    const ec = document.getElementById("waErrorCount"); if (ec) ec.textContent = d.errorRowCount || 0;
+    const tv = document.getElementById("waToggleVal");
+    tv.textContent = d.waToggle || "OFF"; tv.style.color = d.waToggle === "ON" ? "#4ade80" : "#ef4444";
+    document.getElementById("waLastBid").textContent    = d.lastBidTime    ? fmt(d.lastBidTime)    : "—";
+    document.getElementById("waLastOutbid").textContent = d.lastOutbidTime ? fmt(d.lastOutbidTime) : "—";
+    const errors = d.errors || [];
+    const eb = document.getElementById("waErrorBanner"); const el = document.getElementById("waErrorList");
+    if (errors.length > 0) { el.innerHTML = errors.map(e => `• ${e}`).join("<br>"); eb.style.display = "block"; }
+    else { eb.style.display = "none"; el.innerHTML = ""; }
   }
 
-  async function loadRecentBids() {
-    try {
-      const r = await api({ action: "getRecentBids" });
-      if (!r.ok || !r.data) return;
-      const bids = r.data.bids || [];
-      const ticker = document.getElementById("ticker");
-      const newestTs = bids.length ? bids[0].ts : null;
-      const isNew = newestTs && lastBidTs && newestTs !== lastBidTs;
-      lastBidTs = newestTs;
-      if (!bids.length) { ticker.innerHTML = `<div class="empty">No bids yet.</div>`; return; }
-      ticker.innerHTML = bids.slice(0, 25).map((b, i) => `
-        <div class="ticker-row ${i === 0 && isNew ? 'flash' : ''}">
-          <div class="t-time-col"><span class="t-time">${b.time || "—"}</span></div>
-          <div class="t-mid">
-            <span class="t-item">${b.item || "—"}</span>
-            <span class="t-desc">${b.desc || ""}</span>
-            <span class="t-name">${b.name || "—"}</span>
-          </div>
-          <div class="t-amount-col"><span class="t-amount">€${Number(b.amount || 0).toLocaleString("en-IE")}</span></div>
-        </div>`).join("");
-      document.getElementById("recentUpdated").textContent = new Date().toLocaleTimeString("en-IE");
-    } catch { /* silent */ }
+  function renderTicker(bids) {
+    const ticker = document.getElementById("ticker");
+    const newestTs = bids.length ? bids[0].ts : null;
+    const isNew = newestTs && lastBidTs && newestTs !== lastBidTs;
+    lastBidTs = newestTs;
+    if (!bids.length) { ticker.innerHTML = `<div class="empty">No bids yet.</div>`; return; }
+    ticker.innerHTML = bids.slice(0, 30).map((b, i) => `
+      <div class="ticker-row ${i === 0 && isNew ? 'flash' : ''}">
+        <div class="t-time-col"><span class="t-time">${b.time || "—"}</span></div>
+        <div class="t-mid">
+          <span class="t-item">${b.item || "—"}</span>
+          <span class="t-desc">${b.desc || ""}</span>
+          <span class="t-name">${b.name || "—"}</span>
+        </div>
+        <div class="t-amount-col"><span class="t-amount">€${Number(b.amount || 0).toLocaleString("en-IE")}</span></div>
+      </div>`).join("");
+    document.getElementById("recentUpdated").textContent = new Date().toLocaleTimeString("en-IE");
   }
 
-  async function loadLeadingBids() {
-    try {
-      const r = await api({ action: "getLeadingBids" });
-      if (!r.ok || !r.data) return;
-      const items = r.data.items || [];
-      const el = document.getElementById("leadingBids");
-      if (!items.length) { el.innerHTML = `<div class="empty">No leading bids yet.</div>`; return; }
-      el.innerHTML = items.map(b => `
-        <div class="lb-row">
-          <div class="lb-num">${b.item || "—"}</div>
-          <div class="lb-mid">
-            <span class="lb-desc">${b.description || "—"}</span>
-            <span class="lb-name">${b.name || ""}</span>
-          </div>
-          <div class="lb-amt">€${Number(b.amount || 0).toLocaleString("en-IE")}</div>
-        </div>`).join("");
-      document.getElementById("leadingUpdated").textContent = new Date().toLocaleTimeString("en-IE");
-    } catch { /* silent */ }
+  function renderLeading(items, total) {
+    const el = document.getElementById("leadingBids");
+    document.getElementById("auctionTotal").textContent = "€" + Number(total || 0).toLocaleString("en-IE");
+    if (!items.length) { el.innerHTML = `<div class="empty">No leading bids yet.</div>`; return; }
+    el.innerHTML = items.map(b => `
+      <div class="lb-row">
+        <div class="lb-num">${b.item || "—"}</div>
+        <div class="lb-mid"><span class="lb-desc">${b.description || "—"}</span></div>
+        <div class="lb-amt">€${Number(b.amount || 0).toLocaleString("en-IE")}</div>
+      </div>`).join("");
+    document.getElementById("leadingUpdated").textContent = new Date().toLocaleTimeString("en-IE");
   }
 
   function bump(id, newVal) {
@@ -439,7 +491,7 @@
     if (!confirm("CLOSE THE AUCTION?\n\n- Bidding form closes\n- Banner stops\n- All screens show auction closed\n\nOnly proceed when the chairman has called it.")) return;
     if (!confirm("Are you absolutely sure? This cannot be undone from this panel.")) return;
     busy.auction = true; renderStatus();
-    try { await api({ action: "closeAuction" }); state.auctionClosed = true; state.formOpen = false; state.bannerActive = false; toast("Auction closed. All screens updated.", "error"); }
+    try { await api({ action: "closeAuction" }); state.auctionClosed = true; state.formOpen = false; state.bannerActive = false; renderStatus(); document.getElementById("closedBanner").style.display = "block"; toast("Auction closed. All screens updated.", "error"); }
     catch (err) { toast("Failed: " + err.message, "error"); }
     finally { busy.auction = false; renderStatus(); }
   }
@@ -450,11 +502,11 @@
     document.getElementById("clockDate").textContent = n.toLocaleDateString("en-IE",{weekday:"short",day:"numeric",month:"short"});
   }
 
-  tick(); setInterval(tick, 1000);
-  loadCtrl(); loadWa(); loadRecentBids(); loadLeadingBids();
-  setInterval(loadCtrl, CTRL_MS);
-  setInterval(loadWa, WA_MS);
-  setInterval(() => { loadRecentBids(); loadLeadingBids(); }, LIVE_MS);
+  function init() {
+    tick(); setInterval(tick, 1000);
+    loadDashboard();
+    setInterval(loadDashboard, DASH_MS);
+  }
 </script>
 </body>
 </html>
