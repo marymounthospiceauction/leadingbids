@@ -94,19 +94,16 @@
     .panel-sub   { font-size: 0.57rem; color: var(--muted); }
     .panel-body  { flex: 1; overflow-y: auto; min-height: 0; }
 
-    /* RECENT BIDS — single row per bid */
-    .ticker-row { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; border-bottom: 0.5px solid var(--b2); min-height: 44px; }
+    /* RECENT BIDS — single-line vidiprinter style */
+    .ticker-row { display: grid; grid-template-columns: 46px 54px 1fr 130px auto; align-items: center; border-bottom: 0.5px solid var(--b2); height: 30px; }
     .ticker-row:last-child { border-bottom: none; }
     .ticker-row.flash { animation: flash 1.4s ease; }
-    @keyframes flash { 0%,100%{background:transparent} 20%{background:rgba(74,222,128,0.12)} }
-    .t-time-col { background: var(--s3); border-right: 1px solid var(--border); align-self: stretch; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
-    .t-time     { color: var(--gold-lt); font-size: 0.72rem; font-weight: 800; font-variant-numeric: tabular-nums; text-align: center; }
-    .t-mid      { padding: 6px 12px; display: flex; align-items: baseline; gap: 8px; min-width: 0; }
-    .t-item     { color: var(--gold-lt); font-weight: 800; font-size: 0.7rem; flex-shrink: 0; }
-    .t-desc     { color: var(--dim); font-size: 0.68rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .t-name     { color: var(--muted); font-size: 0.63rem; flex-shrink: 0; white-space: nowrap; }
-    .t-amount-col { padding: 6px 12px; border-left: 0.5px solid var(--b2); align-self: stretch; display: flex; align-items: center; }
-    .t-amount   { color: var(--green); font-weight: 800; font-size: 0.85rem; white-space: nowrap; }
+    @keyframes flash { 0%,100%{background:transparent} 20%{background:rgba(74,222,128,0.15)} }
+    .t-time     { background: var(--s3); border-right: 1px solid var(--border); align-self: stretch; display: flex; align-items: center; justify-content: center; color: var(--gold-lt); font-size: 0.68rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .t-item     { color: var(--gold-lt); font-weight: 800; font-size: 0.66rem; padding: 0 8px; border-right: 0.5px solid var(--b2); align-self: stretch; display: flex; align-items: center; justify-content: center; text-align: center; }
+    .t-desc     { color: var(--dim); font-size: 0.68rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 10px; }
+    .t-name     { color: var(--muted); font-size: 0.65rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; border-left: 0.5px solid var(--b2); align-self: stretch; display: flex; align-items: center; }
+    .t-amount   { color: var(--green); font-weight: 800; font-size: 0.78rem; white-space: nowrap; padding: 0 12px; border-left: 0.5px solid var(--b2); align-self: stretch; display: flex; align-items: center; }
 
     /* LEADING BIDS */
     .lb-row { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; border-bottom: 0.5px solid var(--b2); min-height: 44px; }
@@ -190,6 +187,11 @@
 
 <div id="app">
 
+  <div class="pageheader">
+    <div class="pageheader-title">The Marymount Ball Auction</div>
+    <div class="pageheader-sub">2026 &nbsp;·&nbsp; Master Control Panel</div>
+  </div>
+
   <div class="topbar">
     <div class="topbar-left">
       <div class="topbar-title"><span class="live-dot"></span>Master Admin</div>
@@ -213,11 +215,6 @@
   </div>
 
   <div class="closed-banner" id="closedBanner">🔒 Auction closed — form and screens updated</div>
-
-  <div class="pageheader">
-    <div class="pageheader-title">The Marymount Ball Auction</div>
-    <div class="pageheader-sub">2026 &nbsp;·&nbsp; Master Control Panel</div>
-  </div>
 
   <div class="wa-strip">
     <div class="wa-hdr">
@@ -425,13 +422,11 @@
     if (!bids.length) { ticker.innerHTML = `<div class="empty">No bids yet.</div>`; return; }
     ticker.innerHTML = bids.slice(0, 30).map((b, i) => `
       <div class="ticker-row ${i === 0 && isNew ? 'flash' : ''}">
-        <div class="t-time-col"><span class="t-time">${b.time || "—"}</span></div>
-        <div class="t-mid">
-          <span class="t-item">${b.item || "—"}</span>
-          <span class="t-desc">${b.desc || ""}</span>
-          <span class="t-name">${b.name || "—"}</span>
-        </div>
-        <div class="t-amount-col"><span class="t-amount">€${Number(b.amount || 0).toLocaleString("en-IE")}</span></div>
+        <div class="t-time">${b.time || "—"}</div>
+        <div class="t-item">${b.item || "—"}</div>
+        <div class="t-desc">${b.desc || ""}</div>
+        <div class="t-name">${b.name || "—"}</div>
+        <div class="t-amount">€${Number(b.amount || 0).toLocaleString("en-IE")}</div>
       </div>`).join("");
     document.getElementById("recentUpdated").textContent = new Date().toLocaleTimeString("en-IE");
   }
