@@ -94,24 +94,31 @@
     .panel-sub   { font-size: 0.57rem; color: var(--muted); }
     .panel-body  { flex: 1; overflow-y: auto; min-height: 0; }
 
-    /* RECENT BIDS — single-line vidiprinter style */
-    .ticker-row { display: grid; grid-template-columns: 46px 54px 1fr 130px auto; align-items: center; border-bottom: 0.5px solid var(--b2); height: 30px; }
+    /* RECENT BIDS — vidiprinter style, no internal dividers */
+    .ticker-row { display: grid; grid-template-columns: 44px 52px 1fr 120px 100px; align-items: center; border-bottom: 0.5px solid var(--b2); height: 28px; padding: 0 10px; gap: 0; }
     .ticker-row:last-child { border-bottom: none; }
     .ticker-row.flash { animation: flash 1.4s ease; }
     @keyframes flash { 0%,100%{background:transparent} 20%{background:rgba(74,222,128,0.15)} }
-    .t-time     { background: var(--s3); border-right: 1px solid var(--border); align-self: stretch; display: flex; align-items: center; justify-content: center; color: var(--gold-lt); font-size: 0.68rem; font-weight: 800; font-variant-numeric: tabular-nums; }
-    .t-item     { color: var(--gold-lt); font-weight: 800; font-size: 0.66rem; padding: 0 8px; border-right: 0.5px solid var(--b2); align-self: stretch; display: flex; align-items: center; justify-content: center; text-align: center; }
-    .t-desc     { color: var(--dim); font-size: 0.68rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 10px; }
-    .t-name     { color: var(--muted); font-size: 0.65rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; border-left: 0.5px solid var(--b2); align-self: stretch; display: flex; align-items: center; }
-    .t-amount   { color: var(--green); font-weight: 800; font-size: 0.78rem; white-space: nowrap; padding: 0 12px; border-left: 0.5px solid var(--b2); align-self: stretch; display: flex; align-items: center; }
+    .t-time     { color: var(--gold-lt); font-size: 0.65rem; font-weight: 800; font-variant-numeric: tabular-nums; text-align: left; }
+    .t-item     { color: var(--gold-lt); font-weight: 800; font-size: 0.63rem; text-align: left; }
+    .t-desc     { color: var(--dim); font-size: 0.66rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px; }
+    .t-name     { color: var(--muted); font-size: 0.63rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
+    .t-amount-wrap { display: flex; align-items: baseline; justify-content: flex-end; gap: 5px; }
+    .t-amount   { color: var(--green); font-weight: 800; font-size: 0.75rem; white-space: nowrap; }
+    .t-increase { color: #6ee7a8; font-size: 0.58rem; font-weight: 700; white-space: nowrap; }
 
-    /* LEADING BIDS */
-    .lb-row { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; border-bottom: 0.5px solid var(--b2); min-height: 44px; }
+    /* FILTER BAR */
+    .filter-bar { display: flex; gap: 6px; padding: 6px 12px; background: var(--s2); border-bottom: 0.5px solid var(--b2); }
+    .filter-input { flex: 1; background: var(--s3); border: 0.5px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 0.65rem; color: var(--white); outline: none; }
+    .filter-input::placeholder { color: var(--muted); }
+    .filter-input:focus { border-color: var(--gold); }
+
+    /* LEADING BIDS — narrowed rows */
+    .lb-row { display: grid; grid-template-columns: 46px 1fr auto; align-items: center; border-bottom: 0.5px solid var(--b2); height: 26px; padding: 0 10px; }
     .lb-row:last-child { border-bottom: none; }
-    .lb-num  { background: var(--s3); border-right: 1px solid var(--border); align-self: stretch; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 800; color: var(--gold-lt); text-align: center; padding: 0 4px; }
-    .lb-mid  { padding: 6px 12px; min-width: 0; }
-    .lb-desc { font-size: 0.72rem; color: var(--white); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .lb-amt  { padding: 6px 12px; align-self: stretch; display: flex; align-items: center; border-left: 0.5px solid var(--b2); font-size: 0.85rem; font-weight: 800; color: var(--green); white-space: nowrap; }
+    .lb-num  { font-size: 0.6rem; font-weight: 800; color: var(--gold-lt); text-align: left; }
+    .lb-desc { font-size: 0.66rem; color: var(--white); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px; }
+    .lb-amt  { font-size: 0.76rem; font-weight: 800; color: var(--green); white-space: nowrap; text-align: right; }
 
     /* CONTROLS COLUMN */
     .ctrl-col { display: flex; flex-direction: column; background: var(--s3); }
@@ -263,6 +270,10 @@
         <div class="panel-title">📥 Recent bids</div>
         <div class="panel-sub" id="recentUpdated">—</div>
       </div>
+      <div class="filter-bar">
+        <input class="filter-input" id="tickerItemFilter" placeholder="Filter item # (e.g. ITEM 01)" oninput="applyTickerFilter()" />
+        <input class="filter-input" id="tickerDescFilter" placeholder="Filter description" oninput="applyTickerFilter()" />
+      </div>
       <div class="panel-body" id="ticker">
         <div class="empty">Loading...</div>
       </div>
@@ -272,6 +283,10 @@
       <div class="panel-hdr">
         <div class="panel-title">🏆 Leading bids</div>
         <div class="panel-sub" id="leadingUpdated">—</div>
+      </div>
+      <div class="filter-bar">
+        <input class="filter-input" id="lbItemFilter" placeholder="Filter item # (e.g. ITEM 01)" oninput="applyLbFilter()" />
+        <input class="filter-input" id="lbDescFilter" placeholder="Filter description" oninput="applyLbFilter()" />
       </div>
       <div class="panel-body" id="leadingBids">
         <div class="empty">Loading...</div>
@@ -318,6 +333,8 @@
   const prev = {};
   let lastBidTs = null;
   let consecutiveFails = 0;
+  let allBids = [];
+  let allLeading = [];
 
   document.getElementById("loginForm").addEventListener("submit", e => {
     e.preventDefault();
@@ -415,30 +432,66 @@
   }
 
   function renderTicker(bids) {
-    const ticker = document.getElementById("ticker");
     const newestTs = bids.length ? bids[0].ts : null;
-    const isNew = newestTs && lastBidTs && newestTs !== lastBidTs;
+    const isNewArrival = newestTs && lastBidTs && newestTs !== lastBidTs;
     lastBidTs = newestTs;
-    if (!bids.length) { ticker.innerHTML = `<div class="empty">No bids yet.</div>`; return; }
-    ticker.innerHTML = bids.slice(0, 30).map((b, i) => `
-      <div class="ticker-row ${i === 0 && isNew ? 'flash' : ''}">
+
+    // Compute increase over the previous bid on the same item (bids are newest-first)
+    for (let i = 0; i < bids.length; i++) {
+      let increase = 0;
+      for (let j = i + 1; j < bids.length; j++) {
+        if (bids[j].item === bids[i].item) { increase = bids[i].amount - bids[j].amount; break; }
+      }
+      bids[i].increase = increase > 0 ? increase : 0;
+    }
+
+    allBids = bids;
+    applyTickerFilter(isNewArrival);
+  }
+
+  function applyTickerFilter(flashNewest) {
+    const itemQ = (document.getElementById("tickerItemFilter").value || "").trim().toUpperCase();
+    const descQ = (document.getElementById("tickerDescFilter").value || "").trim().toUpperCase();
+    let list = allBids;
+    if (itemQ) list = list.filter(b => (b.item || "").toUpperCase().includes(itemQ));
+    if (descQ) list = list.filter(b => (b.desc || "").toUpperCase().includes(descQ));
+
+    const ticker = document.getElementById("ticker");
+    if (!list.length) { ticker.innerHTML = `<div class="empty">No matching bids.</div>`; return; }
+
+    ticker.innerHTML = list.slice(0, 40).map((b, i) => `
+      <div class="ticker-row ${i === 0 && flashNewest ? 'flash' : ''}">
         <div class="t-time">${b.time || "—"}</div>
         <div class="t-item">${b.item || "—"}</div>
         <div class="t-desc">${b.desc || ""}</div>
         <div class="t-name">${b.name || "—"}</div>
-        <div class="t-amount">€${Number(b.amount || 0).toLocaleString("en-IE")}</div>
+        <div class="t-amount-wrap">
+          <span class="t-amount">€${Number(b.amount || 0).toLocaleString("en-IE")}</span>
+          ${b.increase > 0 ? `<span class="t-increase">▲€${Number(b.increase).toLocaleString("en-IE")}</span>` : ""}
+        </div>
       </div>`).join("");
     document.getElementById("recentUpdated").textContent = new Date().toLocaleTimeString("en-IE");
   }
 
   function renderLeading(items, total) {
-    const el = document.getElementById("leadingBids");
     document.getElementById("auctionTotal").textContent = "€" + Number(total || 0).toLocaleString("en-IE");
-    if (!items.length) { el.innerHTML = `<div class="empty">No leading bids yet.</div>`; return; }
-    el.innerHTML = items.map(b => `
+    allLeading = items;
+    applyLbFilter();
+  }
+
+  function applyLbFilter() {
+    const itemQ = (document.getElementById("lbItemFilter").value || "").trim().toUpperCase();
+    const descQ = (document.getElementById("lbDescFilter").value || "").trim().toUpperCase();
+    let list = allLeading;
+    if (itemQ) list = list.filter(b => (b.item || "").toUpperCase().includes(itemQ));
+    if (descQ) list = list.filter(b => (b.description || "").toUpperCase().includes(descQ));
+
+    const el = document.getElementById("leadingBids");
+    if (!list.length) { el.innerHTML = `<div class="empty">No matching items.</div>`; return; }
+    el.innerHTML = list.map(b => `
       <div class="lb-row">
         <div class="lb-num">${b.item || "—"}</div>
-        <div class="lb-mid"><span class="lb-desc">${b.description || "—"}</span></div>
+        <div class="lb-desc">${b.description || "—"}</div>
         <div class="lb-amt">€${Number(b.amount || 0).toLocaleString("en-IE")}</div>
       </div>`).join("");
     document.getElementById("leadingUpdated").textContent = new Date().toLocaleTimeString("en-IE");
