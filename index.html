@@ -231,7 +231,7 @@
     /* GOOGLE SHEET LOADING */
     const sheetID = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
     const sheetName = 'LEADING BIDS';
-    const range = 'U5:V43';
+    const range = 'R5:T46';
 
     const url =
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
@@ -258,8 +258,8 @@
         let html = '';
 
         rows.forEach(r => {
-          const item = boldFirstSeven(r[0]);    // Col U
-          const leadingBid = formatEuro(r[1]);  // Col V
+          const item = boldFirstSeven(r[0]);    // Col R
+          const leadingBid = formatEuro(r[2]);  // Col T
 
           html += `
             <tr>
