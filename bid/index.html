@@ -200,11 +200,19 @@
       letter-spacing: 0.2px;
     }
 
+    .item-card-item-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #c39243;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
     .item-card-name {
       font-size: 16px;
       font-weight: 800;
       color: #111;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
     .item-card-grid {
@@ -356,7 +364,7 @@
   <div class="page">
 
     <div class="hero">
-      <img src="/Marymount%20Header2.png" alt="Marymount Ball Auction">
+      <img src="/assess/Marymount%20Header2.png" alt="Marymount Ball Auction">
     </div>
 
     <div class="card">
@@ -380,6 +388,7 @@
           <div id="itemCardMode" style="display: none;">
             <div class="item-card">
               <div class="item-card-label">Selected Item</div>
+              <div id="itemCardLabel" class="item-card-item-label"></div>
               <div id="itemCardName" class="item-card-name"></div>
               <div class="item-card-grid">
                 <div class="item-card-column">
@@ -623,12 +632,18 @@ Marymount Ball Committee`;
         if (selected && selected.dataset.currentLeadingBid) {
           const leadingBid = Number(selected.dataset.currentLeadingBid);
           
-          const itemMatch = fullItemText.match(/^([^\–]*)/);
-          const cleanName = itemMatch ? itemMatch[1].trim() : fullItemText;
+          // Extract ITEM XX
+          const itemLabelMatch = fullItemText.match(/^(ITEM\s*\d+)/i);
+          const itemLabel = itemLabelMatch ? itemLabelMatch[1].toUpperCase() : "ITEM";
+          
+          // Extract description - everything after the first dash and before any price
+          const descMatch = fullItemText.match(/–\s*([^€]*?)(?:\s*–|$)/);
+          const description = descMatch ? descMatch[1].trim() : fullItemText;
           
           document.getElementById("itemSelectMode").style.display = "none";
           document.getElementById("itemCardMode").style.display = "block";
-          document.getElementById("itemCardName").textContent = cleanName;
+          document.getElementById("itemCardLabel").textContent = itemLabel;
+          document.getElementById("itemCardName").textContent = description;
           document.getElementById("itemCardBid").textContent = formatEuro(leadingBid);
           document.getElementById("itemCardMinBid").textContent = "€" + (leadingBid + 1).toLocaleString("en-IE");
           
@@ -766,6 +781,10 @@ Marymount Ball Committee`;
       try {
         json = JSON.parse(text);
       } catch (e) {
+        // Fallback: if parsing fails but the response contains certain keywords, treat as success
+        if (text && (text.includes("received") || text.includes("success"))) {
+          return { ok: true, message: "Bid received" };
+        }
         throw new Error("Invalid response from server.");
       }
 
