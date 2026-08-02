@@ -219,7 +219,7 @@
 
     .item-card-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 10px;
       margin-bottom: 8px;
     }
@@ -244,10 +244,6 @@
 
     .item-card-bid {
       color: #c39243;
-    }
-
-    .item-card-minbid {
-      color: #111;
     }
 
     .change-item-btn {
@@ -396,10 +392,6 @@
                 <div class="item-card-column">
                   <div class="item-card-column-label">Current Leading Bid</div>
                   <div id="itemCardBid" class="item-card-column-value item-card-bid"></div>
-                </div>
-                <div class="item-card-column">
-                  <div class="item-card-column-label">Your Bid Must Be</div>
-                  <div id="itemCardMinBid" class="item-card-column-value item-card-minbid"></div>
                 </div>
               </div>
               <button type="button" id="changeItemBtn" class="change-item-btn">Change Item</button>
@@ -648,7 +640,6 @@ Marymount Ball Committee`;
           document.getElementById("itemCardLabel").textContent = itemLabel;
           document.getElementById("itemCardName").textContent = description;
           document.getElementById("itemCardBid").textContent = formatEuro(leadingBid);
-          document.getElementById("itemCardMinBid").textContent = "€" + (leadingBid + 1).toLocaleString("en-IE");
           
           itemEl.dataset.currentLeadingBid = leadingBid;
         } else {
@@ -1019,7 +1010,19 @@ Marymount Ball Committee`;
     });
 
     bidAmountEl.addEventListener("keydown", handleBidKeydown);
-    bidAmountEl.addEventListener("input", formatBidInput);
+    bidAmountEl.addEventListener("input", function() {
+      formatBidInput();
+      
+      // Real-time validation: check if bid is below current leading bid
+      const currentLeading = Number(itemEl.dataset.currentLeadingBid || 0);
+      const bidClean = getCleanBidAmount();
+      
+      if (bidClean && currentLeading && bidClean <= currentLeading) {
+        showError(bidErrorEl, "Your bid must be higher than €" + currentLeading.toLocaleString("en-IE") + ".");
+      } else {
+        hideError(bidErrorEl);
+      }
+    });
     bidAmountEl.addEventListener("paste", handleBidPaste);
 
     document.getElementById("changeItemBtn").addEventListener("click", function() {
