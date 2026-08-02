@@ -2,1024 +2,272 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marymount Ball Auction – Place Your Bid</title>
+
+  <!-- VIEWPORT — ZOOM ENABLED -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
+
+  <title>Marymount Auction Leading Bids</title>
+
   <style>
-    :root {
-      --bg: #decca1;
-      --card: #f8f2e4;
-      --accent: #c39243;
-      --accent-dark: #a87933;
-      --text: #111111;
-      --muted: #5f5a4f;
-      --border: #d8c6a0;
-      --error: #b42318;
-      --success: #166534;
-      --white: #ffffff;
-      --shadow: 0 8px 24px rgba(0,0,0,0.12);
-      --radius: 18px;
+    /* BASIC PAGE SETUP */
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Calibri, Arial, sans-serif;
+      background-color: #e6d4ad;
+      min-height: 100%;
+    }
+
+    body {
+      overflow-x: hidden;
     }
 
     * { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-    }
-
-    .page {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 6px 10px 16px;
-    }
-
-    .hero {
-      margin-bottom: 8px;
-    }
-
-    .hero img {
+    /* HEADER IMAGE */
+    .header-image img {
       width: 100%;
-      max-width: 640px;
+      max-width: 600px;
+      display: block;
+      margin: 10px auto 20px auto;
       border-radius: 6px;
-      display: block;
-      margin: 0 auto;
     }
 
-    .card {
-      background: var(--card);
-      border-radius: 18px;
-      padding: 14px 12px 16px;
-      box-shadow: var(--shadow);
-    }
-
-    .title {
-      text-align: center;
-      font-size: 20px;
-      font-weight: 800;
-      margin: 0 0 12px;
-    }
-
-    .section {
-      margin-bottom: 10px;
-    }
-
-    .label {
-      display: block;
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      margin-bottom: 5px;
-      color: #1b1b1b;
-      letter-spacing: 0.2px;
-    }
-
-    .required-star {
-      color: var(--error);
-      margin-left: 3px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    select {
-      width: 100%;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 11px 14px;
-      font-size: 16px;
-      background: #fffdf8;
-      color: var(--text);
-      outline: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-    }
-
-    select {
-      background-image:
-        linear-gradient(45deg, transparent 50%, #444 50%),
-        linear-gradient(135deg, #444 50%, transparent 50%);
-      background-position:
-        calc(100% - 22px) calc(50% - 3px),
-        calc(100% - 16px) calc(50% - 3px);
-      background-size: 6px 6px, 6px 6px;
-      background-repeat: no-repeat;
-      padding-right: 44px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    #item {
-      font-family: Calibri, Arial, sans-serif;
-      font-size: 16px;
-    }
-
-    #item option {
-      font-family: Calibri, Arial, sans-serif;
-      font-size: 16px;
-    }
-
-    input:focus, select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(195, 146, 67, 0.18);
-    }
-
-    .field-error {
-      margin-top: 5px;
-      color: var(--error);
-      font-size: 13px;
-      font-weight: 700;
-      display: none;
-      line-height: 1.4;
-    }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .two-col .section {
-      margin-bottom: 0;
-    }
-
-    .checkbox-wrap {
+    /* BUTTON SECTION */
+    .button-section {
       display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      background: rgba(255,255,255,0.45);
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
+      justify-content: center;
+      padding: 20px 0;
+      width: 100%;
     }
 
-    .checkbox-wrap input[type="checkbox"] {
-      margin: 2px 0 0;
-      width: 20px;
-      height: 20px;
-      accent-color: var(--accent-dark);
-      flex: 0 0 auto;
-    }
-
-    .checkbox-text {
-      font-size: 14px;
-      line-height: 1.4;
-      color: #1f1f1f;
-    }
-
-    .consent-message {
-      margin-top: 8px;
-      padding: 10px 12px;
-      background: #fff3cd;
-      border-left: 4px solid #e67e22;
-      font-size: 13px;
-      line-height: 1.4;
-      color: #333;
-      border-radius: 4px;
-    }
-
-    .item-card {
-      background: #f5ebd0;
-      border: 2px solid var(--accent);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 8px;
-    }
-
-    .item-card-label {
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: #5f5a4f;
-      margin-bottom: 6px;
-      letter-spacing: 0.2px;
-    }
-
-    .item-card-name {
-      font-size: 16px;
-      font-weight: 800;
-      color: #111;
-      margin-bottom: 8px;
-    }
-
-    .item-card-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
-    .item-card-column {
+    .button-container {
       display: flex;
       flex-direction: column;
-    }
-
-    .item-card-column-label {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: #5f5a4f;
-      margin-bottom: 2px;
-    }
-
-    .item-card-column-value {
-      font-size: 18px;
-      font-weight: 800;
-    }
-
-    .item-card-bid {
-      color: #c39243;
-    }
-
-    .item-card-minbid {
-      color: #111;
-    }
-
-    .change-item-btn {
+      gap: 15px;
       width: 100%;
-      padding: 8px;
-      background: transparent;
-      border: 1px solid var(--accent);
-      color: var(--accent);
+      max-width: 360px;
+      align-items: center;
+    }
+
+    .custom-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 10px 16px;
+      font-size: 17px;
+      font-weight: bold;
+      color: #000;
+      background-color: #bc8b41;
+      text-align: center;
+      text-decoration: none;
       border-radius: 8px;
-      font-weight: 700;
-      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
       cursor: pointer;
-      text-transform: uppercase;
     }
 
-    .btn {
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-size: 18px;
-      font-weight: 800;
-      cursor: pointer;
-      background: #000;
-      color: #fff;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.14);
-      -webkit-tap-highlight-color: transparent;
-      margin-top: 4px;
-      text-decoration: none;
-      display: inline-block;
-      text-align: center;
+    .custom-button:hover {
+      background-color: #a87d3a;
     }
 
-    .btn:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-    }
-
-    .success-screen,
-    .closed-screen {
-      display: none;
-      text-align: center;
-    }
-
-    .success-title,
-    .closed-title {
-      font-size: 30px;
-      font-weight: 800;
-      margin: 0 0 10px;
-    }
-
-    .success-message {
-      font-size: 16px;
-      color: var(--success);
-      line-height: 1.5;
-      margin-bottom: 20px;
-      white-space: pre-line;
-    }
-
-    .closed-message {
-      font-size: 16px;
-      color: var(--text);
-      line-height: 1.5;
-      margin-bottom: 18px;
-      white-space: pre-line;
-    }
-
-    .secondary-btn {
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-size: 18px;
-      font-weight: 800;
-      cursor: pointer;
-      background: var(--accent);
-      color: #111;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.14);
-      text-decoration: none;
-      display: inline-block;
-      text-align: center;
-    }
-
-    .secondary-btn:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-    }
-
-    .loading-note {
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 14px;
-      display: none;
-    }
-
-    .footer-note {
-      text-align: center;
-      font-size: 11px;
-      color: #5c5547;
-      margin-top: 14px;
-    }
-
-    .closed-actions {
-      display: grid;
-      gap: 10px;
-      margin-top: 8px;
+    .custom-button .emoji {
+      margin-right: 8px;
+      font-size: 1.2em;
     }
 
     @media (max-width: 480px) {
-      .title, .success-title, .closed-title { font-size: 18px; }
-      .btn, .secondary-btn { font-size: 17px; }
+      .custom-button {
+        max-width: 90%;
+        font-size: 16px;
+        padding: 12px;
+      }
+      .button-container {
+        max-width: 90%;
+      }
+    }
+
+    /* TABLE SECTION */
+    .table-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      width: 100%;
+    }
+
+    .table-heading {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .table-container {
+      width: 98vw;
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: clamp(0.6rem, 1.6vw, 0.9rem);
+      table-layout: fixed;
+    }
+
+    /* HEADER CELLS */
+    thead th {
+      background-color: #000;
+      color: #bc8b41;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-align: center;
+      border: 1px solid #ccc;
+      padding: 0.25em 0.2em;
+      font-size: 0.58rem;
+      line-height: 1.1;
+      white-space: normal;
+    }
+
+    /* TABLE BODY CELLS */
+    tbody td {
+      border: 1px solid #ccc;
+      vertical-align: middle;
+      padding: 0.3em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    tbody td:nth-child(1),
+    thead th:nth-child(1) {
+      width: 75%;
+      white-space: normal;
+      word-wrap: break-word;
+      text-align: left;
+    }
+
+    tbody td:nth-child(2),
+    thead th:nth-child(2) {
+      width: 25%;
+      text-align: center;
     }
   </style>
 </head>
+
 <body>
-  <div class="page">
 
-    <div class="hero">
-      <img src="/Marymount%20Header2.png" alt="Marymount Ball Auction">
+  <!-- HEADER IMAGE -->
+  <div class="header-image">
+    <img src="Marymount Header.png"
+         alt="The Starry Night Ball in aid of Marymount University Hospital and Hospice">
+  </div>
+
+  <!-- BUTTON SECTION -->
+  <div class="button-section">
+    <div class="button-container">
+
+      <a href="https://marymountauction2026.ie/bid"
+         class="custom-button" target="_blank">
+        <span class="emoji">📝</span> Place an Auction Bid
+      </a>
+
+      <!-- VIEW AUCTION LISTINGS – DRIVE PRIMARY, GITHUB FALLBACK -->
+      <a href="https://drive.google.com/file/d/1ooKDPMn_7ALMIvux-RXPBAs4rq3es3eh/view?usp=sharing"
+         class="custom-button"
+         target="_blank"
+         rel="noopener"
+         onclick="
+           const primaryUrl = 'https://drive.google.com/file/d/1ooKDPMn_7ALMIvux-RXPBAs4rq3es3eh/view?usp=sharing';
+           const fallbackUrl = 'https://raw.githubusercontent.com/marymounthospiceauction/leadingbids/main/2025%20MARYMOUNT%20Starry%20Night%20Booklet.pdf';
+           const win = window.open(primaryUrl, '_blank');
+           if (!win) { window.open(fallbackUrl, '_blank'); }
+           return false;
+         ">
+        <span class="emoji">📜</span> View Auction Listings
+      </a>
+
+      <a href="https://www.idonate.ie/donate/event/MarymountBall2025Donations"
+         class="custom-button" target="_blank">
+        <span class="emoji">❤️</span> Donate Now
+      </a>
+
     </div>
+  </div>
 
-    <div class="card">
-      <div id="formScreen">
-        <h1 class="title">Place Your Bid</h1>
+  <!-- TABLE SECTION -->
+  <div class="table-section">
+    <div class="table-heading">LEADING BIDS</div>
 
-        <input type="hidden" id="itemNumber">
-        <input type="hidden" id="token">
-
-        <div class="section">
-          <label class="label">Item<span class="required-star">*</span></label>
-          
-          <!-- Dropdown (hidden, but still there for data) -->
-          <div id="itemSelectMode" style="display: none;">
-            <select id="item">
-              <option value="">Updating items with latest bids...</option>
-            </select>
-          </div>
-          
-          <!-- Card mode (what the user sees) -->
-          <div id="itemCardMode" style="display: none;">
-            <div class="item-card">
-              <div class="item-card-label">Selected Item</div>
-              <div id="itemCardName" class="item-card-name"></div>
-              <div class="item-card-grid">
-                <div class="item-card-column">
-                  <div class="item-card-column-label">Current Leading Bid</div>
-                  <div id="itemCardBid" class="item-card-column-value item-card-bid"></div>
-                </div>
-                <div class="item-card-column">
-                  <div class="item-card-column-label">Your Bid Must Be</div>
-                  <div id="itemCardMinBid" class="item-card-column-value item-card-minbid"></div>
-                </div>
-              </div>
-              <button type="button" id="changeItemBtn" class="change-item-btn">Change Item</button>
-            </div>
-          </div>
-          
-          <div id="itemError" class="field-error"></div>
-        </div>
-
-        <div class="section">
-          <label class="label" for="bidAmount">Bid Amount (€)<span class="required-star">*</span></label>
-          <input
-            id="bidAmount"
-            type="tel"
-            inputmode="numeric"
-            autocomplete="off"
-            placeholder="Enter your bid amount"
-          >
-          <div id="bidError" class="field-error"></div>
-        </div>
-
-        <div class="section">
-          <label class="label" for="yourName">Your Name<span class="required-star">*</span></label>
-          <input id="yourName" type="text" placeholder="Enter your name">
-          <div id="nameError" class="field-error"></div>
-        </div>
-
-        <div class="section">
-          <label class="label" for="mobileNumber">Mobile Number<span class="required-star">*</span></label>
-          <input id="mobileNumber" type="text" inputmode="numeric" placeholder="Enter your mobile number">
-          <div id="mobileError" class="field-error"></div>
-        </div>
-
-        <div class="two-col">
-          <div class="section">
-            <label class="label" for="emailAddress">Email <span style="font-weight:400;text-transform:none;font-size:11px;color:var(--muted);">(optional)</span></label>
-            <input id="emailAddress" type="email" placeholder="your@email.com">
-          </div>
-          <div class="section">
-            <label class="label" for="tableValue">Table <span style="font-weight:400;text-transform:none;font-size:11px;color:var(--muted);">(optional)</span></label>
-            <input id="tableValue" type="text" placeholder="e.g. 12">
-          </div>
-        </div>
-
-        <div class="section">
-          <div class="checkbox-wrap">
-            <input type="checkbox" id="consentCheckbox" checked>
-            <div class="checkbox-text">
-              I agree to receive WhatsApp notifications regarding my bid.
-            </div>
-          </div>
-          <div id="consentMessage" class="consent-message" style="display: none;">
-            ⚠️ Without WhatsApp notifications, you won't receive alerts if you're outbid or if you win. You can still bid, but you'll need to check manually.
-          </div>
-        </div>
-
-        <button id="submitBtn" class="btn" type="button">Submit Bid</button>
-        <div class="footer-note">Marymount Ball Auction</div>
-      </div>
-
-      <div id="successScreen" class="success-screen">
-        <h1 class="success-title">Bid Received</h1>
-        <div id="successMessage" class="success-message">Thank you for your bid.
-
-If you entered your correct phone number, you will shortly receive a WhatsApp message with confirmation of your bid.
-
-We shall also inform you if you get outbid.
-
-Regards,
-Marymount Ball Committee</div>
-        <button id="anotherBidBtn" class="secondary-btn" type="button">Place another bid</button>
-        <div id="loadingNote" class="loading-note">Updating bids…</div>
-        <div class="footer-note">Marymount Ball Auction</div>
-      </div>
-
-      <div id="closedScreen" class="closed-screen">
-        <h1 class="closed-title">Bidding Closed</h1>
-        <div id="closedMessage" class="closed-message">The 2026 Marymount Ball auction is now closed.
-
-Thank you for all your support.
-
-Regards,
-Marymount Ball Committee</div>
-        <div class="closed-actions">
-          <a id="viewLeadingBidsBtn" class="secondary-btn" href="https://marymountauction2026.ie/" target="_self">View Leading Bids</a>
-        </div>
-        <div class="footer-note">Marymount Ball Auction</div>
-      </div>
+    <div class="table-container">
+      <table id="bidsTable">
+        <thead>
+          <tr>
+            <th>Item Description</th>
+            <th>Leading Bid</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
-    const LEADING_BIDS_URL = "https://marymountauction2026.ie/";
-    const MOBILE_ERROR_MESSAGE = "Mobile number must start with 08 and be 10 digits long, or start with 0044 and be 13 digits long.";
-    const DEFAULT_SUCCESS_MESSAGE = `Thank you for your bid.
+    /* ============================================================
+       DATA SOURCE — edit these if the sheet or range ever changes
+       ============================================================ */
+    const SHEET_ID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
+    const SHEET_NAME = 'LEADING BIDS';
+    const SHEET_RANGE = 'V5:W43';   // U = item description, V = leading bid
+    const REFRESH_MS  = 5000;       // how often to poll the sheet (milliseconds)
+    /* ============================================================ */
 
-If you entered your correct phone number, you will shortly receive a WhatsApp message with confirmation of your bid.
-
-We shall also inform you if you get outbid.
-
-Regards,
-Marymount Ball Committee`;
-    const DEFAULT_CLOSED_MESSAGE = `The 2026 Marymount Ball auction is now closed.
-
-Thank you for all your support.
-
-Regards,
-Marymount Ball Committee`;
-
-    const itemEl = document.getElementById("item");
-    const itemNumberEl = document.getElementById("itemNumber");
-    const bidAmountEl = document.getElementById("bidAmount");
-    const yourNameEl = document.getElementById("yourName");
-    const mobileNumberEl = document.getElementById("mobileNumber");
-    const emailAddressEl = document.getElementById("emailAddress");
-    const tableValueEl = document.getElementById("tableValue");
-    const consentCheckboxEl = document.getElementById("consentCheckbox");
-    const submitBtnEl = document.getElementById("submitBtn");
-    const anotherBidBtnEl = document.getElementById("anotherBidBtn");
-    const loadingNoteEl = document.getElementById("loadingNote");
-    const formScreenEl = document.getElementById("formScreen");
-    const successScreenEl = document.getElementById("successScreen");
-    const closedScreenEl = document.getElementById("closedScreen");
-    const successMessageEl = document.getElementById("successMessage");
-    const closedMessageEl = document.getElementById("closedMessage");
-    const tokenEl = document.getElementById("token");
-    const viewLeadingBidsBtnEl = document.getElementById("viewLeadingBidsBtn");
-
-    const itemErrorEl = document.getElementById("itemError");
-    const bidErrorEl = document.getElementById("bidError");
-    const nameErrorEl = document.getElementById("nameError");
-    const mobileErrorEl = document.getElementById("mobileError");
-
-    viewLeadingBidsBtnEl.href = LEADING_BIDS_URL;
-
-    function getTokenFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get("token") || "";
-    }
-
-    function isClosedMessage(message) {
-      return String(message || "").toLowerCase().includes("closed");
-    }
-
-    function hideError(el) {
-      el.textContent = "";
-      el.style.display = "none";
-    }
-
-    function showError(el, message) {
-      el.textContent = message;
-      el.style.display = "block";
-    }
-
-    function clearAllErrors() {
-      hideError(itemErrorEl);
-      hideError(bidErrorEl);
-      hideError(nameErrorEl);
-      hideError(mobileErrorEl);
-    }
-
-    function showBidError(message) {
-      showError(bidErrorEl, message || "Something went wrong.");
-      bidAmountEl.focus();
-      bidAmountEl.select();
-    }
-
-    function showSuccessScreen(message) {
-      successMessageEl.textContent = message || DEFAULT_SUCCESS_MESSAGE;
-      formScreenEl.style.display = "none";
-      closedScreenEl.style.display = "none";
-      successScreenEl.style.display = "block";
-    }
-
-    function showClosedScreen(message) {
-      closedMessageEl.textContent = message || DEFAULT_CLOSED_MESSAGE;
-      formScreenEl.style.display = "none";
-      successScreenEl.style.display = "none";
-      closedScreenEl.style.display = "block";
-    }
-
-    function showFormScreen() {
-      closedScreenEl.style.display = "none";
-      successScreenEl.style.display = "none";
-      formScreenEl.style.display = "block";
-    }
-
-    function normalizeItemNumberValue(value) {
-      const digits = String(value || "").replace(/[^\d]/g, "");
-      if (!digits) return "";
-      return String(Number(digits));
-    }
-
-    function buildItemDropdown(items, selectedItem = "", selectedItemNumber = "") {
-      itemEl.innerHTML = "";
-
-      const emptyOption = document.createElement("option");
-      emptyOption.value = "";
-      emptyOption.textContent = "Select an item";
-      itemEl.appendChild(emptyOption);
-
-      const normalizedSelectedNumber = normalizeItemNumberValue(selectedItemNumber);
-
-      items.forEach(row => {
-        const option = document.createElement("option");
-        option.value = row.item;
-        option.textContent = row.item;
-        option.dataset.itemNumber = row.itemNumber || "";
-        
-        const leadingBid = extractLeadBidFromItemText(row.item);
-        option.dataset.currentLeadingBid = leadingBid;
-
-        if (
-          (normalizedSelectedNumber && normalizeItemNumberValue(row.itemNumber) === normalizedSelectedNumber) ||
-          (!normalizedSelectedNumber && selectedItem && row.item === selectedItem)
-        ) {
-          option.selected = true;
-        }
-
-        itemEl.appendChild(option);
-      });
-
-      itemEl.onchange = function () {
-        const selected = itemEl.options[itemEl.selectedIndex];
-        const fullItemText = selected ? selected.value : "";
-        
-        itemEl.value = fullItemText;
-        itemNumberEl.value = selected ? (selected.dataset.itemNumber || "") : "";
-        hideError(itemErrorEl);
-        
-        if (selected && selected.dataset.currentLeadingBid) {
-          const leadingBid = Number(selected.dataset.currentLeadingBid);
-          
-          const itemMatch = fullItemText.match(/^([^\–]*)/);
-          const cleanName = itemMatch ? itemMatch[1].trim() : fullItemText;
-          
-          document.getElementById("itemSelectMode").style.display = "none";
-          document.getElementById("itemCardMode").style.display = "block";
-          document.getElementById("itemCardName").textContent = cleanName;
-          document.getElementById("itemCardBid").textContent = formatEuro(leadingBid);
-          document.getElementById("itemCardMinBid").textContent = "€" + (leadingBid + 1).toLocaleString("en-IE");
-          
-          itemEl.dataset.currentLeadingBid = leadingBid;
-        } else {
-          document.getElementById("itemSelectMode").style.display = "block";
-          document.getElementById("itemCardMode").style.display = "none";
-        }
-      };
-
-      const selected = itemEl.options[itemEl.selectedIndex];
-      itemNumberEl.value = selected ? (selected.dataset.itemNumber || "") : "";
-    }
-
-    function digitsOnly(value) {
-      return String(value || "").replace(/[^\d]/g, "");
-    }
-
-    function formatWithCommas(value) {
-      if (!value) return "";
-      return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
+    const url =
+      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json` +
+      `&sheet=${encodeURIComponent(SHEET_NAME)}&range=${SHEET_RANGE}`;
 
     function formatEuro(value) {
-      const n = Number(value);
-      return Number.isFinite(n) ? "€" + n.toLocaleString("en-IE", { maximumFractionDigits: 0 }) : "€0";
+      if (!value || isNaN(value)) return '€0';
+      return '€' + Number(value).toLocaleString('en-IE');
     }
 
-    function formatBidDisplay(value) {
-      const cleaned = digitsOnly(value);
-      if (!cleaned) return "";
-      return "€" + formatWithCommas(cleaned);
+    function boldFirstSeven(text) {
+      if (!text) return '';
+      return '<strong>' + text.substring(0, 7) + '</strong>' + text.substring(7);
     }
 
-    function getCleanBidAmount() {
-      return digitsOnly(bidAmountEl.value);
-    }
-
-    function normalizeMobileNumber(value) {
-      return String(value || "")
-        .trim()
-        .replace(/\s+/g, "")
-        .replace(/-/g, "");
-    }
-
-    function isValidMobileNumber(value) {
-      const mobile = normalizeMobileNumber(value);
-
-      if (!/^\d+$/.test(mobile)) {
-        return false;
-      }
-
-      if (mobile.startsWith("08")) {
-        return mobile.length === 10;
-      }
-
-      if (mobile.startsWith("0044")) {
-        return mobile.length === 13;
-      }
-
-      return false;
-    }
-
-    function formatBidInput() {
-      const currentValue = bidAmountEl.value;
-
-      if (currentValue.includes(".")) {
-        showError(bidErrorEl, "Decimal points not allowed.");
-      } else if (bidErrorEl.textContent === "Decimal points not allowed.") {
-        hideError(bidErrorEl);
-      }
-
-      bidAmountEl.value = formatBidDisplay(currentValue);
-    }
-
-    function handleBidPaste(e) {
-      const pasted = (e.clipboardData || window.clipboardData).getData("text");
-
-      if (pasted.includes(".")) {
-        showError(bidErrorEl, "Decimal points not allowed.");
-      } else if (bidErrorEl.textContent === "Decimal points not allowed.") {
-        hideError(bidErrorEl);
-      }
-
-      e.preventDefault();
-      bidAmountEl.value = formatBidDisplay(pasted);
-    }
-
-    function handleBidKeydown(e) {
-      const blockedKeys = [".", ",", "e", "E", "-", "+"];
-
-      if (e.key === ".") {
-        e.preventDefault();
-        showError(bidErrorEl, "Decimal points not allowed.");
-        return;
-      }
-
-      if (blockedKeys.includes(e.key)) {
-        e.preventDefault();
-        return;
-      }
-    }
-
-    function handleMobileInput() {
-      hideError(mobileErrorEl);
-    }
-
-    function validateMobileField() {
-      const mobileValue = mobileNumberEl.value.trim();
-
-      if (!mobileValue) {
-        showError(mobileErrorEl, "Please enter your mobile number.");
-        return false;
-      }
-
-      if (!isValidMobileNumber(mobileValue)) {
-        showError(mobileErrorEl, MOBILE_ERROR_MESSAGE);
-        return false;
-      }
-
-      hideError(mobileErrorEl);
-      return true;
-    }
-
-    async function apiRequest(payload) {
-      const res = await fetch(SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload)
-      });
-
-      const text = await res.text();
-      let json;
-
+    async function loadData() {
       try {
-        json = JSON.parse(text);
-      } catch (e) {
-        throw new Error("Invalid response from server.");
-      }
+        const res = await fetch(url);
+        const text = await res.text();
+        const json = JSON.parse(text.substr(47).slice(0, -2));
+        const rows = json.table.rows.map(r => r.c.map(c => c?.v || ''));
 
-      return json;
-    }
+        const tbody = document.querySelector('#bidsTable tbody');
+        let html = '';
 
-    async function loadItemsAndPrefill() {
-      const token = getTokenFromUrl();
-      tokenEl.value = token;
-
-      const result = await apiRequest({ action: "getFormData", token });
-
-      if (!result.ok) {
-        if (isClosedMessage(result.message)) {
-          showClosedScreen(DEFAULT_CLOSED_MESSAGE);
-          return;
-        }
-        throw new Error(result.message || "Could not load form data.");
-      }
-
-      const data = result.data || {};
-      const items = data.items || [];
-      const prefill = data.prefill || {};
-
-      buildItemDropdown(items, prefill.item || "", prefill.itemNumber || "");
-
-      yourNameEl.value = prefill.yourName || "";
-      mobileNumberEl.value = prefill.mobileNumber || "";
-      emailAddressEl.value = prefill.emailAddress || "";
-      tableValueEl.value = prefill.tableValue || "";
-
-      bidAmountEl.value = "";
-      consentCheckboxEl.checked = true;
-
-      itemEl.disabled = false;
-      yourNameEl.readOnly = false;
-      mobileNumberEl.readOnly = false;
-      emailAddressEl.readOnly = false;
-      tableValueEl.readOnly = false;
-
-      if (prefill.mode === "token") {
-        bidAmountEl.focus();
-      }
-    }
-
-    function validateForm() {
-      clearAllErrors();
-      let isValid = true;
-
-      if (!itemEl.value) {
-        showError(itemErrorEl, "Please select an item.");
-        if (isValid) itemEl.focus();
-        isValid = false;
-      }
-
-      const bidDisplay = bidAmountEl.value.trim();
-      const bidClean = getCleanBidAmount();
-
-      if (!bidDisplay) {
-        showError(bidErrorEl, "Please enter your bid amount.");
-        if (isValid) bidAmountEl.focus();
-        isValid = false;
-      } else if (!bidClean) {
-        showError(bidErrorEl, "Please enter a whole number only.");
-        if (isValid) {
-          bidAmountEl.focus();
-          bidAmountEl.select();
-        }
-        isValid = false;
-      } else if (Number(bidClean) <= 0) {
-        showError(bidErrorEl, "Please enter a valid bid amount.");
-        if (isValid) {
-          bidAmountEl.focus();
-          bidAmountEl.select();
-        }
-        isValid = false;
-      } else {
-        const currentLeading = Number(itemEl.dataset.currentLeadingBid || 0);
-        if (currentLeading && bidClean <= currentLeading) {
-          showError(bidErrorEl, "Your bid must be higher than €" + currentLeading.toLocaleString("en-IE") + ".");
-          if (isValid) {
-            bidAmountEl.focus();
-            bidAmountEl.select();
-          }
-          isValid = false;
-        }
-      }
-
-      if (!yourNameEl.value.trim()) {
-        showError(nameErrorEl, "Please enter your name.");
-        if (isValid) yourNameEl.focus();
-        isValid = false;
-      }
-
-      if (!mobileNumberEl.value.trim()) {
-        showError(mobileErrorEl, "Please enter your mobile number.");
-        if (isValid) mobileNumberEl.focus();
-        isValid = false;
-      } else if (!isValidMobileNumber(mobileNumberEl.value)) {
-        showError(mobileErrorEl, MOBILE_ERROR_MESSAGE);
-        if (isValid) mobileNumberEl.focus();
-        isValid = false;
-      }
-
-      return isValid;
-    }
-
-    async function submitBid() {
-      if (!validateForm()) return;
-
-      submitBtnEl.disabled = true;
-      submitBtnEl.textContent = "Submitting...";
-
-      try {
-        const cleanBidAmount = getCleanBidAmount();
-        const cleanMobileNumber = normalizeMobileNumber(mobileNumberEl.value);
-
-        const result = await apiRequest({
-          action: "submitBid",
-          token: tokenEl.value,
-          item: itemEl.value,
-          itemNumber: itemNumberEl.value,
-          bidAmount: cleanBidAmount,
-          yourName: yourNameEl.value,
-          mobileNumber: cleanMobileNumber,
-          emailAddress: emailAddressEl.value,
-          tableValue: tableValueEl.value,
-          consent: consentCheckboxEl.checked ? "Yes" : "No"
+        rows.forEach(r => {
+          const item       = boldFirstSeven(r[0]);
+          const leadingBid = formatEuro(r[1]);
+          html += `<tr><td>${item}</td><td>${leadingBid}</td></tr>`;
         });
 
-        if (!result.ok) {
-          if (isClosedMessage(result.message)) {
-            showClosedScreen(DEFAULT_CLOSED_MESSAGE);
-            return;
-          }
-          throw new Error(result.message || "Your bid could not be submitted.");
-        }
+        tbody.innerHTML = html;
 
-        showSuccessScreen(DEFAULT_SUCCESS_MESSAGE);
-      } catch (error) {
-        if (isClosedMessage(error.message)) {
-          showClosedScreen(DEFAULT_CLOSED_MESSAGE);
-          return;
-        }
-
-        if (String(error.message || "") === MOBILE_ERROR_MESSAGE) {
-          showError(mobileErrorEl, MOBILE_ERROR_MESSAGE);
-          mobileNumberEl.focus();
-          return;
-        }
-
-        showBidError(error.message || "Your bid could not be submitted.");
-      } finally {
-        submitBtnEl.disabled = false;
-        submitBtnEl.textContent = "Submit Bid";
+      } catch (err) {
+        console.error('Failed to load sheet', err);
       }
     }
 
-    async function placeAnotherBid() {
-      anotherBidBtnEl.disabled = true;
-      loadingNoteEl.style.display = "block";
-
-      try {
-        tokenEl.value = "";
-        window.history.replaceState({}, "", window.location.pathname);
-
-        await loadItemsAndPrefill();
-
-        if (closedScreenEl.style.display === "block") {
-          return;
-        }
-
-        bidAmountEl.value = "";
-        yourNameEl.value = "";
-        mobileNumberEl.value = "";
-        emailAddressEl.value = "";
-        tableValueEl.value = "";
-        consentCheckboxEl.checked = true;
-        document.getElementById("consentMessage").style.display = "none";
-        clearAllErrors();
-        showFormScreen();
-        document.getElementById("itemSelectMode").style.display = "block";
-        document.getElementById("itemCardMode").style.display = "none";
-        itemEl.focus();
-      } catch (error) {
-        if (isClosedMessage(error.message)) {
-          showClosedScreen(DEFAULT_CLOSED_MESSAGE);
-          return;
-        }
-        showBidError(error.message || "Could not refresh the form.");
-      } finally {
-        anotherBidBtnEl.disabled = false;
-        loadingNoteEl.style.display = "none";
-      }
-    }
-
-    function extractLeadBidFromItemText(itemText) {
-      const text = String(itemText || "").trim();
-      const match = text.match(/Lead Bid\s*€\s*([\d,]+)/i);
-
-      if (!match) {
-        return 0;
-      }
-
-      const cleaned = match[1].replace(/[^0-9]/g, "");
-      const amount = Number(cleaned);
-
-      if (isNaN(amount)) {
-        return 0;
-      }
-
-      return amount;
-    }
-
-    submitBtnEl.addEventListener("click", submitBid);
-    anotherBidBtnEl.addEventListener("click", placeAnotherBid);
-
-    yourNameEl.addEventListener("input", () => hideError(nameErrorEl));
-    mobileNumberEl.addEventListener("input", handleMobileInput);
-    mobileNumberEl.addEventListener("blur", validateMobileField);
-
-    consentCheckboxEl.addEventListener("change", function() {
-      const msg = document.getElementById("consentMessage");
-      if (!this.checked) {
-        msg.style.display = "block";
-      } else {
-        msg.style.display = "none";
-      }
-    });
-
-    bidAmountEl.addEventListener("keydown", handleBidKeydown);
-    bidAmountEl.addEventListener("input", formatBidInput);
-    bidAmountEl.addEventListener("paste", handleBidPaste);
-
-    document.getElementById("changeItemBtn").addEventListener("click", function() {
-      document.getElementById("itemSelectMode").style.display = "block";
-      document.getElementById("itemCardMode").style.display = "none";
-      itemEl.value = "";
-      itemNumberEl.value = "";
-      itemEl.focus();
-    });
-
-    // Show dropdown on initial load
-    document.getElementById("itemSelectMode").style.display = "block";
-    document.getElementById("itemCardMode").style.display = "none";
-
-    loadItemsAndPrefill().catch(err => {
-      if (isClosedMessage(err.message)) {
-        showClosedScreen(DEFAULT_CLOSED_MESSAGE);
-        return;
-      }
-      itemEl.innerHTML = '<option value="">Could not load items</option>';
-      showBidError(err.message || "Could not load the form.");
-    });
+    loadData();
+    setInterval(loadData, REFRESH_MS);
   </script>
+
 </body>
-</html>
+</html> 
