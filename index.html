@@ -1008,6 +1008,10 @@ Marymount Ball Committee`;
       itemEl.focus();
     });
 
+    // Show dropdown on initial load
+    document.getElementById("itemSelectMode").style.display = "block";
+    document.getElementById("itemCardMode").style.display = "none";
+
     loadItemsAndPrefill().catch(err => {
       if (isClosedMessage(err.message)) {
         showClosedScreen(DEFAULT_CLOSED_MESSAGE);
