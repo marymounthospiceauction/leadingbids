@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Marymount Ball Auction – Place Your Bid</title>
   <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <meta name="theme-color" content="#c39243">
   <style>
     :root {
       --bg: #decca1;
@@ -365,7 +366,7 @@
   <div class="page">
 
     <div class="hero">
-      <img src="/assets/Marymount%20Header2.png" alt="Marymount Ball Auction">
+      <img src="/assets/Marymount%20Header.png" alt="Marymount Ball Auction">
     </div>
 
     <div class="card">
@@ -637,9 +638,10 @@ Marymount Ball Committee`;
           const itemLabelMatch = fullItemText.match(/^(ITEM\s*\d+)/i);
           const itemLabel = itemLabelMatch ? itemLabelMatch[1].toUpperCase() : "ITEM";
           
-          // Extract description - everything after the first dash and before any price
-          const descMatch = fullItemText.match(/–\s*([^€]*?)(?:\s*–|$)/);
-          const description = descMatch ? descMatch[1].trim() : fullItemText;
+          // Remove "Lead Bid €XXX - " and extract just the description
+          const cleanedText = fullItemText.replace(/\s*–\s*Lead Bid\s*€[\d,]+\s*–\s*/i, " - ").trim();
+          const descMatch = cleanedText.match(/^ITEM\s*\d+\s*-\s*(.+?)(?:\s*–|$)/i);
+          const description = descMatch ? descMatch[1].trim() : cleanedText;
           
           document.getElementById("itemSelectMode").style.display = "none";
           document.getElementById("itemCardMode").style.display = "block";
