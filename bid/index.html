@@ -634,14 +634,14 @@ Marymount Ball Committee`;
         if (selected && selected.dataset.currentLeadingBid) {
           const leadingBid = Number(selected.dataset.currentLeadingBid);
           
-          // Extract ITEM XX
+          // Extract ITEM XX (e.g. "ITEM 01")
           const itemLabelMatch = fullItemText.match(/^(ITEM\s*\d+)/i);
           const itemLabel = itemLabelMatch ? itemLabelMatch[1].toUpperCase() : "ITEM";
           
-          // Remove "Lead Bid €XXX - " and extract just the description
-          const cleanedText = fullItemText.replace(/\s*–\s*Lead Bid\s*€[\d,]+\s*–\s*/i, " - ").trim();
-          const descMatch = cleanedText.match(/^ITEM\s*\d+\s*-\s*(.+?)(?:\s*–|$)/i);
-          const description = descMatch ? descMatch[1].trim() : cleanedText;
+          // Remove "ITEM XX - Lead Bid €XXXX - " and get just the description
+          // Format is: "ITEM 01 - Lead Bid €13,800 - WIMBLEDON LADIES FINAL"
+          const descMatch = fullItemText.match(/^ITEM\s*\d+\s*-\s*Lead Bid\s*€[\d,]+\s*-\s*(.+)$/i);
+          const description = descMatch ? descMatch[1].trim() : fullItemText;
           
           document.getElementById("itemSelectMode").style.display = "none";
           document.getElementById("itemCardMode").style.display = "block";
