@@ -170,6 +170,14 @@
       .wa-stats { grid-template-columns: 1fr 1fr; }
       .wa-hdr-right { display: none; }
     }
+
+    @media (max-width: 560px) {
+      .ticker-row { grid-template-columns: 40px 46px 1fr 62px; padding: 0 8px; }
+      .t-desc { display: none; }
+      .t-name { text-align: left; }
+      .t-increase { display: none; }
+      .lb-row { grid-template-columns: 42px 1fr auto; }
+    }
   </style>
 </head>
 <body>
