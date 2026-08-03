@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marymount Ball Auction – Place Your Bid</title>
+  <title>Marymount Ball Auction Place Your Bid</title>
   <link rel="icon" type="image/png" href="/assets/favicon.png">
   <meta name="theme-color" content="#c39243">
   <style>
@@ -189,44 +189,45 @@
       background: #f5ebd0;
       border: 2px solid var(--accent);
       border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 8px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
     }
 
     .item-card-label {
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
       color: #5f5a4f;
-      margin-bottom: 6px;
+      margin-bottom: 2px;
       letter-spacing: 0.2px;
     }
 
     .item-card-item-label {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 700;
       color: #c39243;
       text-transform: uppercase;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .item-card-name {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 800;
       color: #111;
-      margin-bottom: 12px;
+      margin-bottom: 6px;
     }
 
     .item-card-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 10px;
-      margin-bottom: 8px;
+      gap: 4px;
+      margin-bottom: 6px;
     }
 
     .item-card-column {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 8px;
     }
 
     .item-card-column-label {
@@ -234,11 +235,11 @@
       font-weight: 700;
       text-transform: uppercase;
       color: #5f5a4f;
-      margin-bottom: 2px;
+      min-width: 120px;
     }
 
     .item-card-column-value {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
     }
 
@@ -248,13 +249,13 @@
 
     .change-item-btn {
       width: 100%;
-      padding: 8px;
+      padding: 6px;
       background: transparent;
       border: 1px solid var(--accent);
       color: var(--accent);
       border-radius: 8px;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 12px;
       cursor: pointer;
       text-transform: uppercase;
     }
@@ -422,7 +423,7 @@
         <div class="section">
           <label class="label" for="mobileNumber">Mobile Number<span class="required-star">*</span></label>
           <input id="mobileNumber" type="text" inputmode="numeric" placeholder="08xxxxxxxxx or +353..." title="Irish: 08 (10 digits) or +353 (12 digits). UK: 0044 (13 digits) or +44 (12 digits)">
-          <div style="font-size: 11px; color: #5f5a4f; margin-top: 4px;">Irish: 08xxxxxxxx or +353xxxxxxxxx | UK: 0044xxxxxxxxxxx or +44xxxxxxxxxx</div>
+          <div style="font-size: 11px; color: #5f5a4f; margin-top: 4px;">Irish: 08xxxxxxxx or 00353/+353xxxxxxxxx | UK: 0044xxxxxxxxxx or +44xxxxxxxxxx</div>
           <div id="mobileError" class="field-error"></div>
         </div>
 
@@ -487,7 +488,7 @@ Marymount Ball Committee</div>
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
     const LEADING_BIDS_URL = "https://marymountauction2026.ie/";
-    const MOBILE_ERROR_MESSAGE = "Irish: 08xxxxxxxx (10 digits) or +353xxxxxxxxx (12 digits). UK: 0044xxxxxxxxxxx (13 digits) or +44xxxxxxxxxx (12 digits).";
+    const MOBILE_ERROR_MESSAGE = "Irish: 08xxxxxxxx (10 digits), 00353xxxxxxxxx or +353xxxxxxxxx (12-14 digits). UK: 0044xxxxxxxxxx (14 digits) or +44xxxxxxxxxx (12 digits).";
     const DEFAULT_SUCCESS_MESSAGE = `Thank you for your bid.
 
 If you entered your correct phone number, you will shortly receive a WhatsApp message with confirmation of your bid.
@@ -696,17 +697,22 @@ Marymount Ball Committee`;
         return mobile.length === 10;
       }
 
-      // UK local: 0044xxxxxxxxxxx (13 digits)
+      // UK local: 0044xxxxxxxxxxx (14 digits)
       if (mobile.startsWith("0044")) {
-        return mobile.length === 13;
+        return mobile.length === 14;
       }
 
-      // Irish international: 353xxxxxxxxxx (12 digits, without +)
+      // Irish international with 00: 00353xxxxxxxxx (14 digits)
+      if (mobile.startsWith("00353")) {
+        return mobile.length === 14;
+      }
+
+      // Irish international: 353xxxxxxxxx (12 digits, without + or 00)
       if (mobile.startsWith("353")) {
         return mobile.length === 12;
       }
 
-      // UK international: 44xxxxxxxxxxx (12 digits, without +)
+      // UK international: 44xxxxxxxxxx (12 digits, without + or 00)
       if (mobile.startsWith("44")) {
         return mobile.length === 12;
       }
@@ -1043,7 +1049,8 @@ Marymount Ball Committee`;
       document.getElementById("itemCardMode").style.display = "none";
       itemEl.value = "";
       itemNumberEl.value = "";
-      itemEl.click();
+      // Small delay needed on mobile for display change to render before click fires
+      setTimeout(function() { itemEl.click(); }, 50);
     });
 
     // Show dropdown on initial load
