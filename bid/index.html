@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marymount Ball Auction – Place Your Bid</title>
+  <title>Marymount Ball Auction Place Your Bid</title>
   <link rel="icon" type="image/png" href="/assets/favicon.png">
   <meta name="theme-color" content="#c39243">
   <style>
@@ -682,7 +682,8 @@ Marymount Ball Committee`;
       return String(value || "")
         .trim()
         .replace(/\s+/g, "")
-        .replace(/-/g, "");
+        .replace(/-/g, "")
+        .replace(/\+/g, "");
     }
 
     function isValidMobileNumber(value) {
