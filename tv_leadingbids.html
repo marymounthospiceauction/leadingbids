@@ -508,7 +508,7 @@
       const head = 'ITEM ' + num;
 
       return '<strong>' + escapeHtml(head) + '</strong>'
-           + escapeHtml(rest ? ' - ' + rest : '');
+           + (rest ? '&nbsp;- ' + escapeHtml(rest) : '');
     }
 
     /* ── ROW HEIGHT CALCULATION ── */
