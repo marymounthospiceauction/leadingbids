@@ -244,7 +244,7 @@
       padding: 1.2vh 2vw;
       background: linear-gradient(90deg, rgba(10,60,20,0.97), rgba(20,90,35,0.97), rgba(10,60,20,0.97));
       border-bottom: 2px solid #2ecc71;
-      z-index: 8000;
+      z-index: 9100;
     }
     #closed-banner.active { display: flex; }
 
@@ -333,7 +333,7 @@
   </div>
 
   <!-- AUCTION CLOSED -->
-  <div id="closed-banner">
+  <div id="closed-banner" role="status" aria-live="polite">
     <div class="closed-text">&#x2705; AUCTION CLOSED &#x2014; THANK YOU FOR YOUR SUPPORT</div>
   </div>
 
@@ -379,7 +379,7 @@
     const sheetName = 'DISPLAY';
     const range     = 'H2:J40';
     const CTRL_SHEET = 'CONTROL';
-    const CTRL_RANGE = 'A1:B5';
+    const CTRL_RANGE = 'A1:B10';
     const REFRESH_MS = 5000;
 
     const bidsUrl = () =>
@@ -508,14 +508,16 @@
 
     function applyControl(rows) {
       const ctrl = {};
-      rows.forEach(r => { if (r[0]) ctrl[String(r[0]).toUpperCase().trim()] = String(r[1] ?? '').trim(); });
+      rows.forEach(r => { 
+        if (r[0]) ctrl[String(r[0]).toUpperCase().trim()] = String(r[1] ?? '').trim(); 
+      });
 
       const closingSoon   = (ctrl['CLOSING_SOON']   || '').toUpperCase() === 'ON';
       const auctionClosed = (ctrl['AUCTION_CLOSED'] || '').toUpperCase() === 'ON';
 
+      /* When 🔒 Close Auction is pressed on master_admin.html */
       if (auctionClosed) {
-        clearTimeout(closingFlashTimer); closingFlashTimer = null;
-        setClosingBanner(false);
+        runClosingFlash(false);
         document.getElementById('closed-banner').classList.add('active');
       } else {
         document.getElementById('closed-banner').classList.remove('active');
@@ -585,7 +587,7 @@
                 c[1] && c[1].v != null ? c[1].v : '',
                 c[2] && c[2].v != null ? c[2].v : ''
               ];
-            }).filter(r => r[0] !== '') /* Filters out empty rows */
+            }).filter(r => r[0] !== '')
           : [];
         renderRows(rows);
 
