@@ -392,12 +392,11 @@
     /* ── CONFIG ── */
     const sheetID   = '10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc';
     const sheetName = 'DISPLAY';
-    const range     = 'H3:J40';
+    const range     = 'H2:J40';
     const CTRL_SHEET = 'CONTROL';
     const CTRL_RANGE = 'A1:B10';
     const REFRESH_MS = 5000;
 
-    /* Export direct CSV to bypass type-casting bug in Google Visualization API */
     const bidsCsvUrl = () =>
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv` +
       `&sheet=${encodeURIComponent(sheetName)}&range=${range}&cacheBust=${Date.now()}`;
@@ -443,18 +442,12 @@
 
     function formatEuro(v) {
       if (v === null || v === undefined || v === '') return '€0';
-      
       const strVal = String(v).trim();
       
-      if (strVal.toUpperCase().includes('LIVE')) {
-        return escapeHtml(strVal);
-      }
+      if (strVal.toUpperCase().includes('LIVE')) return escapeHtml(strVal);
 
       const cleanNumStr = strVal.replace(/[^0-9.-]/g, '');
-      
-      if (cleanNumStr === '' || isNaN(cleanNumStr)) {
-        return escapeHtml(strVal);
-      }
+      if (cleanNumStr === '' || isNaN(cleanNumStr)) return escapeHtml(strVal);
       
       const n = Number(cleanNumStr);
       return Number.isFinite(n) ? '€' + euroFmt.format(n) : escapeHtml(strVal);
@@ -497,19 +490,25 @@
 
     /* ── RENDER BIDS ── */
     function makeRow(r) {
-      const item   = boldFirstSevenSafe((r[0] ?? '').toString());
-      const newBid = formatNewBidCell(r[1]);
-      const latest = formatEuro(r[2] ?? r[1]);
-      
-      const rawLatestStr = String(r[2] ?? r[1] ?? '').trim().toUpperCase();
-      const rawNewBidStr = String(r[1] ?? '').trim().toUpperCase();
-      const isLive = rawLatestStr.includes('LIVE') || rawNewBidStr.includes('LIVE');
+      const rawName   = (r[0] ?? '').toString().trim();
+      const rawNewBid = (r[1] ?? '').toString().trim();
+      const rawLatest = (r[2] ?? r[1] ?? '').toString().trim();
+
+      const item = boldFirstSevenSafe(rawName);
+
+      /* FORCE OVERRIDE FOR ITEM 03 / LIVE ITEMS */
+      const isLive = rawName.toUpperCase().includes('ITEM 03') ||
+                     rawLatest.toUpperCase().includes('LIVE') ||
+                     rawNewBid.toUpperCase().includes('LIVE');
+
+      const latestDisplay = isLive ? '*LIVE*' : formatEuro(rawLatest);
+      const newBidDisplay = formatNewBidCell(rawNewBid);
 
       return `
         <div class="item-row ${isLive ? 'is-live' : ''}">
           <div class="item-label">${item}</div>
-          <div class="item-newbid">${newBid}</div>
-          <div class="item-amount">${latest}</div>
+          <div class="item-newbid">${newBidDisplay}</div>
+          <div class="item-amount">${latestDisplay}</div>
         </div>`;
     }
 
@@ -639,11 +638,9 @@
           fetchCsvData(ctrlCsvUrl()).catch(() => [])
         ]);
 
-        /* Filter out empty header rows if any */
         const validBids = bidsRows.filter(r => r[0] && r[0].trim() !== '');
         renderRows(validBids);
 
-        /* Control */
         if (ctrlRows && ctrlRows.length) {
           applyControl(ctrlRows);
         }
