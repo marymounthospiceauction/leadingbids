@@ -13,12 +13,12 @@
       --black: #000000;
       --offwhite: #ffffff;
       --red: #ff3b30;
-      --safe-top: 1.6vh;
-      --safe-bottom: 6vh;
+      --safe-top: 1.2vh;
+      --safe-bottom: 7.5vh;
       --safe-horiz: 3vw;
-      --footer-h: 7.2vh;
+      --footer-h: 9vh;
       --rowH: 40px;
-      --row-gap: 0.22vh;
+      --row-gap: 0.2vh;
     }
 
     * { box-sizing: border-box; }
@@ -34,11 +34,11 @@
     .frame {
       width: 100vw;
       height: 100vh;
-      padding: var(--safe-top) var(--safe-horiz) var(--safe-bottom) var(--safe-horiz);
-      padding-bottom: calc(var(--safe-bottom) + var(--footer-h));
+      padding: var(--safe-top) var(--safe-horiz) calc(var(--safe-bottom) + var(--footer-h) + 1.5vh) var(--safe-horiz);
       display: flex;
       flex-direction: column;
       background: transparent;
+      box-sizing: border-box;
     }
 
     .header {
@@ -87,6 +87,8 @@
       display: flex;
       flex-direction: column;
       gap: var(--row-gap);
+      min-height: 0;
+      overflow: hidden;
     }
 
     .item-row {
@@ -164,51 +166,56 @@
       position: fixed;
       left: var(--safe-horiz);
       right: var(--safe-horiz);
-      bottom: var(--safe-bottom);
+      bottom: 1.2vh;
       height: var(--footer-h);
       display: grid;
       grid-template-columns: auto 1fr auto;
-      align-items: center;
+      align-items: flex-end;
       gap: 2vw;
+      z-index: 100;
     }
 
     .footer-block {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
       text-align: center;
       height: 100%;
     }
 
+    /* ── ENHANCED LARGER & CRISP QR CODES ── */
     .qr-img {
-      max-height: calc(var(--footer-h) * 0.90);
-      background: rgba(255,255,255,0.98);
-      padding: 0.4vh;
-      border-radius: 0.3rem;
-      box-shadow: 0 0 8px rgba(0,0,0,0.9);
-      margin-bottom: 0.35vh;
+      max-height: calc(var(--footer-h) * 1.25);
+      background: #ffffff;
+      padding: 0.5vh;
+      border-radius: 0.4rem;
+      box-shadow: 0 0 12px rgba(0,0,0,0.95);
+      margin-bottom: 0.4vh;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: pixelated;
+      shape-rendering: crispEdges;
     }
 
     .footer-block span {
-      font-size: clamp(0.8rem, 1vw, 1.2rem);
-      font-weight: 700;
+      font-size: clamp(0.85rem, 1.1vw, 1.3rem);
+      font-weight: 800;
       color: #000000;
       letter-spacing: 0.05em;
-      text-shadow: 0 0 3px rgba(255,255,255,0.7);
+      text-shadow: 0 0 4px rgba(255,255,255,0.9);
       text-transform: uppercase;
     }
 
     .footer-sponsors {
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
       height: 100%;
       pointer-events: none;
     }
 
     .footer-sponsors img {
-      max-height: 100%;
+      max-height: 85%;
       max-width: 100%;
       object-fit: contain;
       filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
@@ -392,7 +399,7 @@
     /* ── CONFIG ── */
     const sheetID   = '10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc';
     const sheetName = 'DISPLAY';
-    const range     = 'H3:J40';
+    const range     = 'H2:J40';
     const CTRL_SHEET = 'CONTROL';
     const CTRL_RANGE = 'A1:B10';
     const REFRESH_MS = 5000;
@@ -466,12 +473,13 @@
       return Number.isFinite(n) ? '€' + euroFmt.format(n) : escapeHtml(strVal);
     }
 
-    function boldFirstSevenSafe(t) {
-      const safe = escapeHtml(t ?? '');
-      return '<strong>' + safe.substring(0,7) + '</strong>' + safe.substring(7);
+    function formatItemLabel(rawText) {
+      let t = escapeHtml(rawText ?? '');
+      t = t.replace(/(ITEM\s*\d+)\s*-\s*/i, '$1 - ');
+      return '<strong>' + t.substring(0, 7) + '</strong>' + t.substring(7);
     }
 
-    /* ── ROW HEIGHT ── */
+    /* ── ROW HEIGHT CALCULATION ── */
     function applyAlignedRowHeights(totalRows, leftCount, rightCount) {
       const itemsGrid = document.querySelector('.items-grid');
       const leftCol   = document.getElementById('column-left');
@@ -483,7 +491,7 @@
       const rightGaps = Math.max(0, (rightCount - 1)) * gapPx;
       const leftRowH  = (availableH - leftGaps)  / Math.max(leftCount, 1);
       const rightRowH = (availableH - rightGaps) / Math.max(rightCount, 1);
-      const sharedRowH = Math.floor(Math.max(24, Math.min(leftRowH, rightRowH)));
+      const sharedRowH = Math.floor(Math.max(20, Math.min(leftRowH, rightRowH)));
       document.documentElement.style.setProperty('--rowH', sharedRowH + 'px');
       document.querySelector('.items-grid').style.opacity = 1;
     }
@@ -494,9 +502,8 @@
       const rawNewBid = (r[1] ?? '').toString().trim();
       const rawLatest = (r[2] ?? r[1] ?? '').toString().trim();
 
-      const item = boldFirstSevenSafe(rawName);
+      const item = formatItemLabel(rawName);
 
-      /* FORCE OVERRIDE FOR ITEM 03 / LIVE ITEMS */
       const isLive = rawName.toUpperCase().includes('ITEM 03') ||
                      rawLatest.toUpperCase().includes('LIVE') ||
                      rawNewBid.toUpperCase().includes('LIVE');
