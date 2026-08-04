@@ -474,11 +474,22 @@
     }
 
     function formatItemLabel(rawText) {
-      let t = escapeHtml(rawText ?? '');
-      // Match "ITEM" followed by spaces, then digits, capturing just that part
-      // Then replace the whole matched section with a clean "ITEM XX - " format
-      t = t.replace(/^ITEM\s+(\d+)\s*-?\s*/i, 'ITEM $1 - ');
-      return '<strong>' + t.substring(0, 7) + '</strong>' + t.substring(7);
+      // Normalise non-breaking spaces and every dash variant to a plain hyphen
+      const src = String(rawText ?? '')
+        .replace(/\u00A0/g, ' ')
+        .replace(/[\u2010-\u2015\u2212]/g, '-')
+        .trim();
+
+      const m = src.match(/^ITEM\s*0*(\d+)\s*-?\s*(.*)$/i);
+
+      if (!m) return escapeHtml(src);
+
+      const num  = m[1].padStart(2, '0');
+      const rest = m[2].trim();
+      const head = 'ITEM ' + num;
+
+      return '<strong>' + escapeHtml(head) + '</strong>'
+           + escapeHtml(rest ? ' - ' + rest : '');
     }
 
     /* ── ROW HEIGHT CALCULATION ── */
@@ -506,16 +517,25 @@
 
       const item = formatItemLabel(rawName);
 
-      const isLive = rawLatest.toUpperCase().includes('*LIVE*') ||
-                     rawNewBid.toUpperCase().includes('*LIVE*');
+      const isLive = /LIVE/i.test(rawLatest) || /LIVE/i.test(rawNewBid);
 
-      let latestDisplay = isLive ? '*LIVE*' : formatEuro(rawLatest);
+      let latestDisplay;
+      if (isLive) {
+        latestDisplay = '*LIVE*';
+      } else {
+        const latestNum = Number(String(rawLatest).replace(/[^0-9.-]/g, ''));
+        latestDisplay = (rawLatest !== '' && !isNaN(latestNum) && latestNum > 0)
+          ? '€' + euroFmt.format(latestNum)
+          : '';
+      }
+
       let newBidDisplay = '';
-      
       if (!isLive) {
         const bidNum = Number(String(rawNewBid).replace(/[^0-9.-]/g, ''));
-        if (!isNaN(bidNum) && bidNum > 0) {
+        if (rawNewBid !== '' && !isNaN(bidNum) && bidNum > 0) {
           newBidDisplay = '€' + euroFmt.format(bidNum);
+        } else if (rawNewBid !== '' && isNaN(bidNum)) {
+          newBidDisplay = escapeHtml(rawNewBid);
         }
       }
 
@@ -654,6 +674,17 @@
         ]);
 
         const validBids = bidsRows.filter(r => r[0] && r[0].trim() !== '');
+
+        // DIAGNOSTIC: shows the exact characters coming from the sheet.
+        // Remove this block once the display is confirmed correct.
+        if (!window.__loggedRaw) {
+          window.__loggedRaw = true;
+          console.log('RAW ROWS FROM DISPLAY!H3:J40 (first 6):');
+          validBids.slice(0, 6).forEach((r, i) => {
+            console.log(i, JSON.stringify(r));
+          });
+        }
+
         renderRows(validBids);
 
         if (ctrlRows && ctrlRows.length) {
