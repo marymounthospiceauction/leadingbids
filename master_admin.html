@@ -64,25 +64,19 @@
     .pageheader-title { font-size: 1.25rem; font-weight: 800; color: var(--gold-lt); letter-spacing: 0.06em; text-transform: uppercase; font-family: Georgia, serif; }
     .pageheader-sub   { font-size: 0.6rem; color: var(--muted); margin-top: 1px; letter-spacing: 0.1em; text-transform: uppercase; }
 
-    /* WA STRIP */
-    .wa-strip { background: var(--surface); border-bottom: 2px solid var(--border); flex-shrink: 0; }
-    .wa-hdr { padding: 6px 14px; border-bottom: 0.5px solid var(--b2); display: flex; align-items: center; justify-content: space-between; }
-    .wa-hdr-left  { display: flex; align-items: center; gap: 10px; }
-    .wa-hdr-title { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); }
-    .wa-toggle    { font-size: 0.65rem; font-weight: 700; color: var(--muted); }
-    .wa-hdr-right { font-size: 0.6rem; color: var(--muted); display: flex; gap: 14px; }
-    .wa-hdr-right strong { font-weight: 800; color: var(--dim); }
-
-    .wa-stats { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr 1fr; gap: 1px; background: var(--b2); }
-    .wa-stat  { background: #4a6090; padding: 9px 10px 7px; text-align: center; }
-    .wa-stat.total { background: var(--grn-bg); border: 1px solid var(--grn-bdr); }
-    .wa-stat.err   { background: #5a2525; }
-    .wa-num   { font-size: clamp(1.5rem, 2.6vw, 2.4rem); font-weight: 800; color: var(--white); line-height: 1; font-variant-numeric: tabular-nums; transition: color 0.4s; }
-    .wa-stat.total .wa-num { color: var(--green); font-size: clamp(1.7rem, 3vw, 2.7rem); }
-    .wa-num.bumped { color: var(--green); }
-    .wa-lbl   { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.05em; color: #c0d0e8; margin-top: 2px; }
-    .wa-stat.total .wa-lbl { color: #86efac; }
-    .wa-err   { display: none; padding: 6px 14px; background: rgba(239,68,68,0.1); border-top: 0.5px solid rgba(239,68,68,0.3); font-size: 0.66rem; color: #fca5a5; }
+    /* STATS STRIP */
+    .stats-strip { background: var(--surface); border-bottom: 2px solid var(--border); display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr 1fr; flex-shrink: 0; }
+    .stat-cell { padding: 9px 10px 7px; text-align: center; border-right: 1px solid var(--b2); }
+    .stat-cell:last-child { border-right: none; }
+    .stat-cell.total   { background: var(--grn-bg); border: 1px solid var(--grn-bdr); }
+    .stat-cell.err-cel { background: #5a2525; }
+    .stat-num  { font-size: clamp(1.4rem, 2.4vw, 2.2rem); font-weight: 800; color: var(--white); line-height: 1; font-variant-numeric: tabular-nums; transition: color 0.4s; }
+    .stat-cell.total .stat-num { color: var(--green); font-size: clamp(1.6rem, 2.8vw, 2.6rem); }
+    .stat-num.bumped { color: var(--green); }
+    .stat-lbl  { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.05em; color: #c0d0e8; margin-top: 2px; }
+    .stat-cell.total .stat-lbl { color: #86efac; }
+    .wa-toggle-row { font-size: 0.62rem; color: var(--muted); margin-top: 3px; }
+    .wa-err { display: none; padding: 6px 14px; background: rgba(239,68,68,0.1); border-top: 0.5px solid rgba(239,68,68,0.3); font-size: 0.66rem; color: #fca5a5; }
     .wa-err-title { font-weight: 800; font-size: 0.63rem; text-transform: uppercase; color: var(--red); margin-bottom: 2px; }
 
     /* BODY */
@@ -94,30 +88,56 @@
     .panel-sub   { font-size: 0.57rem; color: var(--muted); }
     .panel-body  { flex: 1; overflow-y: auto; min-height: 0; }
 
-    /* RECENT BIDS — vidiprinter style, no internal dividers */
-    .ticker-row { display: grid; grid-template-columns: 44px 52px 1fr 120px 90px 70px; align-items: center; border-bottom: 0.5px solid var(--b2); height: 28px; padding: 0 10px; gap: 0; }
-    .ticker-row:last-child { border-bottom: none; }
-    .ticker-row.flash { animation: flash 1.4s ease; }
-    @keyframes flash { 0%,100%{background:transparent} 20%{background:rgba(74,222,128,0.15)} }
-    .t-time     { color: var(--gold-lt); font-size: 0.65rem; font-weight: 800; font-variant-numeric: tabular-nums; text-align: left; }
-    .t-item     { color: var(--gold-lt); font-weight: 800; font-size: 0.63rem; text-align: left; }
-    .t-desc     { color: var(--dim); font-size: 0.66rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px; }
-    .t-name     { color: var(--muted); font-size: 0.63rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
-    .t-amount   { color: var(--green); font-weight: 800; font-size: 0.75rem; white-space: nowrap; text-align: right; }
-    .t-increase { color: #6ee7a8; font-size: 0.63rem; font-weight: 700; white-space: nowrap; text-align: right; }
-
     /* FILTER BAR */
-    .filter-bar { display: flex; gap: 6px; padding: 6px 12px; background: var(--s2); border-bottom: 0.5px solid var(--b2); }
-    .filter-input { flex: 1; background: var(--s3); border: 0.5px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 0.65rem; color: var(--white); outline: none; }
+    .filter-bar { display: flex; gap: 6px; padding: 6px 12px; background: var(--s2); border-bottom: 0.5px solid var(--b2); flex-shrink: 0; }
+    .filter-input { flex: 1; background: var(--s3); border: 0.5px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 0.65rem; color: var(--white); outline: none; min-width: 0; }
     .filter-input::placeholder { color: var(--muted); }
     .filter-input:focus { border-color: var(--gold); }
 
-    /* LEADING BIDS — narrowed rows */
-    .lb-row { display: grid; grid-template-columns: 46px 1fr auto; align-items: center; border-bottom: 0.5px solid var(--b2); height: 26px; padding: 0 10px; }
-    .lb-row:last-child { border-bottom: none; }
-    .lb-num  { font-size: 0.6rem; font-weight: 800; color: var(--gold-lt); text-align: left; }
-    .lb-desc { font-size: 0.66rem; color: var(--white); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px; }
-    .lb-amt  { font-size: 0.76rem; font-weight: 800; color: var(--green); white-space: nowrap; text-align: right; }
+    /* ALL BIDS TICKER */
+    .ticker-row { display: grid; grid-template-columns: 44px 52px 1fr 110px 80px 64px; align-items: center; border-bottom: 0.5px solid var(--b2); height: 28px; padding: 0 10px; gap: 0; }
+    .ticker-row:last-child { border-bottom: none; }
+    .ticker-row.flash { animation: flash 1.4s ease; }
+    @keyframes flash { 0%,100%{background:transparent} 20%{background:rgba(74,222,128,0.15)} }
+    .t-time     { color: var(--gold-lt); font-size: 0.65rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .t-item     { color: var(--gold-lt); font-weight: 800; font-size: 0.63rem; }
+    .t-desc     { color: var(--dim); font-size: 0.66rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 6px; }
+    .t-name     { color: var(--muted); font-size: 0.63rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .t-amount   { color: var(--green); font-weight: 800; font-size: 0.75rem; white-space: nowrap; text-align: right; }
+    .t-increase { color: #6ee7a8; font-size: 0.63rem; font-weight: 700; white-space: nowrap; text-align: right; }
+
+    /* LEADING BIDS — COLLAPSIBLE BY ITEM */
+    .lb-item-group { border-bottom: 1px solid var(--b2); }
+    .lb-item-group:last-child { border-bottom: none; }
+
+    .lb-item-header {
+      display: grid;
+      grid-template-columns: 52px 1fr auto auto;
+      align-items: center;
+      height: 30px;
+      padding: 0 10px;
+      cursor: pointer;
+      user-select: none;
+      background: var(--s2);
+      border-bottom: 0.5px solid var(--b2);
+      gap: 6px;
+    }
+    .lb-item-header:hover { background: var(--s3); }
+    .lb-h-num   { font-size: 0.62rem; font-weight: 800; color: var(--gold-lt); }
+    .lb-h-desc  { font-size: 0.66rem; color: var(--white); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lb-h-amt   { font-size: 0.76rem; font-weight: 800; color: var(--green); white-space: nowrap; }
+    .lb-h-chev  { font-size: 0.7rem; color: var(--muted); transition: transform 0.2s; width: 14px; text-align: center; }
+    .lb-item-group.open .lb-h-chev { transform: rotate(90deg); }
+
+    .lb-item-bids { display: none; }
+    .lb-item-group.open .lb-item-bids { display: block; }
+
+    .lb-bid-row { display: grid; grid-template-columns: 50px 1fr auto 60px; align-items: center; height: 24px; padding: 0 10px 0 22px; border-bottom: 0.5px solid rgba(58,80,128,0.4); font-size: 0.63rem; gap: 6px; }
+    .lb-bid-row:last-child { border-bottom: none; }
+    .lb-b-time  { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .lb-b-name  { color: var(--dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lb-b-amt   { color: var(--green); font-weight: 800; text-align: right; white-space: nowrap; }
+    .lb-b-inc   { color: #6ee7a8; font-size: 0.6rem; text-align: right; white-space: nowrap; }
 
     /* CONTROLS COLUMN */
     .ctrl-col { display: flex; flex-direction: column; background: var(--s3); }
@@ -145,9 +165,7 @@
     .btn-red      { background: #dc2626; color: #fff; width: 100%; padding: 9px; font-size: 0.76rem; }
     .danger-warn  { font-size: 0.61rem; color: #fca5a5; line-height: 1.4; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 6px; padding: 6px 9px; }
 
-    /* CLOSED BANNER */
     .closed-banner { display: none; background: var(--red); color: #fff; text-align: center; padding: 5px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0; }
-
     .empty { padding: 20px 14px; font-size: 0.7rem; color: var(--muted); text-align: center; }
     .stale { font-size: 0.58rem; color: var(--amber); }
 
@@ -163,20 +181,17 @@
       html, body { overflow: auto; }
       #app { height: auto; overflow: visible; }
       .body { grid-template-columns: 1fr; }
-      .panel { border-right: none; border-bottom: 2px solid var(--border); max-height: 320px; }
+      .panel { border-right: none; border-bottom: 2px solid var(--border); max-height: 360px; }
       .ctrl-col { flex-direction: row; flex-wrap: wrap; }
       .ctrl-card { flex: 1 1 280px; }
       .topbar-links { display: none; }
-      .wa-stats { grid-template-columns: 1fr 1fr; }
-      .wa-hdr-right { display: none; }
+      .stats-strip { grid-template-columns: 1fr 1fr 1fr; }
     }
 
     @media (max-width: 560px) {
       .ticker-row { grid-template-columns: 40px 46px 1fr 62px; padding: 0 8px; }
       .t-desc { display: none; }
-      .t-name { text-align: left; }
       .t-increase { display: none; }
-      .lb-row { grid-template-columns: 42px 1fr auto; }
     }
   </style>
 </head>
@@ -230,76 +245,69 @@
 
   <div class="closed-banner" id="closedBanner">🔒 Auction closed — form and screens updated</div>
 
-  <div class="wa-strip">
-    <div class="wa-hdr">
-      <div class="wa-hdr-left">
-        <div class="wa-hdr-title">💬 WhatsApp</div>
-        <div class="wa-toggle">Sending: <span id="waToggleVal" style="font-weight:800;color:var(--muted)">—</span></div>
-      </div>
-      <div class="wa-hdr-right">
-        <span>Last confirmation: <strong id="waLastBid">—</strong></span>
-        <span>Last outbid: <strong id="waLastOutbid">—</strong></span>
-        <span class="stale" id="staleWarning" style="display:none;">⚠ Data may be stale</span>
-      </div>
+  <!-- STATS STRIP -->
+  <div class="stats-strip">
+    <div class="stat-cell total">
+      <div class="stat-num" id="auctionTotal">—</div>
+      <div class="stat-lbl">Auction total raised</div>
     </div>
-    <div class="wa-stats">
-      <div class="wa-stat total">
-        <div class="wa-num" id="auctionTotal">—</div>
-        <div class="wa-lbl">Auction total raised</div>
-      </div>
-      <div class="wa-stat">
-        <div class="wa-num" id="waBidsSent">—</div>
-        <div class="wa-lbl">Confirmations sent</div>
-      </div>
-      <div class="wa-stat">
-        <div class="wa-num" id="waOutbidsSent">—</div>
-        <div class="wa-lbl">Outbid alerts sent</div>
-      </div>
-      <div class="wa-stat">
-        <div class="wa-num" id="waWinnersSent">—</div>
-        <div class="wa-lbl">Winner notices</div>
-      </div>
-      <div class="wa-stat err">
-        <div class="wa-num" id="waErrorCount" style="color:var(--red)">—</div>
-        <div class="wa-lbl" style="color:#fca5a5;">Send errors</div>
-      </div>
+    <div class="stat-cell">
+      <div class="stat-num" id="totalBids">—</div>
+      <div class="stat-lbl">Total bids placed</div>
     </div>
-    <div class="wa-err" id="waErrorBanner">
-      <div class="wa-err-title">⚠️ Error detected</div>
-      <div id="waErrorList"></div>
+    <div class="stat-cell">
+      <div class="stat-num" id="uniqueBidders">—</div>
+      <div class="stat-lbl">Unique bidders</div>
     </div>
+    <div class="stat-cell">
+      <div class="stat-num" id="waBidsSent">—</div>
+      <div class="stat-lbl">WA confirmations</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num" id="waOutbidsSent">—</div>
+      <div class="stat-lbl">WA outbid alerts</div>
+    </div>
+    <div class="stat-cell err-cel">
+      <div class="stat-num" id="waErrorCount" style="color:var(--red)">—</div>
+      <div class="stat-lbl" style="color:#fca5a5;">WA send errors</div>
+      <div class="wa-toggle-row">Sending: <strong id="waToggleVal" style="color:var(--muted)">—</strong></div>
+    </div>
+  </div>
+  <div class="wa-err" id="waErrorBanner">
+    <div class="wa-err-title">⚠️ WhatsApp error</div>
+    <div id="waErrorList"></div>
   </div>
 
   <div class="body">
 
+    <!-- LEFT: ALL BIDS -->
     <div class="panel">
       <div class="panel-hdr">
-        <div class="panel-title">📥 Recent bids</div>
-        <div class="panel-sub" id="recentUpdated">—</div>
+        <div class="panel-title">📥 All bids</div>
+        <div class="panel-sub" id="bidsUpdated">—</div>
       </div>
       <div class="filter-bar">
-        <input class="filter-input" id="tickerItemFilter" placeholder="Filter item # (e.g. ITEM 01)" oninput="applyTickerFilter()" />
-        <input class="filter-input" id="tickerDescFilter" placeholder="Filter description" oninput="applyTickerFilter()" />
+        <input class="filter-input" id="fItem"   placeholder="Item (e.g. ITEM 01)" oninput="applyBidFilter()" />
+        <input class="filter-input" id="fDesc"   placeholder="Description" oninput="applyBidFilter()" />
+        <input class="filter-input" id="fBidder" placeholder="Bidder name" oninput="applyBidFilter()" />
       </div>
       <div class="panel-body" id="ticker">
         <div class="empty">Loading...</div>
       </div>
     </div>
 
+    <!-- MIDDLE: LEADING BIDS COLLAPSIBLE -->
     <div class="panel">
       <div class="panel-hdr">
         <div class="panel-title">🏆 Leading bids</div>
         <div class="panel-sub" id="leadingUpdated">—</div>
-      </div>
-      <div class="filter-bar">
-        <input class="filter-input" id="lbItemFilter" placeholder="Filter item # (e.g. ITEM 01)" oninput="applyLbFilter()" />
-        <input class="filter-input" id="lbDescFilter" placeholder="Filter description" oninput="applyLbFilter()" />
       </div>
       <div class="panel-body" id="leadingBids">
         <div class="empty">Loading...</div>
       </div>
     </div>
 
+    <!-- RIGHT: CONTROLS -->
     <div class="panel ctrl-col">
       <div class="ctrl-card">
         <div class="ctrl-title">📝 Bidding form</div>
@@ -333,15 +341,16 @@
 <script>
   const PASSWORD   = "master2026"; // CHANGE BEFORE EVENT NIGHT
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
-  const DASH_MS = 12000;
+  const DASH_MS    = 12000;
 
   let state = { formOpen: null, bannerActive: null, auctionClosed: null };
   let busy  = { form: false, banner: false, auction: false };
   const prev = {};
-  let lastBidTs = null;
   let consecutiveFails = 0;
-  let allBids = [];
+  let allBids   = [];
   let allLeading = [];
+  let byItem    = {};
+  let lastBidTs = null;
 
   document.getElementById("loginForm").addEventListener("submit", e => {
     e.preventDefault();
@@ -363,20 +372,18 @@
   }
 
   async function api(payload) {
-    const res = await fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
+    const res  = await fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
     const text = await res.text();
     let json; try { json = JSON.parse(text); } catch { throw new Error("Server error."); }
     if (!json.ok) throw new Error(json.message || "Unknown error.");
     return json;
   }
 
-  // ── ONE COMBINED CALL PER CYCLE ──────────────────────────
   async function loadDashboard() {
     try {
       const r = await api({ action: "getDashboard" });
       const d = r.data || {};
 
-      // Control
       if (d.control && d.control.ok) {
         state.formOpen      = !!d.control.formOpen;
         state.bannerActive  = !!d.control.bannerActive;
@@ -385,27 +392,39 @@
         document.getElementById("closedBanner").style.display = state.auctionClosed ? "block" : "none";
       }
 
-      // WhatsApp
       if (d.whatsapp && d.whatsapp.ok !== false) renderWa(d.whatsapp);
 
-      // Recent bids
-      if (d.recentBids && d.recentBids.ok) renderTicker(d.recentBids.bids || []);
+      if (d.allBids) {
+        bump("totalBids",     d.allBids.totalCount    || 0);
+        bump("uniqueBidders", d.allBids.uniqueBidders || 0);
+        allBids = d.allBids.bids || [];
+        byItem  = d.allBids.byItem || {};
 
-      // Leading bids + total
-      if (d.leadingBids && d.leadingBids.ok) renderLeading(d.leadingBids.items || [], d.leadingBids.total || 0);
+        const newestTs = allBids.length ? allBids[0].ts : null;
+        const isNew    = newestTs && lastBidTs && newestTs !== lastBidTs;
+        lastBidTs = newestTs;
+        applyBidFilter(isNew);
+      }
+
+      if (d.leadingBids && d.leadingBids.ok) {
+        document.getElementById("auctionTotal").textContent =
+          "€" + Number(d.leadingBids.total || 0).toLocaleString("en-IE");
+        allLeading = d.leadingBids.items || [];
+        renderLeading();
+      }
 
       document.getElementById("syncLabel").textContent = "Synced " + new Date().toLocaleTimeString("en-IE");
-      document.getElementById("staleWarning").style.display = "none";
+      document.getElementById("staleWarning") && (document.getElementById("staleWarning").style.display = "none");
       consecutiveFails = 0;
     } catch (err) {
       consecutiveFails++;
       document.getElementById("syncLabel").textContent = "Sync failed";
-      if (consecutiveFails >= 2) document.getElementById("staleWarning").style.display = "inline";
     }
   }
 
   function renderStatus() {
-    const { formOpen, bannerActive, auctionClosed } = state; const closed = auctionClosed === true;
+    const { formOpen, bannerActive, auctionClosed } = state;
+    const closed = auctionClosed === true;
     setPill("formPill",    "formPillLabel",    formOpen,      "Form is open",      "Form is closed",     "pill-open",   "pill-closed");
     setPill("bannerPill",  "bannerPillLabel",  bannerActive,  "Banner is active",  "Banner is off",      "pill-on",     "pill-off");
     setPill("auctionPill", "auctionPillLabel", auctionClosed, "Auction is closed", "Auction is running", "pill-closed", "pill-open");
@@ -426,80 +445,84 @@
   function renderWa(d) {
     bump("waBidsSent",    d.bidsSent    || 0);
     bump("waOutbidsSent", d.outbidsSent || 0);
-    bump("waWinnersSent", d.winnersSent || 0);
-    const ec = document.getElementById("waErrorCount"); if (ec) ec.textContent = d.errorRowCount || 0;
+    const ec = document.getElementById("waErrorCount");
+    if (ec) ec.textContent = d.errorRowCount || 0;
     const tv = document.getElementById("waToggleVal");
-    tv.textContent = d.waToggle || "OFF"; tv.style.color = d.waToggle === "ON" ? "#4ade80" : "#ef4444";
-    document.getElementById("waLastBid").textContent    = d.lastBidTime    ? fmt(d.lastBidTime)    : "—";
-    document.getElementById("waLastOutbid").textContent = d.lastOutbidTime ? fmt(d.lastOutbidTime) : "—";
+    tv.textContent = d.waToggle || "OFF";
+    tv.style.color = d.waToggle === "ON" ? "#4ade80" : "#ef4444";
     const errors = d.errors || [];
-    const eb = document.getElementById("waErrorBanner"); const el = document.getElementById("waErrorList");
-    if (errors.length > 0) { el.innerHTML = errors.map(e => `• ${e}`).join("<br>"); eb.style.display = "block"; }
+    const eb = document.getElementById("waErrorBanner");
+    const el = document.getElementById("waErrorList");
+    if (errors.length) { el.innerHTML = errors.map(e => `• ${e}`).join("<br>"); eb.style.display = "block"; }
     else { eb.style.display = "none"; el.innerHTML = ""; }
   }
 
-  function renderTicker(bids) {
-    const newestTs = bids.length ? bids[0].ts : null;
-    const isNewArrival = newestTs && lastBidTs && newestTs !== lastBidTs;
-    lastBidTs = newestTs;
+  function applyBidFilter(flashNewest) {
+    const itemQ   = (document.getElementById("fItem").value   || "").trim().toUpperCase();
+    const descQ   = (document.getElementById("fDesc").value   || "").trim().toUpperCase();
+    const bidderQ = (document.getElementById("fBidder").value || "").trim().toUpperCase();
 
-    // Compute increase over the previous bid on the same item (bids are newest-first)
-    for (let i = 0; i < bids.length; i++) {
-      let increase = 0;
-      for (let j = i + 1; j < bids.length; j++) {
-        if (bids[j].item === bids[i].item) { increase = bids[i].amount - bids[j].amount; break; }
-      }
-      bids[i].increase = increase > 0 ? increase : 0;
-    }
-
-    allBids = bids;
-    applyTickerFilter(isNewArrival);
-  }
-
-  function applyTickerFilter(flashNewest) {
-    const itemQ = (document.getElementById("tickerItemFilter").value || "").trim().toUpperCase();
-    const descQ = (document.getElementById("tickerDescFilter").value || "").trim().toUpperCase();
     let list = allBids;
-    if (itemQ) list = list.filter(b => (b.item || "").toUpperCase().includes(itemQ));
-    if (descQ) list = list.filter(b => (b.desc || "").toUpperCase().includes(descQ));
+    if (itemQ)   list = list.filter(b => (b.item || "").toUpperCase().includes(itemQ));
+    if (descQ)   list = list.filter(b => (b.desc || "").toUpperCase().includes(descQ));
+    if (bidderQ) list = list.filter(b => (b.name || "").toUpperCase().includes(bidderQ));
 
     const ticker = document.getElementById("ticker");
     if (!list.length) { ticker.innerHTML = `<div class="empty">No matching bids.</div>`; return; }
 
-    ticker.innerHTML = list.slice(0, 40).map((b, i) => `
+    ticker.innerHTML = list.map((b, i) => `
       <div class="ticker-row ${i === 0 && flashNewest ? 'flash' : ''}">
         <div class="t-time">${b.time || "—"}</div>
         <div class="t-item">${b.item || "—"}</div>
         <div class="t-desc">${b.desc || ""}</div>
         <div class="t-name">${b.name || "—"}</div>
         <div class="t-amount">€${Number(b.amount || 0).toLocaleString("en-IE")}</div>
-        <div class="t-increase">${b.increase > 0 ? "+€" + Number(b.increase).toLocaleString("en-IE") : ""}</div>
+        <div class="t-increase">${b.increment > 0 ? "+€" + Number(b.increment).toLocaleString("en-IE") : ""}</div>
       </div>`).join("");
-    document.getElementById("recentUpdated").textContent = new Date().toLocaleTimeString("en-IE");
+
+    document.getElementById("bidsUpdated").textContent = new Date().toLocaleTimeString("en-IE");
   }
 
-  function renderLeading(items, total) {
-    document.getElementById("auctionTotal").textContent = "€" + Number(total || 0).toLocaleString("en-IE");
-    allLeading = items;
-    applyLbFilter();
-  }
-
-  function applyLbFilter() {
-    const itemQ = (document.getElementById("lbItemFilter").value || "").trim().toUpperCase();
-    const descQ = (document.getElementById("lbDescFilter").value || "").trim().toUpperCase();
-    let list = allLeading;
-    if (itemQ) list = list.filter(b => (b.item || "").toUpperCase().includes(itemQ));
-    if (descQ) list = list.filter(b => (b.description || "").toUpperCase().includes(descQ));
+  function renderLeading() {
+    // Preserve which groups are open
+    const openItems = new Set(
+      [...document.querySelectorAll(".lb-item-group.open")]
+        .map(el => el.dataset.item)
+    );
 
     const el = document.getElementById("leadingBids");
-    if (!list.length) { el.innerHTML = `<div class="empty">No matching items.</div>`; return; }
-    el.innerHTML = list.map(b => `
-      <div class="lb-row">
-        <div class="lb-num">${b.item || "—"}</div>
-        <div class="lb-desc">${b.description || "—"}</div>
-        <div class="lb-amt">€${Number(b.amount || 0).toLocaleString("en-IE")}</div>
-      </div>`).join("");
+    if (!allLeading.length) { el.innerHTML = `<div class="empty">No data.</div>`; return; }
+
+    el.innerHTML = allLeading.map(item => {
+      const key   = item.item;
+      const bids  = (byItem[key] && byItem[key].bids) ? byItem[key].bids : [];
+      const isOpen = openItems.has(key);
+
+      const bidRows = bids.map(b => `
+        <div class="lb-bid-row">
+          <div class="lb-b-time">${b.time || "—"}</div>
+          <div class="lb-b-name">${b.name || "—"}</div>
+          <div class="lb-b-amt">€${Number(b.amount || 0).toLocaleString("en-IE")}</div>
+          <div class="lb-b-inc">${b.increment > 0 ? "+€" + Number(b.increment).toLocaleString("en-IE") : ""}</div>
+        </div>`).join("");
+
+      return `
+        <div class="lb-item-group ${isOpen ? 'open' : ''}" data-item="${key}">
+          <div class="lb-item-header" onclick="toggleGroup(this.parentElement)">
+            <div class="lb-h-num">${key}</div>
+            <div class="lb-h-desc">${item.description || ""}</div>
+            <div class="lb-h-amt">€${Number(item.amount || 0).toLocaleString("en-IE")}</div>
+            <div class="lb-h-chev">▶</div>
+          </div>
+          <div class="lb-item-bids">${bidRows || '<div class="empty" style="padding:8px 22px;font-size:0.65rem;">No bids yet</div>'}</div>
+        </div>`;
+    }).join("");
+
     document.getElementById("leadingUpdated").textContent = new Date().toLocaleTimeString("en-IE");
+  }
+
+  function toggleGroup(el) {
+    el.classList.toggle("open");
   }
 
   function bump(id, newVal) {
@@ -512,30 +535,20 @@
     prev[id] = newVal;
   }
 
-  function fmt(raw) {
-    try {
-      if (typeof raw === "string" && raw.startsWith("Date(")) {
-        const p = raw.slice(5,-1).split(",").map(Number);
-        return new Date(p[0],p[1],p[2],p[3]||0,p[4]||0,p[5]||0).toLocaleTimeString("en-IE",{hour:"2-digit",minute:"2-digit"});
-      }
-      return new Date(raw).toLocaleTimeString("en-IE",{hour:"2-digit",minute:"2-digit"});
-    } catch { return String(raw); }
-  }
-
   async function doFormAction(dir) {
     const open = dir === "open";
-    if (!confirm(open ? "Open the bidding form?\n\nGuests will be able to place bids immediately." : "Close the bidding form?\n\nGuests cannot bid until you reopen it.")) return;
+    if (!confirm(open ? "Open the bidding form?" : "Close the bidding form?")) return;
     busy.form = true; renderStatus();
-    try { await api({ action: "setFormStatus", open }); state.formOpen = open; toast(open ? "Bidding form is now open." : "Bidding form closed.", open ? "success" : "warn"); }
+    try { await api({ action: "setFormStatus", open }); state.formOpen = open; toast(open ? "Form is now open." : "Form closed.", open ? "success" : "warn"); }
     catch (err) { toast("Failed: " + err.message, "error"); }
     finally { busy.form = false; renderStatus(); }
   }
 
   async function doBannerAction(dir) {
     const on = dir === "on";
-    if (!confirm(on ? "Activate the closing soon banner?\n\nFlashing red alert on all screens." : "Deactivate the closing soon banner?")) return;
+    if (!confirm(on ? "Activate the closing soon banner?" : "Deactivate the closing soon banner?")) return;
     busy.banner = true; renderStatus();
-    try { await api({ action: "setClosingSoonBanner", active: on }); state.bannerActive = on; toast(on ? "Closing soon banner is live." : "Banner deactivated.", on ? "warn" : "info"); }
+    try { await api({ action: "setClosingSoonBanner", active: on }); state.bannerActive = on; toast(on ? "Banner is live." : "Banner deactivated.", on ? "warn" : "info"); }
     catch (err) { toast("Failed: " + err.message, "error"); }
     finally { busy.banner = false; renderStatus(); }
   }
@@ -544,15 +557,21 @@
     if (!confirm("CLOSE THE AUCTION?\n\n- Bidding form closes\n- Banner stops\n- All screens show auction closed\n\nOnly proceed when the chairman has called it.")) return;
     if (!confirm("Are you absolutely sure? This cannot be undone from this panel.")) return;
     busy.auction = true; renderStatus();
-    try { await api({ action: "closeAuction" }); state.auctionClosed = true; state.formOpen = false; state.bannerActive = false; renderStatus(); document.getElementById("closedBanner").style.display = "block"; toast("Auction closed. All screens updated.", "error"); }
+    try {
+      await api({ action: "closeAuction" });
+      state.auctionClosed = true; state.formOpen = false; state.bannerActive = false;
+      renderStatus();
+      document.getElementById("closedBanner").style.display = "block";
+      toast("Auction closed. All screens updated.", "error");
+    }
     catch (err) { toast("Failed: " + err.message, "error"); }
     finally { busy.auction = false; renderStatus(); }
   }
 
   function tick() {
     const n = new Date();
-    document.getElementById("clockTime").textContent = n.toLocaleTimeString("en-IE",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
-    document.getElementById("clockDate").textContent = n.toLocaleDateString("en-IE",{weekday:"short",day:"numeric",month:"short"});
+    document.getElementById("clockTime").textContent = n.toLocaleTimeString("en-IE", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+    document.getElementById("clockDate").textContent = n.toLocaleDateString("en-IE", { weekday: "short", day: "numeric", month: "short" });
   }
 
   function init() {
