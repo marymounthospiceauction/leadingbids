@@ -467,15 +467,16 @@
       if (strVal.toUpperCase().includes('LIVE')) return escapeHtml(strVal);
       
       const cleanNumStr = strVal.replace(/[^0-9.-]/g, '');
-      if (cleanNumStr === '' || isNaN(cleanNumStr)) return escapeHtml(strVal);
+      if (cleanNumStr === '' || isNaN(cleanNumStr)) return '';
       
       const n = Number(cleanNumStr);
-      return Number.isFinite(n) ? '€' + euroFmt.format(n) : escapeHtml(strVal);
+      return Number.isFinite(n) && n > 0 ? '€' + euroFmt.format(n) : '';
     }
 
     function formatItemLabel(rawText) {
       let t = escapeHtml(rawText ?? '');
-      t = t.replace(/(ITEM\s*\d+)\s*-\s*/i, '$1 - ');
+      // Match ITEM followed by optional spaces and digits, then clean up spacing
+      t = t.replace(/^(ITEM\s*\d+)\s*-?\s*/i, '$1 - ');
       return '<strong>' + t.substring(0, 7) + '</strong>' + t.substring(7);
     }
 
@@ -507,8 +508,8 @@
       const isLive = rawLatest.toUpperCase().includes('*LIVE*') ||
                      rawNewBid.toUpperCase().includes('*LIVE*');
 
-      const latestDisplay = isLive ? '*LIVE*' : formatEuro(rawLatest);
-      const newBidDisplay = formatNewBidCell(rawNewBid);
+      let latestDisplay = isLive ? '*LIVE*' : formatEuro(rawLatest);
+      let newBidDisplay = isLive ? '' : formatNewBidCell(rawNewBid);
 
       return `
         <div class="item-row ${isLive ? 'is-live' : ''}">
