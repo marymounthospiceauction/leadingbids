@@ -397,10 +397,9 @@
     const CTRL_RANGE = 'A1:B10';
     const REFRESH_MS = 5000;
 
-    /* Enforce plain text fetching via tq=SELECT H, I, J */
     const bidsUrl = () =>
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
-      `&sheet=${encodeURIComponent(sheetName)}&range=${range}&tq=${encodeURIComponent('SELECT H, I, J')}&cacheBust=${Date.now()}`;
+      `&sheet=${encodeURIComponent(sheetName)}&range=${range}&cacheBust=${Date.now()}`;
 
     const ctrlUrl = () =>
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
@@ -418,15 +417,15 @@
       
       const strVal = String(v).trim();
       
-      // If it contains *LIVE*, render as plain text string
-      if (strVal.toUpperCase().includes('*LIVE*')) {
+      // Explicitly catch any variation of LIVE text
+      if (strVal.toUpperCase().includes('LIVE')) {
         return escapeHtml(strVal);
       }
 
-      // Remove euro symbols and commas to check for numeric value
-      const cleanNumStr = strVal.replace(/[€,\s]/g, '');
+      // Remove non-numeric currency characters
+      const cleanNumStr = strVal.replace(/[^0-9.-]/g, '');
       
-      if (isNaN(cleanNumStr) || cleanNumStr === '') {
+      if (cleanNumStr === '' || isNaN(cleanNumStr)) {
         return escapeHtml(strVal);
       }
       
@@ -437,8 +436,11 @@
     function formatNewBidCell(v) {
       if (v === null || v === undefined || v === '') return '';
       const strVal = String(v).trim();
-      const cleanNumStr = strVal.replace(/[€,\s]/g, '');
-      if (isNaN(cleanNumStr) || cleanNumStr === '') return escapeHtml(strVal);
+      
+      if (strVal.toUpperCase().includes('LIVE')) return escapeHtml(strVal);
+      
+      const cleanNumStr = strVal.replace(/[^0-9.-]/g, '');
+      if (cleanNumStr === '' || isNaN(cleanNumStr)) return escapeHtml(strVal);
       
       const n = Number(cleanNumStr);
       return Number.isFinite(n) ? '€' + euroFmt.format(n) : escapeHtml(strVal);
@@ -482,7 +484,7 @@
       
       const rawLatestStr = String(r[2] ?? r[1] ?? '').trim().toUpperCase();
       const rawNewBidStr = String(r[1] ?? '').trim().toUpperCase();
-      const isLive = rawLatestStr.includes('*LIVE*') || rawNewBidStr.includes('*LIVE*');
+      const isLive = rawLatestStr.includes('LIVE') || rawNewBidStr.includes('LIVE');
 
       return `
         <div class="item-row ${isLive ? 'is-live' : ''}">
@@ -618,7 +620,7 @@
           fetchJson(ctrlUrl()).catch(() => null)
         ]);
 
-        /* Safely extract formatted cell string 'f' or raw value 'v' */
+        /* Extract formatted cell string 'f' or raw value 'v' */
         const extractCell = (cell) => {
           if (!cell) return '';
           if (cell.f !== undefined && cell.f !== null && cell.f !== '') return cell.f;
