@@ -475,8 +475,9 @@
 
     function formatItemLabel(rawText) {
       let t = escapeHtml(rawText ?? '');
-      // Match ITEM followed by optional spaces and digits, then clean up spacing
-      t = t.replace(/^(ITEM\s*\d+)\s*-?\s*/i, '$1 - ');
+      // Match "ITEM" followed by spaces, then digits, capturing just that part
+      // Then replace the whole matched section with a clean "ITEM XX - " format
+      t = t.replace(/^ITEM\s+(\d+)\s*-?\s*/i, 'ITEM $1 - ');
       return '<strong>' + t.substring(0, 7) + '</strong>' + t.substring(7);
     }
 
@@ -509,7 +510,14 @@
                      rawNewBid.toUpperCase().includes('*LIVE*');
 
       let latestDisplay = isLive ? '*LIVE*' : formatEuro(rawLatest);
-      let newBidDisplay = isLive ? '' : formatNewBidCell(rawNewBid);
+      let newBidDisplay = '';
+      
+      if (!isLive) {
+        const bidNum = Number(String(rawNewBid).replace(/[^0-9.-]/g, ''));
+        if (!isNaN(bidNum) && bidNum > 0) {
+          newBidDisplay = '€' + euroFmt.format(bidNum);
+        }
+      }
 
       return `
         <div class="item-row ${isLive ? 'is-live' : ''}">
