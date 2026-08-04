@@ -399,7 +399,7 @@
     /* ── CONFIG ── */
     const sheetID   = '10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc';
     const sheetName = 'DISPLAY';
-    const range     = 'H2:J40';
+    const range     = 'H3:J40';
     const CTRL_SHEET = 'CONTROL';
     const CTRL_RANGE = 'A1:B10';
     const REFRESH_MS = 5000;
@@ -504,8 +504,8 @@
 
       const item = formatItemLabel(rawName);
 
-      const isLive = rawName.toUpperCase().includes('ITEM 03') ||
-                     rawLatest.toUpperCase().includes('LIVE') ||
+      /* DYNAMIC CHECK FOR LIVE CONTENT */
+      const isLive = rawLatest.toUpperCase().includes('LIVE') ||
                      rawNewBid.toUpperCase().includes('LIVE');
 
       const latestDisplay = isLive ? '*LIVE*' : formatEuro(rawLatest);
