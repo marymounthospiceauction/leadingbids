@@ -397,13 +397,42 @@
     const CTRL_RANGE = 'A1:B10';
     const REFRESH_MS = 5000;
 
-    const bidsUrl = () =>
-      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
+    /* Export direct CSV to bypass type-casting bug in Google Visualization API */
+    const bidsCsvUrl = () =>
+      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv` +
       `&sheet=${encodeURIComponent(sheetName)}&range=${range}&cacheBust=${Date.now()}`;
 
-    const ctrlUrl = () =>
-      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
+    const ctrlCsvUrl = () =>
+      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv` +
       `&sheet=${encodeURIComponent(CTRL_SHEET)}&range=${CTRL_RANGE}&cacheBust=${Date.now()}`;
+
+    /* ── CSV PARSER ── */
+    function parseCsv(text) {
+      const p = [[]];
+      let quote = false;
+      for (let c = 0; c < text.length; c++) {
+        const cc = text[c], nc = text[c + 1];
+        if (cc === '"') {
+          if (quote && nc === '"') { p[p.length - 1][p[p.length - 1].length - 1] += '"'; c++; }
+          else { quote = !quote; }
+        } else if (cc === ',' && !quote) {
+          p[p.length - 1].push('');
+        } else if ((cc === '\r' || cc === '\n') && !quote) {
+          if (cc === '\r' && nc === '\n') { c++; }
+          p.push([]);
+        } else {
+          if (!p[p.length - 1].length) p[p.length - 1].push('');
+          p[p.length - 1][p[p.length - 1].length - 1] += cc;
+        }
+      }
+      return p.filter(r => r.length > 0 && r.some(cell => cell.trim() !== ''));
+    }
+
+    async function fetchCsvData(url) {
+      const res = await fetch(url, { cache: 'no-store' });
+      const raw = await res.text();
+      return parseCsv(raw);
+    }
 
     /* ── HELPERS ── */
     const euroFmt = new Intl.NumberFormat('en-IE', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
@@ -417,12 +446,10 @@
       
       const strVal = String(v).trim();
       
-      // Explicitly catch any variation of LIVE text
       if (strVal.toUpperCase().includes('LIVE')) {
         return escapeHtml(strVal);
       }
 
-      // Remove non-numeric currency characters
       const cleanNumStr = strVal.replace(/[^0-9.-]/g, '');
       
       if (cleanNumStr === '' || isNaN(cleanNumStr)) {
@@ -449,14 +476,6 @@
     function boldFirstSevenSafe(t) {
       const safe = escapeHtml(t ?? '');
       return '<strong>' + safe.substring(0,7) + '</strong>' + safe.substring(7);
-    }
-
-    async function fetchJson(url) {
-      const res  = await fetch(url, { cache: 'no-store' });
-      const raw  = await res.text();
-      const s = raw.indexOf('{'), e = raw.lastIndexOf('}');
-      if (s === -1 || e === -1) throw new Error('Bad sheet response');
-      return JSON.parse(raw.slice(s, e + 1));
     }
 
     /* ── ROW HEIGHT ── */
@@ -615,37 +634,17 @@
     /* ── MAIN LOOP ── */
     async function loadData() {
       try {
-        const [bidsJson, ctrlJson] = await Promise.all([
-          fetchJson(bidsUrl()),
-          fetchJson(ctrlUrl()).catch(() => null)
+        const [bidsRows, ctrlRows] = await Promise.all([
+          fetchCsvData(bidsCsvUrl()),
+          fetchCsvData(ctrlCsvUrl()).catch(() => [])
         ]);
 
-        /* Extract formatted cell string 'f' or raw value 'v' */
-        const extractCell = (cell) => {
-          if (!cell) return '';
-          if (cell.f !== undefined && cell.f !== null && cell.f !== '') return cell.f;
-          if (cell.v !== undefined && cell.v !== null) return cell.v;
-          return '';
-        };
-
-        /* Bids */
-        const rows = (bidsJson.table && Array.isArray(bidsJson.table.rows))
-          ? bidsJson.table.rows.map(r => {
-              const c = Array.isArray(r.c) ? r.c : [];
-              return [
-                extractCell(c[0]),
-                extractCell(c[1]),
-                extractCell(c[2])
-              ];
-            }).filter(r => r[0] !== '')
-          : [];
-        renderRows(rows);
+        /* Filter out empty header rows if any */
+        const validBids = bidsRows.filter(r => r[0] && r[0].trim() !== '');
+        renderRows(validBids);
 
         /* Control */
-        if (ctrlJson && ctrlJson.table && Array.isArray(ctrlJson.table.rows)) {
-          const ctrlRows = ctrlJson.table.rows.map(r =>
-            (Array.isArray(r.c) ? r.c : []).map(c => extractCell(c))
-          );
+        if (ctrlRows && ctrlRows.length) {
           applyControl(ctrlRows);
         }
 
