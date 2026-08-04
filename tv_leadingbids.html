@@ -414,19 +414,27 @@
 
     function formatEuro(v) {
       if (v === null || v === undefined || v === '') return '€0';
+      
       const strVal = String(v).trim();
-      if (isNaN(strVal)) {
+      
+      // Clean string currency symbols and commas to check if it's purely a number
+      const cleanNumStr = strVal.replace(/[€,\s]/g, '');
+      
+      if (isNaN(cleanNumStr) || cleanNumStr === '') {
         return escapeHtml(strVal);
       }
-      const n = Number(strVal);
+      
+      const n = Number(cleanNumStr);
       return Number.isFinite(n) ? '€' + euroFmt.format(n) : escapeHtml(strVal);
     }
 
     function formatNewBidCell(v) {
       if (v === null || v === undefined || v === '') return '';
       const strVal = String(v).trim();
-      if (isNaN(strVal)) return escapeHtml(strVal);
-      const n = Number(strVal);
+      const cleanNumStr = strVal.replace(/[€,\s]/g, '');
+      if (isNaN(cleanNumStr) || cleanNumStr === '') return escapeHtml(strVal);
+      
+      const n = Number(cleanNumStr);
       return Number.isFinite(n) ? '€' + euroFmt.format(n) : escapeHtml(strVal);
     }
 
@@ -466,7 +474,6 @@
       const newBid = formatNewBidCell(r[1]);
       const latest = formatEuro(r[2] ?? r[1]);
       
-      // Check if either newBid or latest contains *LIVE*
       const rawLatestStr = String(r[2] ?? r[1] ?? '').trim().toUpperCase();
       const rawNewBidStr = String(r[1] ?? '').trim().toUpperCase();
       const isLive = rawLatestStr.includes('*LIVE*') || rawNewBidStr.includes('*LIVE*');
@@ -605,14 +612,20 @@
           fetchJson(ctrlUrl()).catch(() => null)
         ]);
 
+        /* Helper to get formatted string 'f' first, then value 'v' */
+        const extractCell = (cell) => {
+          if (!cell) return '';
+          return (cell.f != null && cell.f !== '') ? cell.f : (cell.v != null ? cell.v : '');
+        };
+
         /* Bids */
         const rows = (bidsJson.table && Array.isArray(bidsJson.table.rows))
           ? bidsJson.table.rows.map(r => {
               const c = Array.isArray(r.c) ? r.c : [];
               return [
-                c[0] && c[0].v != null ? c[0].v : '',
-                c[1] && c[1].v != null ? c[1].v : '',
-                c[2] && c[2].v != null ? c[2].v : ''
+                extractCell(c[0]),
+                extractCell(c[1]),
+                extractCell(c[2])
               ];
             }).filter(r => r[0] !== '')
           : [];
@@ -621,7 +634,7 @@
         /* Control */
         if (ctrlJson && ctrlJson.table && Array.isArray(ctrlJson.table.rows)) {
           const ctrlRows = ctrlJson.table.rows.map(r =>
-            (Array.isArray(r.c) ? r.c : []).map(c => c && c.v != null ? c.v : '')
+            (Array.isArray(r.c) ? r.c : []).map(c => extractCell(c))
           );
           applyControl(ctrlRows);
         }
