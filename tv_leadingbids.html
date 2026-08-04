@@ -34,7 +34,7 @@
     .frame {
       width: 100vw;
       height: 100vh;
-      padding: var(--safe-top) var(--safe-horiz) var(--safe-bottom) var(--safe-horiz);
+      padding: var(--safe-top) var(--safe-horiz) calc(var(--safe-bottom) + var(--footer-h)) var(--safe-horiz);
       display: flex;
       flex-direction: column;
       background: transparent;
@@ -504,9 +504,8 @@
 
       const item = formatItemLabel(rawName);
 
-      const isLive = rawName.toUpperCase().includes('ITEM 03') ||
-                     rawLatest.toUpperCase().includes('LIVE') ||
-                     rawNewBid.toUpperCase().includes('LIVE');
+      const isLive = rawLatest.toUpperCase().includes('*LIVE*') ||
+                     rawNewBid.toUpperCase().includes('*LIVE*');
 
       const latestDisplay = isLive ? '*LIVE*' : formatEuro(rawLatest);
       const newBidDisplay = formatNewBidCell(rawNewBid);
