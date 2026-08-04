@@ -100,17 +100,17 @@
       transition: background 0.3s ease, border-color 0.3s ease;
     }
 
-    /* ── GREEN HIGHLIGHT FOR *LIVE* ITEMS ── */
+    /* ── EMERALD GREEN HIGHLIGHT FOR *LIVE* ITEMS ── */
     .item-row.is-live {
       background: linear-gradient(90deg, rgba(15,75,28,0.95), rgba(25,110,42,0.95)) !important;
       border: 1px solid #2ecc71 !important;
-      box-shadow: 0 0 8px rgba(46,204,113,0.4);
+      box-shadow: 0 0 12px rgba(46,204,113,0.6);
     }
 
     .item-row.is-live .item-amount {
       color: #2ecc71 !important;
       font-weight: 900;
-      text-shadow: 0 0 8px rgba(46,204,113,0.5);
+      text-shadow: 0 0 8px rgba(46,204,113,0.7);
       border-left: 1px solid #2ecc71;
     }
 
@@ -397,9 +397,10 @@
     const CTRL_RANGE = 'A1:B10';
     const REFRESH_MS = 5000;
 
+    /* Enforce plain text fetching via tq=SELECT H, I, J */
     const bidsUrl = () =>
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
-      `&sheet=${encodeURIComponent(sheetName)}&range=${range}&cacheBust=${Date.now()}`;
+      `&sheet=${encodeURIComponent(sheetName)}&range=${range}&tq=${encodeURIComponent('SELECT H, I, J')}&cacheBust=${Date.now()}`;
 
     const ctrlUrl = () =>
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json` +
@@ -417,7 +418,12 @@
       
       const strVal = String(v).trim();
       
-      // Clean string currency symbols and commas to check if it's purely a number
+      // If it contains *LIVE*, render as plain text string
+      if (strVal.toUpperCase().includes('*LIVE*')) {
+        return escapeHtml(strVal);
+      }
+
+      // Remove euro symbols and commas to check for numeric value
       const cleanNumStr = strVal.replace(/[€,\s]/g, '');
       
       if (isNaN(cleanNumStr) || cleanNumStr === '') {
@@ -612,10 +618,12 @@
           fetchJson(ctrlUrl()).catch(() => null)
         ]);
 
-        /* Helper to get formatted string 'f' first, then value 'v' */
+        /* Safely extract formatted cell string 'f' or raw value 'v' */
         const extractCell = (cell) => {
           if (!cell) return '';
-          return (cell.f != null && cell.f !== '') ? cell.f : (cell.v != null ? cell.v : '');
+          if (cell.f !== undefined && cell.f !== null && cell.f !== '') return cell.f;
+          if (cell.v !== undefined && cell.v !== null) return cell.v;
+          return '';
         };
 
         /* Bids */
