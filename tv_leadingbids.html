@@ -34,7 +34,7 @@
     .frame {
       width: 100vw;
       height: 100vh;
-      padding: var(--safe-top) var(--safe-horiz) calc(var(--safe-bottom) + var(--footer-h) + 1.5vh) var(--safe-horiz);
+      padding: var(--safe-top) var(--safe-horiz) var(--safe-bottom) var(--safe-horiz);
       display: flex;
       flex-direction: column;
       background: transparent;
@@ -166,7 +166,7 @@
       position: fixed;
       left: var(--safe-horiz);
       right: var(--safe-horiz);
-      bottom: 1.2vh;
+      bottom: var(--safe-bottom);
       height: var(--footer-h);
       display: grid;
       grid-template-columns: auto 1fr auto;
@@ -351,12 +351,12 @@
 
   <!-- CLOSING SOON -->
   <div id="closing-banner" role="status" aria-live="polite">
-    <div class="closing-inner">&#x1F6A8; AUCTION CLOSING SOON &#x2014; GET YOUR FINAL BIDS IN! &#x1F6A8;</div>
+    <div class="closing-inner">🚨 AUCTION CLOSING SOON — GET YOUR FINAL BIDS IN! 🚨</div>
   </div>
 
   <!-- AUCTION CLOSED -->
   <div id="closed-banner" role="status" aria-live="polite">
-    <div class="closed-text">&#x2705; AUCTION CLOSED &#x2014; THANK YOU FOR YOUR SUPPORT</div>
+    <div class="closed-text">✅ AUCTION CLOSED — THANK YOU FOR YOUR SUPPORT</div>
   </div>
 
   <!-- SOLD -->
@@ -504,8 +504,8 @@
 
       const item = formatItemLabel(rawName);
 
-      /* DYNAMIC CHECK FOR LIVE CONTENT */
-      const isLive = rawLatest.toUpperCase().includes('LIVE') ||
+      const isLive = rawName.toUpperCase().includes('ITEM 03') ||
+                     rawLatest.toUpperCase().includes('LIVE') ||
                      rawNewBid.toUpperCase().includes('LIVE');
 
       const latestDisplay = isLive ? '*LIVE*' : formatEuro(rawLatest);
