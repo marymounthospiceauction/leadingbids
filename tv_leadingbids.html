@@ -97,6 +97,21 @@
       background: rgba(0,0,0,0.9);
       border: 1px solid #3a3a3a;
       box-shadow: 0 0 4px rgba(0,0,0,0.5);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    /* ── GREEN HIGHLIGHT FOR *LIVE* ITEMS ── */
+    .item-row.is-live {
+      background: linear-gradient(90deg, rgba(15,75,28,0.95), rgba(25,110,42,0.95)) !important;
+      border: 1px solid #2ecc71 !important;
+      box-shadow: 0 0 8px rgba(46,204,113,0.4);
+    }
+
+    .item-row.is-live .item-amount {
+      color: #2ecc71 !important;
+      font-weight: 900;
+      text-shadow: 0 0 8px rgba(46,204,113,0.5);
+      border-left: 1px solid #2ecc71;
     }
 
     .item-label,
@@ -392,20 +407,28 @@
 
     /* ── HELPERS ── */
     const euroFmt = new Intl.NumberFormat('en-IE', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-    function formatEuro(v) {
-      const n = Number(v);
-      return Number.isFinite(n) ? '\u20ac' + euroFmt.format(n) : '\u20ac0';
-    }
-
-    function formatNewBidCell(v) {
-      if (v === null || v === undefined || v === '') return '';
-      const n = Number(v);
-      return Number.isFinite(n) ? '\u20ac' + euroFmt.format(n) : String(v);
-    }
 
     const escapeHtml = s => String(s)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+    function formatEuro(v) {
+      if (v === null || v === undefined || v === '') return '€0';
+      const strVal = String(v).trim();
+      if (isNaN(strVal)) {
+        return escapeHtml(strVal);
+      }
+      const n = Number(strVal);
+      return Number.isFinite(n) ? '€' + euroFmt.format(n) : escapeHtml(strVal);
+    }
+
+    function formatNewBidCell(v) {
+      if (v === null || v === undefined || v === '') return '';
+      const strVal = String(v).trim();
+      if (isNaN(strVal)) return escapeHtml(strVal);
+      const n = Number(strVal);
+      return Number.isFinite(n) ? '€' + euroFmt.format(n) : escapeHtml(strVal);
+    }
 
     function boldFirstSevenSafe(t) {
       const safe = escapeHtml(t ?? '');
@@ -442,11 +465,16 @@
       const item   = boldFirstSevenSafe((r[0] ?? '').toString());
       const newBid = formatNewBidCell(r[1]);
       const latest = formatEuro(r[2] ?? r[1]);
-      const newBidSafe = escapeHtml(newBid);
+      
+      // Check if either newBid or latest contains *LIVE*
+      const rawLatestStr = String(r[2] ?? r[1] ?? '').trim().toUpperCase();
+      const rawNewBidStr = String(r[1] ?? '').trim().toUpperCase();
+      const isLive = rawLatestStr.includes('*LIVE*') || rawNewBidStr.includes('*LIVE*');
+
       return `
-        <div class="item-row">
+        <div class="item-row ${isLive ? 'is-live' : ''}">
           <div class="item-label">${item}</div>
-          <div class="item-newbid">${newBidSafe}</div>
+          <div class="item-newbid">${newBid}</div>
           <div class="item-amount">${latest}</div>
         </div>`;
     }
@@ -515,7 +543,6 @@
       const closingSoon   = (ctrl['CLOSING_SOON']   || '').toUpperCase() === 'ON';
       const auctionClosed = (ctrl['AUCTION_CLOSED'] || '').toUpperCase() === 'ON';
 
-      /* When 🔒 Close Auction is pressed on master_admin.html */
       if (auctionClosed) {
         runClosingFlash(false);
         document.getElementById('closed-banner').classList.add('active');
