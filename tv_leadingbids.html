@@ -375,9 +375,9 @@
 
   <script>
     /* ── CONFIG ── */
-    const sheetID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
-    const sheetName = 'LEADING BIDS';
-    const range     = 'X5:Z43';
+    const sheetID   = '10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc';
+    const sheetName = 'DISPLAY';
+    const range     = 'H2:J40';
     const CTRL_SHEET = 'CONTROL';
     const CTRL_RANGE = 'A1:B5';
     const REFRESH_MS = 5000;
@@ -585,7 +585,7 @@
                 c[1] && c[1].v != null ? c[1].v : '',
                 c[2] && c[2].v != null ? c[2].v : ''
               ];
-            })
+            }).filter(r => r[0] !== '') /* Filters out empty rows */
           : [];
         renderRows(rows);
 
