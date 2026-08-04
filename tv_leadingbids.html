@@ -400,11 +400,19 @@
     const sheetID   = '10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc';
     const sheetName = 'DISPLAY';
     const range     = 'H3:J40';
+    const DISPLAY_GID = '0';        // gid of the DISPLAY tab
     const CTRL_SHEET = 'CONTROL';
     const CTRL_RANGE = 'A1:B10';
     const REFRESH_MS = 5000;
 
+    // gviz coerces a whole column to one type, so text such as *LIVE* sitting in
+    // the numeric LEADING BID column is returned as an empty string. The export
+    // endpoint returns raw cell text, so it is used for the bids.
     const bidsCsvUrl = () =>
+      `https://docs.google.com/spreadsheets/d/${sheetID}/export?format=csv` +
+      `&gid=${DISPLAY_GID}&range=${range}&cacheBust=${Date.now()}`;
+
+    const bidsCsvFallbackUrl = () =>
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv` +
       `&sheet=${encodeURIComponent(sheetName)}&range=${range}&cacheBust=${Date.now()}`;
 
@@ -436,8 +444,19 @@
 
     async function fetchCsvData(url) {
       const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const raw = await res.text();
       return parseCsv(raw);
+    }
+
+    // Try the export endpoint first; fall back to gviz if it is unavailable.
+    async function fetchBids() {
+      try {
+        return await fetchCsvData(bidsCsvUrl());
+      } catch (e) {
+        console.warn('Export endpoint failed, falling back to gviz:', e.message);
+        return await fetchCsvData(bidsCsvFallbackUrl());
+      }
     }
 
     /* ── HELPERS ── */
@@ -526,17 +545,15 @@
         const latestNum = Number(String(rawLatest).replace(/[^0-9.-]/g, ''));
         latestDisplay = (rawLatest !== '' && !isNaN(latestNum) && latestNum > 0)
           ? '€' + euroFmt.format(latestNum)
-          : '';
+          : '€0';
       }
 
       let newBidDisplay = '';
-      if (!isLive) {
+      if (!isLive && rawNewBid !== '') {
         const bidNum = Number(String(rawNewBid).replace(/[^0-9.-]/g, ''));
-        if (rawNewBid !== '' && !isNaN(bidNum) && bidNum > 0) {
-          newBidDisplay = '€' + euroFmt.format(bidNum);
-        } else if (rawNewBid !== '' && isNaN(bidNum)) {
-          newBidDisplay = escapeHtml(rawNewBid);
-        }
+        newBidDisplay = (!isNaN(bidNum) && bidNum > 0)
+          ? '€' + euroFmt.format(bidNum)
+          : escapeHtml(rawNewBid);
       }
 
       return `
@@ -669,7 +686,7 @@
     async function loadData() {
       try {
         const [bidsRows, ctrlRows] = await Promise.all([
-          fetchCsvData(bidsCsvUrl()),
+          fetchBids(),
           fetchCsvData(ctrlCsvUrl()).catch(() => [])
         ]);
 
