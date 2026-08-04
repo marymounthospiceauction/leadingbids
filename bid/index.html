@@ -782,7 +782,7 @@ Marymount Ball Committee`;
       return true;
     }
 
-    async function apiRequest(payload) {
+   async function apiRequest(payload) {
       const res = await fetch(SCRIPT_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -795,11 +795,10 @@ Marymount Ball Committee`;
       try {
         json = JSON.parse(text);
       } catch (e) {
-        // Fallback: if parsing fails but the response contains certain keywords, treat as success
-        if (text && (text.includes("received") || text.includes("success"))) {
+        if (res.ok && payload.action === "submitBid") {
           return { ok: true, message: "Bid received" };
         }
-        throw new Error("Invalid response from server.");
+        throw new Error("Could not connect to the server. Please try again.");
       }
 
       return json;
