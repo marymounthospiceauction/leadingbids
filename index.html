@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
-  <title>Marymount Auction Leading Bids</title>
-  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <title>Marymount Auction – Committee Admin</title>
 
   <style>
     html, body {
@@ -15,283 +15,809 @@
       min-height: 100%;
     }
 
-    body { overflow-x: hidden; }
+    body { overflow-x: auto; }
+
     * { box-sizing: border-box; }
 
-    .header-image img {
-      width: 100%;
-      max-width: 600px;
-      display: block;
-      margin: 10px auto 20px auto;
-      border-radius: 6px;
-    }
-
-    .button-section {
-      display: flex;
-      justify-content: center;
-      padding: 20px 0;
-      width: 100%;
-    }
-
-    .button-container {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      width: 100%;
-      max-width: 360px;
-      align-items: center;
-    }
-
-    .custom-button {
+    /* ===== LOGIN SCREEN ===== */
+    #loginScreen {
+      position: fixed;
+      inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 100%;
-      padding: 10px 16px;
-      font-size: 17px;
-      font-weight: bold;
-      color: #000;
-      background-color: #bc8b41;
+      background: linear-gradient(135deg, #e6d4ad 0%, #f5e7c3 55%, #e6d4ad 100%);
+      z-index: 9999;
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 16px;
+      padding: 26px 28px;
+      width: 90%;
+      max-width: 380px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
       text-align: center;
-      text-decoration: none;
+    }
+
+    .login-title {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+      letter-spacing: 0.08em;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .login-subtitle {
+      font-size: 0.9rem;
+      margin-bottom: 18px;
+    }
+
+    .login-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+      text-align: left;
+      font-weight: bold;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 10px;
       border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      transition: background-color 0.3s ease;
-      white-space: nowrap;
+      border: 1px solid #aaa;
+      font-size: 1rem;
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      margin-top: 12px;
+      border-radius: 999px;
+      font-weight: bold;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #bc8b41, #e6ce91);
       cursor: pointer;
     }
 
-    .custom-button:hover { background-color: #a87d3a; }
-    .custom-button .emoji { margin-right: 8px; font-size: 1.2em; }
-
-    @media (max-width: 480px) {
-      .custom-button { max-width: 90%; font-size: 16px; padding: 12px; }
-      .button-container { max-width: 90%; }
-    }
-
-    .table-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-      width: 100%;
-    }
-
-    .table-heading {
-      font-size: 1.5em;
-      font-weight: bold;
-      color: #000;
-      margin-bottom: 10px;
-      text-align: center;
-    }
-
-    .table-container {
-      width: 98vw;
-      background: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: clamp(0.6rem, 1.6vw, 0.9rem);
-      table-layout: fixed;
-    }
-
-    thead th {
-      background-color: #000;
-      color: #bc8b41;
-      font-weight: 700;
-      text-transform: uppercase;
-      text-align: center;
-      border: 1px solid #ccc;
-      padding: 0.25em 0.2em;
-      font-size: 0.58rem;
-      line-height: 1.1;
-      white-space: normal;
-    }
-
-    tbody td {
-      border: 1px solid #ccc;
-      vertical-align: middle;
-      padding: 0.3em;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    tbody td:nth-child(1),
-    thead th:nth-child(1) {
-      width: 75%;
-      white-space: normal;
-      word-wrap: break-word;
+    .login-error {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: red;
+      min-height: 16px;
       text-align: left;
     }
 
-    tbody td:nth-child(2),
-    thead th:nth-child(2) {
-      width: 25%;
-      text-align: center;
+    #protectedContent { display: none; }
+
+    /* ===== HEADER IMAGE ===== */
+    .header-image img {
+      width: 100%;
+      max-width: 600px;
+      margin: 10px auto 20px auto;
+      display: block;
     }
 
-    /* LIVE item styling */
-    tr.is-live td { background-color: #0f2a1a; color: #4ade80; }
-    tr.is-live td:nth-child(2) { font-weight: 800; }
-    tr.is-live strong { color: #4ade80; }
+    /* ===== PAGE TITLE ===== */
+    .page-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ===== SECTIONS ===== */
+    .section-wrapper {
+      padding: 0 10px 20px;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #333;
+    }
+
+    /* ===== LIVE ITEMS SECTION ===== */
+    #liveItemsContainer {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      min-height: 80px;
+      margin-bottom: 20px;
+    }
+
+    .live-item-card {
+      display: flex;
+      align-items: stretch;
+      gap: 12px;
+      padding: 12px;
+      background: #f9f9f9;
+      border-left: 4px solid #27ae60;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .live-item-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .live-item-checkbox {
+      flex: 0 0 30px;
+      display: flex;
+      align-items: flex-start;
+      padding-top: 2px;
+    }
+
+    .live-item-checkbox input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .live-item-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .live-item-name {
+      font-weight: bold;
+      color: #111;
+      margin-bottom: 4px;
+    }
+
+    .live-item-bid {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    /* ===== RECORD WINNER FORM (inside live item) ===== */
+    .live-item-form {
+      display: none;
+      flex: 1;
+      min-width: 280px;
+      padding-left: 12px;
+      border-left: 1px solid #ddd;
+    }
+
+    .live-item-form.show {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      color: #1b1b1b;
+      letter-spacing: 0.05em;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #d8c6a0;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #fffdf8;
+      color: #111;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .form-input:focus {
+      border-color: #bc8b41;
+      box-shadow: 0 0 0 3px rgba(195, 146, 67, 0.18);
+    }
+
+    .whatsapp-confirm {
+      background: #e6f4ea;
+      border-left: 4px solid #27ae60;
+      padding: 8px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: #1b5e20;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .whatsapp-confirm.show {
+      display: block;
+    }
+
+    .btn-record-sale {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      background: #27ae60;
+      color: white;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .btn-record-sale:hover {
+      background: #229954;
+    }
+
+    .btn-record-sale:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* ===== AVAILABLE ITEMS SECTION ===== */
+    #availableItemsContainer {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+
+    .available-item-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: #f9f9f9;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .available-item-card:hover {
+      border-color: #bc8b41;
+    }
+
+    .available-item-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .available-item-checkbox {
+      flex: 0 0 30px;
+    }
+
+    .available-item-checkbox input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .available-item-info {
+      flex: 1;
+    }
+
+    .available-item-name {
+      font-weight: bold;
+      color: #111;
+      margin-bottom: 4px;
+    }
+
+    .available-item-bid {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .empty-state {
+      color: #999;
+      padding: 20px;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .error-message {
+      background: #f8d7da;
+      border-left: 4px solid #c0392b;
+      padding: 10px;
+      border-radius: 6px;
+      color: #c0392b;
+      margin-bottom: 12px;
+      display: none;
+      font-size: 0.85rem;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    /* ===== ACTION LOG ===== */
+    .action-log-section {
+      padding: 0 10px 20px;
+    }
+
+    .action-log-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .action-log-container {
+      background: white;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      max-height: 250px;
+      overflow-y: auto;
+      font-size: 0.85rem;
+    }
+
+    .action-log-entry {
+      padding: 8px;
+      border-bottom: 1px solid #f0f0f0;
+      line-height: 1.4;
+    }
+
+    .action-log-entry:last-child {
+      border-bottom: none;
+    }
+
+    .action-log-time {
+      color: #999;
+      font-size: 0.75rem;
+    }
+
+    .action-log-text {
+      color: #333;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .live-item-form {
+        flex: 0 0 100%;
+        border-left: none;
+        border-top: 1px solid #ddd;
+        padding-left: 0;
+        padding-top: 12px;
+        margin-top: 12px;
+      }
+    }
   </style>
 </head>
+
 <body>
 
-  <div class="header-image">
-    <img src="/assets/Marymount%20Header.png"
-         alt="The Starry Night Ball in aid of Marymount University Hospital and Hospice">
-  </div>
+  <!-- LOGIN -->
+  <div id="loginScreen">
+    <div class="login-card">
+      <div class="login-title">Committee Admin</div>
+      <div class="login-subtitle">Enter the password to record sales.</div>
 
-  <div class="button-section">
-    <div class="button-container">
-
-      <a href="https://marymountauction2026.ie/bid" class="custom-button" target="_blank">
-        <span class="emoji">📝</span> Place an Auction Bid
-      </a>
-
-      <a href="https://drive.google.com/file/d/1ooKDPMn_7ALMIvux-RXPBAs4rq3es3eh/view?usp=sharing"
-         class="custom-button" target="_blank" rel="noopener"
-         onclick="
-           const win = window.open('https://drive.google.com/file/d/1ooKDPMn_7ALMIvux-RXPBAs4rq3es3eh/view?usp=sharing', '_blank');
-           if (!win) window.open('https://raw.githubusercontent.com/marymounthospiceauction/marymount-ball-auction/main/2025%20MARYMOUNT%20Starry%20Night%20Booklet.pdf', '_blank');
-           return false;
-         ">
-        <span class="emoji">📜</span> View Auction Listings
-      </a>
-
-      <a href="https://www.idonate.ie/donate/event/MarymountBall2025Donations"
-         class="custom-button" target="_blank">
-        <span class="emoji">❤️</span> Donate Now
-      </a>
-
+      <form id="loginForm">
+        <label class="login-label">Password</label>
+        <input type="password" id="passwordInput" class="login-input" required />
+        <button class="login-button">Unlock</button>
+        <div id="loginError" class="login-error"></div>
+      </form>
     </div>
   </div>
 
-  <div class="table-section">
-    <div class="table-heading">LEADING BIDS</div>
-    <div class="table-container">
-      <table id="bidsTable">
-        <thead>
-          <tr>
-            <th>Item Description</th>
-            <th>Leading Bid</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+  <!-- CONTENT -->
+  <div id="protectedContent">
+
+    <div class="header-image">
+      <img src="/assets/Marymount%20Header.png" alt="Marymount Ball Auction">
     </div>
+
+    <div class="page-title">COMMITTEE ADMIN PANEL</div>
+
+    <!-- LIVE ITEMS SECTION -->
+    <div class="section-wrapper">
+      <div class="section-title">Items Now Live — Record Winner</div>
+      <div id="liveItemsContainer">
+        <div class="empty-state">No items marked as live yet.</div>
+      </div>
+    </div>
+
+    <!-- AVAILABLE ITEMS SECTION -->
+    <div class="section-wrapper">
+      <div class="section-title">Items Available to Mark Live</div>
+      <div id="availableItemsContainer">
+        <div class="empty-state">Loading items...</div>
+      </div>
+    </div>
+
+    <!-- ACTION LOG -->
+    <div class="action-log-section">
+      <div class="action-log-title">Action Log — This Session</div>
+      <div class="action-log-container" id="actionLogContainer">
+        <div style="color: #999; padding: 12px; text-align: center;">No actions yet.</div>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    // Display sheet — no personal data, safe to be public.
-    // Export endpoint used (not gviz) so *LIVE* text in a numeric column
-    // is not silently dropped by type coercion.
-    const SHEET_ID  = '10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc';
-    const SHEET_GID = '0';   // gid of the DISPLAY tab
-    const RANGE     = 'H3:J40';
-    const REFRESH_MS = 5000;
+    const PASSWORD = "Brendan2026";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
+    const LEADING_BIDS_SHEET = "1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc";
+    const LEADING_BIDS_RANGE = "R5:T43";
+    const SETTINGS_SHEET = "1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc";
+    const SETTINGS_RANGE = "A2:G100";
 
-    const exportUrl = () =>
-      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv` +
-      `&gid=${SHEET_GID}&range=${RANGE}&cacheBust=${Date.now()}`;
+    let actionLog = [];
 
-    const gvizUrl = () =>
-      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv` +
-      `&sheet=DISPLAY&range=${RANGE}&cacheBust=${Date.now()}`;
-
-    function parseCsv(text) {
-      const rows = []; let row = ['']; let quote = false;
-      for (let i = 0; i < text.length; i++) {
-        const c = text[i], n = text[i + 1];
-        if (c === '"') {
-          if (quote && n === '"') { row[row.length - 1] += '"'; i++; }
-          else { quote = !quote; }
-        } else if (c === ',' && !quote) {
-          row.push('');
-        } else if ((c === '\r' || c === '\n') && !quote) {
-          if (c === '\r' && n === '\n') i++;
-          if (row.some(cell => cell.trim())) rows.push(row);
-          row = [''];
-        } else {
-          row[row.length - 1] += c;
-        }
+    document.getElementById("loginForm").addEventListener("submit", e => {
+      e.preventDefault();
+      if (document.getElementById("passwordInput").value === PASSWORD) {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("protectedContent").style.display = "block";
+        loadItems();
+      } else {
+        document.getElementById("loginError").textContent = "Incorrect password.";
       }
-      if (row.some(cell => cell.trim())) rows.push(row);
-      return rows;
+    });
+
+    function formatEuro(value) {
+      if (!value || isNaN(value)) return '€0';
+      return '€' + Number(value).toLocaleString('en-IE');
     }
 
-    async function fetchData() {
-      try {
-        const res = await fetch(exportUrl(), { cache: 'no-store' });
-        if (!res.ok) throw new Error('export failed');
-        return parseCsv(await res.text());
-      } catch {
-        // Fallback to gviz — *LIVE* may be lost but at least data shows
-        const res = await fetch(gvizUrl(), { cache: 'no-store' });
-        return parseCsv(await res.text());
-      }
+    function extractItemNumber(label) {
+      const match = label.match(/ITEM\s*(\d+)/i);
+      return match ? match[1] : '';
     }
 
-    function formatItemLabel(raw) {
-      // Normalise any dash variant and rebuild "ITEM XX - Description"
-      const src = String(raw ?? '')
-        .replace(/\u00A0/g, ' ')
-        .replace(/[\u2010-\u2015\u2212]/g, '-')
-        .trim();
-      const m = src.match(/^ITEM\s*0*(\d+)\s*-?\s*(.*)/i);
-      if (!m) return escHtml(src);
-      const num  = m[1].padStart(2, '0');
-      const rest = m[2].trim();
-      return '<strong>ITEM ' + num + '</strong>'
-           + (rest ? '&nbsp;- ' + escHtml(rest) : '');
-    }
+    function loadItems() {
+      const leadingUrl = 
+        `https://docs.google.com/spreadsheets/d/${LEADING_BIDS_SHEET}/gviz/tq?tqx=out:json` +
+        `&sheet=LEADING%20BIDS&range=${encodeURIComponent(LEADING_BIDS_RANGE)}`;
 
-    function escHtml(s) {
-      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
-                      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
+      const settingsUrl = 
+        `https://docs.google.com/spreadsheets/d/${SETTINGS_SHEET}/gviz/tq?tqx=out:json` +
+        `&sheet=SETTINGS&range=${encodeURIComponent(SETTINGS_RANGE)}`;
 
-    function formatEuro(v) {
-      if (!v || v === '') return '€0';
-      const n = Number(String(v).replace(/[^0-9.-]/g, ''));
-      return isNaN(n) ? escHtml(v) : '€' + n.toLocaleString('en-IE');
-    }
+      Promise.all([
+        fetch(leadingUrl).then(r => r.text()),
+        fetch(settingsUrl).then(r => r.text())
+      ])
+        .then(results => {
+          const leadingJson = JSON.parse(results[0].substr(47).slice(0, -2));
+          const settingsJson = JSON.parse(results[1].substr(47).slice(0, -2));
 
-    async function loadData() {
-      try {
-        const rows = await fetchData();
-        const tbody = document.querySelector('#bidsTable tbody');
-        let html = '';
+          const leadingRows = leadingJson.table.rows.map(r => r.c.map(c => c?.v || ''));
+          const settingsRows = settingsJson.table.rows.map(r => r.c.map(c => c?.v || ''));
 
-        rows.forEach(r => {
-          const label  = (r[0] ?? '').trim();
-          const latest = (r[2] ?? r[1] ?? '').trim(); // col J = leading bid
-          if (!label) return;
-
-          const isLive = /LIVE/i.test(latest);
-          const bidDisplay = isLive ? '🟢 LIVE' : formatEuro(latest);
-
-          html += `<tr class="${isLive ? 'is-live' : ''}">
-            <td>${formatItemLabel(label)}</td>
-            <td>${bidDisplay}</td>
-          </tr>`;
+          renderItems(leadingRows, settingsRows);
+        })
+        .catch(err => {
+          console.error("Load error", err);
+          document.getElementById("availableItemsContainer").innerHTML = 
+            '<p style="color: red; padding: 20px;">Could not load items.</p>';
         });
-
-        tbody.innerHTML = html || '<tr><td colspan="2" style="text-align:center;color:#888;">Loading bids...</td></tr>';
-      } catch (err) {
-        console.error('Failed to load sheet', err);
-      }
     }
 
-    loadData();
-    setInterval(loadData, REFRESH_MS);
+    function renderItems(leadingRows, settingsRows) {
+      // Build lead bid map from LEADING_BIDS
+      const leadBidMap = {};
+      leadingRows.forEach(r => {
+        const itemLabel = String(r[0] || '').trim();
+        if (!itemLabel || !/ITEM\s*\d+/i.test(itemLabel)) return;
+        
+        const itemNum = extractItemNumber(itemLabel);
+        const leadBid = Number(String(r[2] || '0').replace(/[^\d.-]/g, '')) || 0;
+        
+        if (itemNum) {
+          leadBidMap[itemNum] = leadBid;
+        }
+      });
+
+      // Build items from SETTINGS (this is the source of truth for what exists)
+      const itemMap = {};
+      settingsRows.forEach(r => {
+        const itemNum = String(r[1] || '').trim();
+        const itemText = String(r[0] || '').trim();
+        const isLiveRaw = r[5];
+        
+        if (!itemNum || !itemText) return;
+
+        // Handle checkbox value: could be true, "TRUE", "YES", 1, etc.
+        const isLive = isLiveRaw === true || 
+                       String(isLiveRaw).toUpperCase() === 'TRUE' || 
+                       String(isLiveRaw).toUpperCase() === 'YES' ||
+                       isLiveRaw === 1;
+
+        // Extract clean description
+        let desc = itemText
+          .replace(/^ITEM\s*\d+\s*-\s*/i, '')           // Remove "ITEM XX -"
+          .replace(/^Lead Bid\s*€[\d,]+\s*-\s*/i, '')   // Remove "Lead Bid €XXX -"
+          .trim();
+
+        itemMap[itemNum] = {
+          itemNum: itemNum,
+          itemLabel: itemText,
+          leadBid: leadBidMap[itemNum] || 0,
+          isLive: isLive,
+          itemText: itemText,
+          description: desc
+        };
+      });
+
+      const liveItems = [];
+      const availableItems = [];
+
+      Object.values(itemMap).forEach(item => {
+        if (item.isLive) {
+          liveItems.push(item);
+        } else {
+          availableItems.push(item);
+        }
+      });
+
+      renderLiveItems(liveItems);
+      renderAvailableItems(availableItems);
+    }
+
+    function renderLiveItems(items) {
+      const container = document.getElementById('liveItemsContainer');
+
+      if (items.length === 0) {
+        container.innerHTML = '<div class="empty-state">No items marked as live yet.</div>';
+        return;
+      }
+
+      let html = '';
+      items.forEach((item, idx) => {
+        html += `
+          <div class="live-item-card" id="live-card-${idx}">
+            <div class="live-item-checkbox">
+              <input 
+                type="checkbox" 
+                checked 
+                id="live-toggle-${idx}"
+                onchange="toggleLive(this, '${item.itemNum}', '${item.description.replace(/'/g, "\\'")}', ${item.leadBid}, ${idx})"
+              />
+            </div>
+            <div class="live-item-info">
+              <div class="live-item-name">ITEM ${item.itemNum} — ${item.description}</div>
+              <div class="live-item-bid">Lead: ${formatEuro(item.leadBid)}</div>
+            </div>
+            <div class="live-item-form" id="form-${idx}">
+              <div id="error-${idx}" class="error-message"></div>
+              
+              <div class="form-group">
+                <label class="form-label">Winner Name</label>
+                <input type="text" class="form-input winner-name-${idx}" placeholder="Enter name" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Mobile Number</label>
+                <input type="tel" class="form-input winner-mobile-${idx}" placeholder="e.g. 0851234567" />
+              </div>
+
+              <div class="whatsapp-confirm" id="whatsapp-${idx}">
+                ✓ WhatsApp notification will be sent
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Sold Price (€)</label>
+                <input type="tel" class="form-input sold-price-${idx}" placeholder="Enter price" inputmode="numeric" />
+              </div>
+
+              <button class="btn-record-sale" onclick="recordSale(${idx}, '${item.itemNum}', '${item.description.replace(/'/g, "\\'")}')">
+                Record Sale
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      items.forEach((item, idx) => {
+        const mobileInput = document.querySelector(`.winner-mobile-${idx}`);
+        const formDiv = document.getElementById(`form-${idx}`);
+        const waConfirm = document.getElementById(`whatsapp-${idx}`);
+
+        if (mobileInput) {
+          mobileInput.addEventListener('input', () => {
+            const mobile = mobileInput.value.trim();
+            formDiv.classList.toggle('show', mobile.length > 0);
+            waConfirm.classList.toggle('show', mobile.length > 0);
+          });
+        }
+      });
+    }
+
+    function renderAvailableItems(items) {
+      const container = document.getElementById('availableItemsContainer');
+
+      if (items.length === 0) {
+        container.innerHTML = '<div class="empty-state">All items are now live or have been sold.</div>';
+        return;
+      }
+
+      items.sort((a, b) => Number(a.itemNum) - Number(b.itemNum));
+
+      let html = '';
+      items.forEach((item, idx) => {
+        html += `
+          <div class="available-item-card">
+            <div class="available-item-checkbox">
+              <input 
+                type="checkbox" 
+                id="avail-toggle-${idx}"
+                onchange="markItemLiveCheckbox(this, '${item.itemNum}', '${item.description.replace(/'/g, "\\'")}', ${item.leadBid})"
+              />
+            </div>
+            <div class="available-item-info">
+              <div class="available-item-name">ITEM ${item.itemNum} — ${item.description}</div>
+              <div class="available-item-bid">Lead: ${formatEuro(item.leadBid)}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function markItemLiveCheckbox(checkbox, itemNum, description, leadBid) {
+      if (!checkbox.checked) {
+        return;
+      }
+
+      const payload = {
+        action: 'markItemLive',
+        itemNumber: itemNum,
+        itemName: `ITEM ${itemNum} - ${description}`
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      })
+        .then(res => res.text())
+        .then(text => {
+          const json = JSON.parse(text);
+          if (json.ok) {
+            addLogEntry(`→ ITEM ${itemNum} marked as live`);
+            checkbox.disabled = true;
+            loadItems();
+          } else {
+            alert('Error: ' + (json.message || 'Failed'));
+            checkbox.checked = false;
+          }
+        })
+        .catch(err => {
+          alert('Error: ' + err.message);
+          checkbox.checked = false;
+        });
+    }
+
+    function toggleLive(checkbox, itemNum, description, leadBid, idx) {
+      if (checkbox.checked) {
+        return;
+      }
+
+      if (!confirm(`Restore ITEM ${itemNum} to available items?`)) {
+        checkbox.checked = true;
+        return;
+      }
+
+      const payload = {
+        action: 'undoItemLive',
+        itemNumber: itemNum,
+        itemName: `ITEM ${itemNum} - ${description}`,
+        itemDescription: description,
+        leadBid: leadBid
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      })
+        .then(res => res.text())
+        .then(text => {
+          const json = JSON.parse(text);
+          if (json.ok) {
+            addLogEntry(`↻ ITEM ${itemNum} restored`);
+            loadItems();
+          } else {
+            alert('Error: ' + (json.message || 'Failed'));
+            checkbox.checked = true;
+          }
+        })
+        .catch(err => {
+          alert('Error: ' + err.message);
+          checkbox.checked = true;
+        });
+    }
+
+    function recordSale(idx, itemNum, description) {
+      const winnerName = document.querySelector(`.winner-name-${idx}`).value.trim();
+      const winnerMobile = document.querySelector(`.winner-mobile-${idx}`).value.trim();
+      const soldPrice = document.querySelector(`.sold-price-${idx}`).value.trim();
+      const errorDiv = document.getElementById(`error-${idx}`);
+
+      errorDiv.classList.remove('show');
+      errorDiv.textContent = '';
+
+      if (!winnerName) {
+        showError(errorDiv, 'Enter winner name.');
+        return;
+      }
+
+      if (!winnerMobile) {
+        showError(errorDiv, 'Enter mobile number.');
+        return;
+      }
+
+      if (!soldPrice || isNaN(soldPrice) || Number(soldPrice) <= 0) {
+        showError(errorDiv, 'Enter valid price.');
+        return;
+      }
+
+      const payload = {
+        action: 'markItemSold',
+        itemNumber: itemNum,
+        itemName: `ITEM ${itemNum} - ${description}`,
+        winnerName: winnerName,
+        winnerMobile: winnerMobile,
+        soldPrice: soldPrice
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      })
+        .then(res => res.text())
+        .then(text => {
+          const json = JSON.parse(text);
+          if (json.ok) {
+            addLogEntry(`✓ ITEM ${itemNum} sold to ${winnerName} for €${Number(soldPrice).toLocaleString('en-IE')}`);
+            document.querySelector(`.winner-name-${idx}`).value = '';
+            document.querySelector(`.winner-mobile-${idx}`).value = '';
+            document.querySelector(`.sold-price-${idx}`).value = '';
+            document.getElementById(`form-${idx}`).classList.remove('show');
+            loadItems();
+          } else {
+            showError(errorDiv, json.message || 'Failed to record sale.');
+          }
+        })
+        .catch(err => {
+          showError(errorDiv, 'Error: ' + err.message);
+        });
+    }
+
+    function showError(div, message) {
+      div.textContent = message;
+      div.classList.add('show');
+    }
+
+    function addLogEntry(text) {
+      const time = new Date().toLocaleTimeString('en-IE');
+      actionLog.unshift({ time, text });
+
+      const container = document.getElementById('actionLogContainer');
+      container.innerHTML = actionLog.slice(0, 20).map(entry => `
+        <div class="action-log-entry">
+          <div class="action-log-time">${entry.time}</div>
+          <div class="action-log-text">${entry.text}</div>
+        </div>
+      `).join('');
+    }
   </script>
 
 </body>
