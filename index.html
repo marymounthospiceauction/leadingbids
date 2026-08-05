@@ -2,16 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-
-  <!-- VIEWPORT — ZOOM ENABLED -->
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
-
   <title>Marymount Auction Leading Bids</title>
   <link rel="icon" type="image/png" href="/assets/favicon.png">
 
-
   <style>
-    /* BASIC PAGE SETUP */
     html, body {
       margin: 0;
       padding: 0;
@@ -20,13 +15,9 @@
       min-height: 100%;
     }
 
-    body {
-      overflow-x: hidden;
-    }
-
+    body { overflow-x: hidden; }
     * { box-sizing: border-box; }
 
-    /* HEADER IMAGE */
     .header-image img {
       width: 100%;
       max-width: 600px;
@@ -35,7 +26,6 @@
       border-radius: 6px;
     }
 
-    /* BUTTON SECTION */
     .button-section {
       display: flex;
       justify-content: center;
@@ -71,27 +61,14 @@
       cursor: pointer;
     }
 
-    .custom-button:hover {
-      background-color: #a87d3a;
-    }
-
-    .custom-button .emoji {
-      margin-right: 8px;
-      font-size: 1.2em;
-    }
+    .custom-button:hover { background-color: #a87d3a; }
+    .custom-button .emoji { margin-right: 8px; font-size: 1.2em; }
 
     @media (max-width: 480px) {
-      .custom-button {
-        max-width: 90%;
-        font-size: 16px;
-        padding: 12px;
-      }
-      .button-container {
-        max-width: 90%;
-      }
+      .custom-button { max-width: 90%; font-size: 16px; padding: 12px; }
+      .button-container { max-width: 90%; }
     }
 
-    /* TABLE SECTION */
     .table-section {
       display: flex;
       flex-direction: column;
@@ -123,7 +100,6 @@
       table-layout: fixed;
     }
 
-    /* HEADER CELLS */
     thead th {
       background-color: #000;
       color: #bc8b41;
@@ -137,7 +113,6 @@
       white-space: normal;
     }
 
-    /* TABLE BODY CELLS */
     tbody td {
       border: 1px solid #ccc;
       vertical-align: middle;
@@ -160,36 +135,32 @@
       width: 25%;
       text-align: center;
     }
+
+    /* LIVE item styling */
+    tr.is-live td { background-color: #0f2a1a; color: #4ade80; }
+    tr.is-live td:nth-child(2) { font-weight: 800; }
+    tr.is-live strong { color: #4ade80; }
   </style>
 </head>
-
 <body>
 
-  <!-- HEADER IMAGE -->
   <div class="header-image">
-<img src="/assets/Marymount%20Header.png"
+    <img src="/assets/Marymount%20Header.png"
          alt="The Starry Night Ball in aid of Marymount University Hospital and Hospice">
   </div>
 
-  <!-- BUTTON SECTION -->
   <div class="button-section">
     <div class="button-container">
 
-      <a href="https://marymountauction2026.ie/bid"
-         class="custom-button" target="_blank">
+      <a href="https://marymountauction2026.ie/bid" class="custom-button" target="_blank">
         <span class="emoji">📝</span> Place an Auction Bid
       </a>
 
-      <!-- VIEW AUCTION LISTINGS – DRIVE PRIMARY, GITHUB FALLBACK -->
       <a href="https://drive.google.com/file/d/1ooKDPMn_7ALMIvux-RXPBAs4rq3es3eh/view?usp=sharing"
-         class="custom-button"
-         target="_blank"
-         rel="noopener"
+         class="custom-button" target="_blank" rel="noopener"
          onclick="
-           const primaryUrl = 'https://drive.google.com/file/d/1ooKDPMn_7ALMIvux-RXPBAs4rq3es3eh/view?usp=sharing';
-           const fallbackUrl = 'https://raw.githubusercontent.com/marymounthospiceauction/leadingbids/main/2025%20MARYMOUNT%20Starry%20Night%20Booklet.pdf';
-           const win = window.open(primaryUrl, '_blank');
-           if (!win) { window.open(fallbackUrl, '_blank'); }
+           const win = window.open('https://drive.google.com/file/d/1ooKDPMn_7ALMIvux-RXPBAs4rq3es3eh/view?usp=sharing', '_blank');
+           if (!win) window.open('https://raw.githubusercontent.com/marymounthospiceauction/marymount-ball-auction/main/2025%20MARYMOUNT%20Starry%20Night%20Booklet.pdf', '_blank');
            return false;
          ">
         <span class="emoji">📜</span> View Auction Listings
@@ -203,10 +174,8 @@
     </div>
   </div>
 
-  <!-- TABLE SECTION -->
   <div class="table-section">
     <div class="table-heading">LEADING BIDS</div>
-
     <div class="table-container">
       <table id="bidsTable">
         <thead>
@@ -221,47 +190,101 @@
   </div>
 
   <script>
-    /* ============================================================
-       DATA SOURCE — edit these if the sheet or range ever changes
-       ============================================================ */
-    const SHEET_ID   = '1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc';
-    const SHEET_NAME = 'LEADING BIDS';
-    const SHEET_RANGE = 'V5:W43';   // v = item description, w = leading bid
-    const REFRESH_MS  = 5000;       // how often to poll the sheet (milliseconds)
-    /* ============================================================ */
+    // Display sheet — no personal data, safe to be public.
+    // Export endpoint used (not gviz) so *LIVE* text in a numeric column
+    // is not silently dropped by type coercion.
+    const SHEET_ID  = '10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc';
+    const SHEET_GID = '0';   // gid of the DISPLAY tab
+    const RANGE     = 'H3:J40';
+    const REFRESH_MS = 5000;
 
-    const url =
-      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json` +
-      `&sheet=${encodeURIComponent(SHEET_NAME)}&range=${SHEET_RANGE}`;
+    const exportUrl = () =>
+      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv` +
+      `&gid=${SHEET_GID}&range=${RANGE}&cacheBust=${Date.now()}`;
 
-    function formatEuro(value) {
-      if (!value || isNaN(value)) return '€0';
-      return '€' + Number(value).toLocaleString('en-IE');
+    const gvizUrl = () =>
+      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv` +
+      `&sheet=DISPLAY&range=${RANGE}&cacheBust=${Date.now()}`;
+
+    function parseCsv(text) {
+      const rows = []; let row = ['']; let quote = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i], n = text[i + 1];
+        if (c === '"') {
+          if (quote && n === '"') { row[row.length - 1] += '"'; i++; }
+          else { quote = !quote; }
+        } else if (c === ',' && !quote) {
+          row.push('');
+        } else if ((c === '\r' || c === '\n') && !quote) {
+          if (c === '\r' && n === '\n') i++;
+          if (row.some(cell => cell.trim())) rows.push(row);
+          row = [''];
+        } else {
+          row[row.length - 1] += c;
+        }
+      }
+      if (row.some(cell => cell.trim())) rows.push(row);
+      return rows;
     }
 
-    function boldFirstSeven(text) {
-      if (!text) return '';
-      return '<strong>' + text.substring(0, 7) + '</strong>' + text.substring(7);
+    async function fetchData() {
+      try {
+        const res = await fetch(exportUrl(), { cache: 'no-store' });
+        if (!res.ok) throw new Error('export failed');
+        return parseCsv(await res.text());
+      } catch {
+        // Fallback to gviz — *LIVE* may be lost but at least data shows
+        const res = await fetch(gvizUrl(), { cache: 'no-store' });
+        return parseCsv(await res.text());
+      }
+    }
+
+    function formatItemLabel(raw) {
+      // Normalise any dash variant and rebuild "ITEM XX - Description"
+      const src = String(raw ?? '')
+        .replace(/\u00A0/g, ' ')
+        .replace(/[\u2010-\u2015\u2212]/g, '-')
+        .trim();
+      const m = src.match(/^ITEM\s*0*(\d+)\s*-?\s*(.*)/i);
+      if (!m) return escHtml(src);
+      const num  = m[1].padStart(2, '0');
+      const rest = m[2].trim();
+      return '<strong>ITEM ' + num + '</strong>'
+           + (rest ? '&nbsp;- ' + escHtml(rest) : '');
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+                      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function formatEuro(v) {
+      if (!v || v === '') return '€0';
+      const n = Number(String(v).replace(/[^0-9.-]/g, ''));
+      return isNaN(n) ? escHtml(v) : '€' + n.toLocaleString('en-IE');
     }
 
     async function loadData() {
       try {
-        const res = await fetch(url);
-        const text = await res.text();
-        const json = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = json.table.rows.map(r => r.c.map(c => c?.v || ''));
-
+        const rows = await fetchData();
         const tbody = document.querySelector('#bidsTable tbody');
         let html = '';
 
         rows.forEach(r => {
-          const item       = boldFirstSeven(r[0]);
-          const leadingBid = formatEuro(r[1]);
-          html += `<tr><td>${item}</td><td>${leadingBid}</td></tr>`;
+          const label  = (r[0] ?? '').trim();
+          const latest = (r[2] ?? r[1] ?? '').trim(); // col J = leading bid
+          if (!label) return;
+
+          const isLive = /LIVE/i.test(latest);
+          const bidDisplay = isLive ? '🟢 LIVE' : formatEuro(latest);
+
+          html += `<tr class="${isLive ? 'is-live' : ''}">
+            <td>${formatItemLabel(label)}</td>
+            <td>${bidDisplay}</td>
+          </tr>`;
         });
 
-        tbody.innerHTML = html;
-
+        tbody.innerHTML = html || '<tr><td colspan="2" style="text-align:center;color:#888;">Loading bids...</td></tr>';
       } catch (err) {
         console.error('Failed to load sheet', err);
       }
@@ -272,4 +295,4 @@
   </script>
 
 </body>
-</html> 
+</html>
