@@ -109,54 +109,109 @@
       letter-spacing: 0.05em;
     }
 
-    /* ===== ITEM CARD ===== */
-    .card-section {
+    /* ===== SECTIONS ===== */
+    .section-wrapper {
       padding: 0 10px 20px;
     }
 
-    .item-card {
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #333;
+    }
+
+    /* ===== LIVE ITEMS SECTION ===== */
+    #liveItemsContainer {
       background: white;
       border-radius: 12px;
-      padding: 18px;
-      margin-bottom: 16px;
+      padding: 16px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-      border-left: 6px solid #bc8b41;
+      min-height: 80px;
+      margin-bottom: 20px;
     }
 
-    .item-header {
-      font-size: 1.2rem;
-      font-weight: bold;
+    .live-item-card {
+      display: flex;
+      align-items: stretch;
+      gap: 12px;
+      padding: 12px;
+      background: #f9f9f9;
+      border-left: 4px solid #27ae60;
+      border-radius: 6px;
       margin-bottom: 12px;
-      color: #111;
+      flex-wrap: wrap;
     }
 
-    .item-subheader {
-      font-size: 0.9rem;
+    .live-item-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .live-item-checkbox {
+      flex: 0 0 30px;
+      display: flex;
+      align-items: flex-start;
+      padding-top: 2px;
+    }
+
+    .live-item-checkbox input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .live-item-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .live-item-name {
+      font-weight: bold;
+      color: #111;
+      margin-bottom: 4px;
+    }
+
+    .live-item-bid {
+      font-size: 0.85rem;
       color: #666;
-      margin-bottom: 16px;
-      font-weight: 500;
+    }
+
+    /* ===== RECORD WINNER FORM (inside live item) ===== */
+    .live-item-form {
+      display: none;
+      flex: 1;
+      min-width: 280px;
+      padding-left: 12px;
+      border-left: 1px solid #ddd;
+    }
+
+    .live-item-form.show {
+      display: block;
     }
 
     .form-group {
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
 
     .form-label {
       display: block;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       font-weight: bold;
       text-transform: uppercase;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       color: #1b1b1b;
       letter-spacing: 0.05em;
     }
 
     .form-input {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       border: 2px solid #d8c6a0;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 14px;
       background: #fffdf8;
       color: #111;
       outline: none;
@@ -168,24 +223,14 @@
       box-shadow: 0 0 0 3px rgba(195, 146, 67, 0.18);
     }
 
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .two-col .form-group {
-      margin-bottom: 0;
-    }
-
     .whatsapp-confirm {
       background: #e6f4ea;
       border-left: 4px solid #27ae60;
-      padding: 12px;
-      border-radius: 6px;
-      font-size: 0.9rem;
+      padding: 8px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
       color: #1b5e20;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
       display: none;
     }
 
@@ -193,41 +238,104 @@
       display: block;
     }
 
-    .whatsapp-confirm strong {
-      font-weight: bold;
-    }
-
-    .btn {
+    .btn-record-sale {
       width: 100%;
       border: none;
-      border-radius: 10px;
-      padding: 14px 18px;
-      font-size: 1.1rem;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.95rem;
       font-weight: bold;
-      cursor: pointer;
       background: #27ae60;
       color: white;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      cursor: pointer;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
     }
 
-    .btn:hover {
+    .btn-record-sale:hover {
       background: #229954;
     }
 
-    .btn:disabled {
+    .btn-record-sale:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
 
-    .btn-secondary {
-      background: #bc8b41;
-      margin-top: 8px;
+    /* ===== AVAILABLE ITEMS SECTION ===== */
+    #availableItemsContainer {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
     }
 
-    .btn-secondary:hover {
-      background: #a87933;
+    .available-item-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: #f9f9f9;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .available-item-card:hover {
+      border-color: #bc8b41;
+    }
+
+    .available-item-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .available-item-checkbox {
+      flex: 0 0 30px;
+    }
+
+    .available-item-checkbox input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .available-item-info {
+      flex: 1;
+    }
+
+    .available-item-name {
+      font-weight: bold;
+      color: #111;
+      margin-bottom: 4px;
+    }
+
+    .available-item-bid {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .empty-state {
+      color: #999;
+      padding: 20px;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .error-message {
+      background: #f8d7da;
+      border-left: 4px solid #c0392b;
+      padding: 10px;
+      border-radius: 6px;
+      color: #c0392b;
+      margin-bottom: 12px;
+      display: none;
+      font-size: 0.85rem;
+    }
+
+    .error-message.show {
+      display: block;
     }
 
     /* ===== ACTION LOG ===== */
@@ -248,7 +356,7 @@
       border-radius: 8px;
       padding: 12px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      max-height: 300px;
+      max-height: 250px;
       overflow-y: auto;
       font-size: 0.85rem;
     }
@@ -265,7 +373,7 @@
 
     .action-log-time {
       color: #999;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
     }
 
     .action-log-text {
@@ -273,32 +381,14 @@
       font-weight: 500;
     }
 
-    .error-message {
-      background: #f8d7da;
-      border-left: 4px solid #c0392b;
-      padding: 12px;
-      border-radius: 6px;
-      color: #c0392b;
-      margin-bottom: 14px;
-      display: none;
-      font-size: 0.9rem;
-    }
-
-    .error-message.show {
-      display: block;
-    }
-
-    @media (max-width: 480px) {
-      .two-col {
-        grid-template-columns: 1fr;
-      }
-
-      .item-header {
-        font-size: 1rem;
-      }
-
-      .page-title {
-        font-size: 1.5rem;
+    @media (max-width: 768px) {
+      .live-item-form {
+        flex: 0 0 100%;
+        border-left: none;
+        border-top: 1px solid #ddd;
+        padding-left: 0;
+        padding-top: 12px;
+        margin-top: 12px;
       }
     }
   </style>
@@ -325,15 +415,28 @@
   <div id="protectedContent">
 
     <div class="header-image">
-      <img src="Marymount%20Header.png" alt="Marymount Ball Auction">
+      <img src="/assets/Marymount%20Header.png" alt="Marymount Ball Auction">
     </div>
 
     <div class="page-title">COMMITTEE ADMIN PANEL</div>
 
-    <div class="card-section">
-      <div id="itemsContainer"></div>
+    <!-- LIVE ITEMS SECTION -->
+    <div class="section-wrapper">
+      <div class="section-title">Items Now Live — Record Winner</div>
+      <div id="liveItemsContainer">
+        <div class="empty-state">No items marked as live yet.</div>
+      </div>
     </div>
 
+    <!-- AVAILABLE ITEMS SECTION -->
+    <div class="section-wrapper">
+      <div class="section-title">Items Available to Mark Live</div>
+      <div id="availableItemsContainer">
+        <div class="empty-state">Loading items...</div>
+      </div>
+    </div>
+
+    <!-- ACTION LOG -->
     <div class="action-log-section">
       <div class="action-log-title">Action Log — This Session</div>
       <div class="action-log-container" id="actionLogContainer">
@@ -347,7 +450,9 @@
     const PASSWORD = "Brendan2026";
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
     const LEADING_BIDS_SHEET = "1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc";
-    const LEADING_BIDS_RANGE = "R5:T43"; // item, new bid, leading bid
+    const LEADING_BIDS_RANGE = "R5:T43";
+    const SETTINGS_SHEET = "1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc";
+    const SETTINGS_RANGE = "A2:G100";
 
     let actionLog = [];
 
@@ -356,91 +461,15 @@
       if (document.getElementById("passwordInput").value === PASSWORD) {
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("protectedContent").style.display = "block";
-        loadLiveItems();
+        loadItems();
       } else {
         document.getElementById("loginError").textContent = "Incorrect password.";
       }
     });
 
-    function loadLiveItems() {
-      const url = 
-        `https://docs.google.com/spreadsheets/d/${LEADING_BIDS_SHEET}/gviz/tq?tqx=out:json` +
-        `&sheet=LEADING%20BIDS&range=${encodeURIComponent(LEADING_BIDS_RANGE)}`;
-
-      fetch(url)
-        .then(res => res.text())
-        .then(text => {
-          const json = JSON.parse(text.substr(47).slice(0, -2));
-          const rows = json.table.rows.map(r => r.c.map(c => c?.v || ''));
-          renderItems(rows);
-        })
-        .catch(err => {
-          console.error("Sheet load error", err);
-          document.getElementById("itemsContainer").innerHTML = 
-            '<p style="color: red; padding: 20px;">Could not load items.</p>';
-        });
-    }
-
-    function renderItems(rows) {
-      const container = document.getElementById("itemsContainer");
-      let html = '';
-
-      rows.forEach((r, idx) => {
-        const itemLabel = String(r[0] || '').trim();
-        const leadBid = formatEuro(r[2]);
-
-        if (!itemLabel) return;
-
-        const itemNum = extractItemNumber(itemLabel);
-        const itemName = extractItemName(itemLabel);
-
-        html += `
-          <div class="item-card">
-            <div class="item-header">${itemLabel}</div>
-            <div class="item-subheader">Lead Bid: ${leadBid}</div>
-
-            <div id="error-${idx}" class="error-message"></div>
-
-            <div class="form-group">
-              <label class="form-label">Winner Name</label>
-              <input type="text" class="form-input winner-name-${idx}" placeholder="Enter winner's name" />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Winner Mobile Number</label>
-              <input type="tel" class="form-input winner-mobile-${idx}" placeholder="e.g. 0851234567 or 00441234567890" />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Sold Price (€)</label>
-              <input type="tel" class="form-input sold-price-${idx}" placeholder="Enter price" inputmode="numeric" />
-            </div>
-
-            <div class="whatsapp-confirm" id="whatsapp-${idx}">
-              <strong>✓ WhatsApp winner notification will be sent</strong> to the mobile number above.
-            </div>
-
-            <button class="btn" onclick="recordSale(${idx}, '${itemNum}', '${itemName}')">
-              Record Sale
-            </button>
-          </div>
-        `;
-      });
-
-      container.innerHTML = html;
-
-      // Show WhatsApp confirmation when mobile is entered
-      document.querySelectorAll('.form-input[class*="winner-mobile"]').forEach((input, idx) => {
-        input.addEventListener('input', () => {
-          const mobile = input.value.trim();
-          const confirmDiv = document.getElementById(`whatsapp-${idx}`);
-          if (mobile) {
-            confirmDiv.classList.add('show');
-          } else {
-            confirmDiv.classList.remove('show');
-          }
-        });
-      });
+    function formatEuro(value) {
+      if (!value || isNaN(value)) return '€0';
+      return '€' + Number(value).toLocaleString('en-IE');
     }
 
     function extractItemNumber(label) {
@@ -448,55 +477,288 @@
       return match ? match[1] : '';
     }
 
-    function extractItemName(label) {
-      return label.replace(/^ITEM\s*\d+\s*-?\s*/i, '').trim();
+    function loadItems() {
+      const leadingUrl = 
+        `https://docs.google.com/spreadsheets/d/${LEADING_BIDS_SHEET}/gviz/tq?tqx=out:json` +
+        `&sheet=LEADING%20BIDS&range=${encodeURIComponent(LEADING_BIDS_RANGE)}`;
+
+      const settingsUrl = 
+        `https://docs.google.com/spreadsheets/d/${SETTINGS_SHEET}/gviz/tq?tqx=out:json` +
+        `&sheet=SETTINGS&range=${encodeURIComponent(SETTINGS_RANGE)}`;
+
+      Promise.all([
+        fetch(leadingUrl).then(r => r.text()),
+        fetch(settingsUrl).then(r => r.text())
+      ])
+        .then(results => {
+          const leadingJson = JSON.parse(results[0].substr(47).slice(0, -2));
+          const settingsJson = JSON.parse(results[1].substr(47).slice(0, -2));
+
+          const leadingRows = leadingJson.table.rows.map(r => r.c.map(c => c?.v || ''));
+          const settingsRows = settingsJson.table.rows.map(r => r.c.map(c => c?.v || ''));
+
+          renderItems(leadingRows, settingsRows);
+        })
+        .catch(err => {
+          console.error("Load error", err);
+          document.getElementById("availableItemsContainer").innerHTML = 
+            '<p style="color: red; padding: 20px;">Could not load items.</p>';
+        });
     }
 
-    function formatEuro(value) {
-      if (!value || isNaN(value)) return '€0';
-      return '€' + Number(value).toLocaleString('en-IE');
+    function renderItems(leadingRows, settingsRows) {
+      const itemMap = {};
+
+      leadingRows.forEach((r, idx) => {
+        const itemLabel = String(r[0] || '').trim();
+        const leadBid = Number(String(r[2] || '0').replace(/[^\d.-]/g, '')) || 0;
+
+        if (!itemLabel || !/ITEM\s*\d+/i.test(itemLabel)) return;
+
+        const itemNum = extractItemNumber(itemLabel);
+        if (!itemNum) return;
+
+        itemMap[itemNum] = {
+          itemNum: itemNum,
+          itemLabel: itemLabel,
+          leadBid: leadBid,
+          isLive: false,
+          itemText: itemLabel,
+          description: itemLabel.replace(/^ITEM\s*\d+\s*-\s*Lead Bid\s*€[\d,]+\s*-\s*/i, '').trim()
+        };
+      });
+
+      settingsRows.forEach(r => {
+        const itemNum = String(r[1] || '').trim();
+        const itemText = String(r[0] || '').trim();
+        const isLive = r[5] === true;
+
+        if (itemNum && itemMap[itemNum]) {
+          itemMap[itemNum].isLive = isLive;
+          if (itemText) itemMap[itemNum].itemText = itemText;
+        }
+      });
+
+      const liveItems = [];
+      const availableItems = [];
+
+      Object.values(itemMap).forEach(item => {
+        if (item.isLive) {
+          liveItems.push(item);
+        } else {
+          availableItems.push(item);
+        }
+      });
+
+      renderLiveItems(liveItems);
+      renderAvailableItems(availableItems);
     }
 
-    function recordSale(idx, itemNum, itemName) {
+    function renderLiveItems(items) {
+      const container = document.getElementById('liveItemsContainer');
+
+      if (items.length === 0) {
+        container.innerHTML = '<div class="empty-state">No items marked as live yet.</div>';
+        return;
+      }
+
+      let html = '';
+      items.forEach((item, idx) => {
+        html += `
+          <div class="live-item-card" id="live-card-${idx}">
+            <div class="live-item-checkbox">
+              <input 
+                type="checkbox" 
+                checked 
+                id="live-toggle-${idx}"
+                onchange="toggleLive(this, '${item.itemNum}', '${item.description.replace(/'/g, "\\'")}', ${item.leadBid}, ${idx})"
+              />
+            </div>
+            <div class="live-item-info">
+              <div class="live-item-name">ITEM ${item.itemNum} — ${item.description}</div>
+              <div class="live-item-bid">Lead: ${formatEuro(item.leadBid)}</div>
+            </div>
+            <div class="live-item-form" id="form-${idx}">
+              <div id="error-${idx}" class="error-message"></div>
+              
+              <div class="form-group">
+                <label class="form-label">Winner Name</label>
+                <input type="text" class="form-input winner-name-${idx}" placeholder="Enter name" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Mobile Number</label>
+                <input type="tel" class="form-input winner-mobile-${idx}" placeholder="e.g. 0851234567" />
+              </div>
+
+              <div class="whatsapp-confirm" id="whatsapp-${idx}">
+                ✓ WhatsApp notification will be sent
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Sold Price (€)</label>
+                <input type="tel" class="form-input sold-price-${idx}" placeholder="Enter price" inputmode="numeric" />
+              </div>
+
+              <button class="btn-record-sale" onclick="recordSale(${idx}, '${item.itemNum}', '${item.description.replace(/'/g, "\\'")}')">
+                Record Sale
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      items.forEach((item, idx) => {
+        const mobileInput = document.querySelector(`.winner-mobile-${idx}`);
+        const formDiv = document.getElementById(`form-${idx}`);
+        const waConfirm = document.getElementById(`whatsapp-${idx}`);
+
+        if (mobileInput) {
+          mobileInput.addEventListener('input', () => {
+            const mobile = mobileInput.value.trim();
+            formDiv.classList.toggle('show', mobile.length > 0);
+            waConfirm.classList.toggle('show', mobile.length > 0);
+          });
+        }
+      });
+    }
+
+    function renderAvailableItems(items) {
+      const container = document.getElementById('availableItemsContainer');
+
+      if (items.length === 0) {
+        container.innerHTML = '<div class="empty-state">All items are now live or have been sold.</div>';
+        return;
+      }
+
+      items.sort((a, b) => Number(a.itemNum) - Number(b.itemNum));
+
+      let html = '';
+      items.forEach((item, idx) => {
+        html += `
+          <div class="available-item-card">
+            <div class="available-item-checkbox">
+              <input 
+                type="checkbox" 
+                id="avail-toggle-${idx}"
+                onchange="markItemLiveCheckbox(this, '${item.itemNum}', '${item.description.replace(/'/g, "\\'")}', ${item.leadBid})"
+              />
+            </div>
+            <div class="available-item-info">
+              <div class="available-item-name">ITEM ${item.itemNum} — ${item.description}</div>
+              <div class="available-item-bid">Lead: ${formatEuro(item.leadBid)}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function markItemLiveCheckbox(checkbox, itemNum, description, leadBid) {
+      if (!checkbox.checked) {
+        return;
+      }
+
+      const payload = {
+        action: 'markItemLive',
+        itemNumber: itemNum,
+        itemName: `ITEM ${itemNum} - ${description}`
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      })
+        .then(res => res.text())
+        .then(text => {
+          const json = JSON.parse(text);
+          if (json.ok) {
+            addLogEntry(`→ ITEM ${itemNum} marked as live`);
+            checkbox.disabled = true;
+            loadItems();
+          } else {
+            alert('Error: ' + (json.message || 'Failed'));
+            checkbox.checked = false;
+          }
+        })
+        .catch(err => {
+          alert('Error: ' + err.message);
+          checkbox.checked = false;
+        });
+    }
+
+    function toggleLive(checkbox, itemNum, description, leadBid, idx) {
+      if (checkbox.checked) {
+        return;
+      }
+
+      if (!confirm(`Restore ITEM ${itemNum} to available items?`)) {
+        checkbox.checked = true;
+        return;
+      }
+
+      const payload = {
+        action: 'undoItemLive',
+        itemNumber: itemNum,
+        itemName: `ITEM ${itemNum} - ${description}`,
+        itemDescription: description,
+        leadBid: leadBid
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      })
+        .then(res => res.text())
+        .then(text => {
+          const json = JSON.parse(text);
+          if (json.ok) {
+            addLogEntry(`↻ ITEM ${itemNum} restored`);
+            loadItems();
+          } else {
+            alert('Error: ' + (json.message || 'Failed'));
+            checkbox.checked = true;
+          }
+        })
+        .catch(err => {
+          alert('Error: ' + err.message);
+          checkbox.checked = true;
+        });
+    }
+
+    function recordSale(idx, itemNum, description) {
       const winnerName = document.querySelector(`.winner-name-${idx}`).value.trim();
       const winnerMobile = document.querySelector(`.winner-mobile-${idx}`).value.trim();
       const soldPrice = document.querySelector(`.sold-price-${idx}`).value.trim();
       const errorDiv = document.getElementById(`error-${idx}`);
 
-      // Clear errors
       errorDiv.classList.remove('show');
       errorDiv.textContent = '';
 
-      // Validate
       if (!winnerName) {
-        showError(errorDiv, 'Please enter the winner\'s name.');
+        showError(errorDiv, 'Enter winner name.');
         return;
       }
 
       if (!winnerMobile) {
-        showError(errorDiv, 'Please enter the winner\'s mobile number.');
+        showError(errorDiv, 'Enter mobile number.');
         return;
       }
 
-      if (!soldPrice || isNaN(soldPrice)) {
-        showError(errorDiv, 'Please enter a valid sold price.');
+      if (!soldPrice || isNaN(soldPrice) || Number(soldPrice) <= 0) {
+        showError(errorDiv, 'Enter valid price.');
         return;
       }
 
-      if (Number(soldPrice) <= 0) {
-        showError(errorDiv, 'Sold price must be greater than 0.');
-        return;
-      }
-
-      // Send to backend
-      recordSaleToBackend(itemNum, itemName, winnerName, winnerMobile, soldPrice, errorDiv, idx);
-    }
-
-    function recordSaleToBackend(itemNum, itemName, winnerName, winnerMobile, soldPrice, errorDiv, idx) {
       const payload = {
         action: 'markItemSold',
         itemNumber: itemNum,
-        itemName: itemName,
+        itemName: `ITEM ${itemNum} - ${description}`,
         winnerName: winnerName,
         winnerMobile: winnerMobile,
         soldPrice: soldPrice
@@ -511,17 +773,18 @@
         .then(text => {
           const json = JSON.parse(text);
           if (json.ok) {
-            addLogEntry(`✓ ${itemName} sold to ${winnerName} for €${Number(soldPrice).toLocaleString('en-IE')}`);
+            addLogEntry(`✓ ITEM ${itemNum} sold to ${winnerName} for €${Number(soldPrice).toLocaleString('en-IE')}`);
             document.querySelector(`.winner-name-${idx}`).value = '';
             document.querySelector(`.winner-mobile-${idx}`).value = '';
             document.querySelector(`.sold-price-${idx}`).value = '';
-            document.getElementById(`whatsapp-${idx}`).classList.remove('show');
+            document.getElementById(`form-${idx}`).classList.remove('show');
+            loadItems();
           } else {
             showError(errorDiv, json.message || 'Failed to record sale.');
           }
         })
         .catch(err => {
-          showError(errorDiv, 'Error: ' + (err.message || 'Network error'));
+          showError(errorDiv, 'Error: ' + err.message);
         });
     }
 
@@ -535,7 +798,7 @@
       actionLog.unshift({ time, text });
 
       const container = document.getElementById('actionLogContainer');
-      container.innerHTML = actionLog.map((entry, i) => `
+      container.innerHTML = actionLog.slice(0, 20).map(entry => `
         <div class="action-log-entry">
           <div class="action-log-time">${entry.time}</div>
           <div class="action-log-text">${entry.text}</div>
