@@ -487,29 +487,57 @@
         `https://docs.google.com/spreadsheets/d/${SETTINGS_SHEET}/gviz/tq?tqx=out:json` +
         `&sheet=SETTINGS&range=${encodeURIComponent(SETTINGS_RANGE)}`;
 
+      console.log('loadItems() called');
+      console.log('LEADING_BIDS URL:', leadingUrl);
+      console.log('SETTINGS URL:', settingsUrl);
+
       Promise.all([
-        fetch(leadingUrl).then(r => r.text()),
-        fetch(settingsUrl).then(r => r.text())
+        fetch(leadingUrl).then(r => {
+          console.log('LEADING_BIDS fetch status:', r.status);
+          return r.text();
+        }),
+        fetch(settingsUrl).then(r => {
+          console.log('SETTINGS fetch status:', r.status);
+          return r.text();
+        })
       ])
         .then(results => {
-          const leadingJson = JSON.parse(results[0].substr(47).slice(0, -2));
-          const settingsJson = JSON.parse(results[1].substr(47).slice(0, -2));
+          console.log('Fetch successful, parsing JSON...');
+          console.log('LEADING_BIDS response length:', results[0].length);
+          console.log('SETTINGS response length:', results[1].length);
 
-          const leadingRows = leadingJson.table.rows.map(r => r.c.map(c => c?.v || ''));
-          const settingsRows = settingsJson.table.rows.map(r => r.c.map(c => c?.v || ''));
+          try {
+            const leadingJson = JSON.parse(results[0].substr(47).slice(0, -2));
+            const settingsJson = JSON.parse(results[1].substr(47).slice(0, -2));
 
-          renderItems(leadingRows, settingsRows);
+            console.log('JSON parsed successfully');
+            const leadingRows = leadingJson.table.rows.map(r => r.c.map(c => c?.v || ''));
+            const settingsRows = settingsJson.table.rows.map(r => r.c.map(c => c?.v || ''));
+
+            console.log('Rows extracted. LEADING_BIDS rows:', leadingRows.length, 'SETTINGS rows:', settingsRows.length);
+
+            renderItems(leadingRows, settingsRows);
+          } catch (parseErr) {
+            console.error('JSON parse error:', parseErr);
+            document.getElementById("availableItemsContainer").innerHTML = 
+              '<p style="color: red; padding: 20px;">Error parsing data: ' + parseErr.message + '</p>';
+          }
         })
         .catch(err => {
-          console.error("Load error", err);
+          console.error("Load error:", err);
           document.getElementById("availableItemsContainer").innerHTML = 
-            '<p style="color: red; padding: 20px;">Could not load items.</p>';
+            '<p style="color: red; padding: 20px;">Could not load items: ' + err.message + '</p>';
         });
     }
 
     function renderItems(leadingRows, settingsRows) {
+      // Debug: log what we got from SETTINGS
+      console.log('SETTINGS rows received:', settingsRows.length);
+      settingsRows.slice(0, 5).forEach((r, i) => {
+        console.log(`Row ${i}: itemNum=${r[1]}, itemText=${r[0]}, isLiveRaw=${r[5]}`);
+      });
+
       // Build lead bid map from LEADING_BIDS
-      // R5:T43 = item label (R), new bid (S), leading bid amount (T)
       const leadBidMap = {};
       leadingRows.forEach(r => {
         const itemLabel = String(r[0] || '').trim();
@@ -538,13 +566,12 @@
                        String(isLiveRaw).toUpperCase() === 'YES' ||
                        isLiveRaw === 1;
 
-        // Extract description — be more aggressive
+        // Extract description
         let desc = itemText
-          .replace(/^ITEM\s+\d+\s*[-–—]\s*/i, '')           // Remove "ITEM XX -"
-          .replace(/^Lead\s+Bid\s+€[\d,]+\s*[-–—]\s*/i, '') // Remove "Lead Bid €XXX -"
+          .replace(/^ITEM\s+\d+\s*[-–—]\s*/i, '')           
+          .replace(/^Lead\s+Bid\s+€[\d,]+\s*[-–—]\s*/i, '') 
           .trim();
         
-        // Fallback: if still contains "ITEM", just take everything after the first dash/hyphen
         if (desc.toUpperCase().startsWith('ITEM')) {
           const dashIdx = itemText.indexOf(' — ') || itemText.indexOf(' - ');
           if (dashIdx > 0) {
@@ -569,11 +596,15 @@
 
       Object.values(itemMap).forEach(item => {
         if (item.isLive) {
+          console.log('LIVE ITEM:', item.itemNum, item.description);
           liveItems.push(item);
         } else {
           availableItems.push(item);
         }
       });
+
+      console.log('Live items count:', liveItems.length);
+      console.log('Available items count:', availableItems.length);
 
       renderLiveItems(liveItems);
       renderAvailableItems(availableItems);
@@ -684,6 +715,11 @@
 
     function markItemLiveCheckbox(checkbox, itemNum, description, leadBid) {
       if (!checkbox.checked) {
+        return;
+      }
+
+      if (!confirm(`Mark ITEM ${itemNum} as LIVE?\n\n${description}`)) {
+        checkbox.checked = false;
         return;
       }
 
