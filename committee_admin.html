@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5" />
   <title>Marymount Auction – Committee Admin</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
 
   <style>
     html, body {
@@ -508,10 +509,11 @@
 
     function renderItems(leadingRows, settingsRows) {
       // Build lead bid map from LEADING_BIDS
+      // R5:T43 = item label (R), new bid (S), leading bid amount (T)
       const leadBidMap = {};
       leadingRows.forEach(r => {
         const itemLabel = String(r[0] || '').trim();
-        if (!itemLabel || !/ITEM\s*\d+/i.test(itemLabel)) return;
+        if (!itemLabel) return;
         
         const itemNum = extractItemNumber(itemLabel);
         const leadBid = Number(String(r[2] || '0').replace(/[^\d.-]/g, '')) || 0;
@@ -521,7 +523,7 @@
         }
       });
 
-      // Build items from SETTINGS (this is the source of truth for what exists)
+      // Build items from SETTINGS
       const itemMap = {};
       settingsRows.forEach(r => {
         const itemNum = String(r[1] || '').trim();
@@ -530,17 +532,27 @@
         
         if (!itemNum || !itemText) return;
 
-        // Handle checkbox value: could be true, "TRUE", "YES", 1, etc.
+        // Handle checkbox value
         const isLive = isLiveRaw === true || 
                        String(isLiveRaw).toUpperCase() === 'TRUE' || 
                        String(isLiveRaw).toUpperCase() === 'YES' ||
                        isLiveRaw === 1;
 
-        // Extract clean description
+        // Extract description — be more aggressive
         let desc = itemText
-          .replace(/^ITEM\s*\d+\s*-\s*/i, '')           // Remove "ITEM XX -"
-          .replace(/^Lead Bid\s*€[\d,]+\s*-\s*/i, '')   // Remove "Lead Bid €XXX -"
+          .replace(/^ITEM\s+\d+\s*[-–—]\s*/i, '')           // Remove "ITEM XX -"
+          .replace(/^Lead\s+Bid\s+€[\d,]+\s*[-–—]\s*/i, '') // Remove "Lead Bid €XXX -"
           .trim();
+        
+        // Fallback: if still contains "ITEM", just take everything after the first dash/hyphen
+        if (desc.toUpperCase().startsWith('ITEM')) {
+          const dashIdx = itemText.indexOf(' — ') || itemText.indexOf(' - ');
+          if (dashIdx > 0) {
+            desc = itemText.substring(dashIdx + 3).trim();
+          } else {
+            desc = itemText;
+          }
+        }
 
         itemMap[itemNum] = {
           itemNum: itemNum,
@@ -675,6 +687,9 @@
         return;
       }
 
+      // Disable to prevent double-clicks
+      checkbox.disabled = true;
+
       const payload = {
         action: 'markItemLive',
         itemNumber: itemNum,
@@ -688,19 +703,27 @@
       })
         .then(res => res.text())
         .then(text => {
-          const json = JSON.parse(text);
+          let json;
+          try {
+            json = JSON.parse(text);
+          } catch (e) {
+            throw new Error('Invalid response from server');
+          }
+          
           if (json.ok) {
             addLogEntry(`→ ITEM ${itemNum} marked as live`);
-            checkbox.disabled = true;
             loadItems();
           } else {
-            alert('Error: ' + (json.message || 'Failed'));
+            alert('Error: ' + (json.message || 'Failed to mark item live'));
             checkbox.checked = false;
+            checkbox.disabled = false;
           }
         })
         .catch(err => {
+          console.error('Error marking item live:', err);
           alert('Error: ' + err.message);
           checkbox.checked = false;
+          checkbox.disabled = false;
         });
     }
 
