@@ -531,14 +531,11 @@
     }
 
     function renderItems(leadingRows, settingsRows) {
-      // Debug: log what we got from SETTINGS
       console.log('SETTINGS rows received:', settingsRows.length);
-      settingsRows.slice(0, 5).forEach((r, i) => {
-        console.log(`Row ${i}: itemNum=${r[1]}, itemText=${r[0]}, isLiveRaw=${r[5]}`);
-      });
 
-      // Build lead bid map from LEADING_BIDS
+      // Build lead bid map from LEADING_BIDS with descriptions
       const leadBidMap = {};
+      const leadDescMap = {};
       leadingRows.forEach(r => {
         const itemLabel = String(r[0] || '').trim();
         if (!itemLabel) return;
@@ -548,17 +545,23 @@
         
         if (itemNum) {
           leadBidMap[itemNum] = leadBid;
+          // Extract and store description
+          let desc = itemLabel
+            .replace(/^ITEM\s+\d+\s*[-–—]\s*/i, '')
+            .replace(/^Lead\s+Bid\s+€[\d,]+\s*[-–—]\s*/i, '')
+            .trim();
+          leadDescMap[itemNum] = desc;
         }
       });
 
       // Build items from SETTINGS
       const itemMap = {};
-      settingsRows.forEach(r => {
+      settingsRows.forEach((r, idx) => {
         const itemNum = String(r[1] || '').trim();
-        const itemText = String(r[0] || '').trim();
+        let itemText = String(r[0] || '').trim();
         const isLiveRaw = r[5];
         
-        if (!itemNum || !itemText) return;
+        if (!itemNum) return; // Must have item number
 
         // Handle checkbox value
         const isLive = isLiveRaw === true || 
@@ -566,10 +569,17 @@
                        String(isLiveRaw).toUpperCase() === 'YES' ||
                        isLiveRaw === 1;
 
+        // If text is empty but item is LIVE, look it up from LEADING_BIDS
+        if (!itemText && isLive) {
+          itemText = leadDescMap[itemNum] || '';
+        }
+
+        if (!itemText) return; // Still no text, skip
+
         // Extract description
         let desc = itemText
-          .replace(/^ITEM\s+\d+\s*[-–—]\s*/i, '')           
-          .replace(/^Lead\s+Bid\s+€[\d,]+\s*[-–—]\s*/i, '') 
+          .replace(/^ITEM\s+\d+\s*[-–—]\s*/i, '')
+          .replace(/^Lead\s+Bid\s+€[\d,]+\s*[-–—]\s*/i, '')
           .trim();
         
         if (desc.toUpperCase().startsWith('ITEM')) {
@@ -580,6 +590,8 @@
             desc = itemText;
           }
         }
+
+        console.log(`Row ${idx}: itemNum=${itemNum}, itemText=${itemText.substring(0, 50)}, isLive=${isLive}`);
 
         itemMap[itemNum] = {
           itemNum: itemNum,
