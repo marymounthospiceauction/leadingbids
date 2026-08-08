@@ -2,247 +2,242 @@
 <html lang="en-IE">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Committee Admin | Marymount Ball Auction</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#e6d4ad" />
+<meta name="mobile-web-app-capable" content="yes" />
+<title>Live Auction | Marymount</title>
 <link rel="icon" href="/assets/favicon.png" />
 
 <style>
 :root{
   --sand:#e6d4ad;
-  --sand-dk:#d8c39a;
+  --sand-dk:#cfb98c;
   --card:#fffdf8;
   --ink:#1a1a1a;
   --muted:#6b6250;
-  --line:#ded0b2;
+  --line:#e0d2b4;
   --gold:#bc8b41;
-  --gold-dk:#966c2e;
-  --green:#1f8a4c;
-  --green-dk:#166b3a;
+  --gold-dk:#8a6425;
+  --green:#1c7f45;
+  --green-dk:#125c31;
   --red:#b42318;
-  --amber:#9a6a00;
-  --amber-bg:#fdf3d8;
-  --radius:14px;
+  --amber:#8a5f00;
+  --amber-bg:#fdf2d4;
+  --tap:52px;
+  --safe-b:env(safe-area-inset-bottom,0px);
 }
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 
-html,body{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
 
 body{
-  font-family:Calibri,-apple-system,"Segoe UI",Arial,sans-serif;
+  margin:0;
+  font-family:Calibri,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
   background:var(--sand);
   color:var(--ink);
-  font-size:16px;
-  line-height:1.45;
-  padding-bottom:48px;
+  font-size:17px;
+  line-height:1.4;
+  overscroll-behavior-y:contain;
 }
 
-/* ─────────── LOGIN ─────────── */
+/* ═══════════ LOGIN ═══════════ */
 #login{
-  position:fixed;inset:0;z-index:9999;
-  display:flex;align-items:center;justify-content:center;
-  padding:20px;
-  background:linear-gradient(150deg,#e6d4ad 0%,#f6e9cb 55%,#e0cba0 100%);
+  position:fixed;inset:0;z-index:900;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  background:linear-gradient(155deg,#e6d4ad,#f7ebce 55%,#dfc99e);
 }
 .login-card{
-  background:rgba(255,255,255,.94);
-  border-radius:18px;padding:28px 24px;
-  width:100%;max-width:360px;text-align:center;
-  box-shadow:0 14px 40px rgba(0,0,0,.22);
+  background:#fff;border-radius:20px;padding:30px 22px;
+  width:100%;max-width:340px;text-align:center;
+  box-shadow:0 16px 44px rgba(0,0,0,.22);
 }
-.login-card h1{font-size:1.25rem;margin:0 0 4px;letter-spacing:.06em;text-transform:uppercase}
-.login-card p{margin:0 0 20px;font-size:.9rem;color:var(--muted)}
+.login-card h1{margin:0 0 2px;font-size:1.15rem;letter-spacing:.08em;text-transform:uppercase}
+.login-card p{margin:0 0 22px;font-size:.88rem;color:var(--muted)}
 .login-card input{
-  width:100%;padding:14px;font-size:17px;
-  border:2px solid var(--line);border-radius:10px;background:#fff;
+  width:100%;height:var(--tap);padding:0 14px;font-size:17px;
+  border:2px solid var(--line);border-radius:12px;background:#fffdf8;
 }
 .login-card input:focus{outline:none;border-color:var(--gold)}
 .login-card button{
-  width:100%;margin-top:14px;padding:15px;
-  border:none;border-radius:999px;cursor:pointer;
-  font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
-  background:linear-gradient(135deg,var(--gold),#e3c489);color:#1a1a1a;
+  width:100%;height:var(--tap);margin-top:14px;
+  border:none;border-radius:999px;font-size:16px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.08em;
+  background:var(--gold);color:#fff;
 }
-#loginMsg{margin-top:10px;min-height:18px;font-size:.85rem;color:var(--red);font-weight:700}
+#loginMsg{margin-top:12px;min-height:18px;font-size:.85rem;font-weight:700;color:var(--red)}
 
-/* ─────────── SHELL ─────────── */
-#app{display:none}
+/* ═══════════ SHELL ═══════════ */
+#app{display:none;padding-bottom:calc(28px + var(--safe-b))}
 
-.masthead{padding:8px 12px 0;text-align:center}
-.masthead img{width:100%;max-width:520px;display:block;margin:0 auto;border-radius:8px}
-.masthead img.broken{display:none}
+.masthead{padding:6px 10px 0}
+.masthead img{width:100%;max-width:460px;display:block;margin:0 auto;border-radius:8px}
+.masthead img.gone{display:none}
 
 .bar{
-  position:sticky;top:0;z-index:50;
-  display:flex;align-items:center;gap:10px;
-  padding:10px 12px;margin-top:8px;
-  background:rgba(230,212,173,.96);
-  border-bottom:1px solid var(--sand-dk);
-  backdrop-filter:blur(6px);
+  position:sticky;top:0;z-index:60;
+  display:flex;align-items:center;gap:8px;
+  padding:9px 12px;margin-top:6px;
+  background:#e6d4ad;border-bottom:1px solid var(--sand-dk);
 }
 .bar h1{
-  flex:1;margin:0;font-size:1rem;font-weight:800;
-  text-transform:uppercase;letter-spacing:.07em;
+  flex:1;min-width:0;margin:0;
+  font-size:.92rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.bar .clock{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.icon-btn{
+.stamp{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums;flex:0 0 auto}
+#refresh{
+  flex:0 0 auto;height:38px;padding:0 14px;
   border:1px solid var(--sand-dk);background:#fff;color:var(--ink);
-  border-radius:9px;padding:8px 12px;font-size:.8rem;font-weight:700;
-  cursor:pointer;text-transform:uppercase;letter-spacing:.04em;
+  border-radius:10px;font-size:.74rem;font-weight:800;
+  letter-spacing:.06em;text-transform:uppercase;
 }
-.icon-btn:active{background:#f0e6d0}
-.icon-btn[disabled]{opacity:.5}
+#refresh:disabled{opacity:.45}
 
-.wrap{padding:0 12px;max-width:820px;margin:0 auto}
+.wrap{padding:0 10px;max-width:640px;margin:0 auto}
 
-.banner{
-  margin:12px 0;padding:12px 14px;border-radius:10px;
-  font-size:.9rem;font-weight:600;display:none;
-}
+.banner{margin:12px 0;padding:13px 14px;border-radius:11px;font-size:.9rem;font-weight:600;display:none}
 .banner.show{display:block}
-.banner.err{background:#fde8e6;border-left:4px solid var(--red);color:#7a1a12}
-.banner.warn{background:var(--amber-bg);border-left:4px solid var(--amber);color:#6b4a00}
-.banner.ok{background:#e4f5ea;border-left:4px solid var(--green);color:#0f5a30}
+.banner.err {background:#fde8e6;border-left:5px solid var(--red);color:#7a1a12}
+.banner.warn{background:var(--amber-bg);border-left:5px solid var(--amber);color:#5f4200}
+.banner.ok  {background:#e3f5ea;border-left:5px solid var(--green);color:#0e5230}
 
-h2.sect{
-  margin:22px 0 4px;font-size:.82rem;font-weight:800;
-  text-transform:uppercase;letter-spacing:.1em;color:#4a4335;
-}
-.sect-note{margin:0 0 10px;font-size:.82rem;color:var(--muted)}
+h2.sect{margin:22px 0 3px;font-size:.76rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#544c3b}
+.note{margin:0 0 10px;font-size:.82rem;color:var(--muted)}
 
-.panel{
-  background:var(--card);border:1px solid var(--line);
-  border-radius:var(--radius);padding:10px;
-}
-.empty{padding:26px 14px;text-align:center;color:var(--muted);font-size:.92rem}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.empty{padding:26px 16px;text-align:center;color:var(--muted);font-size:.9rem}
 
-/* ─────────── LIVE CARD ─────────── */
-.live{
-  border:2px solid var(--green);border-radius:12px;
-  background:#fff;margin-bottom:12px;overflow:hidden;
+.dupe{
+  display:inline-block;margin-left:6px;
+  font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--amber-bg);color:var(--amber);
+  border:1px solid #e2c98a;border-radius:999px;padding:2px 7px;
+  vertical-align:middle;
 }
+
+/* ═══════════ LIVE ═══════════ */
+.live{border:2px solid var(--green);border-radius:16px;background:#fff;margin-bottom:14px;overflow:hidden}
 .live:last-child{margin-bottom:0}
-.live-top{padding:12px 14px;background:#f2faf5;border-bottom:1px solid #d8ebdf}
+.live-top{padding:13px 15px;background:#f0f9f3;border-bottom:1px solid #d3e9dc}
 .tag{
-  display:inline-block;font-size:.66rem;font-weight:800;
-  letter-spacing:.12em;text-transform:uppercase;
-  background:var(--green);color:#fff;padding:3px 8px;border-radius:999px;
+  display:inline-block;font-size:.62rem;font-weight:800;letter-spacing:.14em;
+  text-transform:uppercase;background:var(--green);color:#fff;
+  padding:4px 9px;border-radius:999px;
 }
-.live-name{font-size:1.02rem;font-weight:800;margin:7px 0 2px;line-height:1.25}
-.live-lead{font-size:.85rem;color:var(--muted)}
-.live-body{padding:12px 14px}
+.live-num{font-size:.72rem;font-weight:800;letter-spacing:.1em;color:var(--muted);margin-top:9px}
+.live-name{font-size:1.12rem;font-weight:800;line-height:1.22;margin:1px 0 5px}
+.live-lead{font-size:.82rem;color:var(--muted)}
+.live-body{padding:13px 15px}
 
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:520px){.grid2{grid-template-columns:1fr}}
-
-.field{margin-bottom:10px}
+.field{margin-bottom:12px}
 .field label{
-  display:block;font-size:.7rem;font-weight:800;text-transform:uppercase;
-  letter-spacing:.07em;margin-bottom:4px;color:#3d382c;
+  display:block;font-size:.68rem;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;margin-bottom:5px;color:#463f31;
 }
 .field input{
-  width:100%;padding:13px 12px;font-size:16px;
-  border:2px solid var(--line);border-radius:10px;background:#fffdf8;color:var(--ink);
+  width:100%;height:var(--tap);padding:0 14px;font-size:17px;
+  border:2px solid var(--line);border-radius:12px;background:#fffdf8;color:var(--ink);
 }
-.field input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(188,139,65,.16)}
+.field input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(188,139,65,.18)}
 .field input.bad{border-color:var(--red);background:#fff6f5}
-.hint{margin-top:4px;font-size:.74rem;color:var(--muted)}
+.hint{margin-top:5px;font-size:.75rem;color:var(--muted)}
 .hint.bad{color:var(--red);font-weight:700}
 
 .btn{
-  width:100%;border:none;border-radius:11px;padding:15px;
-  font-size:16px;font-weight:800;letter-spacing:.05em;
-  text-transform:uppercase;cursor:pointer;
+  display:block;width:100%;min-height:var(--tap);
+  border:none;border-radius:13px;
+  font-size:16px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
 }
-.btn-sell{background:var(--green);color:#fff}
+.btn-sell{background:var(--green);color:#fff;height:58px;font-size:17px}
 .btn-sell:active{background:var(--green-dk)}
 .btn-undo{
   background:#fff;color:var(--muted);border:1px solid var(--line);
-  padding:11px;font-size:.78rem;margin-top:8px;
+  min-height:44px;font-size:.76rem;margin-top:9px;
 }
-.btn[disabled]{opacity:.55}
+.btn:disabled{opacity:.5}
 
-/* ─────────── AVAILABLE ─────────── */
+/* ═══════════ AVAILABLE ═══════════ */
+.search-wrap{padding:10px;border-bottom:1px solid var(--line);background:var(--card)}
 .search{
-  width:100%;padding:12px 14px;font-size:16px;margin-bottom:10px;
-  border:2px solid var(--line);border-radius:10px;background:#fff;
+  width:100%;height:var(--tap);padding:0 14px;font-size:17px;
+  border:2px solid var(--line);border-radius:12px;background:#fff;
 }
 .search:focus{outline:none;border-color:var(--gold)}
 
 .row{
   display:flex;align-items:center;gap:12px;
-  padding:13px 12px;border-bottom:1px solid #f0e8d6;
-  cursor:pointer;
+  padding:12px 13px;min-height:66px;
+  border-bottom:1px solid #f2ead8;
 }
 .row:last-child{border-bottom:none}
-.row:active{background:#faf4e6}
+.row:active{background:#f9f2e2}
 .row-num{
-  flex:0 0 auto;min-width:42px;text-align:center;
-  font-size:.72rem;font-weight:800;letter-spacing:.04em;
-  background:#f2e8d2;color:#6b5a35;border-radius:6px;padding:5px 6px;
+  flex:0 0 44px;text-align:center;
+  font-size:.74rem;font-weight:800;
+  background:#f1e6cd;color:#6b5a35;border-radius:8px;padding:7px 0;
 }
 .row-main{flex:1;min-width:0}
-.row-name{font-weight:700;font-size:.95rem;line-height:1.3}
-.row-lead{font-size:.8rem;color:var(--muted);margin-top:2px}
+.row-name{display:block;font-weight:700;font-size:.95rem;line-height:1.28}
+.row-lead{display:block;font-size:.78rem;color:var(--muted);margin-top:3px}
 .row-go{
-  flex:0 0 auto;font-size:.7rem;font-weight:800;letter-spacing:.06em;
+  flex:0 0 auto;font-size:.68rem;font-weight:800;letter-spacing:.07em;
   text-transform:uppercase;color:var(--gold-dk);
-  border:1px solid var(--gold);border-radius:999px;padding:6px 11px;
+  border:1.5px solid var(--gold);border-radius:999px;padding:9px 13px;
 }
 
-/* ─────────── SOLD ─────────── */
-.sold-head{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px;cursor:pointer;
-}
-.sold-total{font-weight:800}
-.sold-list{display:none;border-top:1px solid #f0e8d6}
+/* ═══════════ SOLD ═══════════ */
+.sold-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 14px;min-height:var(--tap)}
+.sold-head .caret{font-size:.7rem;color:var(--muted)}
+.sold-total{font-weight:800;font-size:1.02rem}
+.sold-list{display:none;border-top:1px solid var(--line)}
 .sold-list.show{display:block}
-.sold-row{
-  display:flex;gap:12px;padding:11px 12px;
-  border-bottom:1px solid #f5efe1;font-size:.88rem;
-}
+.sold-row{display:flex;align-items:center;gap:11px;padding:12px 13px;border-bottom:1px solid #f5eee0;font-size:.88rem}
 .sold-row:last-child{border-bottom:none}
 
-/* ─────────── LOG ─────────── */
-.log{max-height:230px;overflow-y:auto}
-.log-row{padding:9px 4px;border-bottom:1px solid #f2ebda;font-size:.85rem}
+/* ═══════════ LOG ═══════════ */
+.log{max-height:240px;overflow-y:auto;padding:4px 12px;-webkit-overflow-scrolling:touch}
+.log-row{padding:10px 0;border-bottom:1px solid #f2ead8;font-size:.86rem}
 .log-row:last-child{border-bottom:none}
-.log-time{color:var(--muted);font-size:.72rem;font-variant-numeric:tabular-nums}
+.log-time{color:var(--muted);font-size:.71rem;font-variant-numeric:tabular-nums}
 
-/* ─────────── MODAL ─────────── */
-#modal{
-  position:fixed;inset:0;z-index:300;display:none;
-  align-items:center;justify-content:center;padding:18px;
-  background:rgba(20,16,8,.55);
-}
-#modal.show{display:flex}
+/* ═══════════ MODAL ═══════════ */
+#modal{position:fixed;inset:0;z-index:800;display:none;background:rgba(24,18,8,.55)}
+#modal.show{display:flex;align-items:flex-end;justify-content:center}
 .modal-card{
-  background:#fff;border-radius:16px;width:100%;max-width:400px;
-  padding:22px;box-shadow:0 20px 50px rgba(0,0,0,.3);
+  background:#fff;width:100%;max-width:520px;
+  border-radius:22px 22px 0 0;
+  padding:22px 20px calc(20px + var(--safe-b));
+  max-height:90vh;overflow-y:auto;
+  animation:rise .18s ease-out;
 }
-.modal-card h3{margin:0 0 10px;font-size:1.05rem;letter-spacing:.02em}
-.modal-card .body{font-size:.92rem;color:#33302a;margin-bottom:8px}
-.modal-card .body b{display:block;font-size:1rem;margin:8px 0 2px}
-.modal-card .consequence{
-  font-size:.83rem;color:#6b4a00;background:var(--amber-bg);
-  border-radius:8px;padding:10px 12px;margin:12px 0 4px;
+@keyframes rise{from{transform:translateY(16px)}to{transform:translateY(0)}}
+@media(min-width:560px){
+  #modal.show{align-items:center}
+  .modal-card{border-radius:20px;padding-bottom:22px}
 }
-.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.modal-card h3{margin:0 0 12px;font-size:1.08rem}
+.mb{font-size:.94rem;color:#33302a}
+.mb .big{display:block;font-size:1.12rem;font-weight:800;line-height:1.25;margin:10px 0 4px}
+.mb dl{margin:12px 0 0;display:grid;grid-template-columns:auto 1fr;gap:7px 14px;font-size:.94rem}
+.mb dt{color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;padding-top:2px}
+.mb dd{margin:0;font-weight:700;word-break:break-word}
+.conseq{font-size:.85rem;color:#5f4200;background:var(--amber-bg);border-radius:10px;padding:12px 13px;margin-top:16px}
+.modal-actions{display:grid;grid-template-columns:1fr;gap:9px;margin-top:18px}
 .modal-actions button{
-  padding:14px;border:none;border-radius:10px;cursor:pointer;
-  font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
+  min-height:56px;border:none;border-radius:13px;
+  font-size:16px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
 }
-.mo-cancel{background:#efe9dc;color:#4a4335}
-.mo-go{background:var(--green);color:#fff}
+.mo-go{background:var(--green);color:#fff;order:1}
 .mo-go.danger{background:var(--gold-dk)}
+.mo-cancel{background:#f0ebdf;color:#4a4335;order:2}
 
-/* ─────────── BUSY ─────────── */
+/* ═══════════ BUSY ═══════════ */
 #busy{
-  position:fixed;inset:0;z-index:400;display:none;
+  position:fixed;inset:0;z-index:850;display:none;
   align-items:center;justify-content:center;
-  background:rgba(255,253,248,.72);
-  font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.85rem;
+  background:rgba(255,253,248,.8);
+  font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.82rem;
 }
 #busy.show{display:flex}
 </style>
@@ -250,18 +245,16 @@ h2.sect{
 
 <body>
 
-<!-- LOGIN -->
 <div id="login">
   <form class="login-card" id="loginForm">
-    <h1>Committee Admin</h1>
-    <p>Live auction control</p>
+    <h1>Live auction</h1>
+    <p>Committee admin</p>
     <input type="password" id="pw" autocomplete="current-password" placeholder="Password" required />
     <button type="submit">Unlock</button>
     <div id="loginMsg"></div>
   </form>
 </div>
 
-<!-- APP -->
 <div id="app">
 
   <div class="masthead">
@@ -270,8 +263,8 @@ h2.sect{
 
   <div class="bar">
     <h1>Live auction</h1>
-    <span class="clock" id="stamp"></span>
-    <button class="icon-btn" id="refresh" type="button">Refresh</button>
+    <span class="stamp" id="stamp"></span>
+    <button id="refresh" type="button">Refresh</button>
   </div>
 
   <div class="wrap">
@@ -279,23 +272,27 @@ h2.sect{
     <div class="banner err"  id="bErr"></div>
     <div class="banner warn" id="bWarn"></div>
     <div class="banner ok"   id="bOk"></div>
+    <div class="banner warn" id="bDupe"></div>
 
     <h2 class="sect">On the block</h2>
-    <p class="sect-note" id="liveNote">Items called by the chairman. Record the winner here.</p>
+    <p class="note" id="liveNote">Items the chairman has called.</p>
     <div id="liveWrap"><div class="panel"><div class="empty">Loading.</div></div></div>
 
     <h2 class="sect">Send an item live</h2>
-    <p class="sect-note">Tick an item the moment the chairman calls it. It leaves the bidding form straight away.</p>
+    <p class="note">Tick the moment the chairman calls it. It leaves the bidding form straight away.</p>
     <div class="panel">
-      <input class="search" id="search" type="search" placeholder="Search by number or name" autocomplete="off" />
+      <div class="search-wrap">
+        <input class="search" id="search" type="search" inputmode="search" placeholder="Search number or name" autocomplete="off" />
+      </div>
       <div id="availWrap"><div class="empty">Loading.</div></div>
     </div>
 
     <h2 class="sect">Sold tonight</h2>
-    <div class="panel" style="padding:0">
+    <div class="panel">
       <div class="sold-head" id="soldHead">
         <span id="soldCount">0 items</span>
-        <span class="sold-total" id="soldTotal">€0</span>
+        <span class="sold-total" id="soldTotal">&euro;0</span>
+        <span class="caret" id="soldCaret">Show</span>
       </div>
       <div class="sold-list" id="soldList"></div>
     </div>
@@ -308,15 +305,14 @@ h2.sect{
   </div>
 </div>
 
-<!-- MODAL -->
 <div id="modal">
   <div class="modal-card">
     <h3 id="mTitle"></h3>
-    <div class="body" id="mBody"></div>
-    <div class="consequence" id="mConseq"></div>
+    <div class="mb" id="mBody"></div>
+    <div class="conseq" id="mConseq"></div>
     <div class="modal-actions">
-      <button class="mo-cancel" id="mCancel" type="button">Cancel</button>
       <button class="mo-go"     id="mGo"     type="button">Confirm</button>
+      <button class="mo-cancel" id="mCancel" type="button">Cancel</button>
     </div>
   </div>
 </div>
@@ -326,49 +322,51 @@ h2.sect{
 <script>
 "use strict";
 
-/* ══════════════ CONFIG ══════════════ */
+/* ═══════════ CONFIG ═══════════ */
 var PASSWORD   = "Brendan2026";
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
 
-/* ══════════════ STATE ══════════════ */
-var data   = { live: [], available: [], sold: [] };
+/* ═══════════ STATE ═══════════ */
+var data    = { live: [], available: [], sold: [], duplicates: [] };
 var logRows = [];
 var filter  = "";
 var pending = null;
 
-/* ══════════════ SHORTHAND ══════════════ */
+/* ═══════════ HELPERS ═══════════ */
 function $(id){ return document.getElementById(id); }
+
 function esc(s){
   return String(s == null ? "" : s)
     .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 }
-function euro(n){
-  var v = Number(n) || 0;
-  return "\u20AC" + v.toLocaleString("en-IE",{maximumFractionDigits:0});
-}
-function now(){ return new Date().toLocaleTimeString("en-IE",{hour:"2-digit",minute:"2-digit",second:"2-digit"}); }
 
-/* ══════════════ BANNERS ══════════════ */
+function euro(n){
+  return "\u20AC" + (Number(n) || 0).toLocaleString("en-IE",{maximumFractionDigits:0});
+}
+
+function now(){
+  return new Date().toLocaleTimeString("en-IE",{hour:"2-digit",minute:"2-digit"});
+}
+
 function banner(kind, msg){
   var el = kind === "err" ? $("bErr") : kind === "warn" ? $("bWarn") : $("bOk");
   el.textContent = msg;
   el.classList.add("show");
-  if (kind !== "err") {
-    setTimeout(function(){ el.classList.remove("show"); }, 9000);
-  }
+  el.scrollIntoView({ behavior:"smooth", block:"center" });
+  if (kind === "ok") setTimeout(function(){ el.classList.remove("show"); }, 8000);
 }
+
 function clearBanners(){
   ["bErr","bWarn","bOk"].forEach(function(id){ $(id).classList.remove("show"); });
 }
 
-/* ══════════════ BUSY ══════════════ */
 function busy(on, label){
   $("busy").textContent = label || "Working";
   $("busy").classList.toggle("show", !!on);
 }
 
-/* ══════════════ API ══════════════ */
+/* ═══════════ API ═══════════ */
 function api(payload){
   return fetch(SCRIPT_URL, {
     method:"POST",
@@ -385,14 +383,14 @@ function api(payload){
   });
 }
 
-/* ══════════════ LOAD ══════════════ */
+/* ═══════════ LOAD ═══════════ */
 function load(quiet){
   if (!quiet) busy(true, "Loading");
   $("refresh").disabled = true;
 
   return api({ action:"getCommitteeItems" })
     .then(function(j){
-      data = j.data || { live:[], available:[], sold:[] };
+      data = j.data || { live:[], available:[], sold:[], duplicates:[] };
       render();
       $("stamp").textContent = now();
       $("bErr").classList.remove("show");
@@ -406,15 +404,26 @@ function load(quiet){
     });
 }
 
-/* ══════════════ RENDER ══════════════ */
-function render(){ renderLive(); renderAvail(); renderSold(); }
+/* ═══════════ RENDER ═══════════ */
+function render(){ renderDupes(); renderLive(); renderAvail(); renderSold(); }
+
+function renderDupes(){
+  var el = $("bDupe");
+  var d  = data.duplicates || [];
+
+  if (!d.length){ el.classList.remove("show"); return; }
+
+  el.textContent = "Repeated item numbers in the sheet: " + d.join(", ") +
+    ". This panel keeps them apart, but the public bidding form shows them as one. Check the bid form before opening.";
+  el.classList.add("show");
+}
 
 function renderLive(){
   var wrap = $("liveWrap");
 
   if (!data.live.length){
-    wrap.innerHTML = '<div class="panel"><div class="empty">Nothing on the block. Tick an item below when the chairman calls it.</div></div>';
-    $("liveNote").textContent = "Items called by the chairman. Record the winner here.";
+    wrap.innerHTML = '<div class="panel"><div class="empty">Nothing on the block.<br>Tick an item below when the chairman calls it.</div></div>';
+    $("liveNote").textContent = "Items the chairman has called.";
     return;
   }
 
@@ -423,32 +432,33 @@ function renderLive(){
     : data.live.length + " items on the block.";
 
   wrap.innerHTML = data.live.map(function(it){
-    var n = esc(it.itemNumber);
+    var r = esc(it.rowId);
     return '' +
-      '<div class="live" data-item="' + n + '">' +
+      '<div class="live">' +
         '<div class="live-top">' +
           '<span class="tag">On the block</span>' +
-          '<div class="live-name">' + esc(it.itemLabel) + " \u00B7 " + esc(it.description) + '</div>' +
+          '<div class="live-num">' + esc(it.itemLabel) +
+            (it.duplicate ? '<span class="dupe">Shared number</span>' : '') +
+          '</div>' +
+          '<div class="live-name">' + esc(it.description) + '</div>' +
           '<div class="live-lead">Silent auction reached ' + euro(it.leadBid) + '</div>' +
         '</div>' +
         '<div class="live-body">' +
           '<div class="field">' +
-            '<label for="wn-' + n + '">Winner name</label>' +
-            '<input id="wn-' + n + '" type="text" autocomplete="off" placeholder="Full name" />' +
+            '<label for="wn-' + r + '">Winner name</label>' +
+            '<input id="wn-' + r + '" type="text" autocomplete="off" autocapitalize="words" placeholder="Full name" />' +
           '</div>' +
-          '<div class="grid2">' +
-            '<div class="field">' +
-              '<label for="wm-' + n + '">Winner mobile</label>' +
-              '<input id="wm-' + n + '" type="tel" inputmode="numeric" autocomplete="off" placeholder="087 123 4567" />' +
-              '<div class="hint" id="wmh-' + n + '">Irish 08x, or UK as 0044</div>' +
-            '</div>' +
-            '<div class="field">' +
-              '<label for="wp-' + n + '">Hammer price</label>' +
-              '<input id="wp-' + n + '" type="tel" inputmode="numeric" autocomplete="off" placeholder="\u20AC" />' +
-            '</div>' +
+          '<div class="field">' +
+            '<label for="wm-' + r + '">Winner mobile</label>' +
+            '<input id="wm-' + r + '" type="tel" inputmode="numeric" autocomplete="off" placeholder="087 123 4567" />' +
+            '<div class="hint" id="wmh-' + r + '">Irish 08x, or UK as 0044</div>' +
           '</div>' +
-          '<button class="btn btn-sell" data-act="sell" data-item="' + n + '" type="button">Record sale</button>' +
-          '<button class="btn btn-undo" data-act="undo" data-item="' + n + '" type="button">Not live, put it back</button>' +
+          '<div class="field">' +
+            '<label for="wp-' + r + '">Hammer price</label>' +
+            '<input id="wp-' + r + '" type="tel" inputmode="numeric" autocomplete="off" placeholder="\u20AC" />' +
+          '</div>' +
+          '<button class="btn btn-sell" data-act="sell" data-row="' + r + '" type="button">Record sale</button>' +
+          '<button class="btn btn-undo" data-act="undo" data-row="' + r + '" type="button">Not live, put it back</button>' +
         '</div>' +
       '</div>';
   }).join("");
@@ -458,15 +468,16 @@ function renderAvail(){
   var wrap = $("availWrap");
   var f = filter.trim().toLowerCase();
 
+  if (!data.available.length){
+    wrap.innerHTML = '<div class="empty">Every item is live or sold.</div>';
+    return;
+  }
+
   var list = data.available.filter(function(it){
     if (!f) return true;
     return (it.itemLabel + " " + it.description).toLowerCase().indexOf(f) !== -1;
   });
 
-  if (!data.available.length){
-    wrap.innerHTML = '<div class="empty">Every item is live or sold.</div>';
-    return;
-  }
   if (!list.length){
     wrap.innerHTML = '<div class="empty">Nothing matches that search.</div>';
     return;
@@ -474,10 +485,12 @@ function renderAvail(){
 
   wrap.innerHTML = list.map(function(it){
     return '' +
-      '<div class="row" data-act="live" data-item="' + esc(it.itemNumber) + '">' +
+      '<div class="row" data-act="live" data-row="' + esc(it.rowId) + '">' +
         '<span class="row-num">' + esc(it.itemLabel.replace(/^ITEM\s*/i,"")) + '</span>' +
         '<span class="row-main">' +
-          '<span class="row-name">' + esc(it.description) + '</span>' +
+          '<span class="row-name">' + esc(it.description) +
+            (it.duplicate ? '<span class="dupe">Shared no.</span>' : '') +
+          '</span>' +
           '<span class="row-lead">Lead ' + euro(it.leadBid) + '</span>' +
         '</span>' +
         '<span class="row-go">Go live</span>' +
@@ -486,15 +499,14 @@ function renderAvail(){
 }
 
 function renderSold(){
-  var total = data.sold.reduce(function(a,b){ return a + (Number(b.leadBid)||0); }, 0);
   $("soldCount").textContent = data.sold.length + (data.sold.length === 1 ? " item" : " items");
-  $("soldTotal").textContent = euro(total);
+  $("soldTotal").textContent = euro(data.sold.reduce(function(a,b){ return a + (Number(b.leadBid)||0); },0));
 
   $("soldList").innerHTML = data.sold.length
     ? data.sold.map(function(it){
         return '<div class="sold-row"><span class="row-num">' +
-          esc(it.itemLabel.replace(/^ITEM\s*/i,"")) + '</span><span style="flex:1">' +
-          esc(it.description) + '</span></div>';
+          esc(it.itemLabel.replace(/^ITEM\s*/i,"")) +
+          '</span><span style="flex:1">' + esc(it.description) + '</span></div>';
       }).join("")
     : '<div class="empty">Nothing sold yet.</div>';
 }
@@ -506,26 +518,33 @@ function addLog(text){
   }).join("");
 }
 
-/* ══════════════ MODAL ══════════════ */
-function ask(opts){
-  pending = opts.run;
-  $("mTitle").textContent  = opts.title;
-  $("mBody").innerHTML     = opts.body;
-  $("mConseq").textContent = opts.consequence;
-  $("mGo").textContent     = opts.go || "Confirm";
-  $("mGo").classList.toggle("danger", !!opts.danger);
+/* ═══════════ MODAL ═══════════ */
+function ask(o){
+  pending = o.run;
+  $("mTitle").textContent  = o.title;
+  $("mBody").innerHTML     = o.body;
+  $("mConseq").textContent = o.consequence;
+  $("mGo").textContent     = o.go || "Confirm";
+  $("mGo").classList.toggle("danger", !!o.danger);
   $("modal").classList.add("show");
+  document.body.style.overflow = "hidden";
 }
-function closeModal(){ $("modal").classList.remove("show"); pending = null; }
 
-/* ══════════════ MOBILE CHECK ══════════════ */
+function closeModal(){
+  $("modal").classList.remove("show");
+  document.body.style.overflow = "";
+  pending = null;
+}
+
+/* ═══════════ MOBILE NUMBER ═══════════ */
 function tidyMobile(v){
-  var s = String(v || "").trim().replace(/[\s\-()]/g, "");
-  if (s.indexOf("+353") === 0)  s = "0" + s.slice(4);
-  else if (s.indexOf("+44") === 0) s = "0044" + s.slice(3);
+  var s = String(v || "").trim().replace(/[\s\-()]/g,"");
+  if (s.indexOf("+353") === 0)       s = "0" + s.slice(4);
+  else if (s.indexOf("+44") === 0)   s = "0044" + s.slice(3);
   else if (s.indexOf("00353") === 0) s = "0" + s.slice(5);
   return s;
 }
+
 function mobileOk(v){
   var s = tidyMobile(v);
   if (!/^\d+$/.test(s)) return false;
@@ -534,28 +553,31 @@ function mobileOk(v){
   return false;
 }
 
-/* ══════════════ ACTIONS ══════════════ */
-function find(list, num){
+/* ═══════════ ACTIONS ═══════════ */
+function byRow(list, rowId){
   for (var i = 0; i < list.length; i++){
-    if (String(list[i].itemNumber) === String(num)) return list[i];
+    if (String(list[i].rowId) === String(rowId)) return list[i];
   }
   return null;
 }
 
-function goLive(num){
-  var it = find(data.available, num);
+function goLive(rowId){
+  var it = byRow(data.available, rowId);
   if (!it) return;
 
   ask({
     title: "Send this item live?",
-    body: "<b>" + esc(it.itemLabel) + " \u00B7 " + esc(it.description) + "</b>Silent auction reached " + euro(it.leadBid) + ".",
-    consequence: "It disappears from the bidding form immediately. Anyone mid-bid on it will be told the item is no longer available.",
+    body: '<span class="big">' + esc(it.description) + '</span>' +
+          '<dl><dt>Item</dt><dd>' + esc(it.itemLabel) + '</dd>' +
+          '<dt>Lead</dt><dd>' + euro(it.leadBid) + '</dd>' +
+          '<dt>Sheet row</dt><dd>' + esc(it.rowId) + '</dd></dl>',
+    consequence: "It leaves the bidding form immediately. Anyone part way through a bid on it will be told it is no longer available.",
     go: "Send live",
     run: function(){
       busy(true, "Sending live");
-      return api({ action:"markItemLive", itemNumber:num })
+      return api({ action:"markItemLive", rowId:it.rowId, itemNumber:it.itemNumber })
         .then(function(j){
-          addLog(it.itemLabel + " sent live");
+          addLog(it.itemLabel + " " + it.description + " sent live");
           banner("ok", j.message);
           return load(true);
         })
@@ -565,22 +587,23 @@ function goLive(num){
   });
 }
 
-function putBack(num){
-  var it = find(data.live, num);
+function putBack(rowId){
+  var it = byRow(data.live, rowId);
   if (!it) return;
 
   ask({
     title: "Put this item back?",
-    body: "<b>" + esc(it.itemLabel) + " \u00B7 " + esc(it.description) + "</b>",
-    consequence: "It returns to the bidding form and guests can bid on it again. Use this only if it was sent live by mistake.",
+    body: '<span class="big">' + esc(it.description) + '</span>' +
+          '<dl><dt>Item</dt><dd>' + esc(it.itemLabel) + '</dd></dl>',
+    consequence: "It returns to the bidding form and guests can bid on it again. Use this only if it went live by mistake.",
     go: "Put it back",
     danger: true,
     run: function(){
       busy(true, "Restoring");
-      return api({ action:"undoItemLive", itemNumber:num })
+      return api({ action:"undoItemLive", rowId:it.rowId, itemNumber:it.itemNumber })
         .then(function(j){
-          addLog(it.itemLabel + " put back in the bidding form");
-          banner("ok", j.message);
+          addLog(it.itemLabel + " " + it.description + " put back");
+          banner(j.formulaMissing ? "warn" : "ok", j.message);
           return load(true);
         })
         .catch(function(err){ banner("err", err.message); })
@@ -589,24 +612,28 @@ function putBack(num){
   });
 }
 
-function sell(num){
-  var it = find(data.live, num);
+function sell(rowId){
+  var it = byRow(data.live, rowId);
   if (!it) return;
 
-  var nameEl = $("wn-" + num);
-  var mobEl  = $("wm-" + num);
-  var priEl  = $("wp-" + num);
-  var hint   = $("wmh-" + num);
+  var nameEl = $("wn-" + rowId);
+  var mobEl  = $("wm-" + rowId);
+  var priEl  = $("wp-" + rowId);
+  var hint   = $("wmh-" + rowId);
 
   var name  = nameEl.value.trim();
   var mob   = mobEl.value.trim();
-  var price = priEl.value.replace(/[^\d]/g, "");
+  var price = priEl.value.replace(/[^\d]/g,"");
 
   [nameEl, mobEl, priEl].forEach(function(el){ el.classList.remove("bad"); });
   hint.classList.remove("bad");
   hint.textContent = "Irish 08x, or UK as 0044";
 
-  if (!name){ nameEl.classList.add("bad"); nameEl.focus(); banner("err","Enter the winner's name."); return; }
+  if (!name){
+    nameEl.classList.add("bad"); nameEl.focus();
+    banner("err","Enter the winner's name.");
+    return;
+  }
 
   if (!mobileOk(mob)){
     mobEl.classList.add("bad");
@@ -618,7 +645,7 @@ function sell(num){
 
   if (!price || Number(price) <= 0){
     priEl.classList.add("bad"); priEl.focus();
-    banner("err","Enter the hammer price as whole euro.");
+    banner("err","Enter the hammer price in whole euro.");
     return;
   }
 
@@ -626,28 +653,33 @@ function sell(num){
 
   ask({
     title: "Record this sale?",
-    body:
-      "<b>" + esc(it.itemLabel) + " \u00B7 " + esc(it.description) + "</b>" +
-      "Winner: " + esc(name) + "<br>Mobile: " + esc(clean) + "<br>Price: " + euro(price),
+    body: '<span class="big">' + esc(it.description) + '</span>' +
+          '<dl>' +
+            '<dt>Item</dt><dd>'   + esc(it.itemLabel) + '</dd>' +
+            '<dt>Winner</dt><dd>' + esc(name) + '</dd>' +
+            '<dt>Mobile</dt><dd>' + esc(clean) + '</dd>' +
+            '<dt>Price</dt><dd>'  + euro(price) + '</dd>' +
+          '</dl>',
     consequence: "This marks the item sold on every screen and sends the winner a WhatsApp message. There is no undo.",
     go: "Record sale",
     run: function(){
       busy(true, "Recording");
       return api({
         action:"markItemSold",
-        itemNumber:num,
+        rowId:it.rowId,
+        itemNumber:it.itemNumber,
         winnerName:name,
         winnerMobile:clean,
         soldPrice:price
       })
       .then(function(j){
-        addLog(it.itemLabel + " sold to " + name + " for " + euro(price));
+        addLog(it.itemLabel + " " + it.description + " sold to " + name + " for " + euro(price));
         clearBanners();
 
         if (j.whatsappOk === false){
-          banner("warn", "Sale recorded, but the WhatsApp to " + name + " did not send. " + (j.whatsappError || "") + " Tell them in person.");
+          banner("warn", "Sale recorded, but the WhatsApp to " + name + " did not send. Tell them in person. " + (j.whatsappError || ""));
         } else if (j.overlayOk === false){
-          banner("warn", "Sale recorded and WhatsApp sent, but the screens did not get the sold overlay.");
+          banner("warn", "Sale recorded and the winner was messaged, but the screens did not show the sold overlay.");
         } else {
           banner("ok", j.message + " Winner notified.");
         }
@@ -660,7 +692,7 @@ function sell(num){
   });
 }
 
-/* ══════════════ EVENTS ══════════════ */
+/* ═══════════ EVENTS ═══════════ */
 $("loginForm").addEventListener("submit", function(e){
   e.preventDefault();
   if ($("pw").value === PASSWORD){
@@ -681,7 +713,8 @@ $("search").addEventListener("input", function(e){
 });
 
 $("soldHead").addEventListener("click", function(){
-  $("soldList").classList.toggle("show");
+  var open = $("soldList").classList.toggle("show");
+  $("soldCaret").textContent = open ? "Hide" : "Show";
 });
 
 $("mCancel").addEventListener("click", closeModal);
@@ -696,21 +729,19 @@ $("modal").addEventListener("click", function(e){
   if (e.target === $("modal")) closeModal();
 });
 
-/* Event delegation. No inline handlers, so apostrophes in
-   item names such as WINE LOVER'S DREAM cannot break anything. */
+/* Delegation, so apostrophes such as WINE LOVER'S DREAM
+   cannot break a handler, and rows can be rebuilt freely. */
 document.addEventListener("click", function(e){
   var el = e.target.closest("[data-act]");
   if (!el) return;
-  var num = el.getAttribute("data-item");
+  var row = el.getAttribute("data-row");
   var act = el.getAttribute("data-act");
-  if (act === "live") goLive(num);
-  else if (act === "undo") putBack(num);
-  else if (act === "sell") sell(num);
+  if (act === "live")      goLive(row);
+  else if (act === "undo") putBack(row);
+  else if (act === "sell") sell(row);
 });
 
-$("masthead").addEventListener("error", function(){
-  this.classList.add("broken");
-});
+$("masthead").addEventListener("error", function(){ this.classList.add("gone"); });
 </script>
 
 </body>
