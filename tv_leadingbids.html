@@ -403,6 +403,8 @@
     const DISPLAY_GID = '0';        // gid of the DISPLAY tab
     const CTRL_SHEET = 'CONTROL';
     const CTRL_RANGE = 'A1:B10';
+    // gid of the CONTROL tab on the DISPLAY spreadsheet. Leave '' to use gviz only.
+    const CTRL_GID   = '752655290';
     const REFRESH_MS = 5000;
 
     // gviz coerces a whole column to one type, so text such as *LIVE* sitting in
@@ -416,9 +418,13 @@
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv` +
       `&sheet=${encodeURIComponent(sheetName)}&range=${range}&cacheBust=${Date.now()}`;
 
-    const ctrlCsvUrl = () =>
+    const ctrlGvizUrl = () =>
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv` +
       `&sheet=${encodeURIComponent(CTRL_SHEET)}&range=${CTRL_RANGE}&cacheBust=${Date.now()}`;
+
+    const ctrlExportUrl = () =>
+      `https://docs.google.com/spreadsheets/d/${sheetID}/export?format=csv` +
+      `&gid=${CTRL_GID}&range=${CTRL_RANGE}&cacheBust=${Date.now()}`;
 
     /* ── CSV PARSER ── */
     function parseCsv(text) {
@@ -454,9 +460,38 @@
       try {
         return await fetchCsvData(bidsCsvUrl());
       } catch (e) {
-        console.warn('Export endpoint failed, falling back to gviz:', e.message);
+        console.warn('BIDS: export endpoint failed, falling back to gviz:', e.message);
         return await fetchCsvData(bidsCsvFallbackUrl());
       }
+    }
+
+    // CONTROL is fetched loudly. A silent failure here disables every overlay
+    // while the rest of the screen keeps working, so every failure is logged.
+    let ctrlLastState = '';
+    async function fetchControl() {
+      try {
+        const rows = await fetchCsvData(ctrlGvizUrl());
+        if (rows.length) return rows;
+        console.warn('CONTROL: gviz returned no rows.');
+      } catch (e) {
+        console.warn('CONTROL: gviz failed:', e.message);
+      }
+
+      if (CTRL_GID !== '') {
+        try {
+          const rows = await fetchCsvData(ctrlExportUrl());
+          if (rows.length) return rows;
+          console.error('CONTROL: export returned no rows.');
+        } catch (e) {
+          console.error('CONTROL: export failed:', e.message);
+        }
+      }
+
+      console.error(
+        'CONTROL UNREADABLE. Overlays are disabled. Check that the CONTROL tab ' +
+        'exists on the DISPLAY spreadsheet and that the sheet is published to web.'
+      );
+      return null;
     }
 
     /* ── HELPERS ── */
@@ -619,14 +654,27 @@
       }, SOLD_DURATION);
     }
 
+    // Keys are matched on letters and digits only, so CLOSING_SOON,
+    // 'Closing Soon' and 'CLOSING  SOON' all resolve to the same signal.
+    const ctrlKey = v => String(v ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const isOn    = v => ['ON','TRUE','YES','1'].includes(String(v ?? '').toUpperCase().trim());
+
     function applyControl(rows) {
       const ctrl = {};
-      rows.forEach(r => { 
-        if (r[0]) ctrl[String(r[0]).toUpperCase().trim()] = String(r[1] ?? '').trim(); 
+      rows.forEach(r => {
+        const k = ctrlKey(r[0]);
+        if (k) ctrl[k] = String(r[1] ?? '').trim();
       });
 
-      const closingSoon   = (ctrl['CLOSING_SOON']   || '').toUpperCase() === 'ON';
-      const auctionClosed = (ctrl['AUCTION_CLOSED'] || '').toUpperCase() === 'ON';
+      const closingSoon   = isOn(ctrl['CLOSINGSOON']);
+      const auctionClosed = isOn(ctrl['AUCTIONCLOSED']);
+
+      const state = JSON.stringify(ctrl);
+      if (state !== ctrlLastState) {
+        ctrlLastState = state;
+        console.log('CONTROL read:', ctrl,
+          '| closingSoon =', closingSoon, '| auctionClosed =', auctionClosed);
+      }
 
       if (auctionClosed) {
         runClosingFlash(false);
@@ -636,8 +684,8 @@
         runClosingFlash(closingSoon);
       }
 
-      const soldItem  = ctrl['SOLD_ITEM']  || '';
-      const soldPrice = ctrl['SOLD_PRICE'] || '';
+      const soldItem  = ctrl['SOLDITEM']  || '';
+      const soldPrice = ctrl['SOLDPRICE'] || '';
       if (soldItem && soldPrice) showSoldOverlay(soldItem, soldPrice);
     }
 
@@ -687,7 +735,7 @@
       try {
         const [bidsRows, ctrlRows] = await Promise.all([
           fetchBids(),
-          fetchCsvData(ctrlCsvUrl()).catch(() => [])
+          fetchControl()
         ]);
 
         const validBids = bidsRows.filter(r => r[0] && r[0].trim() !== '');
@@ -704,9 +752,7 @@
 
         renderRows(validBids);
 
-        if (ctrlRows && ctrlRows.length) {
-          applyControl(ctrlRows);
-        }
+        if (ctrlRows && ctrlRows.length) applyControl(ctrlRows);
 
       } catch(e) {
         console.error('Load error:', e);
