@@ -323,8 +323,9 @@ h2.sect{margin:22px 0 3px;font-size:.76rem;font-weight:800;letter-spacing:.13em;
 "use strict";
 
 /* ═══════════ CONFIG ═══════════ */
-var PASSWORD   = "Brendan2026";
-var SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
+var PASSWORD     = "Brendan2026";
+var ADMIN_SECRET = "mh_control_#2026#";
+var SCRIPT_URL   = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
 
 /* ═══════════ STATE ═══════════ */
 var data    = { live: [], available: [], sold: [], duplicates: [] };
@@ -575,7 +576,7 @@ function goLive(rowId){
     go: "Send live",
     run: function(){
       busy(true, "Sending live");
-      return api({ action:"markItemLive", rowId:it.rowId, itemNumber:it.itemNumber })
+      return api({ action:"markItemLive", secret:ADMIN_SECRET, rowId:it.rowId, itemNumber:it.itemNumber })
         .then(function(j){
           addLog(it.itemLabel + " " + it.description + " sent live");
           banner("ok", j.message);
@@ -600,7 +601,7 @@ function putBack(rowId){
     danger: true,
     run: function(){
       busy(true, "Restoring");
-      return api({ action:"undoItemLive", rowId:it.rowId, itemNumber:it.itemNumber })
+      return api({ action:"undoItemLive", secret:ADMIN_SECRET, rowId:it.rowId, itemNumber:it.itemNumber })
         .then(function(j){
           addLog(it.itemLabel + " " + it.description + " put back");
           banner(j.formulaMissing ? "warn" : "ok", j.message);
@@ -666,6 +667,7 @@ function sell(rowId){
       busy(true, "Recording");
       return api({
         action:"markItemSold",
+        secret:ADMIN_SECRET,
         rowId:it.rowId,
         itemNumber:it.itemNumber,
         winnerName:name,
