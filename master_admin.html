@@ -339,8 +339,9 @@
 </div>
 
 <script>
-  const PASSWORD   = "master2026"; // CHANGE BEFORE EVENT NIGHT
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
+  const PASSWORD     = "master2026"; // CHANGE BEFORE EVENT NIGHT
+  const ADMIN_SECRET = "mh_control_#2026#";
+  const SCRIPT_URL   = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
   const DASH_MS    = 12000;
 
   let state = { formOpen: null, bannerActive: null, auctionClosed: null };
@@ -539,7 +540,7 @@
     const open = dir === "open";
     if (!confirm(open ? "Open the bidding form?" : "Close the bidding form?")) return;
     busy.form = true; renderStatus();
-    try { await api({ action: "setFormStatus", open }); state.formOpen = open; toast(open ? "Form is now open." : "Form closed.", open ? "success" : "warn"); }
+    try { await api({ action: "setFormStatus", secret: ADMIN_SECRET, open }); state.formOpen = open; toast(open ? "Form is now open." : "Form closed.", open ? "success" : "warn"); }
     catch (err) { toast("Failed: " + err.message, "error"); }
     finally { busy.form = false; renderStatus(); }
   }
@@ -548,7 +549,7 @@
     const on = dir === "on";
     if (!confirm(on ? "Activate the closing soon banner?" : "Deactivate the closing soon banner?")) return;
     busy.banner = true; renderStatus();
-    try { await api({ action: "setClosingSoonBanner", active: on }); state.bannerActive = on; toast(on ? "Banner is live." : "Banner deactivated.", on ? "warn" : "info"); }
+    try { await api({ action: "setClosingSoonBanner", secret: ADMIN_SECRET, active: on }); state.bannerActive = on; toast(on ? "Banner is live." : "Banner deactivated.", on ? "warn" : "info"); }
     catch (err) { toast("Failed: " + err.message, "error"); }
     finally { busy.banner = false; renderStatus(); }
   }
@@ -558,7 +559,7 @@
     if (!confirm("Are you absolutely sure? This cannot be undone from this panel.")) return;
     busy.auction = true; renderStatus();
     try {
-      await api({ action: "closeAuction" });
+      await api({ action: "closeAuction", secret: ADMIN_SECRET });
       state.auctionClosed = true; state.formOpen = false; state.bannerActive = false;
       renderStatus();
       document.getElementById("closedBanner").style.display = "block";
