@@ -321,6 +321,7 @@
               <th style="width:40px;"></th>
               <th class="col-item">Item</th>
               <th>Leading Bid</th>
+              <th>Winner</th>
               <th>Bids</th>
               <th>Low Target</th>
               <th>High Target</th>
@@ -338,9 +339,9 @@
        CONFIG
        ============================================================ */
     const PASSWORD   = "starrynight";
-    const SHEET_ID   = "1UdOW-OSvZUxlHEzPz0--FDtFcSMTjbZLDo-OhwRr_Mc";
-    const SHEET_TAB  = "LEADING BIDS";
-    const RANGE      = "A6:O50";
+    const SHEET_ID   = "10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc"; // DISPLAY spreadsheet
+    const SHEET_TAB  = "COMMITTEE";
+    const RANGE      = "A2:H50";
     const REFRESH_MS = 5000;
     /* ============================================================ */
 
@@ -386,17 +387,18 @@
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
 
-        // Range starts at row 6 (data rows only, no header row in response)
-        // Column positions in LEADING BIDS (0-indexed from column A):
-        // A=0, B=1, C=2, D=3, E=4 (CURRENT BID), F=5 (STATUS),
-        // G=6 (LOW), H=7 (HIGH), O=14 (NUMBER OF BIDS)
+        // COMMITTEE tab column layout (0-indexed from column A), data starts row 2:
+        // A=0 ITEM, B=1 CURRENT BID, C=2 STATUS, D=3 LOW, E=4 HIGH,
+        // F=5 JOINT TOP BID, G=6 NUMBER OF BIDS, H=7 NAME
         const idx = {
-          item:       3,  // Column D — full item description
-          currentBid: 4,  // Column E — current bid
-          status:     5,  // Column F — status
-          low:        6,  // Column G — low target
-          high:       7,  // Column H — high target
-          numBids:    14, // Column O — number of bids
+          item:       0,
+          currentBid: 1,
+          status:     2,
+          low:        3,
+          high:       4,
+          jointTop:   5,
+          numBids:    6,
+          name:       7,
         };
 
         const allRows = json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
@@ -411,10 +413,10 @@
         // Track best bid per item for totals (multi-slot items like ITEM 07)
         const itemBest = new Map();
         dataRows.forEach(row => {
-          const itemKey  = String(row[idx.item] || "").trim().toUpperCase();
-          const bidNum   = Number(String(row[idx.currentBid] || "").replace(/[^\d.-]/g, "")) || 0;
+          const itemKey   = String(row[idx.item] || "").trim().toUpperCase();
+          const bidNum    = Number(String(row[idx.currentBid] || "").replace(/[^\d.-]/g, "")) || 0;
           const statusVal = String(row[idx.status] || "").toUpperCase().trim();
-          const existing = itemBest.get(itemKey);
+          const existing  = itemBest.get(itemKey);
           if (!existing || bidNum > existing.bid) {
             itemBest.set(itemKey, { bid: bidNum, status: statusVal });
           }
@@ -440,12 +442,13 @@
           const itemKey = String(row[idx.item] || "").trim().toUpperCase();
           if (itemKey !== lastItem) { stripe = 1 - stripe; lastItem = itemKey; }
 
-          const item      = idx.item      > -1 ? String(row[idx.item] || "").trim()      : "";
-          const bid       = idx.currentBid > -1 ? row[idx.currentBid]                    : "";
-          const status    = idx.status    > -1 ? String(row[idx.status] || "").trim()    : "";
-          const low       = idx.low       > -1 ? row[idx.low]                            : "";
-          const high      = idx.high      > -1 ? row[idx.high]                           : "";
-          const numBids   = idx.numBids   > -1 ? row[idx.numBids]                        : "";
+          const item    = String(row[idx.item] || "").trim();
+          const bid     = row[idx.currentBid];
+          const status  = String(row[idx.status] || "").trim();
+          const low     = row[idx.low];
+          const high    = row[idx.high];
+          const numBids = row[idx.numBids];
+          const name    = String(row[idx.name] || "").trim();
 
           const rowClass  = stripe === 1 ? "alt-gold" : "";
           const statClass = statusClass(status);
@@ -454,7 +457,8 @@
           html += `<td class="${statClass}">${statusIcon(status)}</td>`;
           html += `<td class="col-item">${item}</td>`;
           html += `<td class="bid-amount">${formatEuro(bid)}</td>`;
-          html += `<td>${numBids !== "" ? numBids : ""}</td>`;
+          html += `<td>${name}</td>`;
+          html += `<td>${numBids !== "" && numBids != null ? numBids : ""}</td>`;
           html += `<td style="background:#f1f1f1">${formatEuro(low)}</td>`;
           html += `<td style="background:#f1f1f1">${formatEuro(high)}</td>`;
           html += `</tr>`;
