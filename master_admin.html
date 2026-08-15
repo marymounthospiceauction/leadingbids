@@ -95,16 +95,27 @@
     .filter-input:focus { border-color: var(--gold); }
 
     /* ALL BIDS TICKER */
-    .ticker-row { display: grid; grid-template-columns: 44px 52px 1fr 110px 80px 64px; align-items: center; border-bottom: 0.5px solid var(--b2); height: 26px; padding: 0 10px; gap: 0; }
+    .ticker-row { display: grid; grid-template-columns: 52px 60px 1fr 120px 92px 68px 52px; align-items: center; border-bottom: 0.5px solid var(--b2); height: 32px; padding: 0 10px; gap: 0; }
     .ticker-row:last-child { border-bottom: none; }
     .ticker-row.flash { animation: flash 1.4s ease; }
     @keyframes flash { 0%,100%{background:transparent} 20%{background:rgba(74,222,128,0.15)} }
-    .t-time     { color: var(--gold-lt); font-size: 0.65rem; font-weight: 800; font-variant-numeric: tabular-nums; }
-    .t-item     { color: var(--gold-lt); font-weight: 800; font-size: 0.63rem; }
-    .t-desc     { color: var(--dim); font-size: 0.66rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 6px; }
-    .t-name     { color: var(--muted); font-size: 0.63rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .t-amount   { color: var(--green); font-weight: 800; font-size: 0.75rem; white-space: nowrap; text-align: right; }
-    .t-increase { color: #6ee7a8; font-size: 0.63rem; font-weight: 700; white-space: nowrap; text-align: right; }
+    /* bid placed within the last 15 minutes */
+    .ticker-row.recent { background: rgba(201,151,63,0.13); box-shadow: inset 3px 0 0 var(--gold); }
+    .ticker-row.recent .t-desc { color: var(--white); }
+    .t-time     { color: var(--gold-lt); font-size: 0.80rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .t-item     { color: var(--gold-lt); font-weight: 800; font-size: 0.78rem; }
+    .t-desc     { color: var(--dim); font-size: 0.81rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 6px; }
+    .t-name     { color: var(--muted); font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .t-amount   { color: var(--green); font-weight: 800; font-size: 0.90rem; white-space: nowrap; text-align: right; }
+    .t-increase { color: #6ee7a8; font-size: 0.76rem; font-weight: 700; white-space: nowrap; text-align: right; }
+    .t-wa       { text-align: right; white-space: nowrap; font-size: 0.78rem; letter-spacing: -1px; padding-left: 6px; }
+    .wa-none    { color: var(--muted); opacity: 0.5; letter-spacing: 0; }
+    .wa-sent    { color: var(--muted); }
+    .wa-read    { color: #38bdf8; }
+    .wa-fail    { color: var(--red); letter-spacing: 0; }
+
+    .filter-toggle { display: flex; align-items: center; gap: 5px; font-size: 0.63rem; color: var(--muted); white-space: nowrap; cursor: pointer; user-select: none; }
+    .filter-toggle input { accent-color: var(--gold); cursor: pointer; }
 
     /* LEADING BIDS — COLLAPSIBLE BY ITEM */
     .lb-item-group { border-bottom: 1px solid var(--b2); }
@@ -112,7 +123,7 @@
 
     .lb-item-header {
       display: grid;
-      grid-template-columns: 52px 1fr auto auto;
+      grid-template-columns: 52px 1fr auto auto auto;
       align-items: center;
       height: 30px;
       padding: 0 10px;
@@ -134,10 +145,23 @@
 
     .lb-bid-row { display: grid; grid-template-columns: 50px 1fr auto 60px; align-items: center; height: 24px; padding: 0 10px 0 22px; border-bottom: 0.5px solid rgba(58,80,128,0.4); font-size: 0.63rem; gap: 6px; }
     .lb-bid-row:last-child { border-bottom: none; }
+    .lb-bid-row.recent { background: rgba(201,151,63,0.13); box-shadow: inset 3px 0 0 var(--gold); }
     .lb-b-time  { color: var(--muted); font-variant-numeric: tabular-nums; }
     .lb-b-name  { color: var(--dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .lb-b-amt   { color: var(--green); font-weight: 800; text-align: right; white-space: nowrap; }
     .lb-b-inc   { color: #6ee7a8; font-size: 0.6rem; text-align: right; white-space: nowrap; }
+
+    /* TARGET STATUS CHIP */
+    .lb-status {
+      font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+      padding: 2px 7px; border-radius: 999px; white-space: nowrap; text-align: center; min-width: 62px;
+    }
+    .st-below   { background: rgba(239,68,68,0.16);  color: #fca5a5; border: 0.5px solid var(--red-bdr); }
+    .st-target  { background: rgba(245,158,11,0.16); color: var(--amber); border: 0.5px solid rgba(245,158,11,0.4); }
+    .st-above   { background: var(--grn-bg);         color: var(--green); border: 0.5px solid var(--grn-bdr); }
+    .st-unknown { background: rgba(255,255,255,0.05);color: var(--muted); border: 0.5px solid var(--border); }
+    .lb-count   { font-size: 0.55rem; color: var(--muted); margin-left: 4px; font-weight: 700; }
+    .lb-target-note { font-size: 0.58rem; color: var(--muted); padding: 4px 10px 5px 22px; border-bottom: 0.5px solid rgba(58,80,128,0.4); }
 
     /* CONTROLS COLUMN */
     .ctrl-col { display: flex; flex-direction: column; background: var(--s3); }
@@ -189,7 +213,7 @@
     }
 
     @media (max-width: 560px) {
-      .ticker-row { grid-template-columns: 40px 46px 1fr 62px; padding: 0 8px; }
+      .ticker-row { grid-template-columns: 46px 52px 1fr 70px 44px; padding: 0 8px; }
       .t-desc { display: none; }
       .t-increase { display: none; }
     }
@@ -290,6 +314,9 @@
         <input class="filter-input" id="fItem"   placeholder="Item (e.g. ITEM 01)" oninput="applyBidFilter()" />
         <input class="filter-input" id="fDesc"   placeholder="Description" oninput="applyBidFilter()" />
         <input class="filter-input" id="fBidder" placeholder="Bidder name" oninput="applyBidFilter()" />
+        <label class="filter-toggle" title="Show only bids from the last 15 minutes">
+          <input type="checkbox" id="fRecent" onchange="applyBidFilter()" /> Last 15m
+        </label>
       </div>
       <div class="panel-body" id="ticker">
         <div class="empty">Loading...</div>
@@ -343,6 +370,7 @@
   const ADMIN_SECRET = "mh_control_#2026#";
   const SCRIPT_URL   = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7hVuQLnvAVhTTygVo6nbqIKnExx0yGvQqsiyE1lr8mbWC7rnKg/exec";
   const DASH_MS    = 12000;
+  const RECENT_MS  = 15 * 60 * 1000; // "recent bid" highlight window
 
   let state = { formOpen: null, bannerActive: null, auctionClosed: null };
   let busy  = { form: false, banner: false, auction: false };
@@ -405,6 +433,8 @@
         const isNew    = newestTs && lastBidTs && newestTs !== lastBidTs;
         lastBidTs = newestTs;
         applyBidFilter(isNew);
+        // Drill-down bids come from allBids, so refresh the leading panel too.
+        if (allLeading.length) renderLeading();
       }
 
       if (d.leadingBids && d.leadingBids.ok) {
@@ -458,64 +488,200 @@
     else { eb.style.display = "none"; el.innerHTML = ""; }
   }
 
+  /* ---------- helpers ---------- */
+
+  // Resolve a bid's timestamp to epoch ms. Tolerates ISO strings, epoch numbers,
+  // Date objects, and falls back to parsing an "HH:MM" time as today.
+  function bidEpoch(b) {
+    if (!b) return NaN;
+    const raw = b.ts != null && b.ts !== "" ? b.ts : b.timestamp;
+    if (raw != null && raw !== "") {
+      if (typeof raw === "number") return raw < 1e12 ? raw * 1000 : raw;
+      const p = Date.parse(raw);
+      if (!isNaN(p)) return p;
+    }
+    const t = String(b.time || "").match(/^(\d{1,2}):(\d{2})/);
+    if (t) {
+      const d = new Date();
+      d.setHours(Number(t[1]), Number(t[2]), 0, 0);
+      return d.getTime();
+    }
+    return NaN;
+  }
+
+  function isRecent(b) {
+    const e = bidEpoch(b);
+    if (isNaN(e)) return false;
+    const age = Date.now() - e;
+    return age >= -60000 && age <= RECENT_MS; // small negative tolerance for clock skew
+  }
+
+  // WhatsApp delivery cell.
+  // Expects b.waSent (bool) and, once the webhook stores it, b.waStatus:
+  // "sent" | "delivered" | "read" | "failed".
+  // Renders a dash while the backend does not supply the fields.
+  function waCell(b) {
+    const err = String(b.waError || "").trim();
+    if (err) return `<span class="wa-fail" title="${escAttr(err)}">✕</span>`;
+
+    const status = String(b.waStatus || "").toLowerCase();
+    if (status === "read")      return `<span class="wa-read"  title="Read">✓✓</span>`;
+    if (status === "delivered") return `<span class="wa-sent"  title="Delivered">✓✓</span>`;
+    if (status === "failed")    return `<span class="wa-fail"  title="Failed">✕</span>`;
+    if (status === "sent")      return `<span class="wa-sent"  title="Sent">✓</span>`;
+
+    if (b.waSent === true)  return `<span class="wa-sent" title="Sent (no delivery receipt stored)">✓</span>`;
+    if (b.waSent === false) return `<span class="wa-none" title="Not sent">–</span>`;
+    return `<span class="wa-none" title="No WhatsApp data from server">–</span>`;
+  }
+
+  function escHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  function escAttr(s) { return escHtml(s); }
+
   function applyBidFilter(flashNewest) {
-    const itemQ   = (document.getElementById("fItem").value   || "").trim().toUpperCase();
-    const descQ   = (document.getElementById("fDesc").value   || "").trim().toUpperCase();
-    const bidderQ = (document.getElementById("fBidder").value || "").trim().toUpperCase();
+    const itemQ    = (document.getElementById("fItem").value   || "").trim().toUpperCase();
+    const descQ    = (document.getElementById("fDesc").value   || "").trim().toUpperCase();
+    const bidderQ  = (document.getElementById("fBidder").value || "").trim().toUpperCase();
+    const recentEl = document.getElementById("fRecent");
+    const recentOnly = recentEl ? recentEl.checked : false;
 
     let list = allBids;
     if (itemQ)   list = list.filter(b => (b.item || "").toUpperCase().includes(itemQ));
     if (descQ)   list = list.filter(b => (b.desc || "").toUpperCase().includes(descQ));
     if (bidderQ) list = list.filter(b => (b.name || "").toUpperCase().includes(bidderQ));
+    if (recentOnly) list = list.filter(isRecent);
 
     const ticker = document.getElementById("ticker");
-    if (!list.length) { ticker.innerHTML = `<div class="empty">No matching bids.</div>`; return; }
+    if (!list.length) {
+      ticker.innerHTML = `<div class="empty">${recentOnly ? "No bids in the last 15 minutes." : "No matching bids."}</div>`;
+      document.getElementById("bidsUpdated").textContent = new Date().toLocaleTimeString("en-IE");
+      return;
+    }
 
     ticker.innerHTML = list.map((b, i) => `
-      <div class="ticker-row ${i === 0 && flashNewest ? 'flash' : ''}">
-        <div class="t-time">${b.time || "—"}</div>
-        <div class="t-item">${b.item || "—"}</div>
-        <div class="t-desc">${b.desc || ""}</div>
-        <div class="t-name">${b.name || "—"}</div>
+      <div class="ticker-row ${i === 0 && flashNewest ? 'flash' : ''} ${isRecent(b) ? 'recent' : ''}">
+        <div class="t-time">${escHtml(b.time) || "—"}</div>
+        <div class="t-item">${escHtml(b.item) || "—"}</div>
+        <div class="t-desc">${escHtml(b.desc)}</div>
+        <div class="t-name">${escHtml(b.name) || "—"}</div>
         <div class="t-amount">€${Number(b.amount || 0).toLocaleString("en-IE")}</div>
         <div class="t-increase">${b.increment > 0 ? "+€" + Number(b.increment).toLocaleString("en-IE") : ""}</div>
+        <div class="t-wa">${waCell(b)}</div>
       </div>`).join("");
 
     document.getElementById("bidsUpdated").textContent = new Date().toLocaleTimeString("en-IE");
+  }
+
+  // Item numbers are NOT unique (ITEM 04 = two Real Madrid sets, ITEM 07 = three
+  // Graham Norton sets), so byItem[itemNumber] collapses them into one bucket.
+  // Match on item number, and additionally on description when the row is a set.
+  function normKey(v) {
+    return String(v == null ? "" : v).toUpperCase().replace(/\s+/g, " ").trim();
+  }
+
+  function bidsForItem(item) {
+    const num  = normKey(item.item);
+    const desc = normKey(item.description);
+    const isSet = /\bSET\s*\d+/.test(desc);
+
+    let list = allBids.filter(b => normKey(b.item) === num);
+
+    if (isSet) {
+      const exact = list.filter(b => normKey(b.desc) === desc);
+      if (exact.length) return exact;
+      // Descriptions were edited mid-event, so old rows may not match the new
+      // string. Fall back to matching just the set number.
+      const setNo = (desc.match(/\bSET\s*(\d+)/) || [])[1];
+      if (setNo) {
+        const bySet = list.filter(b => {
+          const m = normKey(b.desc).match(/\bSET\s*(\d+)/);
+          return m && m[1] === setNo;
+        });
+        if (bySet.length) return bySet;
+      }
+      return [];
+    }
+
+    if (!list.length && byItem[item.item] && byItem[item.item].bids) {
+      list = byItem[item.item].bids;
+    }
+    return list;
+  }
+
+  // Target status. Expects item.status ("BELOW" | "ON TARGET" | "ABOVE") from
+  // the LIVE STATUS tab. Falls back to deriving it from item.target if supplied.
+  function statusChip(item) {
+    let s = normKey(item.status || item.targetStatus);
+
+    if (!s) {
+      const target = Number(item.target || item.lowTarget || 0);
+      const amount = Number(item.amount || 0);
+      if (target > 0) {
+        if (amount > target) s = "ABOVE";
+        else if (amount === target) s = "ON TARGET";
+        else s = "BELOW";
+      }
+    }
+
+    if (s === "ABOVE")     return `<div class="lb-status st-above">Above</div>`;
+    if (s === "BELOW")     return `<div class="lb-status st-below">Below</div>`;
+    if (s === "ON TARGET") return `<div class="lb-status st-target">On target</div>`;
+    return `<div class="lb-status st-unknown" title="No target status from server">—</div>`;
+  }
+
+  function targetNote(item) {
+    const low  = Number(item.lowTarget  || item.target || 0);
+    const high = Number(item.highTarget || 0);
+    if (!low && !high) return "";
+    const parts = [];
+    if (low)  parts.push("Low target €" + low.toLocaleString("en-IE"));
+    if (high) parts.push("High target €" + high.toLocaleString("en-IE"));
+    return `<div class="lb-target-note">${parts.join(" &nbsp;·&nbsp; ")}</div>`;
   }
 
   function renderLeading() {
     // Preserve which groups are open
     const openItems = new Set(
       [...document.querySelectorAll(".lb-item-group.open")]
-        .map(el => el.dataset.item)
+        .map(el => el.dataset.key)
     );
 
     const el = document.getElementById("leadingBids");
     if (!allLeading.length) { el.innerHTML = `<div class="empty">No data.</div>`; return; }
 
-    el.innerHTML = allLeading.map(item => {
-      const key   = item.item;
-      const bids  = (byItem[key] && byItem[key].bids) ? byItem[key].bids : [];
-      const isOpen = openItems.has(key);
+    el.innerHTML = allLeading.map((item, idx) => {
+      // Unique per row, so two ITEM 04 rows keep their own open/closed state.
+      const rowKey = normKey(item.item) + "|" + normKey(item.description) + "|" + idx;
+      const bids   = bidsForItem(item);
+      const isOpen = openItems.has(rowKey);
 
-      const bidRows = bids.map(b => `
-        <div class="lb-bid-row">
-          <div class="lb-b-time">${b.time || "—"}</div>
-          <div class="lb-b-name">${b.name || "—"}</div>
+      const sorted = bids.slice().sort((a, b) => Number(b.amount || 0) - Number(a.amount || 0));
+
+      const bidRows = sorted.map(b => `
+        <div class="lb-bid-row ${isRecent(b) ? 'recent' : ''}">
+          <div class="lb-b-time">${escHtml(b.time) || "—"}</div>
+          <div class="lb-b-name">${escHtml(b.name) || "—"}</div>
           <div class="lb-b-amt">€${Number(b.amount || 0).toLocaleString("en-IE")}</div>
           <div class="lb-b-inc">${b.increment > 0 ? "+€" + Number(b.increment).toLocaleString("en-IE") : ""}</div>
         </div>`).join("");
 
       return `
-        <div class="lb-item-group ${isOpen ? 'open' : ''}" data-item="${key}">
+        <div class="lb-item-group ${isOpen ? 'open' : ''}" data-key="${escAttr(rowKey)}" data-item="${escAttr(item.item)}">
           <div class="lb-item-header" onclick="toggleGroup(this.parentElement)">
-            <div class="lb-h-num">${key}</div>
-            <div class="lb-h-desc">${item.description || ""}</div>
+            <div class="lb-h-num">${escHtml(item.item)}</div>
+            <div class="lb-h-desc">${escHtml(item.description)}<span class="lb-count">(${sorted.length})</span></div>
+            ${statusChip(item)}
             <div class="lb-h-amt">€${Number(item.amount || 0).toLocaleString("en-IE")}</div>
             <div class="lb-h-chev">▶</div>
           </div>
-          <div class="lb-item-bids">${bidRows || '<div class="empty" style="padding:8px 22px;font-size:0.65rem;">No bids yet</div>'}</div>
+          <div class="lb-item-bids">
+            ${targetNote(item)}
+            ${bidRows || '<div class="empty" style="padding:8px 22px;font-size:0.65rem;">No bids yet</div>'}
+          </div>
         </div>`;
     }).join("");
 
@@ -524,6 +690,14 @@
 
   function toggleGroup(el) {
     el.classList.toggle("open");
+  }
+
+  // Bids age out of the 15-minute window between dashboard polls, so recompute
+  // the highlight on its own timer rather than only on fetch.
+  function refreshRecency() {
+    if (!allBids.length) return;
+    applyBidFilter(false);
+    if (allLeading.length) renderLeading();
   }
 
   function bump(id, newVal) {
@@ -579,6 +753,7 @@
     tick(); setInterval(tick, 1000);
     loadDashboard();
     setInterval(loadDashboard, DASH_MS);
+    setInterval(refreshRecency, 60000);
   }
 </script>
 </body>
