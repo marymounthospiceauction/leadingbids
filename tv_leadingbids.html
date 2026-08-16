@@ -420,7 +420,10 @@
 
     const ctrlGvizUrl = () =>
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv` +
-      `&sheet=${encodeURIComponent(CTRL_SHEET)}&range=${CTRL_RANGE}&cacheBust=${Date.now()}`;
+      `&sheet=${encodeURIComponent(CTRL_SHEET)}&range=${CTRL_RANGE}` +
+      // headers=0 is required. Without it gviz guesses that the first rows are
+      // column labels, merges them into one label and drops them from the data.
+      `&headers=0&cacheBust=${Date.now()}`;
 
     const ctrlExportUrl = () =>
       `https://docs.google.com/spreadsheets/d/${sheetID}/export?format=csv` +
@@ -493,7 +496,9 @@
     async function fetchControlCsv(url) {
       const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) throw new Error('HTTP ' + res.status);
-      return parseControlCsv(await res.text());
+      const raw = await res.text();
+      console.log('CONTROL raw:', JSON.stringify(raw));
+      return parseControlCsv(raw);
     }
 
     async function fetchControl() {
