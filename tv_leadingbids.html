@@ -465,12 +465,40 @@
       }
     }
 
-    // CONTROL is fetched loudly. A silent failure here disables every overlay
-    // while the rest of the screen keeps working, so every failure is logged.
+    // CONTROL is a simple two-column KEY,VALUE sheet. The shared character-level
+    // CSV parser mis-splits rows on some gviz CONTROL responses (quoted-cell edge
+    // case), so CONTROL gets its own line-based parser instead of fetchCsvData's
+    // parseCsv, and every failure is logged loudly rather than swallowed.
+    function parseControlCsv(raw) {
+      return raw
+        .split(/\r\n|\r|\n/)
+        .map(line => line.trim())
+        .filter(line => line.length)
+        .map(line => {
+          // First comma splits KEY,VALUE. Strip a single layer of "..." quoting
+          // and doubled "" if Sheets wrapped the cell, then unescape "".
+          const idx = line.indexOf(',');
+          let key = idx === -1 ? line : line.slice(0, idx);
+          let val = idx === -1 ? ''   : line.slice(idx + 1);
+          const unquote = c => {
+            c = c.trim();
+            if (c.startsWith('"') && c.endsWith('"')) c = c.slice(1, -1).replace(/""/g, '"');
+            return c;
+          };
+          return [unquote(key), unquote(val)];
+        });
+    }
+
     let ctrlLastState = '';
+    async function fetchControlCsv(url) {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return parseControlCsv(await res.text());
+    }
+
     async function fetchControl() {
       try {
-        const rows = await fetchCsvData(ctrlGvizUrl());
+        const rows = await fetchControlCsv(ctrlGvizUrl());
         if (rows.length) return rows;
         console.warn('CONTROL: gviz returned no rows.');
       } catch (e) {
@@ -479,7 +507,7 @@
 
       if (CTRL_GID !== '') {
         try {
-          const rows = await fetchCsvData(ctrlExportUrl());
+          const rows = await fetchControlCsv(ctrlExportUrl());
           if (rows.length) return rows;
           console.error('CONTROL: export returned no rows.');
         } catch (e) {
