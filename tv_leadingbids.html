@@ -398,25 +398,51 @@
   <script>
     /* ── CONFIG ── */
     const sheetID   = '10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc';
-    const sheetName = 'DISPLAY';
-    const range     = 'H3:J40';
-    const DISPLAY_GID = '0';        // gid of the DISPLAY tab
     const CTRL_SHEET = 'CONTROL';
     const CTRL_RANGE = 'A1:B10';
     // gid of the CONTROL tab on the DISPLAY spreadsheet. Leave '' to use gviz only.
     const CTRL_GID   = '752655290';
     const REFRESH_MS = 5000;
 
-    // gviz coerces a whole column to one type, so text such as *LIVE* sitting in
-    // the numeric LEADING BID column is returned as an empty string. The export
-    // endpoint returns raw cell text, so it is used for the bids.
-    const bidsCsvUrl = () =>
-      `https://docs.google.com/spreadsheets/d/${sheetID}/export?format=csv` +
-      `&gid=${DISPLAY_GID}&range=${range}&cacheBust=${Date.now()}`;
+    /* Published CSV of the DISPLAY tab (gid 0). /export needs link sharing,
+       which this file is not published under, and gviz casts a whole column
+       to one type and silently drops text such as *LIVE*. The published
+       endpoint returns raw cell text and does not need link sharing, only
+       "publish to web", which is already on for this document.
 
-    const bidsCsvFallbackUrl = () =>
-      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv` +
-      `&sheet=${encodeURIComponent(sheetName)}&range=${range}&cacheBust=${Date.now()}`;
+       It returns the entire DISPLAY tab, not a range, so the block-3
+       columns (description / new bid / leading bid) are located by header
+       name below rather than assumed to sit at H:J. */
+    const bidsPubCsvUrl = () =>
+      'https://docs.google.com/spreadsheets/d/e/2PACX-1vSQNDV6Mxcwx7ooiUrTkRUHHVUFCnu47d7qaeEijrK0b-5QvafzDwhEax7genVr_ZK512ZDhgbTjJYx/pub' +
+      `?gid=0&single=true&output=csv&cacheBust=${Date.now()}`;
+
+    const norm = s => String(s ?? '').replace(/\u00A0/g, ' ').trim().toUpperCase();
+
+    // Finds the header row, then the 3rd "ITEM DESCRIPTION" block (the one
+    // paired with a NEW BID column), then its LEADING BID column. Returns
+    // null if the layout is not what is expected, so a sheet change fails
+    // loudly instead of silently rendering the wrong column.
+    function locateBidColumns(rows) {
+      for (let r = 0; r < Math.min(rows.length, 10); r++) {
+        const cells = rows[r].map(norm);
+        const descCols = [];
+        cells.forEach((v, i) => { if (v === 'ITEM DESCRIPTION') descCols.push(i); });
+        if (descCols.length < 3) continue;
+
+        const descCol   = descCols[2];
+        const blockEnd  = cells.length;
+        let newBidCol = -1, bidCol = -1;
+        for (let i = descCol + 1; i < blockEnd; i++) {
+          if (cells[i] === 'NEW BID')      newBidCol = i;
+          if (cells[i] === 'LEADING BID')  bidCol = i;
+        }
+        if (bidCol === -1) continue;
+
+        return { headerRow: r, descCol, newBidCol, bidCol };
+      }
+      return null;
+    }
 
     const ctrlGvizUrl = () =>
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv` +
@@ -458,14 +484,34 @@
       return parseCsv(raw);
     }
 
-    // Try the export endpoint first; fall back to gviz if it is unavailable.
+    let loggedBidColumns = false;
+
+    // Fetches the published DISPLAY CSV, finds the block-3 columns by
+    // header name, and returns rows already sliced to [description, newBid,
+    // leadingBid] so renderRows/makeRow below need no further changes.
     async function fetchBids() {
-      try {
-        return await fetchCsvData(bidsCsvUrl());
-      } catch (e) {
-        console.warn('BIDS: export endpoint failed, falling back to gviz:', e.message);
-        return await fetchCsvData(bidsCsvFallbackUrl());
+      const allRows = await fetchCsvData(bidsPubCsvUrl());
+      const cols = locateBidColumns(allRows);
+
+      if (!cols) {
+        console.error('BIDS: could not find the ITEM DESCRIPTION / LEADING BID headers.',
+          allRows.slice(0, 4));
+        return [];
       }
+
+      if (!loggedBidColumns) {
+        console.log('BIDS: header row', cols.headerRow,
+          '| description col', cols.descCol,
+          '| new bid col', cols.newBidCol,
+          '| leading bid col', cols.bidCol);
+        loggedBidColumns = true;
+      }
+
+      return allRows.slice(cols.headerRow + 1).map(r => [
+        r[cols.descCol]   ?? '',
+        cols.newBidCol > -1 ? (r[cols.newBidCol] ?? '') : '',
+        r[cols.bidCol]     ?? ''
+      ]);
     }
 
     // CONTROL is a simple two-column KEY,VALUE sheet. The shared character-level
