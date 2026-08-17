@@ -130,6 +130,20 @@ h2.sect{margin:22px 0 3px;font-size:.76rem;font-weight:800;letter-spacing:.13em;
 .live-lead{font-size:.82rem;color:var(--muted)}
 .live-body{padding:13px 15px}
 
+/* ═══════════ PENDING (awaiting winner details) ═══════════ */
+.pending{border:2px solid var(--gold);border-radius:16px;background:#fff;margin-bottom:14px;overflow:hidden}
+.pending:last-child{margin-bottom:0}
+.pending-top{padding:13px 15px;background:#fbf3e4;border-bottom:1px solid #ecdcb8}
+.tag-gold{
+  display:inline-block;font-size:.62rem;font-weight:800;letter-spacing:.14em;
+  text-transform:uppercase;background:var(--gold);color:#fff;
+  padding:4px 9px;border-radius:999px;
+}
+.pending-num{font-size:.72rem;font-weight:800;letter-spacing:.1em;color:var(--muted);margin-top:9px}
+.pending-name{font-size:1.12rem;font-weight:800;line-height:1.22;margin:1px 0 5px}
+.pending-price{font-size:.95rem;font-weight:800;color:var(--gold)}
+.pending-body{padding:13px 15px}
+
 .field{margin-bottom:12px}
 .field label{
   display:block;font-size:.68rem;font-weight:800;letter-spacing:.09em;
@@ -151,6 +165,8 @@ h2.sect{margin:22px 0 3px;font-size:.76rem;font-weight:800;letter-spacing:.13em;
 }
 .btn-sell{background:var(--green);color:#fff;height:58px;font-size:17px}
 .btn-sell:active{background:var(--green-dk)}
+.btn-notify{background:var(--gold);color:#fff;height:58px;font-size:17px}
+.btn-notify:active{opacity:.85}
 .btn-undo{
   background:#fff;color:var(--muted);border:1px solid var(--line);
   min-height:44px;font-size:.76rem;margin-top:9px;
@@ -278,6 +294,10 @@ h2.sect{margin:22px 0 3px;font-size:.76rem;font-weight:800;letter-spacing:.13em;
     <p class="note" id="liveNote">Items the chairman has called.</p>
     <div id="liveWrap"><div class="panel"><div class="empty">Loading.</div></div></div>
 
+    <h2 class="sect">Awaiting winner details</h2>
+    <p class="note" id="pendingNote">Sold, flashed on every screen, waiting on a name and mobile.</p>
+    <div id="pendingWrap"><div class="panel"><div class="empty">Loading.</div></div></div>
+
     <h2 class="sect">Send an item live</h2>
     <p class="note">Tick the moment the chairman calls it. It leaves the bidding form straight away.</p>
     <div class="panel">
@@ -329,6 +349,7 @@ var SCRIPT_URL   = "https://script.google.com/macros/s/AKfycby1YsQ-4o26Krk7zWMn7
 
 /* ═══════════ STATE ═══════════ */
 var data    = { live: [], available: [], sold: [], duplicates: [] };
+var pending = [];
 var logRows = [];
 var filter  = "";
 var pending = null;
@@ -389,9 +410,13 @@ function load(quiet){
   if (!quiet) busy(true, "Loading");
   $("refresh").disabled = true;
 
-  return api({ action:"getCommitteeItems" })
-    .then(function(j){
-      data = j.data || { live:[], available:[], sold:[], duplicates:[] };
+  return Promise.all([
+    api({ action:"getCommitteeItems" }),
+    api({ action:"getPendingWinners" })
+  ])
+    .then(function(results){
+      data = results[0].data || { live:[], available:[], sold:[], duplicates:[] };
+      pending = (results[1].data && results[1].data.pending) || [];
       render();
       $("stamp").textContent = now();
       $("bErr").classList.remove("show");
@@ -406,7 +431,7 @@ function load(quiet){
 }
 
 /* ═══════════ RENDER ═══════════ */
-function render(){ renderDupes(); renderLive(); renderAvail(); renderSold(); }
+function render(){ renderDupes(); renderLive(); renderPending(); renderAvail(); renderSold(); }
 
 function renderDupes(){
   var el = $("bDupe");
@@ -446,20 +471,52 @@ function renderLive(){
         '</div>' +
         '<div class="live-body">' +
           '<div class="field">' +
-            '<label for="wn-' + r + '">Winner name</label>' +
-            '<input id="wn-' + r + '" type="text" autocomplete="off" autocapitalize="words" placeholder="Full name" />' +
-          '</div>' +
-          '<div class="field">' +
-            '<label for="wm-' + r + '">Winner mobile</label>' +
-            '<input id="wm-' + r + '" type="tel" inputmode="numeric" autocomplete="off" placeholder="087 123 4567" />' +
-            '<div class="hint" id="wmh-' + r + '">Irish 08x, or UK as 0044</div>' +
-          '</div>' +
-          '<div class="field">' +
             '<label for="wp-' + r + '">Hammer price</label>' +
             '<input id="wp-' + r + '" type="tel" inputmode="numeric" autocomplete="off" placeholder="\u20AC" />' +
           '</div>' +
-          '<button class="btn btn-sell" data-act="sell" data-row="' + r + '" type="button">Record sale</button>' +
+          '<button class="btn btn-sell" data-act="sellPrice" data-row="' + r + '" type="button">Sold, flash the screens</button>' +
           '<button class="btn btn-undo" data-act="undo" data-row="' + r + '" type="button">Not live, put it back</button>' +
+        '</div>' +
+      '</div>';
+  }).join("");
+}
+
+function renderPending(){
+  var wrap = $("pendingWrap");
+
+  if (!pending.length){
+    wrap.innerHTML = '<div class="panel"><div class="empty">Nothing waiting. Winner details go here the moment a price is recorded.</div></div>';
+    $("pendingNote").textContent = "Sold, flashed on every screen, waiting on a name and mobile.";
+    return;
+  }
+
+  $("pendingNote").textContent = pending.length === 1
+    ? "One sale waiting on winner details."
+    : pending.length + " sales waiting on winner details.";
+
+  wrap.innerHTML = pending.map(function(it, idx){
+    var r = esc(it.settingsRow);
+    var n = esc(it.itemNumber);
+    var key = r + "-" + idx;
+    return '' +
+      '<div class="pending">' +
+        '<div class="pending-top">' +
+          '<span class="tag-gold">Awaiting details</span>' +
+          '<div class="pending-num">' + esc(it.itemLabel) + '</div>' +
+          '<div class="pending-name">' + esc(it.description) + '</div>' +
+          '<div class="pending-price">Sold ' + euro(it.price) + '</div>' +
+        '</div>' +
+        '<div class="pending-body">' +
+          '<div class="field">' +
+            '<label for="pn-' + key + '">Winner name</label>' +
+            '<input id="pn-' + key + '" type="text" autocomplete="off" autocapitalize="words" placeholder="Full name" />' +
+          '</div>' +
+          '<div class="field">' +
+            '<label for="pm-' + key + '">Winner mobile</label>' +
+            '<input id="pm-' + key + '" type="tel" inputmode="numeric" autocomplete="off" placeholder="087 123 4567" />' +
+            '<div class="hint" id="pmh-' + key + '">Irish 08x, or UK as 0044</div>' +
+          '</div>' +
+          '<button class="btn btn-notify" data-act="notify" data-row="' + r + '" data-item="' + n + '" data-key="' + esc(key) + '" type="button">Send winner WhatsApp</button>' +
         '</div>' +
       '</div>';
   }).join("");
@@ -613,20 +670,58 @@ function putBack(rowId){
   });
 }
 
-function sell(rowId){
+function sellPrice(rowId){
   var it = byRow(data.live, rowId);
   if (!it) return;
 
-  var nameEl = $("wn-" + rowId);
-  var mobEl  = $("wm-" + rowId);
-  var priEl  = $("wp-" + rowId);
-  var hint   = $("wmh-" + rowId);
-
-  var name  = nameEl.value.trim();
-  var mob   = mobEl.value.trim();
+  var priEl = $("wp-" + rowId);
   var price = priEl.value.replace(/[^\d]/g,"");
 
-  [nameEl, mobEl, priEl].forEach(function(el){ el.classList.remove("bad"); });
+  priEl.classList.remove("bad");
+
+  if (!price || Number(price) <= 0){
+    priEl.classList.add("bad"); priEl.focus();
+    banner("err","Enter the hammer price in whole euro.");
+    return;
+  }
+
+  // Deliberately no confirm dialog here. This is the one action Brendan
+  // needs to fire in a single tap while the room is moving, and the
+  // price can still be corrected afterwards, unlike the old all-in-one
+  // sale which had no undo. Winner details are a separate, unhurried step.
+  busy(true, "Recording");
+  api({
+    action:"recordSalePrice",
+    secret:ADMIN_SECRET,
+    rowId:it.rowId,
+    itemNumber:it.itemNumber,
+    soldPrice:price
+  })
+    .then(function(j){
+      addLog(it.itemLabel + " " + it.description + " sold for " + euro(price));
+      clearBanners();
+
+      if (j.overlayOk === false){
+        banner("warn", "Sale recorded and screens should update, but the sold overlay may not have fired.");
+      } else {
+        banner("ok", j.message);
+      }
+
+      return load(true);
+    })
+    .catch(function(err){ banner("err", "Not recorded. " + err.message); })
+    .then(function(){ busy(false); });
+}
+
+function notifyWinner(settingsRow, itemNumber, key){
+  var nameEl = $("pn-" + key);
+  var mobEl  = $("pm-" + key);
+  var hint   = $("pmh-" + key);
+
+  var name = nameEl.value.trim();
+  var mob  = mobEl.value.trim();
+
+  [nameEl, mobEl].forEach(function(el){ el.classList.remove("bad"); });
   hint.classList.remove("bad");
   hint.textContent = "Irish 08x, or UK as 0044";
 
@@ -644,54 +739,29 @@ function sell(rowId){
     return;
   }
 
-  if (!price || Number(price) <= 0){
-    priEl.classList.add("bad"); priEl.focus();
-    banner("err","Enter the hammer price in whole euro.");
-    return;
-  }
-
   var clean = tidyMobile(mob);
 
-  ask({
-    title: "Record this sale?",
-    body: '<span class="big">' + esc(it.description) + '</span>' +
-          '<dl>' +
-            '<dt>Item</dt><dd>'   + esc(it.itemLabel) + '</dd>' +
-            '<dt>Winner</dt><dd>' + esc(name) + '</dd>' +
-            '<dt>Mobile</dt><dd>' + esc(clean) + '</dd>' +
-            '<dt>Price</dt><dd>'  + euro(price) + '</dd>' +
-          '</dl>',
-    consequence: "This marks the item sold on every screen and sends the winner a WhatsApp message. There is no undo.",
-    go: "Record sale",
-    run: function(){
-      busy(true, "Recording");
-      return api({
-        action:"markItemSold",
-        secret:ADMIN_SECRET,
-        rowId:it.rowId,
-        itemNumber:it.itemNumber,
-        winnerName:name,
-        winnerMobile:clean,
-        soldPrice:price
-      })
-      .then(function(j){
-        addLog(it.itemLabel + " " + it.description + " sold to " + name + " for " + euro(price));
-        clearBanners();
-
-        if (j.whatsappOk === false){
-          banner("warn", "Sale recorded, but the WhatsApp to " + name + " did not send. Tell them in person. " + (j.whatsappError || ""));
-        } else if (j.overlayOk === false){
-          banner("warn", "Sale recorded and the winner was messaged, but the screens did not show the sold overlay.");
-        } else {
-          banner("ok", j.message + " Winner notified.");
-        }
-
-        return load(true);
-      })
-      .catch(function(err){ banner("err", "Not recorded. " + err.message); })
-      .then(function(){ busy(false); });
-    }
-  });
+  busy(true, "Sending");
+  api({
+    action:"sendWinnerNotice",
+    secret:ADMIN_SECRET,
+    rowId:settingsRow,
+    itemNumber:itemNumber,
+    winnerName:name,
+    winnerMobile:clean
+  })
+    .then(function(j){
+      clearBanners();
+      addLog("Winner " + name + " notified");
+      if (j.whatsappOk === false){
+        banner("warn", "Saved, but the WhatsApp to " + name + " did not send. Tell them in person. " + (j.whatsappError || ""));
+      } else {
+        banner("ok", j.message);
+      }
+      return load(true);
+    })
+    .catch(function(err){ banner("err", "Not sent. " + err.message); })
+    .then(function(){ busy(false); });
 }
 
 /* ═══════════ EVENTS ═══════════ */
@@ -738,9 +808,10 @@ document.addEventListener("click", function(e){
   if (!el) return;
   var row = el.getAttribute("data-row");
   var act = el.getAttribute("data-act");
-  if (act === "live")      goLive(row);
-  else if (act === "undo") putBack(row);
-  else if (act === "sell") sell(row);
+  if (act === "live")           goLive(row);
+  else if (act === "undo")      putBack(row);
+  else if (act === "sellPrice") sellPrice(row);
+  else if (act === "notify")    notifyWinner(row, el.getAttribute("data-item"), el.getAttribute("data-key"));
 });
 
 $("masthead").addEventListener("error", function(){ this.classList.add("gone"); });
