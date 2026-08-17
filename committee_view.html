@@ -396,39 +396,39 @@
     // LEADING_BIDS fails loudly (blank dashboard, console warning) instead
     // of silently showing the wrong figure under the right header.
     //
-    // Scans the first several rows for the header rather than assuming
-    // row 0, since fetching the whole tab (no range parameter) means the
-    // exact header row position is no longer guaranteed by the request.
-    function locateColumns(allRows) {
-      for (let r = 0; r < Math.min(allRows.length, 5); r++) {
-        const cells = allRows[r].map(norm);
-        const find = (...names) => {
-          for (const name of names) {
-            const i = cells.indexOf(name);
-            if (i > -1) return i;
-          }
-          return -1;
-        };
+    // gviz auto-detects the header row from a plain (no-range) request and
+    // removes it from table.rows entirely, moving it into table.cols[].label
+    // instead. Every row in table.rows is data; there is no header row left
+    // to scan for. Column labels are read from table.cols, not from rows.
+    function locateColumns(cols) {
+      const labels = cols.map(c => norm(c.label));
+      const find = (...names) => {
+        for (const name of names) {
+          const i = labels.indexOf(name);
+          if (i > -1) return i;
+        }
+        return -1;
+      };
 
-        const idx = {
-          headerRow:  r,
-          item:       find("ITEM"),
-          currentBid: find("CURRENT BID"),
-          status:     find("STATUS"),
-          low:        find("LOW"),
-          high:       find("HIGH"),
-          numBids:    find("NUMBER OF BIDS"),
-          name:       find("NAME"),
-        };
+      const idx = {
+        item:       find("ITEM"),
+        currentBid: find("CURRENT BID"),
+        status:     find("STATUS"),
+        low:        find("LOW"),
+        high:       find("HIGH"),
+        numBids:    find("NUMBER OF BIDS"),
+        name:       find("NAME"),
+      };
 
-        const required = ["item", "currentBid", "status", "low", "high"];
-        const missing = required.filter(k => idx[k] === -1);
-        if (!missing.length) return idx;
+      const required = ["item", "currentBid", "status", "low", "high"];
+      const missing = required.filter(k => idx[k] === -1);
+      if (missing.length) {
+        console.error("COMMITTEE view: could not find column(s) "
+          + missing.join(", ") + " among the sheet's column labels.", labels);
+        return null;
       }
 
-      console.error("COMMITTEE view: could not find the item/bid/status/low/high "
-        + "columns in the first few rows.", allRows.slice(0, 5));
-      return null;
+      return idx;
     }
 
     let loggedColumns = false;
@@ -442,10 +442,7 @@
         if (start === -1 || end === -1) throw new Error("Unexpected sheet response");
         const json = JSON.parse(text.slice(start, end + 1));
 
-        const allRows = json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
-        if (!allRows.length) return;
-
-        const idx = locateColumns(allRows);
+        const idx = locateColumns(json.table.cols);
         if (!idx) return; // keep whatever was last shown rather than blank the dashboard
 
         if (!loggedColumns) {
@@ -453,7 +450,8 @@
           loggedColumns = true;
         }
 
-        const dataRows = allRows.slice(idx.headerRow + 1).filter(r => String(r[idx.item] || "").trim() !== "");
+        const allRows = json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
+        const dataRows = allRows.filter(r => String(r[idx.item] || "").trim() !== "");
 
         // Totals and counts
         let auctionTotal = 0;
