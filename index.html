@@ -294,6 +294,9 @@
     }
 
     let loggedColumns = false;
+    let consecutiveFailures = 0;
+    let hasShownData = false;
+    const MAX_SILENT_FAILURES = 4; // ~20s of failed polls before we tell the guest
 
     async function loadData() {
       let rows;
@@ -302,18 +305,29 @@
         if (!res.ok) throw new Error('HTTP ' + res.status);
         rows = parseCsv(await res.text());
       } catch (err) {
-        console.error('Leading bids fetch failed:', err);
-        showMessage('Live bids are temporarily unavailable.');
+        consecutiveFailures++;
+        console.warn('Leading bids fetch failed (' + consecutiveFailures + ' in a row):', err.message);
+        if (!hasShownData && consecutiveFailures >= MAX_SILENT_FAILURES) {
+          showMessage('Live bids are temporarily unavailable.');
+        }
+        // Otherwise leave whatever is already on screen alone. One bad
+        // fetch on an otherwise-working page should be invisible, not
+        // blank the table for every guest looking at it.
         return;
       }
 
       const cols = locateColumns(rows);
       if (!cols) {
-        console.error('Could not find the ITEM DESCRIPTION / LEADING BID headers.',
-                      rows.slice(0, 4));
-        showMessage('Live bids are temporarily unavailable.');
+        consecutiveFailures++;
+        console.warn('Could not find the ITEM DESCRIPTION / LEADING BID headers ('
+          + consecutiveFailures + ' in a row).', rows.slice(0, 4));
+        if (!hasShownData && consecutiveFailures >= MAX_SILENT_FAILURES) {
+          showMessage('Live bids are temporarily unavailable.');
+        }
         return;
       }
+
+      consecutiveFailures = 0;
 
       if (!loggedColumns) {
         console.log('Leading bids: header row ' + cols.headerRow
@@ -340,10 +354,14 @@
       }
 
       if (!count) {
-        showMessage('Live bids are temporarily unavailable.');
+        consecutiveFailures++;
+        if (!hasShownData && consecutiveFailures >= MAX_SILENT_FAILURES) {
+          showMessage('Live bids are temporarily unavailable.');
+        }
         return;
       }
 
+      hasShownData = true;
       document.querySelector('#bidsTable tbody').innerHTML = html;
     }
 
