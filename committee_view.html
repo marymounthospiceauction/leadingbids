@@ -341,7 +341,7 @@
     const PASSWORD   = "starrynight";
     const SHEET_ID   = "10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc"; // DISPLAY spreadsheet
     const SHEET_TAB  = "COMMITTEE";
-    const RANGE      = "A2:H50";
+    const RANGE      = "A1:M50";
     const REFRESH_MS = 5000;
     /* ============================================================ */
 
@@ -381,30 +381,69 @@
       return "";
     }
 
+    const norm = s => String(s ?? "").replace(/\u00A0/g, " ").trim().toUpperCase();
+
+    // Locates every column by its header text rather than a fixed position.
+    // COMMITTEE!A1 is itself an IMPORTRANGE of LEADING_BIDS row 5 onward, so
+    // its column order tracks whatever LEADING_BIDS happens to look like at
+    // any given moment. A fixed index map here has already gone silently
+    // out of sync with the sheet once; this is here so the next insert on
+    // LEADING_BIDS fails loudly (blank dashboard, console warning) instead
+    // of silently showing the wrong figure under the right header.
+    function locateColumns(headerRow) {
+      const cells = headerRow.map(norm);
+      const find = (...names) => {
+        for (const name of names) {
+          const i = cells.indexOf(name);
+          if (i > -1) return i;
+        }
+        return -1;
+      };
+
+      const idx = {
+        item:       find("ITEM"),
+        currentBid: find("CURRENT BID"),
+        status:     find("STATUS"),
+        low:        find("LOW"),
+        high:       find("HIGH"),
+        numBids:    find("NUMBER OF BIDS"),
+        name:       find("NAME"),
+      };
+
+      const required = ["item", "currentBid", "status", "low", "high"];
+      const missing = required.filter(k => idx[k] === -1);
+      if (missing.length) {
+        console.error("COMMITTEE view: could not find column(s) "
+          + missing.join(", ") + " in the header row.", headerRow);
+        return null;
+      }
+
+      return idx;
+    }
+
+    let loggedColumns = false;
+
     async function loadData() {
       try {
-        const res  = await fetch(url);
+        const res  = await fetch(url + "&cb=" + Date.now(), { cache: "no-store" });
         const text = await res.text();
-        const json = JSON.parse(text.substr(47).slice(0, -2));
-
-        // COMMITTEE tab column layout (0-indexed from column A), data starts row 2:
-        // A=0 ITEM, B=1 CURRENT BID, C=2 STATUS, D=3 LOW, E=4 HIGH,
-        // F=5 JOINT TOP BID, G=6 NUMBER OF BIDS, H=7 NAME
-        const idx = {
-          item:       0,
-          currentBid: 1,
-          status:     2,
-          low:        3,
-          high:       4,
-          jointTop:   5,
-          numBids:    6,
-          name:       7,
-        };
+        const start = text.indexOf("{");
+        const end   = text.lastIndexOf("}");
+        if (start === -1 || end === -1) throw new Error("Unexpected sheet response");
+        const json = JSON.parse(text.slice(start, end + 1));
 
         const allRows = json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
         if (!allRows.length) return;
 
-        const dataRows = allRows.filter(r => String(r[idx.item] || "").trim() !== "");
+        const idx = locateColumns(allRows[0]);
+        if (!idx) return; // keep whatever was last shown rather than blank the dashboard
+
+        if (!loggedColumns) {
+          console.log("COMMITTEE view columns:", idx);
+          loggedColumns = true;
+        }
+
+        const dataRows = allRows.slice(1).filter(r => String(r[idx.item] || "").trim() !== "");
 
         // Totals and counts
         let auctionTotal = 0;
@@ -447,8 +486,8 @@
           const status  = String(row[idx.status] || "").trim();
           const low     = row[idx.low];
           const high    = row[idx.high];
-          const numBids = row[idx.numBids];
-          const name    = String(row[idx.name] || "").trim();
+          const numBids = idx.numBids > -1 ? row[idx.numBids] : "";
+          const name    = idx.name > -1 ? String(row[idx.name] || "").trim() : "";
 
           const rowClass  = stripe === 1 ? "alt-gold" : "";
           const statClass = statusClass(status);
@@ -467,7 +506,9 @@
         tbody.innerHTML = html;
 
       } catch (err) {
-        console.error("Sheet load error", err);
+        console.warn("COMMITTEE view: fetch skipped:", err.message);
+        // Leave whatever is already on screen alone rather than blank a
+        // working dashboard over one bad poll.
       }
     }
 
