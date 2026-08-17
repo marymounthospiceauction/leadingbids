@@ -450,14 +450,18 @@
        rather than assumed to sit at a fixed position, so a sheet
        change fails loudly instead of silently reading the wrong data.
 
-       headers=0 is required. Without it, gviz auto-detects the merged
-       block-title row above each header row and glues the two together
-       into one string (e.g. "ALL ITEMS (INC MULTIPLES) ITEM DESCRIPTION"),
-       so an exact match on "ITEM DESCRIPTION" never fires. The CONTROL
-       fetch below already knows this; the bids fetch needs it too. */
+       No headers=0 here (unlike the CONTROL fetch below, which needs
+       it for its own layout). gviz only merges a block's title text
+       into a column's header when that column's row-1 cell actually
+       holds text; here that is only true for the ITEM DESCRIPTION
+       columns (e.g. "ALL ITEMS (INC MULTIPLES) ITEM DESCRIPTION").
+       LEADING BID / LIVE STATUS / SOLD STATUS all sit under an empty
+       row-1 cell, so gviz correctly uses row 2 as their header on its
+       own. locateBidColumns below matches description columns by
+       suffix rather than exact text to allow for that merge. */
     const bidsGvizUrl = () =>
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv` +
-      `&sheet=DISPLAY&headers=0&cacheBust=${Date.now()}`;
+      `&sheet=DISPLAY&cacheBust=${Date.now()}`;
 
     const norm = s => String(s ?? '').replace(/\u00A0/g, ' ').trim().toUpperCase();
 
@@ -469,7 +473,7 @@
       for (let r = 0; r < Math.min(rows.length, 10); r++) {
         const cells = rows[r].map(norm);
         const descCols = [];
-        cells.forEach((v, i) => { if (v === 'ITEM DESCRIPTION') descCols.push(i); });
+        cells.forEach((v, i) => { if (v.endsWith('ITEM DESCRIPTION')) descCols.push(i); });
         if (descCols.length < 3) continue;
 
         const descCol   = descCols[2];
