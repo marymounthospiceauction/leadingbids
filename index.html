@@ -190,21 +190,30 @@
   </div>
 
   <script>
-    // Display sheet — no personal data, safe to be public.
-    // Export endpoint used (not gviz) so *LIVE* text in a numeric column
-    // is not silently dropped by type coercion.
-    const SHEET_ID  = '10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc';
-    const SHEET_GID = '0';   // gid of the DISPLAY tab
-    const RANGE     = 'H3:J40';
+    /* ────────────────────────────────────────────────────────────
+       DATA SOURCE
+
+       Published CSV of the DISPLAY tab on the display spreadsheet.
+       gid=0 pins this URL to DISPLAY, so it cannot return any other
+       tab even though the document as a whole is published.
+
+       This endpoint is used in preference to /export (401s without
+       link sharing) and to gviz (casts a whole column to one type
+       and silently drops text such as *LIVE*).
+
+       It returns the entire tab, headers and all, so the columns are
+       located by name below rather than by a fixed range.
+       ──────────────────────────────────────────────────────────── */
+    const PUB_CSV =
+      'https://docs.google.com/spreadsheets/d/e/2PACX-1vSQNDV6Mxcwx7ooiUrTkRUHHVUFCnu47d7qaeEijrK0b-5QvafzDwhEax7genVr_ZK512ZDhgbTjJYx/pub?gid=0&single=true&output=csv';
+
     const REFRESH_MS = 5000;
 
-    const exportUrl = () =>
-      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv` +
-      `&gid=${SHEET_GID}&range=${RANGE}&cacheBust=${Date.now()}`;
-
-    const gvizUrl = () =>
-      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv` +
-      `&sheet=DISPLAY&range=${RANGE}&cacheBust=${Date.now()}`;
+    /* Which ITEM DESCRIPTION block to read. The tab holds three:
+       1 = all items including multiples
+       2 = individual items, multiples collapsed
+       3 = individual items with a NEW BID column   <-- this one */
+    const BLOCK = 3;
 
     function parseCsv(text) {
       const rows = []; let row = ['']; let quote = false;
@@ -217,30 +226,49 @@
           row.push('');
         } else if ((c === '\r' || c === '\n') && !quote) {
           if (c === '\r' && n === '\n') i++;
-          if (row.some(cell => cell.trim())) rows.push(row);
+          rows.push(row);
           row = [''];
         } else {
           row[row.length - 1] += c;
         }
       }
-      if (row.some(cell => cell.trim())) rows.push(row);
+      rows.push(row);
       return rows;
     }
 
-    async function fetchData() {
-      try {
-        const res = await fetch(exportUrl(), { cache: 'no-store' });
-        if (!res.ok) throw new Error('export failed');
-        return parseCsv(await res.text());
-      } catch {
-        // Fallback to gviz — *LIVE* may be lost but at least data shows
-        const res = await fetch(gvizUrl(), { cache: 'no-store' });
-        return parseCsv(await res.text());
+    const norm = s => String(s ?? '').replace(/\u00A0/g, ' ').trim().toUpperCase();
+
+    /* Finds the header row, then the requested ITEM DESCRIPTION block,
+       then the LEADING BID column belonging to that block. Returns null
+       if the sheet layout is not what we expect, so a layout change
+       fails loudly instead of rendering the wrong column. */
+    function locateColumns(rows) {
+      for (let r = 0; r < Math.min(rows.length, 10); r++) {
+        const cells = rows[r].map(norm);
+        const descCols = [];
+        cells.forEach((v, i) => { if (v === 'ITEM DESCRIPTION') descCols.push(i); });
+        if (descCols.length < BLOCK) continue;
+
+        const descCol = descCols[BLOCK - 1];
+        const blockEnd = descCols[BLOCK] ?? cells.length;
+
+        let bidCol = -1;
+        for (let i = descCol + 1; i < blockEnd; i++) {
+          if (cells[i] === 'LEADING BID') { bidCol = i; break; }
+        }
+        if (bidCol === -1) continue;
+
+        return { headerRow: r, descCol: descCol, bidCol: bidCol };
       }
+      return null;
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     function formatItemLabel(raw) {
-      // Normalise any dash variant and rebuild "ITEM XX - Description"
       const src = String(raw ?? '')
         .replace(/\u00A0/g, ' ')
         .replace(/[\u2010-\u2015\u2212]/g, '-')
@@ -253,43 +281,73 @@
            + (rest ? '&nbsp;- ' + escHtml(rest) : '');
     }
 
-    function escHtml(s) {
-      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
-                      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
     function formatEuro(v) {
       if (!v || v === '') return '€0';
       const n = Number(String(v).replace(/[^0-9.-]/g, ''));
       return isNaN(n) ? escHtml(v) : '€' + n.toLocaleString('en-IE');
     }
 
-    async function loadData() {
-      try {
-        const rows = await fetchData();
-        const tbody = document.querySelector('#bidsTable tbody');
-        let html = '';
-
-        rows.forEach(r => {
-          const label  = (r[0] ?? '').trim();
-          const latest = (r[2] ?? r[1] ?? '').trim(); // col J = leading bid
-          if (!label) return;
-
-          const isLive = /LIVE/i.test(latest);
-          const bidDisplay = isLive ? '🟢 LIVE' : formatEuro(latest);
-
-          html += `<tr class="${isLive ? 'is-live' : ''}">
-            <td>${formatItemLabel(label)}</td>
-            <td>${bidDisplay}</td>
-          </tr>`;
-        });
-
-        tbody.innerHTML = html || '<tr><td colspan="2" style="text-align:center;color:#888;">Loading bids...</td></tr>';
-      } catch (err) {
-        console.error('Failed to load sheet', err);
-      }
+    function showMessage(msg) {
+      document.querySelector('#bidsTable tbody').innerHTML =
+        '<tr><td colspan="2" style="text-align:center;color:#8a2b20;padding:14px;">'
+        + escHtml(msg) + '</td></tr>';
     }
 
+    let loggedColumns = false;
+
+    async function loadData() {
+      let rows;
+      try {
+        const res = await fetch(PUB_CSV + '&cb=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        rows = parseCsv(await res.text());
+      } catch (err) {
+        console.error('Leading bids fetch failed:', err);
+        showMessage('Live bids are temporarily unavailable.');
+        return;
+      }
+
+      const cols = locateColumns(rows);
+      if (!cols) {
+        console.error('Could not find the ITEM DESCRIPTION / LEADING BID headers.',
+                      rows.slice(0, 4));
+        showMessage('Live bids are temporarily unavailable.');
+        return;
+      }
+
+      if (!loggedColumns) {
+        console.log('Leading bids: header row ' + cols.headerRow
+          + ', description col ' + cols.descCol
+          + ', leading bid col ' + cols.bidCol);
+        loggedColumns = true;
+      }
+
+      let html = '';
+      let count = 0;
+
+      for (let r = cols.headerRow + 1; r < rows.length; r++) {
+        const label = String(rows[r][cols.descCol] ?? '').trim();
+        if (!label) continue;
+
+        const raw    = String(rows[r][cols.bidCol] ?? '').trim();
+        const isLive = /LIVE/i.test(raw);
+
+        html += '<tr class="' + (isLive ? 'is-live' : '') + '">'
+             +    '<td>' + formatItemLabel(label) + '</td>'
+             +    '<td>' + (isLive ? '🟢 LIVE' : formatEuro(raw)) + '</td>'
+             +  '</tr>';
+        count++;
+      }
+
+      if (!count) {
+        showMessage('Live bids are temporarily unavailable.');
+        return;
+      }
+
+      document.querySelector('#bidsTable tbody').innerHTML = html;
+    }
+
+    showMessage('Loading bids…');
     loadData();
     setInterval(loadData, REFRESH_MS);
   </script>
