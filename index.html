@@ -140,6 +140,23 @@
     tr.is-live td { background-color: #0f2a1a; color: #4ade80; }
     tr.is-live td:nth-child(2) { font-weight: 800; }
     tr.is-live strong { color: #4ade80; }
+
+    /* SOLD item styling */
+    tr.is-sold td { background-color: #e2e2e2; color: #555; }
+    tr.is-sold strong { color: #555; }
+    tr.is-sold td:nth-child(2) { font-weight: 800; }
+    .sold-tag {
+      display: inline-block;
+      margin-left: 0.5em;
+      padding: 0.05em 0.5em;
+      border-radius: 3px;
+      background: #777;
+      color: #fff;
+      font-size: 0.75em;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body>
@@ -193,26 +210,36 @@
     /* ────────────────────────────────────────────────────────────
        DATA SOURCE
 
-       Published CSV of the DISPLAY tab on the display spreadsheet.
-       gid=0 pins this URL to DISPLAY, so it cannot return any other
-       tab even though the document as a whole is published.
+       gviz live query against the DISPLAY tab. Used instead of the
+       published /pub CSV endpoint, which sits behind Google's publish
+       cache and occasionally serves a short placeholder response
+       instead of real data on a completely normal request. gviz is a
+       direct query with no cache layer, so it does not have that
+       failure mode.
 
-       This endpoint is used in preference to /export (401s without
-       link sharing) and to gviz (casts a whole column to one type
-       and silently drops text such as *LIVE*).
+       gviz's own weakness is that it casts a whole column to one type
+       and silently drops any text sitting in a numeric column. That
+       is no longer a problem here: LEADING BID is always a number,
+       and LIVE / SOLD state lives in their own dedicated text columns
+       (LIVE STATUS, SOLD STATUS) rather than being encoded as text
+       inside the price.
 
-       It returns the entire tab, headers and all, so the columns are
-       located by name below rather than by a fixed range.
+       The DISPLAY tab holds the same data three times, in three
+       column blocks. Columns are located by header name within the
+       correct block below rather than assumed to sit at a fixed
+       position, so a future column insert fails loudly instead of
+       silently reading the wrong data.
        ──────────────────────────────────────────────────────────── */
-    const PUB_CSV =
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vSQNDV6Mxcwx7ooiUrTkRUHHVUFCnu47d7qaeEijrK0b-5QvafzDwhEax7genVr_ZK512ZDhgbTjJYx/pub?gid=0&single=true&output=csv';
+    const GVIZ_URL =
+      'https://docs.google.com/spreadsheets/d/10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc/gviz/tq'
+      + '?tqx=out:csv&sheet=DISPLAY';
 
     const REFRESH_MS = 5000;
 
     /* Which ITEM DESCRIPTION block to read. The tab holds three:
        1 = all items including multiples
        2 = individual items, multiples collapsed
-       3 = individual items with a NEW BID column   <-- this one */
+       3 = individual items with NEW BID, LIVE STATUS, SOLD STATUS  <-- this one */
     const BLOCK = 3;
 
     function parseCsv(text) {
@@ -239,9 +266,10 @@
     const norm = s => String(s ?? '').replace(/\u00A0/g, ' ').trim().toUpperCase();
 
     /* Finds the header row, then the requested ITEM DESCRIPTION block,
-       then the LEADING BID column belonging to that block. Returns null
-       if the sheet layout is not what we expect, so a layout change
-       fails loudly instead of rendering the wrong column. */
+       then the LEADING BID / LIVE STATUS / SOLD STATUS columns
+       belonging to that block. Returns null if the sheet layout is
+       not what we expect, so a layout change fails loudly instead of
+       rendering the wrong column. */
     function locateColumns(rows) {
       for (let r = 0; r < Math.min(rows.length, 10); r++) {
         const cells = rows[r].map(norm);
@@ -249,16 +277,18 @@
         cells.forEach((v, i) => { if (v === 'ITEM DESCRIPTION') descCols.push(i); });
         if (descCols.length < BLOCK) continue;
 
-        const descCol = descCols[BLOCK - 1];
+        const descCol  = descCols[BLOCK - 1];
         const blockEnd = descCols[BLOCK] ?? cells.length;
 
-        let bidCol = -1;
+        let bidCol = -1, liveCol = -1, soldCol = -1;
         for (let i = descCol + 1; i < blockEnd; i++) {
-          if (cells[i] === 'LEADING BID') { bidCol = i; break; }
+          if (cells[i] === 'LEADING BID')  bidCol  = i;
+          if (cells[i] === 'LIVE STATUS')  liveCol = i;
+          if (cells[i] === 'SOLD STATUS')  soldCol = i;
         }
         if (bidCol === -1) continue;
 
-        return { headerRow: r, descCol: descCol, bidCol: bidCol };
+        return { headerRow: r, descCol, bidCol, liveCol, soldCol };
       }
       return null;
     }
@@ -294,25 +324,18 @@
     }
 
     let loggedColumns = false;
-    let hasShownData = false;
 
-    // The published CSV endpoint occasionally returns a short placeholder
-    // ("Loading...", ~10 bytes) instead of real data, on completely normal
-    // requests. This is routine for this endpoint, not an error condition,
-    // so a bad poll is simply skipped: whatever is already on screen stays
-    // there and the next poll five seconds later tries again. Nothing is
-    // shown to the guest for a single bad poll; only the console records it.
+    // gviz is a direct query, not a cached endpoint, so a failed fetch
+    // here is a real network problem, not a routine placeholder. Still
+    // skip a single bad poll rather than blank a working table, since
+    // one dropped connection on a mobile hotspot should not flash an
+    // error at every guest looking at the screen.
     async function loadData() {
       let rows;
       try {
-        const res = await fetch(PUB_CSV + '&cb=' + Date.now(), { cache: 'no-store' });
+        const res = await fetch(GVIZ_URL + '&cb=' + Date.now(), { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        const text = await res.text();
-        // Google's publish endpoint occasionally returns a short placeholder
-        // instead of the CSV. Treat it the same as a failed fetch rather
-        // than letting it fall through to the parser as one garbage row.
-        if (text.trim().length < 50) throw new Error('placeholder response: ' + JSON.stringify(text));
-        rows = parseCsv(text);
+        rows = parseCsv(await res.text());
       } catch (err) {
         console.warn('Leading bids fetch skipped:', err.message);
         return;
@@ -328,7 +351,9 @@
       if (!loggedColumns) {
         console.log('Leading bids: header row ' + cols.headerRow
           + ', description col ' + cols.descCol
-          + ', leading bid col ' + cols.bidCol);
+          + ', leading bid col ' + cols.bidCol
+          + ', live status col ' + cols.liveCol
+          + ', sold status col ' + cols.soldCol);
         loggedColumns = true;
       }
 
@@ -339,12 +364,32 @@
         const label = String(rows[r][cols.descCol] ?? '').trim();
         if (!label) continue;
 
-        const raw    = String(rows[r][cols.bidCol] ?? '').trim();
-        const isLive = /LIVE/i.test(raw);
+        const raw = String(rows[r][cols.bidCol] ?? '').trim();
 
-        html += '<tr class="' + (isLive ? 'is-live' : '') + '">'
+        // Exact match only. "NOT LIVE" and "NOT SOLD" both contain their
+        // positive counterpart as a substring, so a /LIVE/ or /SOLD/
+        // pattern test would wrongly mark every row as live/sold.
+        const liveVal = cols.liveCol > -1 ? norm(rows[r][cols.liveCol]) : '';
+        const soldVal = cols.soldCol > -1 ? norm(rows[r][cols.soldCol]) : '';
+        const isLive  = liveVal === 'LIVE';
+        const isSold  = soldVal === 'SOLD';
+
+        let rowClass = '';
+        let priceCell;
+
+        if (isSold) {
+          rowClass  = 'is-sold';
+          priceCell = formatEuro(raw) + '<span class="sold-tag">SOLD</span>';
+        } else if (isLive) {
+          rowClass  = 'is-live';
+          priceCell = '🟢 LIVE';
+        } else {
+          priceCell = formatEuro(raw);
+        }
+
+        html += '<tr class="' + rowClass + '">'
              +    '<td>' + formatItemLabel(label) + '</td>'
-             +    '<td>' + (isLive ? '🟢 LIVE' : formatEuro(raw)) + '</td>'
+             +    '<td>' + priceCell + '</td>'
              +  '</tr>';
         count++;
       }
@@ -354,7 +399,6 @@
         return;
       }
 
-      hasShownData = true;
       document.querySelector('#bidsTable tbody').innerHTML = html;
     }
 
