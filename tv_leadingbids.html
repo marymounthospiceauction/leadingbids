@@ -383,14 +383,14 @@
 
   <div class="footer">
     <div class="footer-block">
-      <img class="qr-img" src="/assets/marymountauction2026-qr.png" alt="QR Code to Bid" />
+      <img class="qr-img" src="/assets/2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid" />
       <span>Scan QR code to bid</span>
     </div>
     <div class="footer-sponsors">
       <img src="/assets/Marymount%20Footer%20Sponsors.png" alt="Sponsors" />
     </div>
     <div class="footer-block">
-      <img class="qr-img" src="/assets/marymountauction2026-qr.png" alt="QR Code to Bid" />
+      <img class="qr-img" src="/assets/2025%20Marymount%20QR%20Code.jpeg" alt="QR Code to Bid" />
       <span>Scan QR code to bid</span>
     </div>
   </div>
@@ -810,6 +810,10 @@
     }
 
     /* ── MAIN LOOP ── */
+    let bidsConsecutiveFailures = 0;
+    let bidsHasShownData = false;
+    const BIDS_MAX_SILENT_FAILURES = 4; // ~20s of failed polls before flagging it
+
     async function loadData() {
       try {
         const [bidsRows, ctrlRows] = await Promise.all([
@@ -829,12 +833,27 @@
           });
         }
 
-        renderRows(validBids);
+        if (validBids.length) {
+          bidsConsecutiveFailures = 0;
+          bidsHasShownData = true;
+          renderRows(validBids);
+        } else {
+          bidsConsecutiveFailures++;
+          console.warn('BIDS: fetch returned no usable rows ('
+            + bidsConsecutiveFailures + ' in a row).');
+          if (bidsHasShownData && bidsConsecutiveFailures >= BIDS_MAX_SILENT_FAILURES) {
+            console.error('BIDS: no live data for ' + (BIDS_MAX_SILENT_FAILURES * REFRESH_MS / 1000)
+              + 's straight. Screen is showing stale data.');
+          }
+          // Leave whatever rows are already on screen alone rather than
+          // blanking a working display over one bad poll.
+        }
 
         if (ctrlRows && ctrlRows.length) applyControl(ctrlRows);
 
       } catch(e) {
-        console.error('Load error:', e);
+        bidsConsecutiveFailures++;
+        console.error('Load error (' + bidsConsecutiveFailures + ' in a row):', e);
       }
     }
 
