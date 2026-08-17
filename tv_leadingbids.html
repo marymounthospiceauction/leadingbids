@@ -116,6 +116,36 @@
       border-left: 1px solid #2ecc71;
     }
 
+    /* ── GREY OUT FOR SOLD ITEMS ── */
+    .item-row.is-sold {
+      background: rgba(60,60,60,0.92) !important;
+      border: 1px solid #888 !important;
+      box-shadow: none;
+    }
+
+    .item-row.is-sold .item-label,
+    .item-row.is-sold .item-label strong {
+      color: #aaa !important;
+    }
+
+    .item-row.is-sold .item-amount {
+      color: #ddd !important;
+      border-left: 1px solid #888;
+    }
+
+    .sold-tag {
+      display: inline-block;
+      margin-left: 0.5em;
+      padding: 0.05em 0.5em;
+      border-radius: 3px;
+      background: #888;
+      color: #fff;
+      font-size: 0.55em;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      vertical-align: middle;
+    }
+
     .item-label,
     .item-newbid,
     .item-amount {
@@ -404,25 +434,31 @@
     const CTRL_GID   = '752655290';
     const REFRESH_MS = 5000;
 
-    /* Published CSV of the DISPLAY tab (gid 0). /export needs link sharing,
-       which this file is not published under, and gviz casts a whole column
-       to one type and silently drops text such as *LIVE*. The published
-       endpoint returns raw cell text and does not need link sharing, only
-       "publish to web", which is already on for this document.
+    /* gviz live query against the DISPLAY tab. Used instead of the
+       published /pub CSV endpoint, which sits behind Google's publish
+       cache and occasionally serves a short placeholder response
+       instead of real data on a completely normal request. gviz has
+       no such cache.
 
-       It returns the entire DISPLAY tab, not a range, so the block-3
-       columns (description / new bid / leading bid) are located by header
-       name below rather than assumed to sit at H:J. */
-    const bidsPubCsvUrl = () =>
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vSQNDV6Mxcwx7ooiUrTkRUHHVUFCnu47d7qaeEijrK0b-5QvafzDwhEax7genVr_ZK512ZDhgbTjJYx/pub' +
-      `?gid=0&single=true&output=csv&cacheBust=${Date.now()}`;
+       gviz's own weakness, casting a whole column to one type and
+       dropping any text in a numeric column, no longer applies here:
+       LEADING BID is always a number, and LIVE / SOLD state live in
+       their own dedicated text columns instead of being encoded as
+       text inside the price.
+
+       Columns are located by header name within the 3rd block below
+       rather than assumed to sit at a fixed position, so a sheet
+       change fails loudly instead of silently reading the wrong data. */
+    const bidsGvizUrl = () =>
+      `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv` +
+      `&sheet=DISPLAY&cacheBust=${Date.now()}`;
 
     const norm = s => String(s ?? '').replace(/\u00A0/g, ' ').trim().toUpperCase();
 
     // Finds the header row, then the 3rd "ITEM DESCRIPTION" block (the one
-    // paired with a NEW BID column), then its LEADING BID column. Returns
-    // null if the layout is not what is expected, so a sheet change fails
-    // loudly instead of silently rendering the wrong column.
+    // paired with NEW BID / LIVE STATUS / SOLD STATUS), then its columns.
+    // Returns null if the layout is not what is expected, so a sheet
+    // change fails loudly instead of silently rendering the wrong column.
     function locateBidColumns(rows) {
       for (let r = 0; r < Math.min(rows.length, 10); r++) {
         const cells = rows[r].map(norm);
@@ -432,14 +468,16 @@
 
         const descCol   = descCols[2];
         const blockEnd  = cells.length;
-        let newBidCol = -1, bidCol = -1;
+        let newBidCol = -1, bidCol = -1, liveCol = -1, soldCol = -1;
         for (let i = descCol + 1; i < blockEnd; i++) {
           if (cells[i] === 'NEW BID')      newBidCol = i;
           if (cells[i] === 'LEADING BID')  bidCol = i;
+          if (cells[i] === 'LIVE STATUS')  liveCol = i;
+          if (cells[i] === 'SOLD STATUS')  soldCol = i;
         }
         if (bidCol === -1) continue;
 
-        return { headerRow: r, descCol, newBidCol, bidCol };
+        return { headerRow: r, descCol, newBidCol, bidCol, liveCol, soldCol };
       }
       return null;
     }
@@ -486,19 +524,15 @@
 
     let loggedBidColumns = false;
 
-    // Fetches the published DISPLAY CSV, finds the block-3 columns by
-    // header name, and returns rows already sliced to [description, newBid,
-    // leadingBid] so renderRows/makeRow below need no further changes.
-    //
-    // Google's publish endpoint occasionally returns a short placeholder
-    // instead of the CSV, on completely normal requests. Checked here
-    // rather than in fetchCsvData because CONTROL's real responses are
-    // legitimately short.
+    // Fetches the DISPLAY tab via gviz, finds the block-3 columns by
+    // header name, and returns rows sliced to
+    // [description, newBid, leadingBid, liveStatus, soldStatus] so
+    // makeRow below can read live/sold state directly instead of
+    // pattern-matching text inside the price.
     async function fetchBids() {
-      const res = await fetch(bidsPubCsvUrl(), { cache: 'no-store' });
+      const res = await fetch(bidsGvizUrl(), { cache: 'no-store' });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const raw = await res.text();
-      if (raw.trim().length < 100) throw new Error('placeholder response: ' + JSON.stringify(raw));
 
       const allRows = parseCsv(raw);
       const cols = locateBidColumns(allRows);
@@ -513,14 +547,18 @@
         console.log('BIDS: header row', cols.headerRow,
           '| description col', cols.descCol,
           '| new bid col', cols.newBidCol,
-          '| leading bid col', cols.bidCol);
+          '| leading bid col', cols.bidCol,
+          '| live status col', cols.liveCol,
+          '| sold status col', cols.soldCol);
         loggedBidColumns = true;
       }
 
       return allRows.slice(cols.headerRow + 1).map(r => [
         r[cols.descCol]   ?? '',
         cols.newBidCol > -1 ? (r[cols.newBidCol] ?? '') : '',
-        r[cols.bidCol]     ?? ''
+        r[cols.bidCol]     ?? '',
+        cols.liveCol > -1 ? (r[cols.liveCol] ?? '') : '',
+        cols.soldCol > -1 ? (r[cols.soldCol] ?? '') : ''
       ]);
     }
 
@@ -656,32 +694,47 @@
     function makeRow(r) {
       const rawName   = (r[0] ?? '').toString().trim();
       const rawNewBid = (r[1] ?? '').toString().trim();
-      const rawLatest = (r[2] ?? r[1] ?? '').toString().trim();
+      const rawLatest = (r[2] ?? '').toString().trim();
+      const rawLive   = (r[3] ?? '').toString().trim();
+      const rawSold   = (r[4] ?? '').toString().trim();
 
       const item = formatItemLabel(rawName);
 
-      const isLive = /LIVE/i.test(rawLatest) || /LIVE/i.test(rawNewBid);
+      // Exact match only. "NOT LIVE" and "NOT SOLD" both contain their
+      // positive counterpart as a substring, so a /LIVE/ or /SOLD/
+      // pattern test would wrongly mark every row as live/sold.
+      const isLive = rawLive.toUpperCase() === 'LIVE';
+      const isSold = rawSold.toUpperCase() === 'SOLD';
 
       let latestDisplay;
-      if (isLive) {
+      let newBidDisplay = '';
+      let rowClass = '';
+
+      if (isSold) {
+        rowClass = 'is-sold';
+        const soldNum = Number(String(rawLatest).replace(/[^0-9.-]/g, ''));
+        latestDisplay = (!isNaN(soldNum) && soldNum > 0)
+          ? '€' + euroFmt.format(soldNum) + '<span class="sold-tag">SOLD</span>'
+          : '<span class="sold-tag">SOLD</span>';
+      } else if (isLive) {
+        rowClass = 'is-live';
         latestDisplay = '*LIVE*';
       } else {
         const latestNum = Number(String(rawLatest).replace(/[^0-9.-]/g, ''));
         latestDisplay = (rawLatest !== '' && !isNaN(latestNum) && latestNum > 0)
           ? '€' + euroFmt.format(latestNum)
           : '€0';
-      }
 
-      let newBidDisplay = '';
-      if (!isLive && rawNewBid !== '') {
-        const bidNum = Number(String(rawNewBid).replace(/[^0-9.-]/g, ''));
-        newBidDisplay = (!isNaN(bidNum) && bidNum > 0)
-          ? '€' + euroFmt.format(bidNum)
-          : escapeHtml(rawNewBid);
+        if (rawNewBid !== '') {
+          const bidNum = Number(String(rawNewBid).replace(/[^0-9.-]/g, ''));
+          newBidDisplay = (!isNaN(bidNum) && bidNum > 0)
+            ? '€' + euroFmt.format(bidNum)
+            : escapeHtml(rawNewBid);
+        }
       }
 
       return `
-        <div class="item-row ${isLive ? 'is-live' : ''}">
+        <div class="item-row ${rowClass}">
           <div class="item-label">${item}</div>
           <div class="item-newbid">${newBidDisplay}</div>
           <div class="item-amount">${latestDisplay}</div>
