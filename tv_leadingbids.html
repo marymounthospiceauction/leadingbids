@@ -489,8 +489,18 @@
     // Fetches the published DISPLAY CSV, finds the block-3 columns by
     // header name, and returns rows already sliced to [description, newBid,
     // leadingBid] so renderRows/makeRow below need no further changes.
+    //
+    // Google's publish endpoint occasionally returns a short placeholder
+    // instead of the CSV, on completely normal requests. Checked here
+    // rather than in fetchCsvData because CONTROL's real responses are
+    // legitimately short.
     async function fetchBids() {
-      const allRows = await fetchCsvData(bidsPubCsvUrl());
+      const res = await fetch(bidsPubCsvUrl(), { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const raw = await res.text();
+      if (raw.trim().length < 100) throw new Error('placeholder response: ' + JSON.stringify(raw));
+
+      const allRows = parseCsv(raw);
       const cols = locateBidColumns(allRows);
 
       if (!cols) {
@@ -809,11 +819,14 @@
       canvas.classList.remove('active'); cP = [];
     }
 
-    /* ── MAIN LOOP ── */
-    let bidsConsecutiveFailures = 0;
-    let bidsHasShownData = false;
-    const BIDS_MAX_SILENT_FAILURES = 4; // ~20s of failed polls before flagging it
+    /* ── MAIN LOOP ──
 
+       The published CSV endpoint occasionally returns a short placeholder
+       ("Loading...", ~10 bytes) instead of real data, on completely normal
+       requests. This is routine for this endpoint, not an error condition.
+       A bad poll is simply skipped: whatever rows are already on screen
+       stay put, and the next poll five seconds later tries again. Only
+       the console records it. */
     async function loadData() {
       try {
         const [bidsRows, ctrlRows] = await Promise.all([
@@ -834,26 +847,15 @@
         }
 
         if (validBids.length) {
-          bidsConsecutiveFailures = 0;
-          bidsHasShownData = true;
           renderRows(validBids);
         } else {
-          bidsConsecutiveFailures++;
-          console.warn('BIDS: fetch returned no usable rows ('
-            + bidsConsecutiveFailures + ' in a row).');
-          if (bidsHasShownData && bidsConsecutiveFailures >= BIDS_MAX_SILENT_FAILURES) {
-            console.error('BIDS: no live data for ' + (BIDS_MAX_SILENT_FAILURES * REFRESH_MS / 1000)
-              + 's straight. Screen is showing stale data.');
-          }
-          // Leave whatever rows are already on screen alone rather than
-          // blanking a working display over one bad poll.
+          console.warn('BIDS: poll returned no usable rows, keeping last known values.');
         }
 
         if (ctrlRows && ctrlRows.length) applyControl(ctrlRows);
 
       } catch(e) {
-        bidsConsecutiveFailures++;
-        console.error('Load error (' + bidsConsecutiveFailures + ' in a row):', e);
+        console.warn('Load skipped:', e.message);
       }
     }
 
