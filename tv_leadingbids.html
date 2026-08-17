@@ -448,10 +448,16 @@
 
        Columns are located by header name within the 3rd block below
        rather than assumed to sit at a fixed position, so a sheet
-       change fails loudly instead of silently reading the wrong data. */
+       change fails loudly instead of silently reading the wrong data.
+
+       headers=0 is required. Without it, gviz auto-detects the merged
+       block-title row above each header row and glues the two together
+       into one string (e.g. "ALL ITEMS (INC MULTIPLES) ITEM DESCRIPTION"),
+       so an exact match on "ITEM DESCRIPTION" never fires. The CONTROL
+       fetch below already knows this; the bids fetch needs it too. */
     const bidsGvizUrl = () =>
       `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv` +
-      `&sheet=DISPLAY&cacheBust=${Date.now()}`;
+      `&sheet=DISPLAY&headers=0&cacheBust=${Date.now()}`;
 
     const norm = s => String(s ?? '').replace(/\u00A0/g, ' ').trim().toUpperCase();
 
