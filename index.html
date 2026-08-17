@@ -230,9 +230,13 @@
        position, so a future column insert fails loudly instead of
        silently reading the wrong data.
        ──────────────────────────────────────────────────────────── */
+    // headers=0 is required. Without it, gviz auto-detects the merged
+    // block-title row above each header row and glues the two together
+    // into one string (e.g. "ALL ITEMS (INC MULTIPLES) ITEM DESCRIPTION"),
+    // so an exact match on "ITEM DESCRIPTION" never fires.
     const GVIZ_URL =
       'https://docs.google.com/spreadsheets/d/10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc/gviz/tq'
-      + '?tqx=out:csv&sheet=DISPLAY';
+      + '?tqx=out:csv&sheet=DISPLAY&headers=0';
 
     const REFRESH_MS = 5000;
 
