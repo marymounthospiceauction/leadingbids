@@ -341,7 +341,6 @@
     const PASSWORD   = "starrynight";
     const SHEET_ID   = "10AMh0CR18jXCpLnjq0JccpzttTEnc8Idb_caiu_EMMc"; // DISPLAY spreadsheet
     const SHEET_TAB  = "COMMITTEE";
-    const RANGE      = "A1:M50";
     const REFRESH_MS = 5000;
     /* ============================================================ */
 
@@ -356,9 +355,15 @@
       }
     });
 
+    // No range parameter. gviz's range parameter has proven unreliable
+    // elsewhere in this project (it clipped the header row differently
+    // to what was requested here on first attempt), so the whole tab is
+    // fetched and every column is located by header text instead. This
+    // also means the request never needs updating again if columns are
+    // added to COMMITTEE in future.
     const url =
       `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json` +
-      `&sheet=${encodeURIComponent(SHEET_TAB)}&range=${RANGE}`;
+      `&sheet=${encodeURIComponent(SHEET_TAB)}`;
 
     function formatEuro(v) {
       if (v === null || v === undefined || v === "" || isNaN(v)) return "";
@@ -390,35 +395,40 @@
     // out of sync with the sheet once; this is here so the next insert on
     // LEADING_BIDS fails loudly (blank dashboard, console warning) instead
     // of silently showing the wrong figure under the right header.
-    function locateColumns(headerRow) {
-      const cells = headerRow.map(norm);
-      const find = (...names) => {
-        for (const name of names) {
-          const i = cells.indexOf(name);
-          if (i > -1) return i;
-        }
-        return -1;
-      };
+    //
+    // Scans the first several rows for the header rather than assuming
+    // row 0, since fetching the whole tab (no range parameter) means the
+    // exact header row position is no longer guaranteed by the request.
+    function locateColumns(allRows) {
+      for (let r = 0; r < Math.min(allRows.length, 5); r++) {
+        const cells = allRows[r].map(norm);
+        const find = (...names) => {
+          for (const name of names) {
+            const i = cells.indexOf(name);
+            if (i > -1) return i;
+          }
+          return -1;
+        };
 
-      const idx = {
-        item:       find("ITEM"),
-        currentBid: find("CURRENT BID"),
-        status:     find("STATUS"),
-        low:        find("LOW"),
-        high:       find("HIGH"),
-        numBids:    find("NUMBER OF BIDS"),
-        name:       find("NAME"),
-      };
+        const idx = {
+          headerRow:  r,
+          item:       find("ITEM"),
+          currentBid: find("CURRENT BID"),
+          status:     find("STATUS"),
+          low:        find("LOW"),
+          high:       find("HIGH"),
+          numBids:    find("NUMBER OF BIDS"),
+          name:       find("NAME"),
+        };
 
-      const required = ["item", "currentBid", "status", "low", "high"];
-      const missing = required.filter(k => idx[k] === -1);
-      if (missing.length) {
-        console.error("COMMITTEE view: could not find column(s) "
-          + missing.join(", ") + " in the header row.", headerRow);
-        return null;
+        const required = ["item", "currentBid", "status", "low", "high"];
+        const missing = required.filter(k => idx[k] === -1);
+        if (!missing.length) return idx;
       }
 
-      return idx;
+      console.error("COMMITTEE view: could not find the item/bid/status/low/high "
+        + "columns in the first few rows.", allRows.slice(0, 5));
+      return null;
     }
 
     let loggedColumns = false;
@@ -435,7 +445,7 @@
         const allRows = json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
         if (!allRows.length) return;
 
-        const idx = locateColumns(allRows[0]);
+        const idx = locateColumns(allRows);
         if (!idx) return; // keep whatever was last shown rather than blank the dashboard
 
         if (!loggedColumns) {
@@ -443,7 +453,7 @@
           loggedColumns = true;
         }
 
-        const dataRows = allRows.slice(1).filter(r => String(r[idx.item] || "").trim() !== "");
+        const dataRows = allRows.slice(idx.headerRow + 1).filter(r => String(r[idx.item] || "").trim() !== "");
 
         // Totals and counts
         let auctionTotal = 0;
