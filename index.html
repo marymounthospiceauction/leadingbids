@@ -294,40 +294,36 @@
     }
 
     let loggedColumns = false;
-    let consecutiveFailures = 0;
     let hasShownData = false;
-    const MAX_SILENT_FAILURES = 4; // ~20s of failed polls before we tell the guest
 
+    // The published CSV endpoint occasionally returns a short placeholder
+    // ("Loading...", ~10 bytes) instead of real data, on completely normal
+    // requests. This is routine for this endpoint, not an error condition,
+    // so a bad poll is simply skipped: whatever is already on screen stays
+    // there and the next poll five seconds later tries again. Nothing is
+    // shown to the guest for a single bad poll; only the console records it.
     async function loadData() {
       let rows;
       try {
         const res = await fetch(PUB_CSV + '&cb=' + Date.now(), { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        rows = parseCsv(await res.text());
+        const text = await res.text();
+        // Google's publish endpoint occasionally returns a short placeholder
+        // instead of the CSV. Treat it the same as a failed fetch rather
+        // than letting it fall through to the parser as one garbage row.
+        if (text.trim().length < 50) throw new Error('placeholder response: ' + JSON.stringify(text));
+        rows = parseCsv(text);
       } catch (err) {
-        consecutiveFailures++;
-        console.warn('Leading bids fetch failed (' + consecutiveFailures + ' in a row):', err.message);
-        if (!hasShownData && consecutiveFailures >= MAX_SILENT_FAILURES) {
-          showMessage('Live bids are temporarily unavailable.');
-        }
-        // Otherwise leave whatever is already on screen alone. One bad
-        // fetch on an otherwise-working page should be invisible, not
-        // blank the table for every guest looking at it.
+        console.warn('Leading bids fetch skipped:', err.message);
         return;
       }
 
       const cols = locateColumns(rows);
       if (!cols) {
-        consecutiveFailures++;
-        console.warn('Could not find the ITEM DESCRIPTION / LEADING BID headers ('
-          + consecutiveFailures + ' in a row).', rows.slice(0, 4));
-        if (!hasShownData && consecutiveFailures >= MAX_SILENT_FAILURES) {
-          showMessage('Live bids are temporarily unavailable.');
-        }
+        console.warn('Leading bids poll returned no usable data, keeping last known values.',
+          rows.slice(0, 4));
         return;
       }
-
-      consecutiveFailures = 0;
 
       if (!loggedColumns) {
         console.log('Leading bids: header row ' + cols.headerRow
@@ -354,10 +350,7 @@
       }
 
       if (!count) {
-        consecutiveFailures++;
-        if (!hasShownData && consecutiveFailures >= MAX_SILENT_FAILURES) {
-          showMessage('Live bids are temporarily unavailable.');
-        }
+        console.warn('Leading bids poll parsed but found no item rows, keeping last known values.');
         return;
       }
 
